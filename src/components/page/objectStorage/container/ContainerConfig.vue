@@ -98,7 +98,7 @@
       </div>
     </div>
     <el-dialog
-      v-dialogDrag
+
       :title="type==='create'?'创建配置':'修改配置'"
       :visible.sync="isCreate"
       width="600px"
@@ -200,7 +200,7 @@ import {
 export default {
   name: 'ContainerConfig',
   components: {},
-  data () {
+  data() {
     return {
       loading: true,
       type: 'create',
@@ -265,7 +265,7 @@ export default {
         threshold: [
           { required: true, message: '必填', trigger: ['blur', 'change'] },
           {
-            validator (rule, data, callback) {
+            validator(rule, data, callback) {
               if (!/^(0|[1-9]\d*)$/.test(data)) {
                 return callback('请填入大于等于0的整数')
               } else if (data > 1000000) {
@@ -284,26 +284,26 @@ export default {
       total: 0
     }
   },
-  mounted () {
+  mounted() {
     this.listContainerConfig()
   },
   methods: {
-    getDurabilityType (row, column) {
+    getDurabilityType(row, column) {
       let durabilityType = []
-      this.ecTypeList.forEach(function (ele) {
+      this.ecTypeList.forEach(function(ele) {
         if (ele.value == row[column.property]) {
           durabilityType = ele
         }
       })
       return durabilityType.label
     },
-    getType (row) {
+    getType(row) {
       const arr = this.typeList.filter(
         item => row.containerFormatType == item.value
       )
       return arr && arr.length && arr[0].label
     },
-    deleteConfig (row) {
+    deleteConfig(row) {
       const {
         durabilityType,
         threshold,
@@ -332,16 +332,16 @@ export default {
           }
           this.listContainerConfig()
         })
-        .catch(function (error) {
+        .catch(function(error) {
           console.error(error)
         })
     },
-    openCreate () {
+    openCreate() {
       this.type = 'create'
       this.isCreate = true
       this.resetForm('createForm')
     },
-    preUpdate (row) {
+    preUpdate(row) {
       console.log(row, 'row')
       this.resetForm('createForm')
       this.type = 'update'
@@ -353,24 +353,24 @@ export default {
       this.createForm.isAutoCreate = row.autoCreate
     },
 
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.pageSize = val
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.currentPage = val
       console.log(JSON.stringify(this.multipleSelection))
     },
-    sortFunction (val) {
+    sortFunction(val) {
       this.prop = val.prop
       this.order = val.order
       this.tableData.sort(this.sortMethod(val.prop, val.order))
     },
-    resetForm (formName) {
+    resetForm(formName) {
       if (this.$refs[formName] != undefined) {
         this.$refs[formName].resetFields()
       }
     },
-    createOrUpdate (formName) {
+    createOrUpdate(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           createOrUpdateContainerConfig({
@@ -410,7 +410,7 @@ export default {
         }
       })
     },
-    listContainerConfig () {
+    listContainerConfig() {
       this.loading = true
       listContainerConfig({
         version: this.$store.state.dosVersion

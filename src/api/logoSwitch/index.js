@@ -1,4 +1,4 @@
-export const getLoginInfoConfig = async () => {
+export const getLoginInfoConfig = async() => {
   const res = {
     code: 200,
     message: undefined,

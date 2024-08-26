@@ -44,7 +44,7 @@ export default {
       default: void 0
     }
   },
-  data () {
+  data() {
     return {
       resource: {
         bucketName: '',
@@ -57,33 +57,33 @@ export default {
 
   },
   watch: {
-    value () {
+    value() {
       this.refreshResource()
     }
 
   },
-  mounted () {
+  mounted() {
     this.refreshResource()
   },
   methods: {
-    refreshResource () {
+    refreshResource() {
       const v = this.value.split(':')
       this.resource.bucketName = v[5].split('/')[0] || ''
       this.resource.keyName = v[5].split(this.resource.bucketName + '/')[1] || ''
     },
-    onChange (val) {
+    onChange(val) {
       this.$emit('change', this.idx, this.resource, this)
     },
-    onChanginput (val) {
+    onChanginput(val) {
       this.$emit('input', this.idx, this.resource, this)
     },
-    onAdd () {
+    onAdd() {
       this.$emit('add', this.resource, this)
     },
-    onDel () {
+    onDel() {
       this.$emit('del', this.idx)
     },
-    clearKeyName () {
+    clearKeyName() {
       this.resource.keyName = ''
     }
   }

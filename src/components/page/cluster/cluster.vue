@@ -40,7 +40,7 @@ export default {
   components: {
     clusterTable
   },
-  data () {
+  data() {
     return {
       createDialog: false,
       searchVal: '',
@@ -54,13 +54,13 @@ export default {
 
   methods: {
 
-    handleSelect (val) {
+    handleSelect(val) {
       this.selection = val
     },
-    resetForm (createForm) {
+    resetForm(createForm) {
       this.$refs[createForm].resetFields()
     },
-    refresh () {
+    refresh() {
       this.$refs.clusterTable.listClusters()
     }
   }

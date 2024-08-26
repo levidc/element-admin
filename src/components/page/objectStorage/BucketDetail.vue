@@ -9,7 +9,7 @@
           >
             <i
               class="el-icon-back backBox"
-              @click="$router.push({name:'Bucket'}),goback()"
+              @click="$router.push({name:'bucketList'}),goback()"
             />
           </el-tooltip>
           <span>{{ $route.params.id }}</span>
@@ -88,32 +88,32 @@
 export default {
   name: 'BucketDetail',
   filters: {},
-  data () {
+  data() {
     return {
       tabVal: 'BucketList',
       activeIndex: 'BucketList'
     }
   },
   computed: {
-    apis () {
-      return this.$store.state.api || JSON.parse(localStorage.getItem('api') || null)
+    apis() {
+      return this.$store.state['user']['api'] || JSON.parse(localStorage.getItem('api') || null)
     }
   },
-  mounted: function () {
+  mounted: function() {
     this.activeIndex = this.$route.name === 'ObjectDetail' ? 'BucketList' : this.$route.name
   },
-  destroyed () { },
+  destroyed() { },
   methods: {
-    goback () {
+    goback() {
       // localStorage.removeItem('isHtGateway')
     },
-    handleSelect (key, keyPath) {
+    handleSelect(key, keyPath) {
       // console.log(key, 'key')
       this.$router.push({
         name: key
       })
     },
-    handleClick () {
+    handleClick() {
       this.$router.push({
         name: this.tabVal
       })

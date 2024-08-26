@@ -22,7 +22,9 @@ import * as filters from './filters' // global filters
 
 import VueMessage from '@/components/message'
 Vue.use(VueMessage)
-
+import * as echarts from 'echarts'
+import 'echarts-liquidfill'
+import '@/icons/svg'
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -90,15 +92,17 @@ Vue.directive('router', {
     if (!window.firstJumpTo && binding.value) window.firstJumpTo = binding.value
   }
 })
-Vue.config.productionTip =
+Vue.prototype.$echarts = echarts
+Vue.config.productionTip = false
 Vue.prototype.showS3Msg = error => {
   if (error.code === 'XMLParserError') {
-    setTimeout(() => {
+    setTimeout(async() => {
       Vue.prototype.$msg({
         type: 'error',
         text: 'token已失效，请重新登录'
       })
-      store.dispatch('logout')
+      await store.dispatch('user/logout')
+      router.push(`/login?redirect=${router.currentRoute.fullPath}`)
     }, 200)
     return
   }
@@ -256,7 +260,7 @@ Vue.prototype.$ts = function(val) {
     return i18n.t(originVal)
   } else {
     // s3翻译
-    const s3Msg = store.state.statusCode.find(item => (item.description && (item.description).toLowerCase().indexOf(val.toLowerCase().substr(0, 50)) > -1))
+    const s3Msg = store.state.statusCode?.find(item => (item.description && (item.description).toLowerCase().indexOf(val.toLowerCase().substr(0, 50)) > -1))
     return (s3Msg && s3Msg.description_cn) || val
   }
 }
@@ -582,23 +586,7 @@ Vue.prototype.isJSON = (str) => {
     return false
   }
 }
-Vue.prototype.$ts = function(val) {
-  val += ''
-  const originVal = val
-  val = val.toLowerCase()
-  // 小写翻译
-  if (val !== i18n.t(val)) {
-    return i18n.t(val)
-  } else if (originVal !== i18n.t(originVal)) {
-    // 驼峰翻译
-    return i18n.t(originVal)
-  } else {
-    // s3翻译
-    return val
-    // const s3Msg = store.state.statusCode.find(item => (item.description && (item.description).toLowerCase().indexOf(val.toLowerCase().substr(0, 50)) > -1))
-    // return (s3Msg && s3Msg.description_cn) || val
-  }
-}
+
 new Vue({
   el: '#app',
   router,

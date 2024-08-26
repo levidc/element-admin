@@ -171,9 +171,9 @@
                       </el-table-column>
                     </el-table>
                     <p class="moreTag"><el-button
-                        type="text"
-                        @click="handleAdd()"
-                      >添加用户</el-button></p>
+                      type="text"
+                      @click="handleAdd()"
+                    >添加用户</el-button></p>
                   </span>
                 </li>
               </ul>
@@ -289,9 +289,9 @@
                 </el-table-column>
               </el-table>
               <p class="moreTag"><el-button
-                  type="text"
-                  @click="handleAdd()"
-                >添加标签</el-button></p>
+                type="text"
+                @click="handleAdd()"
+              >添加标签</el-button></p>
             </div>
           </div>
         </div>
@@ -305,7 +305,7 @@ export default {
   name: 'ObjDetail',
   filters: {
   },
-  data () {
+  data() {
     return {
       tableDataUser: [],
       tableDataTag: [],
@@ -316,7 +316,7 @@ export default {
   computed: {
 
   },
-  mounted: function () {
+  mounted: function() {
     this.routeArr = []
     this.routeArr.push(this.$route.params.id)
     if (this.$route.query.filename) {
@@ -324,7 +324,7 @@ export default {
       this.routeArr = this.routeArr.concat(fileArr)
     }
   },
-  destroyed () {
+  destroyed() {
 
   },
   methods: {

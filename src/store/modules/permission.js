@@ -1,4 +1,5 @@
 import { asyncRoutes, constantRoutes } from '@/router'
+import store from '@/store'
 
 /**
  * Use meta.role to determine if the current user has permission
@@ -11,6 +12,11 @@ function hasPermission(roles, route) {
   } else {
     return true
   }
+}
+
+function handlePermissionRoute(route, api) {
+  console.log(route, api)
+  return route
 }
 
 /**
@@ -42,20 +48,23 @@ const state = {
 const mutations = {
   SET_ROUTES: (state, routes) => {
     state.addRoutes = routes
-    state.routes = constantRoutes.concat(routes)
+    //
+    const accessConstantRoutes = handlePermissionRoute(constantRoutes, store.state.user.api)
+    state.routes = accessConstantRoutes.concat(routes)
   }
 }
 
 const actions = {
   generateRoutes({ commit }, roles) {
     return new Promise(resolve => {
-      const accessedRoutes = []
-      // if (roles.includes('admin')) {
-      //   accessedRoutes = asyncRoutes || []
-      // } else {
-      //   accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
-      // }
-      // 权限路由、按照匹配权限进行
+      // const accessedRoutes = []
+
+      let accessedRoutes
+      if (roles.includes('admin')) {
+        accessedRoutes = asyncRoutes || []
+      } else {
+        accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
+      }
       commit('SET_ROUTES', accessedRoutes)
       resolve(accessedRoutes)
     })

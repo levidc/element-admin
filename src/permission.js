@@ -5,7 +5,8 @@ import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
-
+var AWS = require('aws-sdk')
+import { Gateway } from '@/api/gateway-request'
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
@@ -16,6 +17,7 @@ router.beforeEach(async(to, from, next) => {
 
   // set page title
   document.title = getPageTitle(to.meta.title)
+  await presistStoreState()
 
   // determine whether the user has logged in
   const hasToken = getToken()
@@ -26,11 +28,16 @@ router.beforeEach(async(to, from, next) => {
       NProgress.done() // hack: https://github.com/PanJiaChen/vue-element-admin/pull/2939
     } else {
       // determine whether the user has obtained his permission roles through getInfo
-      const accessRoutes = await store.dispatch('permission/generateRoutes', ['admin'])
-
-      // dynamically add accessible routes
-      router.addRoutes(accessRoutes)
-      next()
+      const activeRoute = store.state.user.activeRoute
+      if (activeRoute) {
+        next()
+      } else {
+        store.commit('user/SET_ACTIVEROUTE', true)
+        const accessRoutes = await store.dispatch('permission/generateRoutes', ['admin'])
+        // dynamically add accessible routes
+        router.addRoutes(accessRoutes)
+        next({ ...to, replace: true })
+      }
       return
       const hasRoles = store.getters.roles && store.getters.roles.length > 0
       if (hasRoles) {
@@ -77,3 +84,44 @@ router.afterEach(() => {
   // finish progress bar
   NProgress.done()
 })
+const presistStoreState = () => {
+  return new Promise((resolve) => {
+    const user = localStorage.getItem('user')
+    const api = localStorage.getItem('api')
+    const role = localStorage.getItem('role')
+    store.commit('user/SET_ACTION', JSON.parse(api))
+    store.commit('user/SET_USER', user)
+    store.commit('user/SET_ROLE', role)
+    const gateways3 = store.state._gatewayS3
+    const port = localStorage.getItem('port')
+    const s3 = store.state._S3
+    if (!s3 && port !== 'null') {
+      var S3 = new AWS.S3({
+        accessKeyId: 'test',
+        secretAccessKey: 'test',
+        endpoint: port,
+        region: 'EastChain-1',
+        s3ForcePathStyle: true
+      })
+      AWS.events.on('send', (req) => {
+        req.request.httpRequest.headers['Authentication'] = localStorage.getItem('token')
+        req.request.httpRequest.headers['request-target'] = 'gateway'
+      })
+      store.commit('user/getS3', S3)
+    }
+    if (!gateways3 && port !== 'null') {
+      var gatewayS3 = Gateway.S3({
+        accessKeyId: 'test',
+        secretAccessKey: 'test',
+        endpoint: port,
+        region: 'EastChain-1'
+      })
+      store.commit('user/gatewayS3', gatewayS3)
+    }
+    resolve()
+  })
+
+  // 需要同步username、user信息
+  // 接口权限信息、关联页面访问
+  // s3服务
+}

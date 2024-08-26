@@ -147,24 +147,24 @@ export default {
       default: false
     }
   },
-  data () {
+  data() {
     return {
       pms: []
     }
   },
   watch: {
-    value () {
+    value() {
       this.formatValue()
     }
   },
-  created () {
+  created() {
     this.formatValue()
   },
-  mounted () {
+  mounted() {
     this.formatValue()
   },
   methods: {
-    formatValue () {
+    formatValue() {
       this.pms = this.permissions.reduce((prev, gp, i) => {
         prev[i] = {
           checkAll: false,
@@ -182,7 +182,7 @@ export default {
         return prev
       }, [])
     },
-    emitChange () {
+    emitChange() {
       const rst = this.pms.reduce((prev, gp, idx) => [...prev, ...((this.mergeGroup && gp.checkVal.length == this.permissions[idx][this.childrenCol].length) ? [`${this.permissions[idx][this.keyCol]}:*`] : gp.checkVal)], [])
       this.$emit('input', [...rst])
       if (this.returnType == 'key-arr') {
@@ -195,7 +195,7 @@ export default {
         )
       } else this.$emit('change', [...rst])
     },
-    handleCheckedPermChange (value, index) {
+    handleCheckedPermChange(value, index) {
       if (!this.editable) return
       const checkedCount = value.length
       this.pms[index].checkVal = value
@@ -207,7 +207,7 @@ export default {
         checkedCount < (this.permissions[index][this.childrenCol] || []).length
       this.emitChange()
     },
-    handleCheckAllChange (val, index) {
+    handleCheckAllChange(val, index) {
       if (!this.editable) return
       this.pms[index].checkVal = val
         ? (this.permissions[index][this.childrenCol] || []).map(
@@ -217,7 +217,7 @@ export default {
       this.pms[index].isIndeterminate = false
       this.emitChange()
     },
-    isAll (idx, gp) {
+    isAll(idx, gp) {
       return this.pms[idx].checkVal.length == gp[this.childrenCol].length
     }
   }

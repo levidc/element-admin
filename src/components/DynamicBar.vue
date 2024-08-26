@@ -78,12 +78,12 @@ export default {
       default: () => { }
     }
   },
-  data () {
+  data() {
     return {
     }
   },
   computed: {
-    option () {
+    option() {
       return Object.assign(
         {
           title: {
@@ -271,10 +271,10 @@ export default {
     }
   },
   watch: {},
-  mounted () {
+  mounted() {
   },
   methods: {
-    onClick (data) {
+    onClick(data) {
       this.$emit('click', data)
     },
     // getTxtNum () {
@@ -283,7 +283,7 @@ export default {
     //   // return DynamicTxtNum
     //   return 33
     // },
-    sliceStr (params) {
+    sliceStr(params) {
       var newParamsName = ''// 最终拼接成的字符串
       var paramsNameNumber = params.length// 实际标签的个数
       // var DynamicTxtNum = this.getTxtNum()// 每行能显示的字的个数

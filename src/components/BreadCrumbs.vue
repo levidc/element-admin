@@ -32,32 +32,32 @@
 import { constantRouterMap } from '@/router'
 export default {
   name: 'BreadCrumbs',
-  data () {
+  data() {
     return {
       breadListLast: []
     }
   },
   computed: {
-    bucketDetail () {
+    bucketDetail() {
       return this.$route.path.indexOf('Dashboard') > -1 || this.$route.path.indexOf('bucket/BucketDetail') > -1
     },
-    renderTitle () {
+    renderTitle() {
       const lastItem = this.breadListLast[this.breadListLast.length - 1]
       return lastItem && this.doTrans(lastItem.name)
     }
   },
   watch: {
-    $route (to, from) {
+    $route(to, from) {
       this.loadChange()
     }
   },
   // 页面挂载之后,解析路由，给出面包屑
-  mounted: function () {
+  mounted: function() {
     this.loadChange()
   },
   methods: {
     // 解决跳转到详情页、再通过面包屑导航跳转上级导致路由失效问题
-    routerLink (item) {
+    routerLink(item) {
       if (item.name === 'Pool') {
         const params = JSON.parse(sessionStorage.getItem('breadcrumbs'))
         const domainId = params.PoolDetail.did
@@ -70,14 +70,14 @@ export default {
         this.$router.push({ name: item.name, params: item.params || {}})
       }
     },
-    accessRouterLink (link, i) {
+    accessRouterLink(link, i) {
       const router = constantRouterMap[1].children
       const flag = router.filter(item => link.name && item.name === link.name)
         .length
       // 确保link生效过滤最后位链接、中间位的link需要匹配路由name
       return flag && i !== this.breadListLast.length - 1
     },
-    loadChange () {
+    loadChange() {
       const dashboard = [{ path: '/main/dashboard', name: 'Dashboard' }]
       const matchArr = this.$route.matched
 
@@ -123,7 +123,7 @@ export default {
       }
     },
 
-    doTrans (name) {
+    doTrans(name) {
       return this.$ts(name)
     }
   }

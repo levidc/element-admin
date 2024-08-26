@@ -1208,15 +1208,6 @@ svg.backicon {
 // =============
 
 
-
-
-
-
-
-
-
-
-
 body,
 html {
   background-color: $bgColorMain;
@@ -1224,6 +1215,7 @@ html {
 
 .el-submenu__icon-arrow {
   right: 8px;
+  top: 55%;
 }
 
 .medium.el-button {
@@ -1600,7 +1592,8 @@ $menuHover: #37464e;
 .el-scrollbar {
   // background-color: $inputInnerBg ;
   color: $titleText;
-  background-color: $menuBg;
+  // background-color: $menuBg;
+  background-color: #23333a;
 
   .el-select-dropdown__list {
     padding: 0;
@@ -1812,6 +1805,10 @@ table {
 
   i {
     color: #16191f;
+  }
+
+  &.el-button--text {
+    background: none;
   }
 }
 

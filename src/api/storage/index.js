@@ -1,6 +1,6 @@
 import request from '../request'
 
-export function listContainerConfig (params) {
+export function listContainerConfig(params) {
   return request({
     method: 'get',
     url: 'listContainerConfig',
@@ -16,7 +16,7 @@ export const deleteContainer = (params) => {
   })
 }
 
-export function createOrUpdateContainerConfig (data) {
+export function createOrUpdateContainerConfig(data) {
   return request({
     method: 'put',
     url: 'createOrUpdateContainerConfig',
@@ -24,7 +24,7 @@ export function createOrUpdateContainerConfig (data) {
   })
 }
 
-export function listContainer (params) {
+export function listContainer(params) {
   return request({
     method: 'get',
     url: 'listContainer',
@@ -35,7 +35,7 @@ export function listContainer (params) {
 // 生命周期任务 执行周期
 // /putLifecycleTaskCron配置 /getLifecycleTaskCron查找
 
-export function putLifecycleTaskCron ({ data, params }) {
+export function putLifecycleTaskCron({ data, params }) {
   return request({
     method: 'post',
     url: 'putLifecycleTaskCron',
@@ -44,7 +44,7 @@ export function putLifecycleTaskCron ({ data, params }) {
   })
 }
 
-export function getLifecycleTaskCron (params) {
+export function getLifecycleTaskCron(params) {
   return request({
     method: 'get',
     url: 'getLifecycleTaskCron',
@@ -52,7 +52,7 @@ export function getLifecycleTaskCron (params) {
   })
 }
 
-export function getBucketStatic (params) {
+export function getBucketStatic(params) {
   return request({
     method: 'put',
     url: 'getBucketStatic',
@@ -60,7 +60,7 @@ export function getBucketStatic (params) {
   })
 }
 
-export function UpdateBucketQuota (data) {
+export function UpdateBucketQuota(data) {
   return request({
     method: 'put',
     url: 'UpdateBucketQuota',
@@ -68,7 +68,7 @@ export function UpdateBucketQuota (data) {
   })
 }
 
-export function SetBucketQuota (data) {
+export function SetBucketQuota(data) {
   return request({
     method: 'put',
     url: 'SetBucketQuota',
@@ -76,14 +76,14 @@ export function SetBucketQuota (data) {
   })
 }
 
-export function listObjectStorageResource () {
+export function listObjectStorageResource() {
   return request({
     method: 'get',
     url: 'listObjectStorageResource'
   })
 }
 
-export function addObjectStorageResource (data) {
+export function addObjectStorageResource(data) {
   return request({
     method: 'post',
     url: 'addStorageResource',
@@ -91,7 +91,7 @@ export function addObjectStorageResource (data) {
   })
 }
 
-export function updateObjectStorageResource (data) {
+export function updateObjectStorageResource(data) {
   return request({
     method: 'post',
     url: 'updateStorageResource',
@@ -99,7 +99,7 @@ export function updateObjectStorageResource (data) {
   })
 }
 
-export function removeObjectStorageResource (params) {
+export function removeObjectStorageResource(params) {
   return request({
     method: 'delete',
     url: 'deleteStorageResource',
@@ -107,7 +107,7 @@ export function removeObjectStorageResource (params) {
   })
 }
 
-export function addStorageDevice (data) {
+export function addStorageDevice(data) {
   return request({
     method: 'post',
     url: 'addStorageDevice',
@@ -115,7 +115,7 @@ export function addStorageDevice (data) {
   })
 }
 
-export function deleteStorageDevice (params) {
+export function deleteStorageDevice(params) {
   return request({
     method: 'delete',
     url: 'deleteStorageDevice',
@@ -123,14 +123,14 @@ export function deleteStorageDevice (params) {
   })
 }
 
-export function listStorageDevice () {
+export function listStorageDevice() {
   return request({
     method: 'post',
     url: 'listStorageDevice'
   })
 }
 
-export function updateStorageDevice (data) {
+export function updateStorageDevice(data) {
   return request({
     method: 'post',
     url: 'updateStorageDevice',
@@ -138,7 +138,7 @@ export function updateStorageDevice (data) {
   })
 }
 
-export function getStorageDevice (params) {
+export function getStorageDevice(params) {
   return request({
     method: 'get',
     url: 'getStorageDevice',
@@ -146,7 +146,7 @@ export function getStorageDevice (params) {
   })
 }
 
-export function getStorageResource (params) {
+export function getStorageResource(params) {
   return request({
     method: 'get',
     url: 'getStorageResource',
@@ -154,7 +154,7 @@ export function getStorageResource (params) {
   })
 }
 
-export function getDefaultNextResource (params) {
+export function getDefaultNextResource(params) {
   return request({
     method: 'get',
     url: 'getDefaultNextResource',
@@ -162,7 +162,7 @@ export function getDefaultNextResource (params) {
   })
 }
 
-export function setDefaultNextResource (params) {
+export function setDefaultNextResource(params) {
   return request({
     method: 'get',
     url: 'setDefaultNextResource',
@@ -170,7 +170,7 @@ export function setDefaultNextResource (params) {
   })
 }
 
-export function getResourceStatus (params) {
+export function getResourceStatus(params) {
   return request({
     method: 'get',
     url: 'getResourceStatus',
@@ -178,7 +178,7 @@ export function getResourceStatus (params) {
   })
 }
 
-export function listAllStorageResource () {
+export function listAllStorageResource() {
   return request({
     method: 'get',
     url: 'listAllStorageResource'
@@ -186,7 +186,7 @@ export function listAllStorageResource () {
 }
 
 // 添加或更新负载
-export function putLoadGroup (data) {
+export function putLoadGroup(data) {
   return request({
     method: 'post',
     url: 'loadGroup/change',
@@ -194,7 +194,7 @@ export function putLoadGroup (data) {
   })
 }
 
-export function getGroupList (data) {
+export function getGroupList(data) {
   return request({
     method: 'post',
     url: 'loadGroup/list',
@@ -203,7 +203,7 @@ export function getGroupList (data) {
 }
 
 // 切换负载组开关
-export function putSwitch (params) {
+export function putSwitch(params) {
   return request({
     method: 'put',
     url: 'loadGroup/switch',
@@ -212,7 +212,7 @@ export function putSwitch (params) {
 }
 
 // 切换负载组项 开关
-export function putSwitchItem (params) {
+export function putSwitchItem(params) {
   return request({
     method: 'put',
     url: 'loadGroupItem/switch',
@@ -220,7 +220,7 @@ export function putSwitchItem (params) {
   })
 }
 
-export function deleteLoadGroup (params) {
+export function deleteLoadGroup(params) {
   return request({
     method: 'delete',
     url: 'loadGroup',
@@ -229,7 +229,7 @@ export function deleteLoadGroup (params) {
 }
 
 // 切换默认负载组
-export function switchDefaultGroup (params) {
+export function switchDefaultGroup(params) {
   return request({
     method: 'post',
     url: 'loadGroup/default/switch',
@@ -238,7 +238,7 @@ export function switchDefaultGroup (params) {
 }
 
 // 负载路由list
-export function getBucketExtendList () {
+export function getBucketExtendList() {
   return request({
     method: 'get',
     url: 'bucketExtend/list'
@@ -246,7 +246,7 @@ export function getBucketExtendList () {
 }
 
 // 查询桶负载路由
-export function getBucketExtend (params) {
+export function getBucketExtend(params) {
   return request({
     method: 'get',
     url: 'bucketExtend/query',
@@ -255,7 +255,7 @@ export function getBucketExtend (params) {
 }
 
 // 创建桶负载
-export function putBucketExtend (data) {
+export function putBucketExtend(data) {
   return request({
     method: 'post',
     url: 'bucketExtend/save',
@@ -264,7 +264,7 @@ export function putBucketExtend (data) {
 }
 
 // ===融合===
-export function listStorageResource (params) {
+export function listStorageResource(params) {
   return request({
     method: 'get',
     url: 'listStorageResource',
@@ -272,7 +272,7 @@ export function listStorageResource (params) {
   })
 }
 
-export function queryTasks ({ data, params }) {
+export function queryTasks({ data, params }) {
   return request({
     method: 'post',
     url: 'queryTasks',
@@ -281,7 +281,7 @@ export function queryTasks ({ data, params }) {
   })
 }
 
-export function createTask (data) {
+export function createTask(data) {
   return request({
     method: 'post',
     url: 'createTask',
@@ -289,7 +289,7 @@ export function createTask (data) {
   })
 }
 
-export function queryOperationLogs ({ data, params }) {
+export function queryOperationLogs({ data, params }) {
   return request({
     method: 'post',
     url: 'queryOperationLogs',
@@ -298,7 +298,7 @@ export function queryOperationLogs ({ data, params }) {
   })
 }
 
-export function retryTask (params) {
+export function retryTask(params) {
   return request({
     method: 'put',
     url: 'retryTask',
@@ -306,7 +306,7 @@ export function retryTask (params) {
   })
 }
 
-export function queryMoveBackTasks ({ data, params }) {
+export function queryMoveBackTasks({ data, params }) {
   return request({
     method: 'post',
     url: '/moveback/queryTasks',
@@ -315,7 +315,7 @@ export function queryMoveBackTasks ({ data, params }) {
   })
 }
 
-export function createMoveBackTasks (data) {
+export function createMoveBackTasks(data) {
   return request({
     method: 'post',
     url: '/moveback/createTask',
@@ -323,7 +323,7 @@ export function createMoveBackTasks (data) {
   })
 }
 
-export function getEsIndices (params) {
+export function getEsIndices(params) {
   return request({
     method: 'get',
     url: 'getEsIndices',
@@ -331,7 +331,7 @@ export function getEsIndices (params) {
   })
 }
 
-export function getDatabaseTable (params) {
+export function getDatabaseTable(params) {
   return request({
     method: 'get',
     url: 'getDatabaseTable',
@@ -339,7 +339,7 @@ export function getDatabaseTable (params) {
   })
 }
 
-export function retryTaskMove (params) {
+export function retryTaskMove(params) {
   return request({
     method: 'put',
     url: '/moveback/retryTask',
@@ -347,7 +347,7 @@ export function retryTaskMove (params) {
   })
 }
 
-export function cloneTask (data) {
+export function cloneTask(data) {
   return request({
     method: 'post',
     url: 'cloneTask',

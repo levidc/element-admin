@@ -241,7 +241,7 @@ import { listGroups, addGroup, deleteGroup } from '@/api/group'
 export default {
   name: 'Group',
   components: {},
-  data () {
+  data() {
     const checkNameReg = (rule, data, callback) => {
       const reg = /^[0-9a-zA-Z]{8,40}$/
       if (!reg.test(data)) {
@@ -286,12 +286,12 @@ export default {
   },
   computed: {},
   watch: {
-    visibleFlag (val) {
+    visibleFlag(val) {
       if (val) {
         this.listUsers()
       }
     },
-    activeName (val, old) {
+    activeName(val, old) {
       if (val == '0') return
       if (old !== '0' && val === 'users') {
         this.listUsers()
@@ -299,7 +299,7 @@ export default {
         this.listPolicies()
       }
     },
-    searchVal (val) {
+    searchVal(val) {
       this.tableData = [...this.cloneData]
       this.total = this.tableData.length
       this.currentPage = 1
@@ -309,14 +309,14 @@ export default {
       })
       this.total = this.tableData.length
     },
-    'form.assignUsers' (val) {
+    'form.assignUsers'(val) {
       this.usersData = [...this.cloneUserData]
       if (!val) return
       this.usersData = this.usersData.filter(item => {
         return item.userName.toLowerCase().indexOf(val.toLowerCase()) !== -1
       })
     },
-    'form.assignPolicy' (val) {
+    'form.assignPolicy'(val) {
       this.policyData = [...this.clonePolicyData]
       if (!val) return
       this.policyData = this.policyData.filter(item => {
@@ -324,11 +324,11 @@ export default {
       })
     }
   },
-  mounted () {
+  mounted() {
     this.listGroup()
   },
   methods: {
-    formatterDate (row, column) {
+    formatterDate(row, column) {
       const timestamp = row[column.property]
       const time = new Date(timestamp)
       let month = time.getMonth() + 1
@@ -365,14 +365,14 @@ export default {
         second
       )
     },
-    handleScroll () {
+    handleScroll() {
       if (this.activeName === 'policies') {
         this.$refs['userTable'].$el.children[2].scrollTop = 0
       } else {
         this.$refs['policyTable'].$el.children[2].scrollTop = 0
       }
     },
-    dialogOpen (e) {
+    dialogOpen(e) {
       this.$nextTick(() => {
         this.$refs[e].$el.querySelector('input').focus()
         this.$refs['userTable'].$el.children[2].scrollTop = 0
@@ -380,13 +380,13 @@ export default {
         this.activeName = 'users'
       })
     },
-    resetForm () {
+    resetForm() {
       this.$refs['form'].resetFields()
     },
-    clearSelection () {
+    clearSelection() {
       this.$refs['userTable'].clearSelection()
     },
-    createGroup () {
+    createGroup() {
       this.$refs['form'].validate(valid => {
         if (valid) {
           const userList = this.selectedUser.map(item => item.userName)
@@ -410,7 +410,7 @@ export default {
         }
       })
     },
-    deleteGroup () {
+    deleteGroup() {
       if (this.selectGroup.userList && this.selectGroup.userList.length) {
         this.deleteFlag = false
         this.$confirm(
@@ -445,7 +445,7 @@ export default {
           })
       }
     },
-    listGroup () {
+    listGroup() {
       this.loading = true
       listGroups()
         .then(res => {
@@ -461,7 +461,7 @@ export default {
           this.loading = false
         })
     },
-    listUsers () {
+    listUsers() {
       listUsers()
         .then(res => {
           this.usersData = res.data
@@ -487,7 +487,7 @@ export default {
       // ]
       // this.cloneUserData = [...this.usersData]
     },
-    listPolicies () {
+    listPolicies() {
       getPolicy()
         .then(res => {
           this.policyData = res.data
@@ -508,25 +508,25 @@ export default {
           console.error(err)
         })
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.currentPage = val
     },
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       console.log(val)
       this.pageSize = val
     },
-    handleSelectionChange (val) {
+    handleSelectionChange(val) {
       this.selectedUser = val
     },
-    handleSelectionChanges (val) {
+    handleSelectionChanges(val) {
       this.selectedPolicy = val
     },
     // 删除用户组
-    handleDelete (index, row) {
+    handleDelete(index, row) {
       this.tableData.splice(index, 1)
       console.log(index, row)
     },
-    sortFunction (val) {
+    sortFunction(val) {
       this.prop = val.prop
       this.order = val.order
       this.tableData.sort(this.sortMethod(val.prop, val.order))

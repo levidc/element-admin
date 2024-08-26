@@ -106,7 +106,7 @@
 <script type="text/javascript">
 import { addManualObjectCleanUp, getTaskList } from '@/api/maintenance'
 export default {
-  data () {
+  data() {
     return {
       searchVal: '',
       tableData: [],
@@ -120,7 +120,7 @@ export default {
     }
   },
   watch: {
-    searchVal (val) {
+    searchVal(val) {
       this.tableData = [...this.copytableData]
       if (!val) return
       this.tableData = this.tableData.filter(item => {
@@ -128,11 +128,11 @@ export default {
       })
     }
   },
-  mounted () {
+  mounted() {
     this.getDataTaskList()
   },
   methods: {
-    manualExecution () {
+    manualExecution() {
       addManualObjectCleanUp().then((res) => {
         this.$ts({
           type: 'success',
@@ -141,7 +141,7 @@ export default {
         this.getDataTaskList()
       })
     },
-    getDataTaskList () {
+    getDataTaskList() {
       this.loading = true
       getTaskList().then((res) => {
         this.tableData = res.data
@@ -153,11 +153,11 @@ export default {
       })
     },
 
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.pageSize = val
       this.currentPage = 1
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.currentPage = val
     }
   }

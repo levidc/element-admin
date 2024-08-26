@@ -157,7 +157,7 @@ export default {
   components: {
     Strategy
   },
-  data () {
+  data() {
     return {
       saveShow: false,
       restShow: false,
@@ -307,19 +307,19 @@ export default {
     }
   },
   computed: {
-    showMenu () {
+    showMenu() {
       // 系统权限禁用修改、删除
       return (
         this.$route.params.name !== 'create' &&
         !this.templatePolicy.includes(this.$route.params.name)
       )
     },
-    showCteatePolicyUp () {
+    showCteatePolicyUp() {
       return (
         !this.templatePolicy.includes(this.$route.params.name)
       )
     },
-    showUpNoMenu () {
+    showUpNoMenu() {
       return this.templateUpPolicy.includes(this.$route.params.name) && this.upShowPolicy
     },
     // 'FullPolicy', // 不能修改 删除
@@ -333,19 +333,19 @@ export default {
     //   'S3Full', // 不能修改 删除
     //   'S3Deny', // 不能修改 删除
     //   'PaaSAdminPolicy'
-    showMenuItem () {
+    showMenuItem() {
       return this.templatePolicy.includes(this.$route.params.name)
     },
-    currentName () {
+    currentName() {
       return this.$route.params.name
     },
-    jsonTxt () {
+    jsonTxt() {
       return JSON.parse(JSON.stringify(this.paramsPolicy))
     }
   },
   watch: {
   },
-  mounted () {
+  mounted() {
     this.getRoute()
     // policy 策略相关字段
     // 版本号 Version
@@ -358,18 +358,18 @@ export default {
     this.getAction()
   },
   methods: {
-    getRoute () {
+    getRoute() {
       // 完全匹配create 展示edit
       if (this.$route.path.split('/').includes('create')) this.upShowPolicy = false
     },
-    upPolicy () {
+    upPolicy() {
       this.restShow = true
       this.upShowPolicy = false
     },
-    onBack () {
+    onBack() {
       this.$router.push({ name: 'GeneralStrategy' })
     },
-    getAction () {
+    getAction() {
       ActionList()
         .then(res => {
           const arr = [
@@ -423,10 +423,10 @@ export default {
           this.loading = false
         })
     },
-    refreshPage () {
+    refreshPage() {
       this.getNewPolicy()
     },
-    getNewPolicy () {
+    getNewPolicy() {
       getPolicy()
         .then(res => {
           if (this.$route.params.name !== 'create') {
@@ -470,7 +470,7 @@ export default {
           this.judgeType = true
         })
     },
-    getPolicy () {
+    getPolicy() {
       const policyDetail = JSON.parse(
         sessionStorage.getItem('policyDetail') || null
       )
@@ -494,7 +494,7 @@ export default {
         })
       }
     },
-    cancelMod () {
+    cancelMod() {
       this.$refs['strategy'].openAll()
       this.restShow = false
       this.upShowPolicy = true
@@ -502,7 +502,7 @@ export default {
       this.strategy = this.copystrategy
       this.policyName = this.copystrategy.name
     },
-    deletePolicy () {
+    deletePolicy() {
       deletePolicy({
         policyName: this.currentName
       })
@@ -518,7 +518,7 @@ export default {
           console.error(err)
         })
     },
-    submitCreate () {
+    submitCreate() {
       // this.connectedPermission.length
       // this.paramsPolicy.Statement.forEach(item => {
       //   // 传递还是list
@@ -579,7 +579,7 @@ export default {
           console.error(err)
         })
     },
-    onSave () {
+    onSave() {
       const nameReg = /^[0-9a-zA-Z]{8,40}$/.test(this.policyName)
       if (!nameReg) {
         return this.$message.error(

@@ -200,7 +200,7 @@ export default {
   components: {
     QuickDefault
   },
-  data () {
+  data() {
     return {
       editFlag: false,
       isshow: true,
@@ -404,21 +404,21 @@ export default {
   },
   watch: {
   },
-  mounted () {
+  mounted() {
     this.getConfig()
   },
   methods: {
-    validateStartTime (type) {
+    validateStartTime(type) {
       if (type === 'physics') {
         this.$refs['form'].validateField('startTime')
       } else {
         this.$refs['form'].validateField('startLifycle')
       }
     },
-    inputPositiveNum (val, ipt) {
+    inputPositiveNum(val, ipt) {
       this.$set(this.form, ipt, val.replace(/(^0+)|\D/g, ''))
     },
-    getConfig () {
+    getConfig() {
       this.loading = true
       getGlobalConfig().then((res) => {
         this.form.expireDays = res.data.expireDays
@@ -455,7 +455,7 @@ export default {
         })
       })
     },
-    handleResEndTime () {
+    handleResEndTime() {
       const {
         startTime,
         endTime,
@@ -473,19 +473,19 @@ export default {
         this.form.endLifecycle = String(endLife + 24).padStart(2, '0') + ':00'
       }
     },
-    handleHourTime (time) {
+    handleHourTime(time) {
       // 处理默认值
       const timeRange = [
         '17', '18', '19', '20', '21', '22', '23', '24', '00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16'
       ]
       return timeRange.includes(time) ? time + ':00' : '00:00'
     },
-    onCheckSave () {
+    onCheckSave() {
       this.$refs['form'].validate(valid => {
         valid && this.onSaveConfig()
       })
     },
-    onSaveConfig () {
+    onSaveConfig() {
       this.loading = true
       setGlobalConfig({ expireDays: Number(this.form.expireDays) }).then((res) => {
         // if (res.msg === 'success') {
@@ -534,11 +534,11 @@ export default {
       })
       //
     },
-    handleReqTimeStr (time) {
+    handleReqTimeStr(time) {
       const num = Number(time.substring(0, 2))
       return String(num >= 24 ? num - 24 : num).padStart(2, '0') + ':00:00'
     },
-    batchUpdateRule () {
+    batchUpdateRule() {
       const updateHardDelete = updateRule({
         startTime: this.handleReqTimeStr(this.form.startTime),
         endTime: this.handleReqTimeStr(this.form.endTime),
@@ -560,12 +560,12 @@ export default {
         this.getConfig()
       })
     },
-    edit () {
+    edit() {
       this.golden = true
       this.isshow = false
       this.disableds = false
     },
-    editVersionControls () {
+    editVersionControls() {
       this.golden = false
       this.isshow = true
       this.disableds = true

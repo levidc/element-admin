@@ -110,7 +110,7 @@
           />
         </div>
         <el-dialog
-          v-dialogDrag
+
           title="上传文件"
           :visible.sync="isCreate"
           width="800px"
@@ -220,7 +220,7 @@
             <el-button @click="isCreate = false;">{{ $ts('button.cancel') }}</el-button>
           </div>
         </el-dialog>
-        <!-- <el-dialog v-dialogDrag title="修改访问权限" :visible.sync="isModifyAccess" width="600px">
+        <!-- <el-dialog  title="修改访问权限" :visible.sync="isModifyAccess" width="600px">
           <el-form ref="modifyAccessForm" :model="modifyAccessForm" size="mini" label-width="100px" style="padding:0 5%">
             <el-radio v-model="modifyAccessForm.publicRadio" label="1">继承权限</el-radio>
             <el-radio v-model="modifyAccessForm.publicRadio" label="2">私有读写</el-radio>
@@ -231,7 +231,7 @@
             <el-button @click="isModifyAccess = false;">{{ $ts('button.cancel') }}</el-button>
           </div>
         </el-dialog> -->
-        <!-- <el-dialog v-dialogDrag title="删除文件" :visible.sync="isDeleteFile" width="600px">
+        <!-- <el-dialog  title="删除文件" :visible.sync="isDeleteFile" width="600px">
           <el-row>
             <el-col :span="2">
               <div class="delete_icon_wrap">
@@ -247,7 +247,7 @@
             <el-button @click="isDeleteFile = false;">{{ $ts('button.cancel') }}</el-button>
           </div>
         </el-dialog> -->
-        <!-- <el-dialog v-dialogDrag title="批量删除文件" :visible.sync="isMulDel" width="600px">
+        <!-- <el-dialog  title="批量删除文件" :visible.sync="isMulDel" width="600px">
           <el-row>
             <el-col :span="2">
               <div class="delete_icon_wrap">
@@ -270,7 +270,7 @@
       </div>
     </div>
     <h2
-      v-if="!$store.state.api['s3:ListBucket']"
+      v-if="!$store.state.user.api['s3:ListBucket']"
       style="font-size:16px;margin:20px 0 0 20px"
     >
       无对象列表权限
@@ -288,7 +288,7 @@ export default {
     BucketVersionTable
   },
   filters: {},
-  data () {
+  data() {
     return {
       hideMenuFlag: false,
       currentPage: 1,
@@ -323,7 +323,7 @@ export default {
   computed: {
   },
   watch: {
-    '$route.query.filename': function (oldVal, newVal) {
+    '$route.query.filename': function(oldVal, newVal) {
       this.routeArr = []
       this.routeArr.push(this.$route.params.id)
       if (this.$route.query.filename) {
@@ -335,15 +335,15 @@ export default {
         this.$refs.bucketdetailtable.listObject()
       }
     },
-    $route (to, from) {
+    $route(to, from) {
       if (this.searchVal) {
         // 如发生跳转则是有文件夹调到对应下面的对象下、需要情况搜索条件
         this.searchVal = ''
       }
     }
   },
-  mounted () {
-    if (this.$store.state.api['s3:GetBucketVersioning']) {
+  mounted() {
+    if (this.$store.state['user']['api']['s3:GetBucketVersioning']) {
       // 无接口权限、不调用版本开关接口
       this.getVersionControl()
     } else {
@@ -359,51 +359,51 @@ export default {
     }
     // console.log(this.routeArr, 'menuarrr')
   },
-  destroyed () { },
+  destroyed() { },
   methods: {
-    directoryPath (path) {
+    directoryPath(path) {
       let index = this.routeArr.findIndex(x => x === path)
       index = index > 1 ? index + 1 : 2
       var temp = [...this.routeArr].slice(1, index).join('/')
       return temp
     },
-    disablePathClick (val) {
+    disablePathClick(val) {
       this.disabledUrl = val
     },
-    hideMenu (val) {
+    hideMenu(val) {
       this.hideMenuFlag = val
     },
-    postFolder (type) {
+    postFolder(type) {
       // if (type === 'file') {
       //   $('.el-upload__input')[0].webkitdirectory = false
       // } else {
       //   $('.el-upload__input')[0].webkitdirectory = true
       // }
     },
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.pageSize = val
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.currentPage = val
     },
-    handleRemove (file, fileList) {
+    handleRemove(file, fileList) {
       console.log(file, fileList)
     },
-    handlePreview (file) {
+    handlePreview(file) {
       console.log(file)
     },
-    beforeRemove (file, fileList) {
+    beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`)
     },
-    changeFile (file, fileList) {
+    changeFile(file, fileList) {
       this.fileListArr = fileList
       this.total = this.fileListArr.length
       console.log(file, fileList, 'changeFileFun')
     },
-    listObject () {
+    listObject() {
       this.$refs.bucketdetailtable.searchPrefix()
     },
-    refresh () {
+    refresh() {
       this.$refs.bucketdetailtable.listObject()
     },
     // buttonControl (selection) {
@@ -420,22 +420,22 @@ export default {
     //     this.chooseObjArr.push(selection[i])
     //   }
     // },
-    changeShowStatus () {
+    changeShowStatus() {
       sessionStorage.setItem('showHistory', this.showHistory)
     },
-    dialogOpen (e) {
+    dialogOpen(e) {
       const ipt = e
-      this.$nextTick(function () {
+      this.$nextTick(function() {
         this.$refs[ipt].$el.querySelector('input').focus()
       })
     },
-    resetForm (formName) {
+    resetForm(formName) {
       console.log('resetForm')
       if (this.$refs[formName] != undefined) {
         this.$refs[formName].resetFields()
       }
     },
-    clearFileInput () {
+    clearFileInput() {
       this.resetForm('createForm')
       if (document.getElementById('upload')) {
         document.getElementById('upload').value = ''
@@ -445,7 +445,7 @@ export default {
     //   this.resetForm('modifyAccessForm')
     //   this.isModifyAccess = true
     // },
-    doMulDel (selection) {
+    doMulDel(selection) {
       this.isMulDel = true
     },
     // doDeleteFile (row) {
@@ -476,7 +476,7 @@ export default {
     //   }
     //   console.log(params)
     //   this.loading = true
-    //   this.$store.state._S3.deleteObject(params, (err, data) => {
+    //   this.$store.state.user._S3.deleteObject(params, (err, data) => {
     //     if (err) {
     //       this.showS3Msg(err)
     //       console.dir(err)
@@ -517,19 +517,19 @@ export default {
     //     Delete: { Objects: deleteLastestArr }
     //   }
     //   // console.log(params)
-    //   this.$store.state._S3.deleteObjects(params, function (err, data) {
+    //   this.$store.state.user._S3.deleteObjects(params, function (err, data) {
     //     console.log(err, data, 'deleteobjects')
     //     temp.$refs.bucketdetailtable.listObject()
     //   })
     // },
-    validateFileRule (file) {
+    validateFileRule(file) {
       const that = this
-      const isSize = new Promise(function (resolve, reject) {
+      const isSize = new Promise(function(resolve, reject) {
         const width = 750
         const height = 1334
         const _URL = window.URL || window.webkitURL
         const image = new Image()
-        image.onload = function () {
+        image.onload = function() {
           console.log(image, 'image')
           console.log(_URL)
           const valid = image.width < width || image.height < height
@@ -566,7 +566,7 @@ export default {
       console.log(isSize, 'return')
       return isSize
     },
-    createFile () {
+    createFile() {
       const temp = this
       // const form = new FormData()
       // this.fileListArr.forEach(item => {
@@ -605,7 +605,7 @@ export default {
         Body: file
       }
       console.log(params, '123', params.Key)
-      this.$store.state._S3.putObject(params, function (err, response) {
+      this.$store.state.user._S3.putObject(params, function(err, response) {
         if (err) {
           console.log(err)
         } else {
@@ -618,12 +618,12 @@ export default {
         }
       })
     },
-    getVersionControl () {
+    getVersionControl() {
       const temp = this
       var params = {
         Bucket: this.$route.params.id
       }
-      this.$store.state._S3.getBucketVersioning(params, function (
+      this.$store.state.user._S3.getBucketVersioning(params, function(
         err,
         response
       ) {

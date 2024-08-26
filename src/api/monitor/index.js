@@ -1,7 +1,7 @@
 import request from '../request'
 
 // 告警list
-export function listAlerts (params) {
+export function listAlerts(params) {
   return request({
     method: 'get',
     url: 'listAlerts',
@@ -10,7 +10,7 @@ export function listAlerts (params) {
 }
 
 // 告警确认
-export function acknowledgeAlert (params) {
+export function acknowledgeAlert(params) {
   return request({
     method: 'post',
     url: 'acknowledgeAlert',
@@ -19,7 +19,7 @@ export function acknowledgeAlert (params) {
 }
 
 // 取消确认
-export function clearAlertsAcknowledge (params) {
+export function clearAlertsAcknowledge(params) {
   return request({
     method: 'post',
     url: 'clearAlertsAcknowledge',
@@ -28,7 +28,7 @@ export function clearAlertsAcknowledge (params) {
 }
 
 // 清除告警
-export function alertsClear (params) {
+export function alertsClear(params) {
   return request({
     method: 'post',
     url: 'alertsClear',
@@ -36,7 +36,7 @@ export function alertsClear (params) {
   })
 }
 // 删除告警
-export function deleteAlerts (params) {
+export function deleteAlerts(params) {
   return request({
     method: 'post',
     url: 'deleteAlerts',
@@ -45,7 +45,7 @@ export function deleteAlerts (params) {
 }
 
 // 告警详情
-export function getAlertDetail (params) {
+export function getAlertDetail(params) {
   return request({
     method: 'get',
     url: 'getAlertDetail',
@@ -54,7 +54,7 @@ export function getAlertDetail (params) {
 }
 
 //  获取性能数据时间粒度
-export function getPerformanceDataTimeSpan () {
+export function getPerformanceDataTimeSpan() {
   return request({
     method: 'get',
     url: 'getPerformanceDataTimeSpan'
@@ -62,7 +62,7 @@ export function getPerformanceDataTimeSpan () {
 }
 
 // 查询对象
-export function getResource (params) {
+export function getResource(params) {
   return request({
     method: 'get',
     url: 'getResource',
@@ -70,7 +70,7 @@ export function getResource (params) {
   })
 }
 
-export function listMultiCompressedPerformanceData (params) {
+export function listMultiCompressedPerformanceData(params) {
   return request({
     method: 'get',
     url: 'listMultiCompressedPerformanceData',
@@ -79,14 +79,14 @@ export function listMultiCompressedPerformanceData (params) {
 }
 
 // 告警模板
-export function getAlertTemplate () {
+export function getAlertTemplate() {
   return request({
     method: 'get',
     url: 'getAlertTemplate'
   })
 }
 
-export function obtainPerformanceItem (params) {
+export function obtainPerformanceItem(params) {
   return request({
     method: 'get',
     url: 'obtainPerformanceItem',
@@ -94,14 +94,14 @@ export function obtainPerformanceItem (params) {
   })
 }
 
-export function obtainUnusedPerformanceItem () {
+export function obtainUnusedPerformanceItem() {
   return request({
     method: 'get',
     url: 'obtainUnusedPerformanceItem'
   })
 }
 
-export function deleteAlertRule (params) {
+export function deleteAlertRule(params) {
   return request({
     method: 'post',
     url: 'deleteAlertRule',
@@ -109,7 +109,7 @@ export function deleteAlertRule (params) {
   })
 }
 
-export function createRule (data) {
+export function createRule(data) {
   return request({
     method: 'post',
     url: 'createRule',
@@ -117,7 +117,7 @@ export function createRule (data) {
   })
 }
 
-export function enableAlertRule (params) {
+export function enableAlertRule(params) {
   return request({
     method: 'post',
     url: 'enableAlertRule',
@@ -125,7 +125,7 @@ export function enableAlertRule (params) {
   })
 }
 
-export function disableAlertRule (params) {
+export function disableAlertRule(params) {
   return request({
     method: 'post',
     url: 'disableAlertRule',
@@ -133,7 +133,7 @@ export function disableAlertRule (params) {
   })
 }
 
-export function mergeRule (data) {
+export function mergeRule(data) {
   return request({
     method: 'post',
     url: 'mergeRule',
@@ -141,7 +141,7 @@ export function mergeRule (data) {
   })
 }
 
-export function updateRule (data) {
+export function updateRule(data) {
   return request({
     method: 'post',
     url: 'updateRule',
@@ -151,14 +151,14 @@ export function updateRule (data) {
 
 // 告警转发配置
 
-export function listEmailForwardItem () {
+export function listEmailForwardItem() {
   return request({
     method: 'get',
     url: 'listEmailForwardItem'
   })
 }
 
-export function deleteEmailForwardItem (params) {
+export function deleteEmailForwardItem(params) {
   return request({
     method: 'post',
     url: 'deleteEmailForwardItem',
@@ -166,7 +166,7 @@ export function deleteEmailForwardItem (params) {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
-    transformRequest (data) {
+    transformRequest(data) {
       var str = []
       for (var s in data) {
         str.push(encodeURIComponent(s) + '=' + encodeURIComponent(data[s]))
@@ -176,7 +176,7 @@ export function deleteEmailForwardItem (params) {
   })
 }
 
-export function updateEmailForwardItem (data) {
+export function updateEmailForwardItem(data) {
   return request({
     method: 'post',
     url: 'updateEmailForwardItem',
@@ -184,14 +184,14 @@ export function updateEmailForwardItem (data) {
   })
 }
 
-export function listSnmpForwardItem () {
+export function listSnmpForwardItem() {
   return request({
     method: 'get',
     url: 'listSnmpForwardItem'
   })
 }
 
-export function updateSnmpForwardItem (data) {
+export function updateSnmpForwardItem(data) {
   return request({
     method: 'post',
     url: 'updateSnmpForwardItem',
@@ -199,14 +199,14 @@ export function updateSnmpForwardItem (data) {
   })
 }
 
-export function getSmtpItem (data) {
+export function getSmtpItem(data) {
   return request({
     method: 'get',
     url: 'getSmtpItem'
   })
 }
 
-export function saveOrUpdateSmtpItem (data) {
+export function saveOrUpdateSmtpItem(data) {
   return request({
     method: 'post',
     url: 'saveOrUpdateSmtpItem',
@@ -214,7 +214,7 @@ export function saveOrUpdateSmtpItem (data) {
   })
 }
 
-export function saveEmailForwardItem (data) {
+export function saveEmailForwardItem(data) {
   return request({
     method: 'post',
     url: 'saveEmailForwardItem',

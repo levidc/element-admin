@@ -1,6 +1,6 @@
 import request from '../request'
 
-export function getAllInstance (params) {
+export function getAllInstance(params) {
   return request({
     method: 'get',
     url: 'getAllInstance',
@@ -8,7 +8,7 @@ export function getAllInstance (params) {
   })
 }
 
-export function startInstance (data) {
+export function startInstance(data) {
   return request({
     method: 'put',
     url: 'startInstance',
@@ -16,7 +16,7 @@ export function startInstance (data) {
   })
 }
 
-export function stopInstance (data) {
+export function stopInstance(data) {
   return request({
     method: 'put',
     url: 'stopInstance',
@@ -24,7 +24,7 @@ export function stopInstance (data) {
   })
 }
 
-export function killInstance (data) {
+export function killInstance(data) {
   return request({
     method: 'put',
     url: 'killInstance',
@@ -32,21 +32,21 @@ export function killInstance (data) {
   })
 }
 
-export function checkRedisStatus () {
+export function checkRedisStatus() {
   return request({
     method: 'get',
     url: 'checkRedisStatus'
   })
 }
 
-export function checkTikvStatus () {
+export function checkTikvStatus() {
   return request({
     method: 'get',
     url: 'checkTikvStatus'
   })
 }
 
-export function addInstanceGroup (data) {
+export function addInstanceGroup(data) {
   return request({
     method: 'post',
     url: 'addInstanceGroup',
@@ -54,7 +54,7 @@ export function addInstanceGroup (data) {
   })
 }
 
-export function setInstanceGroup (data) {
+export function setInstanceGroup(data) {
   return request({
     method: 'post',
     url: 'setInstanceGroup',
@@ -62,15 +62,14 @@ export function setInstanceGroup (data) {
   })
 }
 
-export function listInstanceGroup () {
+export function listInstanceGroup() {
   return request({
     method: 'get',
     url: 'listInstanceGroup'
   })
 }
 
-
-export function getInstanceByServiceName () {
+export function getInstanceByServiceName() {
   return request({
     method: 'get',
     url: 'getInstanceByServiceName'

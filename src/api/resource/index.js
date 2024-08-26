@@ -1,6 +1,6 @@
 import request from '../request'
 // 域list
-export function listDomain (params) {
+export function listDomain(params) {
   return request({
     method: 'get',
     url: 'listDomain',
@@ -9,7 +9,7 @@ export function listDomain (params) {
 }
 
 // 创建域
-export function createDomain (data) {
+export function createDomain(data) {
   return request({
     method: 'post',
     url: 'createDomain',
@@ -18,7 +18,7 @@ export function createDomain (data) {
 }
 
 // 删除域
-export function deleteDomain (data) {
+export function deleteDomain(data) {
   return request({
     method: 'delete',
     url: 'deleteDomain',
@@ -27,7 +27,7 @@ export function deleteDomain (data) {
 }
 
 // 更新域
-export function updateDomain (data) {
+export function updateDomain(data) {
   return request({
     method: 'put',
     url: 'updateDomain',
@@ -36,7 +36,7 @@ export function updateDomain (data) {
 }
 
 // 已使用节点
-export function listUsedInstanceById (params) {
+export function listUsedInstanceById(params) {
   return request({
     method: 'get',
     url: 'listUsedInstanceById',
@@ -45,7 +45,7 @@ export function listUsedInstanceById (params) {
 }
 
 // 未使用节点
-export function listUnusedInstanceById (params) {
+export function listUnusedInstanceById(params) {
   return request({
     method: 'get',
     url: 'listUnusedInstanceById',
@@ -54,7 +54,7 @@ export function listUnusedInstanceById (params) {
 }
 
 // 移除节点
-export function removeInstanceFromDomain (data) {
+export function removeInstanceFromDomain(data) {
   return request({
     method: 'put',
     url: 'removeInstanceFromDomain',
@@ -63,7 +63,7 @@ export function removeInstanceFromDomain (data) {
 }
 
 // 磁盘list
-export function listArchives (params) {
+export function listArchives(params) {
   return request({
     method: 'get',
     url: 'listArchives',
@@ -71,7 +71,7 @@ export function listArchives (params) {
   })
 }
 
-export function getArchive (params) {
+export function getArchive(params) {
   return request({
     method: 'post',
     url: 'getArchive',
@@ -79,7 +79,7 @@ export function getArchive (params) {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
-    transformRequest (data) {
+    transformRequest(data) {
       var str = []
       for (var s in data) {
         str.push(encodeURIComponent(s) + '=' + encodeURIComponent(data[s]))
@@ -90,7 +90,7 @@ export function getArchive (params) {
 }
 
 // 服务器 list
-export function listServerNodes (params) {
+export function listServerNodes(params) {
   return request({
     method: 'post',
     url: 'listServerNodes',
@@ -98,7 +98,7 @@ export function listServerNodes (params) {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
-    transformRequest (data) {
+    transformRequest(data) {
       var str = []
       for (var s in data) {
         str.push(encodeURIComponent(s) + '=' + encodeURIComponent(data[s]))
@@ -109,7 +109,7 @@ export function listServerNodes (params) {
 }
 
 // 获取服务器维护详情
-export function getInstanceMaintenance (params) {
+export function getInstanceMaintenance(params) {
   return request({
     method: 'post',
     url: 'getInstanceMaintenance',
@@ -117,7 +117,7 @@ export function getInstanceMaintenance (params) {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
-    transformRequest (data) {
+    transformRequest(data) {
       var str = []
       for (var s in data) {
         str.push(encodeURIComponent(s) + '=' + encodeURIComponent(data[s]))
@@ -128,7 +128,7 @@ export function getInstanceMaintenance (params) {
 }
 
 // 取消维护
-export function cancelInstanceMaintenance (params) {
+export function cancelInstanceMaintenance(params) {
   return request({
     method: 'post',
     url: 'cancelInstanceMaintenance',
@@ -136,7 +136,7 @@ export function cancelInstanceMaintenance (params) {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
-    transformRequest (data) {
+    transformRequest(data) {
       var str = []
       for (var s in data) {
         str.push(encodeURIComponent(s) + '=' + encodeURIComponent(data[s]))
@@ -147,7 +147,7 @@ export function cancelInstanceMaintenance (params) {
 }
 
 // 延迟维护
-export function markInstanceMaintenance (params) {
+export function markInstanceMaintenance(params) {
   return request({
     method: 'post',
     url: 'markInstanceMaintenance',
@@ -155,7 +155,7 @@ export function markInstanceMaintenance (params) {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
-    transformRequest (data) {
+    transformRequest(data) {
       var str = []
       for (var s in data) {
         str.push(encodeURIComponent(s) + '=' + encodeURIComponent(data[s]))
@@ -166,7 +166,7 @@ export function markInstanceMaintenance (params) {
 }
 
 // 更新服务器
-export function updateServernode (params) {
+export function updateServernode(params) {
   return request({
     method: 'post',
     url: 'updateServernode',
@@ -174,7 +174,7 @@ export function updateServernode (params) {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
-    transformRequest (data) {
+    transformRequest(data) {
       var str = []
       for (var s in data) {
         str.push(encodeURIComponent(s) + '=' + encodeURIComponent(data[s]))
@@ -185,7 +185,7 @@ export function updateServernode (params) {
 }
 
 // 删除服务器
-export function deleteServerNodes (params) {
+export function deleteServerNodes(params) {
   return request({
     method: 'post',
     url: 'deleteServerNodes',
@@ -193,7 +193,7 @@ export function deleteServerNodes (params) {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
-    transformRequest (data) {
+    transformRequest(data) {
       var str = []
       for (var s in data) {
         str.push(encodeURIComponent(s) + '=' + encodeURIComponent(data[s]))
@@ -204,7 +204,7 @@ export function deleteServerNodes (params) {
 }
 
 // 存储池list
-export function listStoragePool (params) {
+export function listStoragePool(params) {
   return request({
     method: 'get',
     url: 'listStoragePool',
@@ -214,7 +214,7 @@ export function listStoragePool (params) {
 
 // 创建存储池
 
-export function createStoragePool (data) {
+export function createStoragePool(data) {
   return request({
     method: 'post',
     url: 'createStoragePool',
@@ -223,7 +223,7 @@ export function createStoragePool (data) {
 }
 
 // 更新存储池
-export function updateStoragePool (data) {
+export function updateStoragePool(data) {
   return request({
     method: 'put',
     url: 'updateStoragePool',
@@ -232,7 +232,7 @@ export function updateStoragePool (data) {
 }
 
 // 移除磁盘
-export function removeArchiveFromStoragePool (data) {
+export function removeArchiveFromStoragePool(data) {
   return request({
     method: 'put',
     url: 'removeArchiveFromStoragePool',
@@ -241,7 +241,7 @@ export function removeArchiveFromStoragePool (data) {
 }
 
 // 删除存储池
-export function deleteStoragePool (data) {
+export function deleteStoragePool(data) {
   return request({
     method: 'delete',
     url: 'deleteStoragePool',
@@ -250,7 +250,7 @@ export function deleteStoragePool (data) {
 }
 
 // 存储池容量
-export function listStoragePoolCapacity (data) {
+export function listStoragePoolCapacity(data) {
   return request({
     method: 'post',
     url: 'listStoragePoolCapacity',
@@ -258,7 +258,7 @@ export function listStoragePoolCapacity (data) {
   })
 }
 
-export function IsPoolhasPerformanceData (data) {
+export function IsPoolhasPerformanceData(data) {
   return request({
     method: 'post',
     url: 'IsPoolhasPerformanceData',
@@ -266,7 +266,7 @@ export function IsPoolhasPerformanceData (data) {
   })
 }
 
-export function listUnusedArchive (params) {
+export function listUnusedArchive(params) {
   return request({
     method: 'get',
     url: 'listUnusedArchive',
@@ -274,7 +274,7 @@ export function listUnusedArchive (params) {
   })
 }
 
-export function listUsedArchive (params) {
+export function listUsedArchive(params) {
   return request({
     method: 'get',
     url: 'listUsedArchive',
@@ -282,7 +282,7 @@ export function listUsedArchive (params) {
   })
 }
 
-export function getServernodeById (params) {
+export function getServernodeById(params) {
   return request({
     method: 'post',
     url: 'getServernodeById',
@@ -290,7 +290,7 @@ export function getServernodeById (params) {
   })
 }
 
-export function changeDiskLightStatus (data) {
+export function changeDiskLightStatus(data) {
   return request({
     method: 'post',
     url: 'changeDiskLightStatus',
@@ -298,7 +298,7 @@ export function changeDiskLightStatus (data) {
   })
 }
 
-export function obtainDiskSmartInfo (data) {
+export function obtainDiskSmartInfo(data) {
   return request({
     method: 'post',
     url: 'obtainDiskSmartInfo',
@@ -306,14 +306,14 @@ export function obtainDiskSmartInfo (data) {
   })
 }
 
-export function listAllDisk () {
+export function listAllDisk() {
   return request({
     method: 'post',
     url: 'listAllDisk'
   })
 }
 
-export function deleteArchives (data) {
+export function deleteArchives(data) {
   return request({
     method: 'post',
     url: 'deleteArchives',
@@ -321,7 +321,7 @@ export function deleteArchives (data) {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
-    transformRequest (data) {
+    transformRequest(data) {
       var str = []
       for (var s in data) {
         str.push(encodeURIComponent(s) + '=' + encodeURIComponent(data[s]))

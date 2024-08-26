@@ -88,7 +88,7 @@ export default {
   name: 'BucketList',
   components: {},
   filters: {},
-  data () {
+  data() {
     return {
       loading: false,
       openCache: false,
@@ -101,16 +101,16 @@ export default {
     }
   },
   computed: {
-    bucketName () {
+    bucketName() {
       return this.$route.params.id
     }
   },
-  mounted () {
+  mounted() {
     this.getConfig()
   },
-  destroyed () { },
+  destroyed() { },
   methods: {
-    getConfig () {
+    getConfig() {
       this.loading = true
       getBucketCacheConfig({ bucketName: this.bucketName }).then(res => {
         if (res.data) {
@@ -127,7 +127,7 @@ export default {
         })
       })
     },
-    doSaveVersion () {
+    doSaveVersion() {
       this.loading = true
       saveBucketCacheConfig({
         bucketName: this.bucketName,

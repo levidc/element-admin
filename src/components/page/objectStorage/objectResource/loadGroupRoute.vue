@@ -461,7 +461,7 @@ import {
 } from '@/api/storage'
 export default {
   name: 'LoadGroupRoute',
-  data () {
+  data() {
     return {
       warmGroupList: [],
       glacierGroupList: [],
@@ -511,14 +511,14 @@ export default {
     }
   },
   computed: {
-    filterLoadGroupList () {
+    filterLoadGroupList() {
       return this.loadGroupList.filter(x => x.options.length)
     },
     // 过滤当前已展示的负载路由数据
-    BucketNameSel () {
+    BucketNameSel() {
       return this.filterSearchTable.map(x => x.bucketName).filter(x => x)
     },
-    LoadGroupSel () {
+    LoadGroupSel() {
       return this.filterSearchTable.reduce((pre, cur) => {
         if (!pre.includes(cur.dataLoadGroupName)) {
           pre.push(cur.dataLoadGroupName)
@@ -526,21 +526,21 @@ export default {
         return pre
       }, [])
     },
-    submitSelectBucket () {
+    submitSelectBucket() {
       return this.form.selectBucket.map(x => {
         return {
           name: x
         }
       })
     },
-    filterSelBucket () {
+    filterSelBucket() {
       return this.allBucket.filter(x => {
         return this.form.selectBucket.every(i => {
           return x.name !== i.name
         })
       })
     },
-    filterSearchTable () {
+    filterSearchTable() {
       // 过滤负载组不存在
       return this.tableData.filter(x => {
         return x.bucketName && x.bucketName.indexOf(this.selBucket) > -1 && x.dataLoadGroupName.indexOf(this.selLoadGroup) > -1
@@ -549,20 +549,20 @@ export default {
   },
   watch: {
   },
-  mounted () {
+  mounted() {
     this.init()
   },
   methods: {
-    renderUseSize (data) {
+    renderUseSize(data) {
       return this.byteConvert(data)
     },
-    renderQuota (data) {
+    renderQuota(data) {
       return Number(data) === -1 ? '无上限' : this.byteConvert(Number(data))
     },
-    handleRemoveBucket (row) {
+    handleRemoveBucket(row) {
       this.form.selectBucket.splice(row.$index, 1)
     },
-    init () {
+    init() {
       this.loading = true
       // list 桶路由 用户桶 映射
       getGroupList().then(res => {
@@ -594,7 +594,7 @@ export default {
         this.loading = false
       })
     },
-    handleAdd () {
+    handleAdd() {
       const all = [getGroupList(), listUserBuckets()]
       Promise.allSettled(all).then(res => {
         const loadGroupList = res[0].value.data || []
@@ -656,13 +656,13 @@ export default {
       })
     },
     //
-    resetForm () {
+    resetForm() {
       this.$refs['form'].resetFields()
     },
-    resetField () {
+    resetField() {
       this.$refs['form'] && this.$refs['form'].clearValidate('selectBucket')
     },
-    viewLoadGroup (type, data) {
+    viewLoadGroup(type, data) {
       if (type === 'bucket') {
         this.$router.push({
           path: `/main/bucket/BucketDetail/${data}/BucketLoadGroup`
@@ -676,7 +676,7 @@ export default {
         })
       }
     },
-    openEdit (row) {
+    openEdit(row) {
       this.currentBucket = {
         bucketName: row.bucketName,
         bucketId: row.bucketId
@@ -751,7 +751,7 @@ export default {
       })
     },
     // 移除当前配置、相当于设置默认负载
-    deleteConfig (row) {
+    deleteConfig(row) {
       this.$confirm('存储桶将按默认负载路由配置!', '请确认', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -772,7 +772,7 @@ export default {
       })
     },
     // 新增桶负载路由
-    confirmCreate () {
+    confirmCreate() {
       const {
         loadGroup,
         selectBucket,
@@ -811,7 +811,7 @@ export default {
       })
     },
     // 修改桶负载路由
-    confirmUpdate () {
+    confirmUpdate() {
       // true 修改负载路由
       this.$refs['editForm'].validate(valid => {
         if (valid) {

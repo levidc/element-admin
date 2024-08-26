@@ -883,7 +883,7 @@
 <script>
 export default {
   name: 'BucketLifeCycle',
-  data () {
+  data() {
     // 数字 输出关系表对应的value
     //   var t = res.map(item => {
     //   return {
@@ -1153,7 +1153,7 @@ export default {
       const index = rule.field.match(/\d/)[0]
       const arr = this.createForm.NoncurrentVersionTransitions
       // 每项都可选、基于上一项的合法的值进行比较、递归去找前一项的ver
-      function preValidVer (i) {
+      function preValidVer(i) {
         const preIndex = i > 0 ? i - 1 : 0
         const pre = arr[preIndex].ver
         if (pre === '' && i !== 0) {
@@ -1574,26 +1574,26 @@ export default {
     }
   },
   computed: {
-    bucketName () {
+    bucketName() {
       return this.$route.params.id
     },
-    tableSlicePage () {
+    tableSlicePage() {
       return this.tableData.slice(
         (this.currentPage - 1) * this.pageSize,
         this.currentPage * this.pageSize
       )
     },
-    addOperate () {
+    addOperate() {
       return this.operateType === 'add'
     },
-    deleteDisable () {
+    deleteDisable() {
       return this.selectRule && !this.selectRule.length
     },
-    operateDisable () {
+    operateDisable() {
       return this.selectRule && this.selectRule.length !== 1
       // return typeof this.radio !== 'number'
     },
-    concatKVarray () {
+    concatKVarray() {
       var str = ''
       if (
         this.selectConfig.Filter.And.Tags &&
@@ -1608,26 +1608,26 @@ export default {
       }
       return str || '-'
     },
-    selectRange () {
+    selectRange() {
       return Object.keys(this.selectConfig.Filter || {}).length
         ? '已筛选'
         : '整个存储桶'
     },
-    maxSizeIptBytes () {
+    maxSizeIptBytes() {
       return (
         (this.precisionNum(
           this.covertByte(this.createForm.maxSizeIpt, this.maxSizeSelect)
         ) || '') + 'bytes'
       )
     },
-    minSizeIptBytes () {
+    minSizeIptBytes() {
       return (
         (this.precisionNum(
           this.covertByte(this.createForm.minSizeIpt, this.minSizeSelect)
         ) || '') + 'bytes'
       )
     },
-    minSizeTransLimit () {
+    minSizeTransLimit() {
       // 转换限制小于128kb
       if (
         (this.createForm.minSizeIpt !== '' &&
@@ -1644,7 +1644,7 @@ export default {
       }
     },
     // 添加转换 禁用
-    disableAddTransform () {
+    disableAddTransform() {
       const len =
         this.createForm.Transition && this.createForm.Transition.length
       return (
@@ -1654,7 +1654,7 @@ export default {
       )
     },
     // disableAddTransformNC
-    disableAddTransformNC () {
+    disableAddTransformNC() {
       const len =
         this.createForm.NoncurrentVersionTransitions &&
         this.createForm.NoncurrentVersionTransitions.length
@@ -1666,7 +1666,7 @@ export default {
       )
     },
     // 对象标签或对象大小进行筛选时 禁用删除过期rule rule5
-    disableDelExpiredRule () {
+    disableDelExpiredRule() {
       const objectLabel = this.createForm.tag && this.createForm.tag.length
       const objectSize =
         (this.objectSize.includes('min') && this.createForm.minSizeIpt) ||
@@ -1681,7 +1681,7 @@ export default {
       }
     },
     // 规则定义至少一个转换或过期操作
-    validRuleOption () {
+    validRuleOption() {
       // 勾选r5 必须选择其中一个
       const r5check1 = this.createForm.AbortIncompleteMultipartUpload
         .deleteExpired
@@ -1700,7 +1700,7 @@ export default {
     }
   },
   watch: {
-    searchName (val) {
+    searchName(val) {
       this.tableData = [...this.copyData]
       this.total = this.tableData.length
       this.currentPage = 1
@@ -1711,7 +1711,7 @@ export default {
       this.total = this.tableData.length
     },
     // 筛选条件提示
-    clickSubmit (val) {
+    clickSubmit(val) {
       if (
         val &&
         !this.createForm.prefixIpt &&
@@ -1724,14 +1724,14 @@ export default {
       }
     },
     // 根据输入前缀 显示标签校验
-    'createForm.prefixIpt' (val) {
+    'createForm.prefixIpt'(val) {
       if (val) {
         this.showPrefixRule = false
       } else if (!this.createForm.tag && this.createForm.tag.length) {
         this.showPrefixRule = true
       }
     },
-    'createForm.tag' (val) {
+    'createForm.tag'(val) {
       // 对象标签触发时、取消前缀的校验
       if (val && val.length) {
         this.$refs['createForm'] &&
@@ -1750,7 +1750,7 @@ export default {
       }
     },
     // 切换选择对象大小 清除输入内容 清除对应校验
-    objectSize (val, old) {
+    objectSize(val, old) {
       if (val && val.length === 1) {
         if (val[0] === 'min') {
           this.$refs['createForm'] &&
@@ -1825,7 +1825,7 @@ export default {
     },
     // 切换添加r1、r2初始化 第一项规则
     // 切换r1、r2需要将对应的arr清空，不影响r3、r4的校验
-    ruleOperate (val, old) {
+    ruleOperate(val, old) {
       // 初始无选项[],
       if (
         !old.includes('r1') &&
@@ -1884,7 +1884,7 @@ export default {
         }
       }
     },
-    'createForm.Transition' (val, old) {
+    'createForm.Transition'(val, old) {
       if (val.length == 0) {
         const index = this.ruleOperate.findIndex(item => item == 'r1')
         if (index !== -1) {
@@ -1893,7 +1893,7 @@ export default {
         }
       }
     },
-    'createForm.NoncurrentVersionTransitions' (val, old) {
+    'createForm.NoncurrentVersionTransitions'(val, old) {
       if (val.length == 0) {
         const index = this.ruleOperate.findIndex(item => item == 'r2')
         if (index !== -1) {
@@ -1903,8 +1903,8 @@ export default {
       }
     }
   },
-  mounted () {
-    // this.$store.state._S3.deleteBucketLifecycle(
+  mounted() {
+    // this.$store.state.user._S3.deleteBucketLifecycle(
     //   {
     //     Bucket: this.bucketName
     //   },
@@ -1920,12 +1920,12 @@ export default {
     this.getBucketLifecycle()
   },
   methods: {
-    changeCheckBox (val) {
+    changeCheckBox(val) {
       if (val.includes('r5') && val.includes('r3')) {
         this.createForm.AbortIncompleteMultipartUpload.deleteExpired = false
       }
     },
-    handleClickName (row) {
+    handleClickName(row) {
       const temp = [row]
       this.handleSelection(temp)
       this.$refs['multipleTable'].clearSelection()
@@ -1934,7 +1934,7 @@ export default {
       })
       this.visibleFlagInfo = true
     },
-    handleSelection (val) {
+    handleSelection(val) {
       // 添加多选删除功能
       this.selectRule = val
       if (val && val.length > 1) {
@@ -1944,7 +1944,7 @@ export default {
         this.handleRowChange(val[0])
       }
     },
-    jumpToError () {
+    jumpToError() {
       this.$nextTick(() => {
         const isError = document.getElementsByClassName('is-error')
         // console.log(isError[0].getBoundingClientRect().top)
@@ -1958,20 +1958,20 @@ export default {
       }, 500)
     },
 
-    handleScroll (ref) {
+    handleScroll(ref) {
       this.$refs[ref].$el.scrollTop = 0
     },
-    applyRange (scope) {
+    applyRange(scope) {
       if (Object.keys(scope.row.Filter || {}).length) {
         return '已筛选'
       } else {
         return '整个存储桶'
       }
     },
-    clearSelectRadio () {
+    clearSelectRadio() {
       this.getBucketLifecycle()
     },
-    delLifecycle () {
+    delLifecycle() {
       if (this.selectRule && this.selectRule.length) {
         const name = this.selectRule.map(item => item.ID).join(';')
         const Rules = this.filterDiff(this.tableData, this.selectRule, 'ID')
@@ -1986,7 +1986,7 @@ export default {
         ).then(() => {
           // 保留的个数大于0就put、无就全部删除
           if (Rules && Rules.length) {
-            this.$store.state._S3.putBucketLifecycleConfiguration(
+            this.$store.state.user._S3.putBucketLifecycleConfiguration(
               {
                 Bucket: this.bucketName,
                 LifecycleConfiguration: {
@@ -2009,7 +2009,7 @@ export default {
               }
             )
           } else {
-            this.$store.state._S3.deleteBucketLifecycle(
+            this.$store.state.user._S3.deleteBucketLifecycle(
               {
                 Bucket: this.bucketName
               },
@@ -2032,7 +2032,7 @@ export default {
         })
       }
     },
-    addModBtn (type) {
+    addModBtn(type) {
       this.operateType = type
       if (type === 'add') {
         this.clearForm()
@@ -2042,7 +2042,7 @@ export default {
     },
 
     // 删除一项版本|非版本规则操作
-    delTransition (i, type) {
+    delTransition(i, type) {
       switch (type) {
         case 'currentVer':
           this.createForm.Transition.splice(i, 1)
@@ -2062,7 +2062,7 @@ export default {
     },
 
     // 对象转换option的禁用
-    judgeDisabled (index, type) {
+    judgeDisabled(index, type) {
       // 打开时获取到上次的结果输入框已经禁用，但视图没效果
       this.$forceUpdate()
       let isCurrent
@@ -2139,7 +2139,7 @@ export default {
         }
       }
     },
-    showTransitionRule (type) {
+    showTransitionRule(type) {
       if (type === 'currentVer') {
         type = 'Transition'
       } else if (type === 'notCurrentVer') {
@@ -2160,7 +2160,7 @@ export default {
       this.validateIpt('createForm')
     },
     // 添加转换规则，需要获取之前已有 剩余排除
-    addTransitionType (type) {
+    addTransitionType(type) {
       let arr
       let addItem
       if (type === 'currentVer') {
@@ -2229,7 +2229,7 @@ export default {
     },
 
     // 删除规则 重置
-    clearDelItem () {
+    clearDelItem() {
       const index = this.ruleOperate.findIndex(item => {
         return item === 'r5'
       })
@@ -2241,10 +2241,10 @@ export default {
         this.ruleOperate.splice(index, 1)
       }
     },
-    validateIpt (form) {
+    validateIpt(form) {
       this.$refs[form].validate()
     },
-    covertByte (num, range) {
+    covertByte(num, range) {
       switch (range) {
         case 'byte':
           return num
@@ -2256,11 +2256,11 @@ export default {
           return num * 1024 ** 3
       }
     },
-    getBucketLifecycle () {
+    getBucketLifecycle() {
       this.loading = true
       this.tableData = []
       this.total = 0
-      this.$store.state._S3.getBucketLifecycleConfiguration(
+      this.$store.state.user._S3.getBucketLifecycleConfiguration(
         {
           Bucket: this.bucketName
         },
@@ -2280,7 +2280,7 @@ export default {
         }
       )
     },
-    clearForm () {
+    clearForm() {
       this.createForm.ID = ''
       this.createForm.range = '1'
       this.createForm.prefixIpt = ''
@@ -2306,7 +2306,7 @@ export default {
         this.$refs['createForm'] && this.$refs['createForm'].clearValidate()
       })
     },
-    submitCreate () {
+    submitCreate() {
       this.clickSubmit = true
       const hasSelectOneRule = this.validRuleOption
       this.$refs['createForm'].validate(valid => {
@@ -2441,7 +2441,7 @@ export default {
                 this.tableData.filter((item, i) => i !== this.radio)
               )
             }
-            this.$store.state._S3.putBucketLifecycleConfiguration(
+            this.$store.state.user._S3.putBucketLifecycleConfiguration(
               params,
               (err, data) => {
                 if (err) {
@@ -2484,7 +2484,7 @@ export default {
       // }
     },
     // 绑定随机key值防止对应index错乱 影响校验问题
-    addLabel () {
+    addLabel() {
       this.createForm.tag.push({
         Key: '',
         Value: '',
@@ -2493,7 +2493,7 @@ export default {
           .substring(2)
       })
     },
-    handleRowChange (val) {
+    handleRowChange(val) {
       if (!val) return
       // mod上次数据清除
       this.clearForm()
@@ -2626,21 +2626,21 @@ export default {
 
       console.log(this.ruleOperate, 'ruleoperate', this.createForm, 'form')
     },
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.pageSize = val
       this.radio = ''
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.currentPage = val
       this.radio = ''
     },
-    changeStatus (type, row) {
+    changeStatus(type, row) {
       return {
         row,
         command: type
       }
     },
-    handleStatus (str) {
+    handleStatus(str) {
       const selectName = str.row.ID
       const index = this.tableData.findIndex(item => {
         return item.ID == selectName
@@ -2665,7 +2665,7 @@ export default {
           }
         ).then(() => {
           copyData[index]['Status'] = 'Disabled'
-          this.$store.state._S3.putBucketLifecycleConfiguration(
+          this.$store.state.user._S3.putBucketLifecycleConfiguration(
             {
               Bucket: this.bucketName,
               LifecycleConfiguration: {
@@ -2701,7 +2701,7 @@ export default {
           }
         ).then(() => {
           copyData[index]['Status'] = 'Enabled'
-          this.$store.state._S3.putBucketLifecycleConfiguration(
+          this.$store.state.user._S3.putBucketLifecycleConfiguration(
             {
               Bucket: this.bucketName,
               LifecycleConfiguration: {

@@ -21,6 +21,9 @@ export default {
         vnodes.push(<i class={[icon, 'sub-el-icon']} />)
       } else {
         vnodes.push(<svg-icon icon-class={icon}/>)
+        // vnodes.push(<svg class='icon' aria-hidden='true'>
+        //   <use xlink:href={'#icon-' + icon} />
+        // </svg>)
       }
     }
 

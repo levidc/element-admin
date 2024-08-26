@@ -3,7 +3,9 @@ import Vue from 'vue'
 // import JSONbig from 'json-bigint'
 import axios from 'axios'
 import store from '../store'
-import { listAlerts } from '@/api/monitor'
+// import { listAlerts } from '@/api/monitor'
+import router from '../router'
+
 export const temp = new Vue()
 axios.withCredentials = false
 // 接口统一code后待后续添加响应处理
@@ -39,20 +41,24 @@ const request = axios.create({
 request.interceptors.request.use(config => {
   const token = localStorage.getItem('token') || ''
   // 处理eip token登录失效
-  if (config.url.indexOf('login') == -1 && config.url.indexOf('eipLogin') == -1 && (!token || token === 'undefined' || token === 'null')) {
+  if (config.url.indexOf('login') === -1 && config.url.indexOf('eipLogin') === -1 && (!token || token === 'undefined' || token === 'null')) {
     setTimeout(() => {
       if (window.location.href.indexOf('s3sg') > -1) {
-        // temp.$ts({
+        // temp.$msg({
         //   type: 'warn',
         //   text: 'token已失效，即将重新登录'
         // })
         return
       } else {
-        temp.$ts({
+        temp.$msg({
           type: 'error',
           text: 'token已失效，请重新登录'
-        })
-        store.dispatch('logout')
+        })(
+          async() => {
+            await store.dispatch('user/logout')
+            router.push(`/login?redirect=${router.currentRoute.fullPath}`)
+          }
+        )()
       }
     }, 200)
   }
@@ -63,12 +69,12 @@ request.interceptors.request.use(config => {
 })
 request.interceptors.response.use(res => {
   res.data = JSON.parse(res.request.response || 'null')
-  console.log(res, 'ress')
+  // console.log(res, 'ress')
   const statusCode = res.status
   const msg = res.data.msg
   const dataStruct = Object.keys(res.data)
-  if (dataStruct && dataStruct.length == 1 && dataStruct[0] === 'msg' && msg !== 'success') {
-    temp.$ts({
+  if (dataStruct && dataStruct.length === 1 && dataStruct[0] === 'msg' && msg !== 'success') {
+    temp.$msg({
       type: 'error',
       text: temp.$ts(msg)
     })
@@ -78,7 +84,7 @@ request.interceptors.response.use(res => {
   //  用户、策略等 res.data.code 之前多数接口为res.data.error.code
   // 成功code'200',部分返回200
   // console.log('msg', msg)
-  if (statusCode == 200) {
+  if (statusCode === 200) {
     switch (code) {
       case '200':
         return res.data
@@ -86,37 +92,41 @@ request.interceptors.response.use(res => {
         return res.data
       case 'buz-error':
         if (msg.indexOf('username:') > -1 && msg.indexOf('already exits') > -1) {
-          temp.$ts({
+          temp.$msg({
             type: 'error',
             text: '用户名:' + msg.match(/\s+(\w+)/)[0].trim() + '已存在'
           })
           return Promise.reject(msg)
         } else if (msg.indexOf('group Already exists ：') > -1) {
-          temp.$ts({
+          temp.$msg({
             type: 'error',
             text: '群组名:' + msg.split('group Already exists ：')[1] + '已存在'
           })
           return Promise.reject(msg)
         }
         if (msg === 'token timeout' || msg === 'token已过期，请重新登录' || msg === 'token is timeout') {
-          temp.$ts({
+          temp.$msg({
             type: 'error',
             text: 'token已过期，请重新登录'
-          })
-          setTimeout(() => {
-            store.dispatch('logout')
-          }, 200)
+          });
+          (
+            async() => {
+              await store.dispatch('user/logout')
+              router.push(`/login?redirect=${router.currentRoute.fullPath}`)
+            }
+          )()
+          console.log('???')
           return Promise.reject(msg)
         }
         if (msg === 'auth-error') {
-          temp.$ts({
+          temp.$msg({
             type: 'error',
             text: '没有相关权限，请稍后重试'
           })
           return Promise.reject(msg)
         }
         if (msg.indexOf('permission list is conflict with permission group') > -1) {
-          temp.$ts({
+          temp.$msg({
             type: 'error',
             text: `当前权限列表与组合包${msg.match(/【.*】/)[0]}中权限列表冲突`
           })
@@ -125,7 +135,7 @@ request.interceptors.response.use(res => {
         if (msg === 'config not exist') {
           return res.data
         }
-        temp.$ts({
+        temp.$msg({
           type: 'error',
           text: temp.$ts(msg)
         })
@@ -138,24 +148,24 @@ request.interceptors.response.use(res => {
           }
           // 添加console同步登出
         } else {
-          temp.$ts({
+          temp.$msg({
             type: 'error',
             text: '没有相关权限，请稍后重试'
           })
         }
         return Promise.reject(msg)
       case 'sys-error':
-        // temp.$ts({
+        // temp.$msg({
         //   type: 'error',
         //   text: '系统繁忙，请重试'
         // })
-        temp.$ts({
+        temp.$msg({
           type: 'error',
           text: temp.$ts(msg)
         })
         return Promise.reject(msg)
       default:
-        temp.$ts({
+        temp.$msg({
           type: 'error',
           text: temp.$ts(msg)
         })
@@ -163,8 +173,8 @@ request.interceptors.response.use(res => {
     }
   }
 }, error => {
-  if (error.request.readyState == 4 && error.request.status == 0) {
-    temp.$ts({
+  if (error.request.readyState === 4 && error.request.status === 0) {
+    temp.$msg({
       type: 'error',
       text: temp.$ts('timeoutexception')
     })
@@ -172,10 +182,10 @@ request.interceptors.response.use(res => {
   }
   // 设置重新请求的次数及延时
   if (!error.config.retryCount) {
-    if (temp.$ts(error.message) === error.message) {
+    if (temp.$msg(error.message) === error.message) {
       return Promise.reject(error)
     } else {
-      temp.$ts({
+      temp.$msg({
         type: 'error',
         text: temp.$ts(error.message)
       })
@@ -202,44 +212,44 @@ request.interceptors.response.use(res => {
   }
 })
 
-Vue.prototype.listAlarm = function() {
-  // 告警权限控制
-  const api = store.state.api || JSON.parse(localStorage.getItem('api') || null)
-  if (!api['admin:ListAlertController']) return
-  let red = 0
-  let yellow = 0
-  let orange = 0
-  listAlerts({
-    ipAddress: '',
-    alertRuleName: '',
-    alertObject: '',
-    alertLevel: '',
-    alertClass: '',
-    acknowledge: 'UNCONFIRM',
-    startTime: '0',
-    endTime: new Date().getTime() + 86400000
-  }).then(res => {
-    if (res.error.code === 0) {
-      res.data.forEach(item => {
-        switch (item.alertLevel) {
-          case 'CRITICAL':
-            red += 1
-            break
-          case 'MAJOR':
-            orange += 1
-            break
-          case 'MINOR':
-            yellow += 1
-            break
-        }
-      })
-      store.state.redCount = red || 0
-      store.state.orangeCount = orange || 0
-      store.state.yellowCount = yellow || 0
-    }
-  }).catch(error => {
-    console.error(error)
-  })
-}
+// Vue.prototype.listAlarm = function() {
+//   // 告警权限控制
+//   const api = store.state.api || JSON.parse(localStorage.getItem('api') || null)
+//   if (!api['admin:ListAlertController']) return
+//   let red = 0
+//   let yellow = 0
+//   let orange = 0
+//   listAlerts({
+//     ipAddress: '',
+//     alertRuleName: '',
+//     alertObject: '',
+//     alertLevel: '',
+//     alertClass: '',
+//     acknowledge: 'UNCONFIRM',
+//     startTime: '0',
+//     endTime: new Date().getTime() + 86400000
+//   }).then(res => {
+//     if (res.error.code === 0) {
+//       res.data.forEach(item => {
+//         switch (item.alertLevel) {
+//           case 'CRITICAL':
+//             red += 1
+//             break
+//           case 'MAJOR':
+//             orange += 1
+//             break
+//           case 'MINOR':
+//             yellow += 1
+//             break
+//         }
+//       })
+//       store.state.redCount = red || 0
+//       store.state.orangeCount = orange || 0
+//       store.state.yellowCount = yellow || 0
+//     }
+//   }).catch(error => {
+//     console.error(error)
+//   })
+// }
 export default request
 export const CancelToken = axios.CancelToken

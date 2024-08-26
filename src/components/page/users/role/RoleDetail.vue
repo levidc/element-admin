@@ -61,7 +61,7 @@
 export default {
   name: 'RoleDetail',
   components: {},
-  data () {
+  data() {
     return {
       roleName: '',
       description: '',
@@ -70,19 +70,19 @@ export default {
       apis: []
     }
   },
-  mounted () {
+  mounted() {
     this.roleId = this.$route.params.id
     this.getInfo()
     console.log(this.$route.path)
   },
   methods: {
-    back () {
+    back() {
       this.$router.push({ name: 'Role' })
     },
-    refresh () {
+    refresh() {
       this.getInfo()
     },
-    getInfo () {
+    getInfo() {
       var vm = this
       this.$http({
         method: 'get',
@@ -93,8 +93,8 @@ export default {
           roleIds: vm.roleId
         }
       })
-        .then(function (response) {
-          $.each(response.data.data, function (i, v) {
+        .then(function(response) {
+          $.each(response.data.data, function(i, v) {
             if (v.roleId == vm.roleId) {
               vm.roleName = response.data.data[i].name
               vm.description = response.data.data[i].description
@@ -141,9 +141,9 @@ export default {
             }
           })
         })
-        .catch(function (response) { })
+        .catch(function(response) { })
     },
-    getTableRowClass (item) {
+    getTableRowClass(item) {
       let str = 'table_' + item.cla
       if (item.name != null) {
         str += ' table_part'

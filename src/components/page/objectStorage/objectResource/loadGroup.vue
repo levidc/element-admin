@@ -892,7 +892,7 @@ import {
 } from '@/api/storage'
 export default {
   name: 'LoadGroup',
-  data () {
+  data() {
     return {
       listenGroupType: '',
       stateParams: {},
@@ -963,14 +963,14 @@ export default {
     }
   },
   computed: {
-    isAdd () {
+    isAdd() {
       return this.opt === 'add'
     },
     // judgeSelItem () {
     //   const exist = this.resourceListSel.find(x => this.selResourceId && this.selResourceId.indexOf(x.storageName) > -1)
     //   return exist
     // },
-    disableDefaultGroup () {
+    disableDefaultGroup() {
       // CACHE、DATA
       // this.form.groupTag
       // 新增和修改区分
@@ -1018,15 +1018,15 @@ export default {
         }
       }
     },
-    choseResource () {
+    choseResource() {
       return this.form.items.filter(x => x.resourceId.length)
     }
   },
   watch: {
-    'form.groupTag' (cur, pre) {
+    'form.groupTag'(cur, pre) {
       this.listenGroupType = pre
     },
-    'form.storageType' (cur, pre) {
+    'form.storageType'(cur, pre) {
       if (this.changeStorageTypeFlag || !this.isAdd) return
       if (this.choseResource && this.choseResource.length) {
         this.$confirm('更改负载类型将会清空已选择的资源,是否继续?', '请确认', {
@@ -1048,23 +1048,23 @@ export default {
         })
       }
     },
-    filterText (val) {
+    filterText(val) {
       this.$refs.tree.filter(val)
     },
-    flag (val) {
+    flag(val) {
       if (val && this.isAdd) {
         this.initForm()
       }
     }
   },
-  mounted () {
+  mounted() {
     this.init()
   },
   methods: {
-    renderStorageType (type) {
+    renderStorageType(type) {
       return type === 'IAM' ? 'AWS' : type === 'GLACIER' ? '冰存储' : type === 'WARM' ? '温存储' : type
     },
-    disableGroupTag (type) {
+    disableGroupTag(type) {
       if (!this.isAdd) return true
       else {
         const { defaultGroup } = this.form
@@ -1077,14 +1077,14 @@ export default {
         }
       }
     },
-    clearStateParams () {
+    clearStateParams() {
       this.stateParams = {}
     },
-    transRegion (val) {
+    transRegion(val) {
       if (val === 'ap-east-1') return '亚太地区(香港)'
       else return '-'
     },
-    changeGroupTag (val) {
+    changeGroupTag(val) {
       // 修改用途得同步负载类型、同步资源交给watch监听 负载类型
       const change = this.listenGroupType
       if (this.choseResource && this.choseResource.length) {
@@ -1139,11 +1139,11 @@ export default {
         }
       }
     },
-    renderAccessResCount (arr) {
+    renderAccessResCount(arr) {
       return arr.filter(x => !x.disabled).length
     },
     // 选择资源 添加 资源限制
-    disableCascader () {
+    disableCascader() {
       const choseResource = this.form.items.map(x => x.resourceId[1]) // 已添加到配置项的资源
       // 筛选可选资源条件、重复添加及对应类型
       return this.filterSelResource.map(x => {
@@ -1198,7 +1198,7 @@ export default {
     //     })
     //   }, 100)
     // },
-    filterMethods (node, val) {
+    filterMethods(node, val) {
       return node.label.toLowerCase().indexOf(val.toLowerCase()) > -1
     },
     // judgeGroupTag (val) {
@@ -1235,12 +1235,12 @@ export default {
     //   }
     // }
     // },
-    handleDemi (row, _, value) {
+    handleDemi(row, _, value) {
       value = value === '0' ? '0' : String(value)
       const reg = /\B(?=(\d{3})+(?!\d))/g
       return value.replace(reg, ',')
     },
-    renderUtilityRatio (data, showForLoadGroup = true) {
+    renderUtilityRatio(data, showForLoadGroup = true) {
       const {
         usedSpace,
         unit,
@@ -1262,7 +1262,7 @@ export default {
           }]
       }
     },
-    renderLoadGroupStatus (stauts) {
+    renderLoadGroupStatus(stauts) {
       let icon = ''
       switch (stauts) {
         case 'GREEN':
@@ -1276,7 +1276,7 @@ export default {
       }
       return '#icon-' + icon
     },
-    init () {
+    init() {
       this.loading = true
       const ResourceList = listStorageDevice()
       const GroupList = getGroupList()
@@ -1355,7 +1355,7 @@ export default {
     //   })
     // },
     // 展示负载组（默认及选中）
-    showDefaultGroup () {
+    showDefaultGroup() {
       if (this.tableData && this.tableData.length) {
         if (JSON.stringify(this.selectLoadGroup) !== '{}') {
           const id = this.selectLoadGroup.id || ''
@@ -1393,7 +1393,7 @@ export default {
         }
       }
     },
-    mapResourceItems (val) {
+    mapResourceItems(val) {
       // val: 设备资源list添加映射、展示loadGroup下资源名称及相关信息
       if (val && val.length) {
         this.resourceListSel = val.reduce((pre, cur) => {
@@ -1501,16 +1501,16 @@ export default {
       // }
       // keepLoad()
     },
-    delResourceSel (index) {
+    delResourceSel(index) {
       this.form.items.splice(index, 1)
     },
-    addResourceSel () {
+    addResourceSel() {
       this.form.items.push({
         resourceId: '',
         isOpen: 1
       })
     },
-    initForm () {
+    initForm() {
       this.form = {
         loadGroupName: '',
         loadStrategy: 'AUTO',
@@ -1528,7 +1528,7 @@ export default {
         this.$refs['form'].clearValidate()
       })
     },
-    filterNode (value, data) {
+    filterNode(value, data) {
       if (!value) return true
       else {
         // 跳转页面后、需把路由信息记录、用于首次过滤、后续过滤不经过此处过滤
@@ -1549,7 +1549,7 @@ export default {
     },
     // 负载组详情展示
     // 展示资源、启用禁用、 默认负载auto、策略类型auto
-    getInfo (node) {
+    getInfo(node) {
       this.selectLoadGroup = node
       const keys = Object.keys(node)
       if (keys.includes('loadStrategy')) {
@@ -1572,7 +1572,7 @@ export default {
       // 校验是否是负载组、匹配负载组才不展示默认资源或设备
       // 触发负载的点击、获取详情后、通过父组件刷新或其他事件后展示该负载、
     },
-    renderGatewayStatus (node) {
+    renderGatewayStatus(node) {
       this.innerFormLoading = true
       const allStatus = node.items && node.items.map(x => {
         return new Promise((resolve, rej) => {
@@ -1624,7 +1624,7 @@ export default {
         this.innerFormLoading = false
       })
     },
-    judgeChange (row) {
+    judgeChange(row) {
       // 更改开关
       const index = this.fillForm.items.findIndex(x => {
         return x.resourceId === row.resourceId
@@ -1632,7 +1632,7 @@ export default {
       this.$set(this.fillForm.items[index], 'status', !row.status)
       // fetch api
     },
-    updateForm () {
+    updateForm() {
       this.opt = 'update'
       this.flag = true
       // console.log(this.selectLoadGroup, '1233')
@@ -1672,7 +1672,7 @@ export default {
       this.requestForm = JSON.parse(JSON.stringify(this.form))
       // console.log(this.selectLoadGroup, '1233', this.form)
     },
-    confirmDelete () {
+    confirmDelete() {
       deleteLoadGroup({
         loadGroupId: this.selectLoadGroup.id
       }).then(res => {
@@ -1681,7 +1681,7 @@ export default {
         this.init()
       })
     },
-    confirmCreate () {
+    confirmCreate() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           const {

@@ -257,7 +257,7 @@ export default {
   components: {
     UserTable
   },
-  data () {
+  data() {
     const checkNameReg = (rule, data, callback) => {
       const reg = /^[0-9a-z_-]{3,63}$/
       if (!reg.test(data)) {
@@ -344,37 +344,37 @@ export default {
     }
   },
   computed: {
-    checkSelection () {
+    checkSelection() {
       return this.multipleSelection && this.multipleSelection.length > 0
     },
-    oneSelection () {
+    oneSelection() {
       return this.multipleSelection && this.multipleSelection.length == 1
     },
-    userNameStr () {
+    userNameStr() {
       return this.multipleSelection
         .reduce((pre, cur) => {
           return pre + cur.userName + ', '
         }, '')
         .replace(/, $/, '')
     },
-    isAdd () {
+    isAdd() {
       return this.type === 'add'
     }
   },
   watch: {
-    isCreate (val) {
+    isCreate(val) {
       if (val) {
         this.listPolicies()
       }
     },
-    policyName (val) {
+    policyName(val) {
       this.policyData = [...this.clonePolicyData]
       if (!val) return
       this.policyData = this.policyData.filter(item => {
         return item.name.toLowerCase().indexOf(val.toLowerCase()) !== -1
       })
     },
-    groupName (val) {
+    groupName(val) {
       this.groupData = [...this.cloneGroupData]
       if (!val) return
       this.groupData = this.groupData.filter(item => {
@@ -388,7 +388,7 @@ export default {
     //     return item.key.toLowerCase().indexOf(val.toLowerCase()) !== -1
     //   })
     // },
-    activeName (val, old) {
+    activeName(val, old) {
       if (val == '0') return
       if (old !== '0' && val === 'policies') {
         this.listPolicies()
@@ -396,7 +396,7 @@ export default {
         this.listGroup()
       }
     },
-    addGroupDialog (val) {
+    addGroupDialog(val) {
       if (val) {
         this.listGroup()
       } else {
@@ -405,20 +405,20 @@ export default {
       }
     }
   },
-  mounted () { },
+  mounted() { },
   methods: {
-    checkBasePolicy (val) {
+    checkBasePolicy(val) {
       return val.name !== 'BasePolicy'
       // this.$refs.policyTable.toggleRowSelection(val.name !== 'BasePolicy', true);
     },
-    refreshList () {
+    refreshList() {
       this.$refs['usertable'].listUser()
     },
-    modUser () {
+    modUser() {
       this.type = ''
       this.isCreate = true
     },
-    addToGroup () {
+    addToGroup() {
       const groups = this.selectedGroup.map(item => item.groupName)
       // 传递多个userName
       // const userName = this.multipleSelection.reduce((pre, cur) => {
@@ -448,7 +448,7 @@ export default {
       //   '选择user'
       // )
     },
-    createUser () {
+    createUser() {
       // 创建用户
       this.$refs['createForm'].validate(valid => {
         if (valid) {
@@ -502,7 +502,7 @@ export default {
         }
       })
     },
-    covertByte (num, range) {
+    covertByte(num, range) {
       switch (range) {
         case 'MB':
           return num * 1024 ** 2
@@ -512,10 +512,10 @@ export default {
           return num * 1024 ** 4
       }
     },
-    handleSelection (val) {
+    handleSelection(val) {
       this.multipleSelection = val
     },
-    clearForm () {
+    clearForm() {
       this.createForm.name = ''
       this.createForm.pwd = ''
       this.createForm.userType = 1
@@ -525,7 +525,7 @@ export default {
       this.$refs.policyTable.clearSelection()
       this.$refs.groupTable.clearSelection()
     },
-    listPolicies () {
+    listPolicies() {
       getPolicy()
         .then(res => {
           this.policyData = res.data
@@ -563,7 +563,7 @@ export default {
           console.error(err)
         })
     },
-    listGroup () {
+    listGroup() {
       listGroups()
         .then(res => {
           this.groupData = res.data
@@ -637,7 +637,7 @@ export default {
     //     }
     //   })
     // },
-    handleScroll () {
+    handleScroll() {
       if (this.activeName === 'policies') {
         this.$refs['groupTable'].$el.children[2].scrollTop = 0
       } else {
@@ -645,7 +645,7 @@ export default {
       }
     },
     // 创建、修改表单重置
-    dialogOpen (e) {
+    dialogOpen(e) {
       this.$nextTick(() => {
         if (this.isAdd) this.$refs[e].$el.querySelector('input').focus()
         this.$refs['policyTable'].$el.children[2].scrollTop = 0
@@ -657,13 +657,13 @@ export default {
         }
       })
     },
-    handlePolicyChange (val) {
+    handlePolicyChange(val) {
       this.selectedPolicy = val
     },
-    handleGroupChange (val) {
+    handleGroupChange(val) {
       this.selectedGroup = val
     },
-    handleAccessChange (val) {
+    handleAccessChange(val) {
       this.selectedAccess = val
     }
   }

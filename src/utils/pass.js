@@ -20,9 +20,9 @@ export const checkPasswordReg = (rule, data, callback) => {
   return callback()
 }
 
-export const debounce = function (fn, delay = 2000) {
+export const debounce = function(fn, delay = 2000) {
   let timer = null
-  return function () {
+  return function() {
     const self = this
     clearTimeout(timer)
     timer = setTimeout(() => {

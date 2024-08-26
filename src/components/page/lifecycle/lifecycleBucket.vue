@@ -55,7 +55,7 @@ import { debounce } from '@/utils/pass'
 import moment from 'moment'
 export default {
   name: 'LifecycleBucket',
-  data () {
+  data() {
     return {
       total: 0,
       loading: false,
@@ -83,16 +83,16 @@ export default {
       pageSize: 10
     }
   },
-  mounted () {
+  mounted() {
     this.init()
   },
   methods: {
-    viewLifeCycleRule (row) {
+    viewLifeCycleRule(row) {
       this.$router.push({
         path: `/main/bucket/BucketDetail/${row.name}/BucketLifeCycle`
       })
     },
-    getPageSearch (val) {
+    getPageSearch(val) {
       this.pageSize = val.pageNumber
       this.getList({
         pageNumber: val.pageNumber,
@@ -101,13 +101,13 @@ export default {
       })
     },
     // 添加防抖处理
-    init () {
+    init() {
       this.getList({
         pageNumber: 1,
         pageSize: 10
       })
     },
-    getList (query) {
+    getList(query) {
       this.loading = true
       getBucketRule(query).then((res) => {
         this.tableData = res.data.list
@@ -116,7 +116,7 @@ export default {
         this.loading = false
       })
     },
-    filterSearch: debounce.call(this, function () {
+    filterSearch: debounce.call(this, function() {
       this.getList({
         pageNumber: 1,
         pageSize: this.pageSize,

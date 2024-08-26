@@ -1049,7 +1049,7 @@ export default {
   components: {
     QuickDefault
   },
-  data () {
+  data() {
     var validateMaxInt = (rule, value, callback) => {
       if (this.form.unit == 'GB') {
         if (value > 8000000000) {
@@ -1341,25 +1341,25 @@ export default {
     }
   },
   computed: {
-    isAdd () {
+    isAdd() {
       return this.opType === 'add'
     },
-    renderData () {
+    renderData() {
       return this.tableData.slice((this.pageObj.currentPage - 1) * this.pageObj.pageSize, this.pageObj.currentPage * this.pageObj.pageSize)
     },
-    isAddDevice () {
+    isAddDevice() {
       return this.optDType === 'add'
     },
-    renderDel () {
+    renderDel() {
       return this.opType === 'del'
     },
-    getStorageType () {
+    getStorageType() {
       return this.form.storageType
     },
-    deviceExistNextConifg () {
+    deviceExistNextConifg() {
       return this.form.deviceId && this.tableData.some(x => x.deviceId === this.form.deviceId && x.storageResourceModelList.some(item => item.next))
     },
-    judgeS3Type () {
+    judgeS3Type() {
       return this.form.storageType === 'S3'
     },
     ...mapState(['api'])
@@ -1371,22 +1371,22 @@ export default {
     //     this.form.nasAdvancedConfig = false
     //   }
     // },
-    deleteFlag (val) {
+    deleteFlag(val) {
       if (!val) {
         this.opType = 'add'
         this.optDType = 'add'
       }
     },
-    filterText (val) {
+    filterText(val) {
       this.$refs.tree.filter(val)
     },
-    defNextFlag (val) {
+    defNextFlag(val) {
       if (!val) {
         Object.assign(this.defNextForm, { flag: 'next', radio: '', search: '', resourceId: '' })
       }
     }
   },
-  mounted () {
+  mounted() {
     this.prop = this.defaultSort.prop
     this.order = this.defaultSort.order
     this.init().then(() => {
@@ -1394,11 +1394,11 @@ export default {
     })
   },
   methods: {
-    mapStorageType (data) {
+    mapStorageType(data) {
       const existMatch = this.enumStorageType.find(x => x.value === data)
       return existMatch ? existMatch.label : ''
     },
-    renderLoadGroupStatus (stauts) {
+    renderLoadGroupStatus(stauts) {
       let icon = ''
       switch (stauts) {
         case 'GREEN':
@@ -1414,7 +1414,7 @@ export default {
       }
       return '#icon-' + icon
     },
-    judgeValidNext () {
+    judgeValidNext() {
       // 禁用选择next
       if (this.deviceExistNextConifg && this.isAdd && this.form.next) {
         this.$confirm('当前设备下已有资源为下一个资源，当前设置将会失效!', '确认', {
@@ -1429,7 +1429,7 @@ export default {
         })
       }
     },
-    renderUtilityRatio (data) {
+    renderUtilityRatio(data) {
       const {
         objectSize,
         usedSpace,
@@ -1447,7 +1447,7 @@ export default {
         }]
       }
     },
-    handleNextResource (val) {
+    handleNextResource(val) {
       if (val === 'CACHE' && this.form.next) {
         this.$confirm('当前NAS资源存储用途为缓存，下一个资源将会失效，是否继续？', '确认', {
           confirmButtonText: '确定',
@@ -1460,16 +1460,16 @@ export default {
         })
       }
     },
-    validateUrl () {
+    validateUrl() {
       setTimeout(() => {
         this.$refs.form.clearValidate('url')
       })
     },
-    transRegion (val) {
+    transRegion(val) {
       if (val === 'ap-east-1') return '亚太地区(香港)'
       else return '-'
     },
-    showDefaultResource () {
+    showDefaultResource() {
       const defaultDevice = this.tableData.filter(item => {
         return item.default === 'true'
       })
@@ -1490,7 +1490,7 @@ export default {
     },
     // 刷新或者 修改当前设备、资源后重新让tree刷新数据并高亮
     // 新需求、需要获取资源状态
-    getCurrentRefresh () {
+    getCurrentRefresh() {
       this.init().then(() => {
         const { resourceId, storageResourceModelList, deviceName } = this.selectObject
         if (resourceId) {
@@ -1519,7 +1519,7 @@ export default {
         }
       })
     },
-    changelogicUnit (val) {
+    changelogicUnit(val) {
       if (val == 'TB') {
         this.form.objectSize = ''
         this.placeholderValue = this.placeholder[1].value
@@ -1528,7 +1528,7 @@ export default {
         this.placeholderValue = this.placeholder[0].value
       }
     },
-    inputPositiveNum (ipt, value, range) {
+    inputPositiveNum(ipt, value, range) {
       // let temp = ''
       // const keys = value.split('.')
       // for (const i of keys) {
@@ -1557,7 +1557,7 @@ export default {
       // console.log(tempV)
       // this[keys[0]][keys[1]] = ipt.replace(/(^0+)|\D/g, '')
     },
-    getResourceStatus (row) {
+    getResourceStatus(row) {
       // console.log(row.storageResourceModelList, 'row')
       // 调用资源
       this.showDescDevice = 'object'
@@ -1589,18 +1589,18 @@ export default {
       }
     },
 
-    transByteToGB (data) {
+    transByteToGB(data) {
       // ByteToGB、
       const res = (Number(data) / 1024 ** 3).toFixed(2)
       return res == 0 ? 0 : res
     },
-    handleRowChange (row) {
+    handleRowChange(row) {
       // 请求成功清除数据 row调用为null
       const resourceId = row && row.resourceId
       this.defNextForm.radio = resourceId
       this.defNextForm.resourceId = resourceId
     },
-    defSearch () {
+    defSearch() {
       this.defNextResource = JSON.parse(JSON.stringify(this.copyDefNextResource))
       if (!this.defNextForm.search) {
         return
@@ -1612,18 +1612,18 @@ export default {
         })
       }
     },
-    sortFunctionDef (val) {
+    sortFunctionDef(val) {
       this.defNextSort.prop = val.prop
       this.defNextSort.order = val.order
       this.defNextResource.sort(this.sortMethod(val.prop, val.order))
     },
-    getCurrentRow (row) {
+    getCurrentRow(row) {
       this.defNextForm.resourceId = row.resourceId
     },
-    transferBool (val) {
+    transferBool(val) {
       return this.stringToBoolean(val)
     },
-    confirmDefNext () {
+    confirmDefNext() {
       const {
         flag,
         deviceId,
@@ -1664,22 +1664,22 @@ export default {
         })
       })
     },
-    handleDefNextFlag (row) {
+    handleDefNextFlag(row) {
       this.defNextResource = row.storageResourceModelList.filter(x => x.storageUseType !== 'CACHE')
       this.copyDefNextResource = JSON.parse(JSON.stringify(this.defNextResource))
       this.defNextForm.deviceId = row.deviceId
       this.defNextFlag = true
     },
-    handleDemi (row, _, value) {
+    handleDemi(row, _, value) {
       value = value === '0' ? '0' : String(value)
       const reg = /\B(?=(\d{3})+(?!\d))/g
       return value.replace(reg, ',')
     },
-    filterNode (value, data) {
+    filterNode(value, data) {
       if (!value) return true
       return (data.deviceName || data.storageName).toLocaleLowerCase().indexOf(value.toLocaleLowerCase()) !== -1
     },
-    getInfo (node) {
+    getInfo(node) {
       this.selectObject = node
       if (Object.keys(node).includes('storageResourceModelList')) {
         this.updateDevice(node, false, true)
@@ -1690,7 +1690,7 @@ export default {
         // render object
       }
     },
-    handleDel (type, { row }) {
+    handleDel(type, { row }) {
       if (type === 'device') {
         this.optDType = 'del'
       } else if (type === 'object') {
@@ -1700,7 +1700,7 @@ export default {
       this.selectRow = row
       this.deleteFlag = true
     },
-    stringToBoolean (string) {
+    stringToBoolean(string) {
       // console.log(string, 'string')
       if (typeof (string) !== 'string') return string
       switch (string.toLowerCase().trim()) {
@@ -1755,14 +1755,14 @@ export default {
     //       })
     //   })
     // },
-    init () {
+    init() {
       return new Promise((resolve) => {
         this.loading = true
         listStorageDevice().then((res) => {
           this.tableData = (res.data || []).map(item => {
             item.id = 'device' + item.deviceId
             if (item.storageResourceModelList && item.storageResourceModelList.length) {
-              item.storageResourceModelList.map(async (itx) => {
+              item.storageResourceModelList.map(async(itx) => {
                 itx.deviceName = itx.storageName
                 itx.id = 'resource' + itx.resourceId
                 // itx.resourceStatus = await this.getSingleResourceStatus(itx)
@@ -1831,7 +1831,7 @@ export default {
       })
     },
     // 点击创建、再修改、数据情况回显问题
-    async updateForm (row, flag = false, needFill = false) {
+    async updateForm(row, flag = false, needFill = false) {
       this.opType = 'update'
       // console.log(row.objectSize, 'egeg')
       // region、
@@ -1864,7 +1864,7 @@ export default {
         })
       }
     },
-    updateDevice (row, flag = false, needFill = false) {
+    updateDevice(row, flag = false, needFill = false) {
       this.optDType = 'update'
       Object.assign(this.deviceForm, {
         ...row, isDefault: this.stringToBoolean(row.default)
@@ -1879,7 +1879,7 @@ export default {
         })
       }
     },
-    createDevice () {
+    createDevice() {
       this.$refs['Dform'].validate((valid) => {
         if (valid) {
           const { deviceName, isDefault, deviceId } = this.deviceForm
@@ -1914,34 +1914,34 @@ export default {
         // console.log(valid, 'valid', this.deviceForm)
       })
     },
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.pageObj.currentPage = 1
       this.pageObj.pageSize = val
     },
     // 当前页改变时触发 跳转其他页
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.pageObj.currentPage = val
     },
-    getRowClass ({ row }) {
+    getRowClass({ row }) {
       if (row.storageResourceModelList && !row.storageResourceModelList.length) {
         return ['hide-dropdown']
       } else {
         return ['']
       }
     },
-    expandChange (row, any) {
+    expandChange(row, any) {
       this.$set(row, 'loading', true)
       setTimeout(() => {
         this.$set(row, 'loading', false)
       }, 200)
     },
-    dialogOpen (e) {
+    dialogOpen(e) {
       const ipt = e
-      this.$nextTick(function () {
+      this.$nextTick(function() {
         this.$refs[ipt].$el.querySelector('input').focus()
       })
     },
-    async showCreate (cName, id = '') {
+    async showCreate(cName, id = '') {
       if (cName === 'device') {
         Object.assign(this.deviceForm, {
           deviceName: '',
@@ -1997,7 +1997,7 @@ export default {
         // getRegions
       }
     },
-    async loadAsyncOption () {
+    async loadAsyncOption() {
       const res = await listStorageDevice()
       this.deviceSelectOpt = (res.data || []).map(item => {
         return {
@@ -2014,7 +2014,7 @@ export default {
       //   return { label: item, value: item }
       // })
     },
-    deleteForm () {
+    deleteForm() {
       if (this.renderDel) {
         const { resourceId, deviceId } = this.selectRow
         // 删除存储资源 校验关联负载组
@@ -2059,7 +2059,7 @@ export default {
           })
       }
     },
-    confirmCreate () {
+    confirmCreate() {
       this.$refs['form'].validate((valid, object) => {
         const {
           userName,

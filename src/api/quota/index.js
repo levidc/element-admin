@@ -1,7 +1,7 @@
 import request from '../request'
 
 // 更新桶配额
-export function updateBucketQuota (data) {
+export function updateBucketQuota(data) {
   return request({
     method: 'put',
     url: 'UpdateBucketQuota',
@@ -10,7 +10,7 @@ export function updateBucketQuota (data) {
 }
 
 // 更新用户配额
-export function updateUserQuota (data) {
+export function updateUserQuota(data) {
   return request({
     method: 'put',
     url: 'UpdateUserQuota',
@@ -18,7 +18,7 @@ export function updateUserQuota (data) {
   })
 }
 
-export function getRank (params) {
+export function getRank(params) {
   return request({
     method: 'get',
     url: 'homepage/report/ranking',
@@ -26,14 +26,14 @@ export function getRank (params) {
   })
 }
 
-export function getTotal () {
+export function getTotal() {
   return request({
     method: 'get',
     url: 'homepage/report/total'
   })
 }
 
-export function getTrend (params) {
+export function getTrend(params) {
   return request({
     method: 'get',
     url: 'homepage/report/trend',

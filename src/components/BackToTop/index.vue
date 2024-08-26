@@ -28,7 +28,8 @@ export default {
           height: '40px',
           'border-radius': '4px',
           'line-height': '45px',
-          background: '#e7eaf1'
+          background: '#3c4c54'
+          // background: '#e7eaf1'
         }
       }
     },

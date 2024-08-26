@@ -269,11 +269,11 @@ export default {
   name: 'ClassificationConfig',
   components: { Echarts },
   filters: {
-    renderRatio (val) {
+    renderRatio(val) {
       return val < 1 ? '0%' : Math.round(val) + '%'
     }
   },
-  data () {
+  data() {
     return {
       modifyResource: {},
       visible: false,
@@ -402,14 +402,14 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     this.init()
   },
   methods: {
-    renderUsedCount (count) {
+    renderUsedCount(count) {
       return Number(count) > 0 ? this.bigNumberTransform(count) : 0
     },
-    getSummaries (param) {
+    getSummaries(param) {
       const { columns, data } = param
       const sums = []
       console.log(columns, 'params', param)
@@ -436,7 +436,7 @@ export default {
 
       return sums
     },
-    init () {
+    init() {
       this.loading = true
       getGlobalCacheConfig().then(res => {
         const { nasResources, maxObjectSize, maxExpires, openCache } = res.data || {}
@@ -484,7 +484,7 @@ export default {
         this.loading = false
       })
     },
-    formatTooltip (val) {
+    formatTooltip(val) {
       // 添加step、处理step显示的容量与百分比
       const {
         realCapacity = '0',
@@ -494,7 +494,7 @@ export default {
       const percentCapacity = this.byteConvert(totalCapacity * val * 0.01)
       return val + '%' + '\r' + '|' + ' ' + percentCapacity
     },
-    handleSizeReq (size, type) {
+    handleSizeReq(size, type) {
       if (type === 'req') {
         // 最小单位h
         return size * 1024 * 1024
@@ -502,7 +502,7 @@ export default {
         return parseInt(size / (1024 * 1024))
       }
     },
-    handleTimeReq (time = 0, type) {
+    handleTimeReq(time = 0, type) {
       if (type === 'req') {
         // 最小单位h
         return time * 3600 * 1000
@@ -510,10 +510,10 @@ export default {
         return parseInt(time / (3600 * 1000))
       }
     },
-    handleCascaderSearch (node, value) {
+    handleCascaderSearch(node, value) {
       return node.text.toLowerCase().indexOf(value.toLowerCase()) > -1
     },
-    renderCapacityRatio (row) {
+    renderCapacityRatio(row) {
       const {
         capacityRatio,
         realCapacity,
@@ -521,14 +521,14 @@ export default {
       } = row
       return capacity === '-1' ? '无上限' : capacityRatio + '%' + ' | ' + realCapacity + ''
     },
-    renderData (obj) {
+    renderData(obj) {
       if (JSON.stringify(obj) === '{}') return []
       else {
         const { percent, title } = obj
         return [{ value: percent ? percent * 100 : '', name: title }]
       }
     },
-    renderOption ({ val, percent }) {
+    renderOption({ val, percent }) {
       const option = {
         series: [
           {
@@ -585,7 +585,7 @@ export default {
             animation: false,
             detail: {
               valueAnimation: false,
-              formatter: function (value) {
+              formatter: function(value) {
                 if (value) {
                   return '{value|' + value.toFixed(0) + '%' + '}' + '\n' + '{data|' + val + '}'
                 } else {
@@ -615,7 +615,7 @@ export default {
       }
       return option
     },
-    editPopover (row) {
+    editPopover(row) {
       this.visible = true
       this.modifyResource = JSON.parse(JSON.stringify(
         Object.assign(this.modifyResource, {
@@ -624,7 +624,7 @@ export default {
         })
       ))
     },
-    getMarks (row) {
+    getMarks(row) {
       const {
         realCapacity = '0',
         capacity
@@ -643,7 +643,7 @@ export default {
       }
       return marks
     },
-    updateResource () {
+    updateResource() {
       const { deviceId, resourceId, cacheMaxSizeRatio } = this.modifyResource
       updateObjectStorageResource({
         deviceId, resourceId, cacheMaxSizeRatio
@@ -657,7 +657,7 @@ export default {
         this.init()
       })
     },
-    confirmApply () {
+    confirmApply() {
       // 百分比 int、size 转换byte、时间转换ms
       this.$refs['modifyForm'].validate((valid) => {
         if (valid) {

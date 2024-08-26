@@ -3,14 +3,27 @@
     <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
-          <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="generateTitle(onlyOneChild.meta.title)" />
+          <!-- <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="generateTitle(onlyOneChild.meta.title)" /> -->
+          <scroll-text v-if="open">
+            <template slot="custom">
+              <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" />
+            </template>
+            {{ generateTitle(onlyOneChild.meta.title) }}
+          </scroll-text>
+          <item v-if="!open" :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="generateTitle(onlyOneChild.meta.title)" />
         </el-menu-item>
       </app-link>
     </template>
 
     <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
       <template slot="title">
-        <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="generateTitle(item.meta.title)" />
+        <scroll-text v-if="item.meta && open">
+          <template slot="custom">
+            <item :icon="item.meta && item.meta.icon" />
+          </template>
+          {{ generateTitle(item.meta.title) }}
+        </scroll-text>
+        <item v-if="item.meta && !open" :icon="item.meta && item.meta.icon" :title="generateTitle(item.meta.title)" />
       </template>
       <sidebar-item
         v-for="child in item.children"
@@ -31,7 +44,6 @@ import { isExternal } from '@/utils/validate'
 import Item from './Item'
 import AppLink from './Link'
 import FixiOSBug from './FixiOSBug'
-
 export default {
   name: 'SidebarItem',
   components: { Item, AppLink },
@@ -56,6 +68,11 @@ export default {
     // TODO: refactor with render function
     this.onlyOneChild = null
     return {}
+  },
+  computed: {
+    open() {
+      return this.$store.getters.sidebar.opened
+    }
   },
   methods: {
     hasOneShowingChild(children = [], parent) {

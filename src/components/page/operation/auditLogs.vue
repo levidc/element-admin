@@ -153,7 +153,7 @@ import { queryPage } from '@/api/auditLogs'
 import moment from 'moment'
 export default {
   name: 'AuditLogs',
-  data () {
+  data() {
     const validEndTime = (rule, data, callback) => {
       if (this.form.startTime > this.form.endTime) {
         return callback(new Error('开始时间不能大于结束时间'))
@@ -182,14 +182,14 @@ export default {
       pageSize: 10
     }
   },
-  mounted () {
+  mounted() {
     this.getTime()
     this.getAuditLoDaTa(1)
   },
   methods: {
-    handleJSON (param) {
+    handleJSON(param) {
       const _this = this
-      function convertJson (jsonString) {
+      function convertJson(jsonString) {
         const json = JSON.parse(jsonString)
         let newJson = {}
         if (Array.isArray(json)) {
@@ -224,7 +224,7 @@ export default {
       }
       return convertJson(param)
     },
-    getTime () {
+    getTime() {
       const date = new Date()
       const year = date.getFullYear()
       const month = (date.getMonth() + 1).toString().padStart(2, '0')
@@ -243,7 +243,7 @@ export default {
       this.form.endTime = EndTime
       this.form.startTime = StartTime
     },
-    getAuditLoDaTa (val) {
+    getAuditLoDaTa(val) {
       this.currentPage = val
       if (this.form.startTime > this.form.endTime || this.form.startTime == null || this.form.endTime == null) return
       this.loading = true
@@ -277,7 +277,7 @@ export default {
         })
       })
     },
-    onReset () {
+    onReset() {
       this.getTime()
       this.form = {
         user: '',
@@ -288,11 +288,11 @@ export default {
 
       this.getAuditLoDaTa(1)
     },
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.pageSize = val
       this.getAuditLoDaTa(1, this.pageSize)
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.currentPage = val
       this.getAuditLoDaTa(this.currentPage)
     }

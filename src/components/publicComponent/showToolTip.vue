@@ -39,7 +39,7 @@ export default {
       default: '100%'
     }
   },
-  data () {
+  data() {
     return {
       style: {},
       showTooltip: true
@@ -47,19 +47,19 @@ export default {
   },
   watch: {
     text: {
-      handler () {
+      handler() {
         this.$nextTick(() => this.checkWidth())
       },
       immediate: true
     }
   },
-  mounted () {
+  mounted() {
     this.style = {
       width: this.width + '!important'
     }
   },
   methods: {
-    checkWidth () {
+    checkWidth() {
       const out = this.$refs['outWidth']
       const outWidth = out.offsetWidth
       const innerWidth = out.childNodes[0].offsetWidth

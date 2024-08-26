@@ -426,7 +426,7 @@ export default {
       default: '按下“enter键”或点击“+”添加'
     }
   },
-  data () {
+  data() {
     return {
       statement: {
         Sid: '',
@@ -467,22 +467,22 @@ export default {
     }
   },
   computed: {
-    routeBucketName () {
+    routeBucketName() {
       return this.$route.params.id
     },
-    conditionSymbolsInfo () {
+    conditionSymbolsInfo() {
       return (this.conditionSymbols || []).reduce((prev, sb) => {
         prev[sb.value] = sb.label
         return prev
       }, {})
     },
-    conditionKeysInfo () {
+    conditionKeysInfo() {
       return (this.conditionKeys || []).reduce((prev, k) => {
         prev[k.value] = k.label
         return prev
       }, {})
     },
-    conditionArr () {
+    conditionArr() {
       return Object.keys(this.statement.Condition || {}).map(sb => ({
         key: sb,
         label: this.conditionSymbolsInfo[sb] || sb,
@@ -495,42 +495,42 @@ export default {
       }))
     },
     isUserNameAll: {
-      get () {
+      get() {
         return this.resource.userName == '*' && !this.focus.userName
       },
-      set (val) {
+      set(val) {
         if (val) this.resource.userName = '*'
         else this.resource.userName = ''
       }
     },
     isBucketNameAll: {
-      get () {
+      get() {
         return this.resource.bucketName == '*' && !this.focus.bucketName
       },
-      set (val) {
+      set(val) {
         if (val) this.resource.bucketName = '*'
         else this.resource.bucketName = ''
       }
     },
     isKeyNameAll: {
-      get () {
+      get() {
         return this.resource.keyName == '*' && !this.focus.keyName
       },
-      set (val) {
+      set(val) {
         if (val) this.resource.keyName = '*'
         else this.resource.keyName = ''
       }
     },
-    permissionGroup () {
+    permissionGroup() {
       return this.permissionGroupList.find(g => g.id == this.permissionGroupId) || {}
     }
   },
   watch: {
-    value () {
+    value() {
       this.refreshStatement()
     }
   },
-  mounted () {
+  mounted() {
     this.copyConditionSymbols = JSON.parse(JSON.stringify(this.conditionSymbols))
     if (!this.hidePrincipal) {
       // 桶名称 默认先展示当前桶
@@ -542,7 +542,7 @@ export default {
     this.initActionState()
   },
   methods: {
-    refreshStatement () {
+    refreshStatement() {
       this.statement = {
         ...this.statement,
         ...this.value,
@@ -554,7 +554,7 @@ export default {
         Condition: this.value.Condition || {}
       }
     },
-    handleAddPrincipalItem () {
+    handleAddPrincipalItem() {
       const reg = /^[0-9a-zA-Z-_/:*.]+$/
       const val = this.principal.val.trim()
       if (!val) {
@@ -574,7 +574,7 @@ export default {
       this.principal.val = ''
       this.emitChange()
     },
-    handleDelPrincipalItem (index) {
+    handleDelPrincipalItem(index) {
       const pri = this.statement.Principal[index]
       this.$confirm(`您确定要删除 <b style="color:#ff8746"> ${pri}</b> 吗？`, '确认删除', {
         confirmButtonText: '确定',
@@ -589,7 +589,7 @@ export default {
         })
         .catch(() => { })
     },
-    handleChangeResourceType (val) {
+    handleChangeResourceType(val) {
       if (val) {
         const resAll = `${this.resource.prepend}::${this.routeBucketName}/*`
         this.ResourceBack = [...this.statement.Resource]
@@ -601,7 +601,7 @@ export default {
       this.statement.Resource.splice()
       this.emitChange()
     },
-    handleAddResourceItem () {
+    handleAddResourceItem() {
       // const reg = /^[0-9a-zA-Z-_.?*]+$/
       const resource = {
         region: this.resource.region.trim(),
@@ -652,7 +652,7 @@ export default {
     //   //   this.isshow = false
     //   // }
     // },
-    handleChangeBucketResourceItem (idx, resource, target) {
+    handleChangeBucketResourceItem(idx, resource, target) {
       resource = { ...this.resource, ...resource }
       if (!resource.keyName) {
         this.handleDelResourceItem(idx)
@@ -665,7 +665,7 @@ export default {
       this.statement.Resource.splice()
       this.emitChange()
     },
-    handleAddBucketResourceItem (resource, target) {
+    handleAddBucketResourceItem(resource, target) {
       this.resource = { ...this.resource, ...resource }
       if (!this.resource.keyName) {
         this.$message.error('请填写资源')
@@ -675,7 +675,7 @@ export default {
         target.clearKeyName()
       }
     },
-    handleDelResourceItem (index, target = undefined) {
+    handleDelResourceItem(index, target = undefined) {
       const res = this.statement.Resource[index]
       this.$confirm(`您确定要删除 <b style="color:#ff8746">${res}</b> 吗？`, '确认删除', {
         confirmButtonText: '确定',
@@ -692,11 +692,11 @@ export default {
           if (target) target.refreshResource()
         })
     },
-    checkResourceSame (idx) {
+    checkResourceSame(idx) {
       console.log(idx, 'wwwww')
       return (this.statement.Resource || []).some((r, i) => r == (this.statement.Resource[idx] || '') && i != idx)
     },
-    filterSymbol (val) {
+    filterSymbol(val) {
       this.condition.symbol = ''
       this.condition.val = ''
       if (val === 'aws:SourceIp') {
@@ -709,7 +709,7 @@ export default {
         })
       }
     },
-    handleAddConditionItem () {
+    handleAddConditionItem() {
       let reg = /^[0-9a-zA-Z-_/]+$/
       if (!this.condition.key) {
         this.$message.error('请选择项目')
@@ -745,7 +745,7 @@ export default {
       this.condition.val = ''
       this.emitChange()
     },
-    handleDelConditiionItem (symbol, key) {
+    handleDelConditiionItem(symbol, key) {
       this.$confirm(`您确定要删除当前的条件吗？`, '确认删除', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -763,17 +763,17 @@ export default {
         })
         .catch(() => { })
     },
-    searchUserNames (queryStr, cb) {
+    searchUserNames(queryStr, cb) {
       listUserNames(queryStr).then(res => {
         cb((res.data || []).map(n => ({ value: n })))
       })
     },
-    searchBucketNames (queryStr, cb) {
+    searchBucketNames(queryStr, cb) {
       listBucketNames(queryStr).then(res => {
         cb((res.data || []).map(n => ({ value: n })))
       })
     },
-    loadPermissionGroups () {
+    loadPermissionGroups() {
       if (this.permissionGroupList && this.permissionGroupList.length) {
         this.initActionState()
         return
@@ -785,7 +785,7 @@ export default {
         })
       }
     },
-    initResourceState () {
+    initResourceState() {
       if (this.routeBucketName) {
         const resAll = `${this.resource.prepend}::${this.routeBucketName}/*`
         if (
@@ -801,7 +801,7 @@ export default {
         this.isResourceAll = false
       }
     },
-    initActionState () {
+    initActionState() {
       if (!this.routeBucketName) return
       const group = this.findGroupFromPermissions(this.statement)
       this.isActionGroup = ((this.permissionGroupList.length > 0 && group) || (this.statement.Action && this.statement.Action.length <= 0)) ? 1 : 0
@@ -811,7 +811,7 @@ export default {
         this.permissionGroupId = ''
       }
     },
-    changeActionState (isGroup) {
+    changeActionState(isGroup) {
       if (isGroup) {
         const group = this.findGroupFromPermissions(this.statement)
         this.permissionGroupId = (group || this.permissionGroupList[0] || {}).id || ''
@@ -823,38 +823,38 @@ export default {
       }
       this.emitChange()
     },
-    changePermissionGroup (id) {
+    changePermissionGroup(id) {
       this.permissionGroupId = id
       this.refreshActionFromGroupPermission()
       this.emitChange()
     },
-    refreshActionFromGroupPermission () {
+    refreshActionFromGroupPermission() {
       if (!this.permissionGroupId) return
       const gp = this.permissionGroupList.find(g => g.id == this.permissionGroupId) || {}
       this.statement.Effect = gp.allow ? 'Allow' : 'Deny'
       this.statement.Action = [...((gp.permissions || '').split(','))]
     },
-    findGroupFromPermissions (statement) {
+    findGroupFromPermissions(statement) {
       return this.permissionGroupList.find(pg => this.isArrValSame(pg.permissions.split(','), statement.Action) && (pg.allow ? 'Allow' : 'Deny') == statement.Effect)
     },
-    isArrValSame (arr1, arr2) {
+    isArrValSame(arr1, arr2) {
       arr1 = arr1 || []
       arr2 = arr2 || []
       if (arr1.length != arr2.length) return false
       const arr = [...(new Set([...arr1, ...arr2]))]
       return arr.length == arr1.length
     },
-    emitChange () {
+    emitChange() {
       this.$emit('input', this.deepClone(this.statement))
       this.$emit('change', this.deepClone(this.statement))
     },
-    deepClone (obj) {
+    deepClone(obj) {
       return JSON.parse(JSON.stringify(obj))
     },
-    shotResource (res) {
+    shotResource(res) {
       return (res || '').substring(13)
     },
-    shotResourceBucketName (res) {
+    shotResourceBucketName(res) {
       const shot = this.shotResource(res)
       return shot.substring(0, shot.indexOf('/'))
     }

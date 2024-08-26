@@ -180,13 +180,13 @@ import {
 } from '@/api/storage'
 export default {
   filters: {
-    precisionNum (val) {
+    precisionNum(val) {
       if (!val) return '0'
       const reg = /\B(?=(\d{3})+(?!\d))/g
       return String(val).replace(reg, ',')
     }
   },
-  data () {
+  data() {
     const checkLogicSize = (rule, data, callback) => {
       console.log(data, 'wws')
 
@@ -285,17 +285,17 @@ export default {
     }
   },
   computed: {
-    convertSize () {
+    convertSize() {
       return this.byteConvert(this.bucket.useSize)
     }
   },
-  mounted () {
+  mounted() {
     this.gettGateway()
   },
-  destroyed () {
+  destroyed() {
   },
   methods: {
-    changelogicUnit (val) {
+    changelogicUnit(val) {
       if (val == 'bytes') {
         this.form.bucketLogicSize = ''
       } else if (val == 'KB') {
@@ -308,7 +308,7 @@ export default {
         this.form.bucketLogicSize = ''
       }
     },
-    gettGateway () {
+    gettGateway() {
       if (localStorage.getItem('isHtGateway') == 'true') {
         this.gateWaySwitch = false
         this.flage = true
@@ -330,7 +330,7 @@ export default {
         })
       }
     },
-    changeSwitch () {
+    changeSwitch() {
       this.flage = !this.flage
       UpdateBucketQuota({
         bucketName: this.$route.params.id,
@@ -344,7 +344,7 @@ export default {
         console.error(err)
       })
     },
-    changeLimtCount (data, type) {
+    changeLimtCount(data, type) {
       if (type == 'count') {
         !data ? this.bucket.logicCount < 0 ? this.form.bucketLogicCount = '' : null : null
       } else if (type == 'size') {
@@ -352,7 +352,7 @@ export default {
       }
     },
 
-    covertByte (num, range) {
+    covertByte(num, range) {
       switch (range) {
         case 'bytes':
           return num * 1
@@ -366,7 +366,7 @@ export default {
           return num * 1024 ** 4
       }
     },
-    doSave () {
+    doSave() {
       UpdateBucketQuota({
         bucketName: this.$route.params.id,
         openStatic: true
@@ -382,11 +382,11 @@ export default {
       })
       // this.openStatic
     },
-    cancelSave () {
+    cancelSave() {
       this.getBucketStatic()
       this.editQuota = false
     },
-    SetBucketQuota () {
+    SetBucketQuota() {
       this.editQuota = true
       // const value = this.byteConvertImpl(this.bucket.logicSize)
       this.form.bucketLogicCount = this.bucket.logicCount
@@ -398,7 +398,7 @@ export default {
         this.form.logicUnit = this.byteConvertImpl(this.bucket.logicSize, this.symbols)[1]
       }
     },
-    getBucketStatic () {
+    getBucketStatic() {
       // 初始化 获取开关
       this.editQuotaControl = false
       this.loading = true
@@ -436,7 +436,7 @@ export default {
           this.loading = false
         })
     },
-    setQuota () {
+    setQuota() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           // console.log(valid)

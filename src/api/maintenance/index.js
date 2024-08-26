@@ -1,5 +1,5 @@
 import request from '../request'
-export function addManualObjectCleanUp (data) {
+export function addManualObjectCleanUp(data) {
   return request({
     method: 'post',
     url: 'addManualObjectCleanUp',
@@ -7,7 +7,7 @@ export function addManualObjectCleanUp (data) {
   })
 }
 
-export function getTaskList (params) {
+export function getTaskList(params) {
   return request({
     method: 'get',
     url: 'getTaskList',

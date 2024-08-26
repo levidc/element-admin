@@ -234,7 +234,7 @@ import {
   removeAccessCredential
 } from '@/api/accessCredential'
 export default {
-  data () {
+  data() {
     const checkKeyReg = (rule, data, callback) => {
       const reg = /^[0-9a-zA-Z]{10,40}$/
       if (!reg.test(data)) {
@@ -322,7 +322,7 @@ export default {
     }
   },
   computed: {
-    pageTable () {
+    pageTable() {
       return this.tableData.slice(
         (this.currentPage - 1) * this.pageSize,
         this.currentPage * this.pageSize
@@ -330,7 +330,7 @@ export default {
     }
   },
   watch: {
-    searchVal (val) {
+    searchVal(val) {
       this.tableData = [...this.cloneData]
       this.total = this.tableData.length
       this.currentPage = 1
@@ -340,39 +340,39 @@ export default {
       })
       this.total = this.tableData.length
     },
-    serviceDialog (val) {
+    serviceDialog(val) {
       if (!val) {
         this.serviceCreateDone = false
         this.serviceForm.credentials = false
         this.serviceForm.policy = false
       }
     },
-    passwordDialog (val) {
+    passwordDialog(val) {
       if (!val) {
         this.$refs['modifyForm'].resetFields()
       }
     }
   },
-  mounted () {
+  mounted() {
     this.listAccounts()
   },
   methods: {
-    ownerStr (row) {
+    ownerStr(row) {
       // 含有多个拥有者
       return row.ownerUser
     },
-    validateReg (val) {
+    validateReg(val) {
       // var reg = /[`~!@#$%^&*()_\-+=<>?:"{}|,.\/;'\\[\]·~！@#￥%……&*（）——\-+={}|《》？：“”【】、；‘'，。、]/im
       var reg = /[~!@#$%^&*()-+={}\[\]、:;'"<>?,\|.\/\\]/
       if (reg.test(val)) {
         console.log('errorr')
       }
     },
-    deleteAccount (row) {
+    deleteAccount(row) {
       this.deleteFlag = true
       this.selectAccount = row.key
     },
-    confirmDelete () {
+    confirmDelete() {
       const accessKeyList = [this.selectAccount]
       removeAccessCredential({
         accessKeyList,
@@ -389,21 +389,21 @@ export default {
           this.listAccounts()
         })
     },
-    openModDialog (row) {
+    openModDialog(row) {
       this.modDialog = true
       this.jsonString = JSON.parse(row.policy)
     },
-    cancelMod () {
+    cancelMod() {
       this.modDialog = false
     },
-    copyCode (data) {
+    copyCode(data) {
       navigator.clipboard.writeText(data)
       this.$ts({
         type: 'success',
         text: '复制成功'
       })
     },
-    modPolicy () {
+    modPolicy() {
       // if() valida
       var json = this.$refs['jsonEditor'].editor.getText()
       var type = Object.prototype.toString.call(JSON.parse(json || '{}'))
@@ -420,7 +420,7 @@ export default {
       }
       console.log('success')
     },
-    listAccounts () {
+    listAccounts() {
       this.loading = true
       listAccessCredentials()
         .then(res => {
@@ -435,17 +435,17 @@ export default {
           this.loading = false
         })
     },
-    clearServiceValidate () {
+    clearServiceValidate() {
       this.$nextTick(() => {
         this.serviceForm.accessKey = ''
         this.serviceForm.secretKey = ''
         this.$refs['serviceForm'].resetFields()
       })
     },
-    eslintJson () {
+    eslintJson() {
       this.$refs['jsonEditor'].editor.format()
     },
-    copyJSON () {
+    copyJSON() {
       var str = this.$refs['jsonEditor'].editor.getText()
       navigator.clipboard.writeText(str)
       this.$ts({
@@ -453,7 +453,7 @@ export default {
         text: '复制成功'
       })
     },
-    downloadSecretAccount () {
+    downloadSecretAccount() {
       // {"console":[{"url":"undefined","access_key":"aptx789","secret_key":"policyTable123","api":"s3v4","path":"auto"}]}
       const json = {
         console: [
@@ -476,7 +476,7 @@ export default {
       Link.click()
       document.body.removeChild(Link)
     },
-    createServiceAccount () {
+    createServiceAccount() {
       // json 正确的值 {}包裹的 json 字符串
       // 若空值或空对象则正确
       // Object.prototype.toString.call({})
@@ -523,10 +523,10 @@ export default {
         }
       })
     },
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.pageSize = val
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.currentPage = val
     }
   }

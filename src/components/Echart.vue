@@ -31,7 +31,7 @@ export default {
       default: '100%'
     }
   },
-  data () {
+  data() {
     return {
       echart: null,
       elMain: null,
@@ -39,36 +39,36 @@ export default {
     }
   },
   computed: {
-    option () {
-      const option = { ...this.options || {} }
+    option() {
+      const option = { ...this.options || {}}
       option.series = Object.assign(option.series || {}, { width: this.width, height: this.height })
       return option
     }
   },
   watch: {
-    option () {
+    option() {
       this.echart && this.echart.setOption(this.option || {})
     },
-    datas () {
+    datas() {
       this.setData()
     }
   },
-  mounted () {
+  mounted() {
     this.init()
     window.addEventListener('resize', this.resizeHandler)
     this.elMain = document.getElementsByClassName('el-main')[0]
     this.elMain && this.elMain.addEventListener('transitionend', this.contentResizeHandler)
   },
-  activated () {
+  activated() {
     this.echart && this.echart.resize()
   },
-  beforeDestroy () {
+  beforeDestroy() {
     window.removeEventListener('resize', this.resizeHandler)
     this.elMain && this.elMain.removeEventListener('transitionend', this.contentResizeHandler)
     this.elMain = null
   },
   methods: {
-    init () {
+    init() {
       if (!this.echart && this.$refs.echart) {
         this.echart = this.$echarts.init(this.$refs.echart)
         if (this.echart) {
@@ -80,7 +80,7 @@ export default {
         }
       }
     },
-    setData () {
+    setData() {
       this.echart && this.echart.setOption({ series: [{ data: JSON.parse(JSON.stringify(this.datas)) }] })
       // setTimeout(() => {
       //   this.echart?.dispatchAction({
@@ -89,17 +89,17 @@ export default {
       //   })
       // })
     },
-    onClick (e) {
+    onClick(e) {
       this.$emit('click', e)
     },
-    resizeHandler () {
+    resizeHandler() {
       if (this.resizeTimer > 0) clearTimeout(this.resizeTimer)
       this.resizeTimer = setTimeout(() => {
         this.echart && this.echart.resize()
         this.resizeTimer = 0
       }, 100)
     },
-    contentResizeHandler (e) {
+    contentResizeHandler(e) {
       if (e.propertyName === 'width') {
         this.resizeHandler()
       }

@@ -141,7 +141,7 @@
     <!-- 对象详情页 -->
     <!-- <ObjectDetail v-if="showFileConfig" type="content" /> -->
     <el-dialog
-      v-dialogDrag
+
       title="添加标签"
       :visible.sync="isAddInfo"
       width="800px"
@@ -254,7 +254,7 @@
       </el-row>
     </el-dialog>
     <el-dialog
-      v-dialogDrag
+
       title="权限设置"
       :visible.sync="isSetAccess"
       width="800px"
@@ -474,7 +474,7 @@
       </div>
     </el-dialog>
     <el-dialog
-      v-dialogDrag
+
       title="重命名对象"
       :visible.sync="isRenameFile"
       width="550px"
@@ -771,7 +771,7 @@ export default {
       }
       // console.log('%c StartAfter', 'color:lime;font-size:20px')
       // console.log(this.StartAfter)
-      this.$store.state._S3.listObjectsV2(params, (err, data) => {
+      this.$store.state.user._S3.listObjectsV2(params, (err, data) => {
         if (err) {
           if (err.code === 'NoSuchBucket') {
             this.$router.push({ name: 'Bucket' })

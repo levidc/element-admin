@@ -119,7 +119,7 @@ export default {
     JsonViewer,
     Strategy
   },
-  data () {
+  data() {
     return {
       editConfig: false,
       jsonString: '',
@@ -136,17 +136,17 @@ export default {
     }
   },
   watch: {
-    editConfig (val) {
+    editConfig(val) {
       if (val) {
         this.getAction()
       }
     }
   },
-  mounted () {
+  mounted() {
     this.getBucketPolicy()
   },
   methods: {
-    getAction () {
+    getAction() {
       this.loading = true
       ActionList()
         .then(res => {
@@ -185,9 +185,9 @@ export default {
           this.loading = false
         })
     },
-    getBucketPolicy () {
+    getBucketPolicy() {
       this.loading = true
-      this.$store.state._S3.getBucketPolicy(
+      this.$store.state.user._S3.getBucketPolicy(
         {
           Bucket: this.$route.params.id
         },
@@ -264,13 +264,13 @@ export default {
         }
       )
     },
-    deletePolicy () {
+    deletePolicy() {
       this.$confirm('删除当前存储桶的策略', {
         confirmButtonText: '删除',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$store.state._S3.deleteBucketPolicy(
+        this.$store.state.user._S3.deleteBucketPolicy(
           {
             Bucket: this.$route.params.id
           },
@@ -292,7 +292,7 @@ export default {
         )
       })
     },
-    submitCreate () {
+    submitCreate() {
       // str 空值为'',空{}为json字符串,保证最基本有效的校验
       // const str = this.$refs['jsonEditor'].editor.getText()
       // const isValid = Object.keys(JSON.parse(str || '{}')).length
@@ -309,7 +309,7 @@ export default {
       //   })
       // } else {
 
-      this.$store.state._S3.putBucketPolicy(
+      this.$store.state.user._S3.putBucketPolicy(
         {
           Bucket: this.$route.params.id,
           Policy: JSON.stringify(this.jsonString)
@@ -332,12 +332,12 @@ export default {
         }
       )
     },
-    editPolicy () {
+    editPolicy() {
       // 切换编辑
       this.editConfig = !this.editConfig
       this.editable = true
     },
-    async onSave () {
+    async onSave() {
       for (let i = 0; i < this.strategy.Statement.length; i++) {
         try {
           if (!this.strategy.Statement[i].Principal.length) {

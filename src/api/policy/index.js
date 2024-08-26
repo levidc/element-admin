@@ -1,7 +1,7 @@
 import request from '../request'
 
 // 创建策略
-export function createPolicy ({ data, params }) {
+export function createPolicy({ data, params }) {
   return request({
     method: 'post',
     url: 'createPolicy',
@@ -11,7 +11,7 @@ export function createPolicy ({ data, params }) {
 }
 
 // 删除策略
-export function deletePolicy (params) {
+export function deletePolicy(params) {
   return request({
     method: 'post',
     url: 'deletePolicy',
@@ -20,7 +20,7 @@ export function deletePolicy (params) {
 }
 
 // 获取策略
-export function getPolicy () {
+export function getPolicy() {
   return request({
     method: 'get',
     url: 'getPolicy'
@@ -28,7 +28,7 @@ export function getPolicy () {
 }
 
 // 设置用户或组策略
-export function setUserOrGroupPolicy (data) {
+export function setUserOrGroupPolicy(data) {
   return request({
     method: 'post',
     url: 'setUserOrGroupPolicy',
@@ -36,28 +36,28 @@ export function setUserOrGroupPolicy (data) {
   })
 }
 
-export function ActionList () {
+export function ActionList() {
   return request({
     method: 'get',
     url: 'ActionList'
   })
 }
 
-export function getPermission () {
+export function getPermission() {
   return request({
     method: 'get',
     url: 'GetPermission'
   })
 }
 
-export function listAllPermissionGroup () {
+export function listAllPermissionGroup() {
   return request({
     method: 'get',
     url: 'listAllPermissionGroup'
   })
 }
 
-export function updatePermissionGroup (data) {
+export function updatePermissionGroup(data) {
   return request({
     method: 'post',
     url: 'updatePermissionGroup',
@@ -65,7 +65,7 @@ export function updatePermissionGroup (data) {
   })
 }
 
-export function getPermissionGroup (params) {
+export function getPermissionGroup(params) {
   return request({
     method: 'get',
     url: 'getPermissionGroup',
@@ -73,7 +73,7 @@ export function getPermissionGroup (params) {
   })
 }
 
-export function deletePermissionGroup (params) {
+export function deletePermissionGroup(params) {
   return request({
     method: 'post',
     url: 'deletePermissionGroup',
@@ -81,7 +81,7 @@ export function deletePermissionGroup (params) {
   })
 }
 
-export function listUsersByUserPolicy (params) {
+export function listUsersByUserPolicy(params) {
   return request({
     method: 'get',
     url: 'listUsersByUserPolicy',

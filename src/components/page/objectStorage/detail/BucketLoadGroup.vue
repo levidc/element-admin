@@ -96,7 +96,7 @@ export default {
   name: 'BucketList',
   components: {},
   filters: {},
-  data () {
+  data() {
     return {
       disableDefault: true,
       bucketId: '',
@@ -113,19 +113,19 @@ export default {
     }
   },
   computed: {
-    bucketName () {
+    bucketName() {
       return this.$route.params.id
     },
-    filterLoadGroupList () {
+    filterLoadGroupList() {
       return this.loadGroupList.filter(x => x.options.length)
     }
   },
-  mounted () {
+  mounted() {
     this.getConfig()
   },
-  destroyed () { },
+  destroyed() { },
   methods: {
-    getConfig () {
+    getConfig() {
       this.loading = true
       listUserBuckets().then((res) => {
         this.buckets = res.data.list || []
@@ -195,7 +195,7 @@ export default {
           })
       })
     },
-    saveConfig () {
+    saveConfig() {
       this.loading = true
       const loadGroupConfig = {}
       if (this.editForm.editLoadGroup.groupTag === 'DATA') {

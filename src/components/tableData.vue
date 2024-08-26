@@ -97,9 +97,9 @@ export default {
       type: Function,
       default: () => { }
     },
-    expandChange:{
-      type:Function,
-      default:()=>{}
+    expandChange: {
+      type: Function,
+      default: () => {}
     },
     filterChange: {
       type: Function,
@@ -118,7 +118,7 @@ export default {
       default: () => false
     }
   },
-  data () {
+  data() {
     return {
       currentPage: 1,
       pageSize: 10
@@ -136,12 +136,12 @@ export default {
   //     },
   //   },
   // },
-  mounted () {
+  mounted() {
     this.pageSize = this.pageObj.pageSize
     this.currentPage = this.pageObj.currentPage
   },
   methods: {
-    showColumn (col) {
+    showColumn(col) {
       if (!col.show) {
         return false
       } else if (!col.slot) {
@@ -150,7 +150,7 @@ export default {
         return true
       }
     },
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       // 切换显示数、重置页数1
       this.currentPage = 1
       this.pageSize = val
@@ -158,15 +158,15 @@ export default {
       this.$emit('renderPagination', { pageSize: this.pageSize, pageNumber: this.currentPage })
     },
     // 当前页改变时触发 跳转其他页
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.currentPage = val
       this.$emit('clearSelection')
       this.$emit('renderPagination', { pageSize: this.pageSize, pageNumber: this.currentPage })
     },
-    next (val) {
+    next(val) {
       console.log(val, '22222')
     },
-    back (val) {
+    back(val) {
       console.log(val, '11111')
     }
 

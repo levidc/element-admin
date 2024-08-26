@@ -180,7 +180,7 @@ export default {
     QuickDefault
   },
   filters: {},
-  data () {
+  data() {
     const checkBandWidth = (rule, data, callback) => {
       // const numberReg = /^\d+$|^\d+[.]?\d+$/
       if (data == '') {
@@ -210,11 +210,11 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     this.init()
   },
   methods: {
-    init () {
+    init() {
       this.loading = true
       this.edit = true
       getBucketQos({ bucketName: this.$route.params.id }).then((res) => {
@@ -240,7 +240,7 @@ export default {
           this.loading = false
         })
     },
-    doSave () {
+    doSave() {
       this.$refs['ruleForm'].validate(valid => {
         if (valid) {
           const {

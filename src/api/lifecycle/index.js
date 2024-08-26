@@ -1,7 +1,7 @@
 import request from '../request'
 // 获取物理/生命周期规则
 
-export function getBucketRule (params) {
+export function getBucketRule(params) {
   return request({
     method: 'get',
     url: 'lifecycle/bucket/search',
@@ -10,7 +10,7 @@ export function getBucketRule (params) {
 }
 
 // 配置开关
-export function setRuleOpen (params) {
+export function setRuleOpen(params) {
   return request({
     method: 'post',
     url: 'lifecycle/rule/open',
@@ -18,7 +18,7 @@ export function setRuleOpen (params) {
   })
 }
 
-export function getRule (data) {
+export function getRule(data) {
   return request({
     method: 'post',
     url: 'lifecycle/rule/search',
@@ -26,7 +26,7 @@ export function getRule (data) {
   })
 }
 
-export function updateRule (data) {
+export function updateRule(data) {
   return request({
     method: 'post',
     url: 'lifecycle/rule/update',
@@ -35,7 +35,7 @@ export function updateRule (data) {
 }
 
 // 获取任务详情
-export function getTaskDetail (data) {
+export function getTaskDetail(data) {
   return request({
     method: 'post',
     url: 'lifecycle/task/detail',
@@ -44,7 +44,7 @@ export function getTaskDetail (data) {
 }
 
 // 获取任务列表
-export function getTaskList (params, data) {
+export function getTaskList(params, data) {
   return request({
     method: 'post',
     url: 'lifecycle/task/search',
@@ -54,7 +54,7 @@ export function getTaskList (params, data) {
 }
 
 // 更新任务
-export function updateTaskStatus (data) {
+export function updateTaskStatus(data) {
   return request({
     method: 'post',
     url: 'lifecycle/task/statusChange',

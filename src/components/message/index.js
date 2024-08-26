@@ -8,6 +8,7 @@ import draggable from 'vuedraggable'
 import DataTable from '@/components/publicComponent/tableData'
 import showToolTip from '@/components/publicComponent/showToolTip'
 import selectStatus from '@/components/selectStatus'
+import scrollText from '../scrollText.vue'
 const components = {
   'vueJsonEditor': vueJsonEditor,
   'JsonViewer': JsonViewer,
@@ -18,10 +19,11 @@ const components = {
   'DataTable': DataTable,
   'showToolTip': showToolTip,
   'SelectStatus': selectStatus,
+  'scrollText': scrollText
 }
 export default {
-  install (Vue) {
-    Vue.prototype.$ts = messageBox
+  install(Vue) {
+    Vue.prototype.$msg = messageBox
     for (const name in components) {
       Vue.component(name, components[name])
     }

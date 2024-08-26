@@ -57,7 +57,7 @@
         </el-table-column>
         <el-table-column slot="storageStatus" label="存储状态" prop="storageStatus" type="expand" width="300">
           <template slot-scope="scope">
-            <el-table :data="scope.row.statusList" v-loading="scope.row.loading" style="position: relative;left: 50%; width: 50%;">
+            <el-table v-loading="scope.row.loading" :data="scope.row.statusList" style="position: relative;left: 50%; width: 50%;">
               <el-table-column prop="gatewayAddress" />
               <el-table-column prop="gatewayStatus" label="服务状态" align="center">
                 <template slot-scope="row">
@@ -78,8 +78,13 @@
                     <span class="red" type="text">
                       资源异常
                     </span>
-                    <el-popover popper-class="text-wrap" placement="top-start" title="异常详情" trigger="hover"
-                      :content="String(row.row.resourceStatus).trim()">
+                    <el-popover
+                      popper-class="text-wrap"
+                      placement="top-start"
+                      title="异常详情"
+                      trigger="hover"
+                      :content="String(row.row.resourceStatus).trim()"
+                    >
                       <i slot="reference" class="fa fa-question-circle" />
                     </el-popover>
                   </span>
@@ -311,7 +316,7 @@ import {
 } from '@/api/storage'
 import { validBucketName, validateMaxInt } from '@/utils/validate'
 export default {
-  data () {
+  data() {
     return {
       timer: null,
       refreshId: [],
@@ -477,35 +482,35 @@ export default {
     }
   },
   computed: {
-    isAdd () {
+    isAdd() {
       return this.opType === 'add'
     },
-    renderDel () {
+    renderDel() {
       return this.opType === 'del'
     },
     ...mapState(['api'])
   },
   watch: {
-    modelFormFlag (val) {
+    modelFormFlag(val) {
       if (val) {
         clearTimeout(this.timer)
       } else {
         this.init(true)
       }
     },
-    'form.storageType': function (val) {
+    'form.storageType': function(val) {
       if (val === 'GLACIER') {
         this.form.nasAdvancedConfig = false
         this.$refs['form'].clearValidate()
       }
     },
-    deleteFlag (val) {
+    deleteFlag(val) {
       if (!val) {
         this.opType = 'add'
         this.optDType = 'add'
       }
     },
-    filterText (val) {
+    filterText(val) {
       this.tableData = JSON.parse(JSON.stringify(this.copyData))
       if (!val) {
         this.init(true)
@@ -516,19 +521,19 @@ export default {
       this.tableData = this.tableData.filter(item => item.storageName.toLowerCase().indexOf(val.toLowerCase()) > -1)
     }
   },
-  mounted () {
+  mounted() {
     this.init(true)
   },
-  destroyed () {
+  destroyed() {
     clearTimeout(this.timer)
   },
   methods: {
-    storageTypeEnu(key){
+    storageTypeEnu(key) {
       switch (key) {
         case 'OK':
           return '连接正常'
         case 'NULL':
-         return '未检测'
+          return '未检测'
       }
       // {
       //   'OK': '连接正常',
@@ -544,7 +549,7 @@ export default {
       //   // 'REMOUNT': '重新挂载中'
       // },
     },
-    expandChange (val, param) {
+    expandChange(val, param) {
       // params为空则恢复定时器
       if (param.length) {
         clearTimeout(this.timer)
@@ -566,15 +571,15 @@ export default {
         }, 4000)
       }
     },
-    transByteToGB (data) {
+    transByteToGB(data) {
       // ByteToGB、
       const res = (Number(data) / 1024 ** 3).toFixed(2)
       return res == 0 ? 0 : res
     },
-    rendeKey (row) {
+    rendeKey(row) {
       return row.resourceId
     },
-    handleDel (type, { row }) {
+    handleDel(type, { row }) {
       if (type === 'object') {
         this.opType = 'del'
       }
@@ -582,12 +587,12 @@ export default {
       this.selectRow = row
       this.deleteFlag = true
     },
-    sortFunction (val) {
+    sortFunction(val) {
       this.prop = val.prop
       this.order = val.order
       this.tableData.sort(this.sortMethod(val.prop, val.order))
     },
-    init (flag = false) {
+    init(flag = false) {
       if (flag) {
         this.loading = true
       }
@@ -598,7 +603,7 @@ export default {
         this.tableData = (res.data || []).filter(item => {
           // return item.storageType === 'GLACIER'
           return item
-        }).map(x=>{
+        }).map(x => {
           // 初始化绑定渲染状态list数据
           x.statusList = []
           x.loading = false
@@ -613,7 +618,7 @@ export default {
         this.loading = false
       })
     },
-    updateForm (row, flag = false) {
+    updateForm(row, flag = false) {
       this.opType = 'update'
       Object.assign(this.form, { ...row, defaultV: row.default, mountDir: row.bucketName })
       this.copyForm = JSON.parse(JSON.stringify(this.form))
@@ -621,13 +626,13 @@ export default {
         this.modelFormFlag = true
       }
     },
-    dialogOpen (e) {
+    dialogOpen(e) {
       const ipt = e
-      this.$nextTick(function () {
+      this.$nextTick(function() {
         this.$refs[ipt].$el.querySelector('input').focus()
       })
     },
-    showCreate (cName, id = '') {
+    showCreate(cName, id = '') {
       if (cName === 'object') {
         this.opType = 'add'
         this.modelFormFlag = true
@@ -658,7 +663,7 @@ export default {
         })
       }
     },
-    deleteForm () {
+    deleteForm() {
       if (this.renderDel) {
         const { resourceId, deviceId } = this.selectRow
         removeObjectStorageResource({
@@ -696,7 +701,7 @@ export default {
         })
       }
     },
-    confirmCreate () {
+    confirmCreate() {
       this.$refs['form'].validate((valid) => {
         const {
           userName,

@@ -128,7 +128,7 @@ export default {
   height: 24px;
   line-height: 24px;
   div{
-    background: url('../../../assets//components/message_icon.png') no-repeat;
+    background-image:  url('../../../assets//components/message_icon.png');
   }
 }
 .mei-message-con {

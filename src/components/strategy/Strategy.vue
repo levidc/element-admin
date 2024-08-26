@@ -135,7 +135,7 @@ export default {
       default: false
     }
   },
-  data () {
+  data() {
     return {
       strategy: {
         name: '',
@@ -145,29 +145,29 @@ export default {
     }
   },
   computed: {
-    currentName () {
+    currentName() {
       if (this.$route.params.name == undefined || this.$route.params.name == 'create') return
       return this.$route.params.name
     }
   },
 
   watch: {
-    value () {
+    value() {
       this.refreshStrategy()
     }
   },
-  mounted () {
+  mounted() {
     this.refreshStrategy()
   },
   methods: {
-    refreshStrategy () {
+    refreshStrategy() {
       this.strategy = {
         ...this.value,
         name: this.value.name || '',
         Statement: this.value.Statement || []
       }
     },
-    getEmptyStatement () {
+    getEmptyStatement() {
       return {
         Sid: '',
         Effect: 'Allow',
@@ -177,13 +177,13 @@ export default {
         Condition: {}
       }
     },
-    onAddNewStatement () {
+    onAddNewStatement() {
       const index = this.strategy.Statement.length
       this.$set(this.strategy.Statement, index, this.getEmptyStatement())
       this.statementOpen = [index]
       this.emitChange()
     },
-    onDelStatement (index) {
+    onDelStatement(index) {
       // console.log(index, 'index')
       this.$confirm(`您确定要删除 <b style="color:#ff8746">配置${index + 1}</b> 吗？`, '确认删除', {
         confirmButtonText: '确定',
@@ -198,27 +198,27 @@ export default {
         .catch(() => { })
         // customClass 怎么修改确认和取消的按钮颜色
     },
-    openAll () {
+    openAll() {
       this.statementOpen = this.strategy.Statement.map((st, idx) => idx) || []
     },
-    closeAll () {
+    closeAll() {
       this.statementOpen = []
     },
-    handleStatementChange (statement, index) {
+    handleStatementChange(statement, index) {
       this.$set(this.strategy.Statement, index, statement)
       this.emitChange()
     },
-    emitEdit () {
+    emitEdit() {
       this.$emit('edit', {})
     },
-    emitChange () {
+    emitChange() {
       this.$emit('input', this.deepClone(this.strategy))
       this.$emit('change', this.deepClone(this.strategy))
     },
-    emitSave () {
+    emitSave() {
       this.$emit('save', this.deepClone(this.strategy))
     },
-    emitDel () {
+    emitDel() {
       this.$confirm(`您确定要删除此IAM策略吗？`, '确认删除', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -229,7 +229,7 @@ export default {
         })
         .catch(() => { })
     },
-    deepClone (obj) {
+    deepClone(obj) {
       return JSON.parse(JSON.stringify(obj))
     }
   }

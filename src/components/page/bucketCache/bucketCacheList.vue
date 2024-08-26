@@ -76,7 +76,7 @@ import {
   saveBucketCacheConfig
 } from '@/api/cacheConfig'
 export default {
-  data () {
+  data() {
     return {
       searchVal: '',
       loading: false,
@@ -99,7 +99,7 @@ export default {
     }
   },
   computed: {
-    filterData () {
+    filterData() {
       return JSON.parse(JSON.stringify(this.tableData)).filter(x => {
         return x.bucketName.toLowerCase().indexOf(this.searchVal.toLowerCase()) > -1
       })
@@ -107,11 +107,11 @@ export default {
   },
   watch: {
   },
-  mounted () {
+  mounted() {
     this.init()
   },
   methods: {
-    init () {
+    init() {
       this.loading = true
       listBucketCache()
         .then(res => {
@@ -121,7 +121,7 @@ export default {
           this.loading = false
         })
     },
-    viewDetail: function (bucketName) {
+    viewDetail: function(bucketName) {
       this.$router.push({
         name: 'BucketDataClassification',
         params: {
@@ -130,7 +130,7 @@ export default {
         }
       })
     },
-    judgeChange (row) {
+    judgeChange(row) {
       // 更改开关
       // row.openStatus = !row.openStatus
       const { bucketName, openStatus } = row

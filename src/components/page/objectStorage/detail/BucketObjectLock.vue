@@ -122,7 +122,7 @@
 </template>
 <script>
 export default {
-  data () {
+  data() {
     const validatorTimeNum = (rule, data, callback) => {
       const reg = new RegExp('^[0-9]+(\.[0-9]+)?$')
       if (!reg.test(data)) {
@@ -169,18 +169,18 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     this.getObjectLock()
   },
   methods: {
-    chanageExpireTime (val) {
+    chanageExpireTime(val) {
       if (val == 'day') {
         this.form.timeNum = ''
       } else {
         this.form.timeNum = ''
       }
     },
-    saveObjectLockConfig () {
+    saveObjectLockConfig() {
       this.$refs['form'].validate(valid => {
         if (valid) {
           var Days = ''
@@ -218,7 +218,7 @@ export default {
           }
           // console.log(params, 'number')
           // 调用 putObjectLockConfiguration 操作
-          this.$store.state._S3.putObjectLockConfiguration(
+          this.$store.state.user._S3.putObjectLockConfiguration(
             params,
             (err, data) => {
               if (err) {
@@ -238,9 +238,9 @@ export default {
         }
       })
     },
-    getObjectLock () {
+    getObjectLock() {
       this.loading = true
-      this.$store.state._S3.getObjectLockConfiguration(
+      this.$store.state.user._S3.getObjectLockConfiguration(
         {
           Bucket: this.$route.params.id
         },
@@ -298,7 +298,7 @@ export default {
         }
       )
     },
-    showOption () {
+    showOption() {
       this.switchOn = true
     }
   }

@@ -2,7 +2,8 @@ import Vue from 'vue'
 import axios from 'axios'
 import AWS from 'aws-sdk'
 export const temp = new Vue()
-import store from '../vuex/index'
+import store from '@/store/index'
+import router from '@/router'
 axios.withCredentials = false
 
 const emptySHA256 = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
@@ -111,7 +112,7 @@ request.interceptors.response.use(res => {
       text: '错误：' + temp.$ts(error.request.statusText)
     })
     return Promise.reject({ message: '错误：' + temp.$ts(error.request.statusText) })
-  } else if (typeof error.request.response == 'string' && error.request.response.substring(0, 5) == '<?xml') {
+  } else if (typeof error.request.response === 'string' && error.request.response.substring(0, 5) == '<?xml') {
     const err = new AWS.XML.Parser().parse(error.request.response)
     const errText = temp.$ts(err.Code) + '：' + temp.$ts(err.Message)
     !error.config.ignoreNotice && temp.$ts({
@@ -121,12 +122,13 @@ request.interceptors.response.use(res => {
     return Promise.reject({ code: err.Code, message: errText })
   } else if (error.response.data.message.indexOf('auth-error') > -1 || error.response.data.message.indexOf('token timeout') > -1) {
     // s3 bucketList调用登出、若eip环境、路由拦截处理跳转eipInfo
-    setTimeout(() => {
+    setTimeout(async() => {
       temp.$ts({
         type: 'error',
         text: 'token已失效，请重新登录'
       })
-      store.dispatch('logout')
+      await store.dispatch('user/logout')
+      router.push(`/login}`)
     }, 200)
     return
   }

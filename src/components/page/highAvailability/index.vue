@@ -226,7 +226,7 @@ export default {
   name: 'HightAvailability',
   filters: {
   },
-  data () {
+  data() {
     return {
       hasConfig: false,
       loadingSel: false,
@@ -347,7 +347,7 @@ export default {
     }
   },
   computed: {
-    filterLoadGroupSelect () {
+    filterLoadGroupSelect() {
       // 过滤已配置负载组类型
       if (this.isAdd) {
         const LoadGroupIds = this.fillSourceForm.map(x => String(x.loadGroupId))
@@ -362,45 +362,45 @@ export default {
         })
       }
     },
-    showLabel () {
+    showLabel() {
       return this.form.designType.indexOf('DesignStorage') > -1 ? '选择设备' : '选择资源'
     },
-    showDesignSel () {
+    showDesignSel() {
       return this.form.designType === 'DesignStorage' || this.form.designType === 'DesignResource'
     },
-    isAdd () {
+    isAdd() {
       return this.opType === 'add'
     }
   },
   watch: {
-    filterText (val) {
+    filterText(val) {
       this.$refs.tree.filter(val)
     }
   },
-  mounted () {
+  mounted() {
     this.init()
   },
   methods: {
-    clearResource () {
+    clearResource() {
       this.form.designListFst = ''
       this.form.designListSec = ''
     },
-    filterDesignLists (value) {
+    filterDesignLists(value) {
       return this.designLists.find(x => x.value === this.form.loadGroupId)?.list.filter(x => {
         return x.value !== value
       })
     },
-    mapSelectLoadGroup (val) {
+    mapSelectLoadGroup(val) {
       // 映射负载组名称、
       const res = this.loadGroupSelect.reduce((pre, cur) => ([...pre, ...cur.options]), [])
       console.log(res, 'nameLoadGroup')
       return this.mapSelectLabel(val, res)
     },
-    mapSelectLabel (val, arr) {
+    mapSelectLabel(val, arr) {
       const item = arr.find(x => String(x.value) === String(val))
       return item && item.label
     },
-    initForm () {
+    initForm() {
       Object.assign(
         this.form,
         {
@@ -420,7 +420,7 @@ export default {
         }
       )
     },
-    initBucketList () {
+    initBucketList() {
       return new Promise((resolve, rej) => {
         listUserBuckets().then(res => {
           this.bucketList = res.data.list || []
@@ -428,7 +428,7 @@ export default {
         })
       })
     },
-    inputPositiveNum (ipt, value) {
+    inputPositiveNum(ipt, value) {
       const val = value.split('.')
       if (val && val.length == 1) {
         this.$set(this.form, value, ipt.replace(/(^0+)|\D/g, ''))
@@ -436,7 +436,7 @@ export default {
         this.$set(this.form[val[0]], val[1], ipt.replace(/(^0+)|\D/g, ''))
       }
     },
-    handleLoadSel (val) {
+    handleLoadSel(val) {
       this.$refs['form'] && this.$refs['form'].clearValidate(['designList'])
       this.form.designList = []
       if (val === 'DesignStorage') {
@@ -466,7 +466,7 @@ export default {
         })
       }
     },
-    changelogicUnit (val) {
+    changelogicUnit(val) {
       if (val == 'TB') {
         this.form.objectSize = ''
         this.placeholderValue = this.placeholder[1].value
@@ -475,25 +475,25 @@ export default {
         this.placeholderValue = this.placeholder[0].value
       }
     },
-    dialogOpen (e) {
+    dialogOpen(e) {
       const ipt = e
-      this.$nextTick(function () {
+      this.$nextTick(function() {
         this.$refs[ipt].$el.querySelector('input').focus()
       })
     },
-    filterNode (value, data) {
+    filterNode(value, data) {
       // console.log(data, '12333')
       if (!value) return true
       return (data.bucketId || data.id).toLocaleLowerCase().indexOf(value.toLocaleLowerCase()) !== -1
     },
-    mapLabel (label, val) {
+    mapLabel(label, val) {
       if (label === 'bucketName') {
         const res = this.bucketList.find(x => (x.id).toString() === val)
         // console.log(val, this.bucketList, label)
         return res && res.name || '-'
       }
     },
-    async getConfig () {
+    async getConfig() {
       const loadGroupMap = await this.initGroupList()
       if (JSON.stringify(loadGroupMap) === '{}') {
         this.innerFormLoading = false
@@ -530,17 +530,17 @@ export default {
           })
       })
     },
-    getResource () {
+    getResource() {
       return new Promise((resolve) => {
         listStorageDevice().then(res => {
           resolve(res.data || [])
         })
       })
     },
-    mapResource (key) {
+    mapResource(key) {
       return this.allResourceList[key]
     },
-    async initGroupList () {
+    async initGroupList() {
       const resourceList = await this.getResource()
       const allRsourceMap = resourceList.reduce((pre, cur) => {
         return [...pre, ...cur.storageResourceModelList.map(x => {
@@ -576,7 +576,7 @@ export default {
       })
       // map 负载组名称
     },
-    async init () {
+    async init() {
       this.innerFormLoading = true
       await this.initBucketList()
       const currentBucketId = this.bucketList.find(x => x.name === this.$route.params.id)
@@ -620,7 +620,7 @@ export default {
         this.innerFormLoading = false
       })
     },
-    async showCreate () {
+    async showCreate() {
       this.fromModal = true
       this.$nextTick(() => {
         this.$refs['form'].clearValidate()
@@ -628,7 +628,7 @@ export default {
       this.opType = 'add'
       this.initForm()
     },
-    confirmSubmit () {
+    confirmSubmit() {
       this.$refs['form'].validate((valid) => {
         const {
           replicaRedundancyType,
@@ -718,7 +718,7 @@ export default {
         }
       })
     },
-    updateForm (row) {
+    updateForm(row) {
       const time = row.rebuildStartTime ? row.rebuildStartTime.split(',') : ['', '']
       Object.assign(this.form,
         { ...row,
@@ -738,7 +738,7 @@ export default {
       this.fromModal = true
       this.opType = 'update'
     },
-    handleDel (row) {
+    handleDel(row) {
       this.$confirm('确认删除当前所选配置吗', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',

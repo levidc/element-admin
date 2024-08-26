@@ -287,7 +287,7 @@
 import { queryMoveBackTasks, createMoveBackTasks, listStorageResource, retryTaskMove, deleteMoveBackTask } from '@/api/storage'
 import moment from 'moment'
 export default {
-  data () {
+  data() {
     return {
       tableHeight: 500,
       total: 0,
@@ -454,13 +454,13 @@ export default {
     }
   },
   computed: {
-    watchForm () {
+    watchForm() {
       return JSON.stringify(this.form)
     }
   },
   watch: {
     watchForm: {
-      handler (val) {
+      handler(val) {
         clearTimeout(this.timer)
       }
     }
@@ -468,33 +468,33 @@ export default {
     //   $('.el-progress-bar__inner').hide(200).show(200)
     // }
   },
-  created () {
+  created() {
     window.addEventListener('resize', this.getHeight)
   },
-  mounted () {
+  mounted() {
     // this.init({ params: { pageNumber: 1, pageSize: 10 }}, true)
     this.$nextTick(() => {
       this.handleSearchParams(false, true)
       this.getHeight()
     })
   },
-  destroyed () {
+  destroyed() {
     clearTimeout(this.timer)
   },
   methods: {
-    getHeight () {
+    getHeight() {
       this.$nextTick(() => {
         const height = window.innerHeight - 400
         this.tableHeight = height > 200 ? height : 200
       })
     },
-    hideColumn (columns) {
+    hideColumn(columns) {
       this.columns = columns
       this.$nextTick(() => {
         this.$refs['tab'].$refs['dataTable'] && this.$refs['tab'].$refs['dataTable'].doLayout()
       })
     },
-    doDelete (row) {
+    doDelete(row) {
       const { id, taskName } = row
       this.$confirm(`删除如下任务：<b style="color:#ff8736">${taskName}</b>，请确认！`, '', {
         confirmButtonText: '确定',
@@ -511,7 +511,7 @@ export default {
         })
       })
     },
-    judgeDisableBtn (row) {
+    judgeDisableBtn(row) {
       if (row.status !== 'FAILURE') {
         return true
       } else if (row.taskType === 'ES') {
@@ -522,7 +522,7 @@ export default {
     },
     // 回迁 索引恢复失败 || 源资源与恢复资源路径一致
 
-    showProgreeColor (row) {
+    showProgreeColor(row) {
       switch (row.status) {
         case 'PROCESSING':
           return '#517beb'
@@ -534,10 +534,10 @@ export default {
           return '#FF8746'
       }
     },
-    showProgress (row) {
+    showProgress(row) {
       return parseInt(((row.taskProgress / row.dataCount) * 100))
     },
-    handleSearchParams (customPage, loading = false) {
+    handleSearchParams(customPage, loading = false) {
       const { pageSize, currentPage } = this.$refs['tab']
       const { userName, createStartTime, createEndTime, taskName } = this.form
       const data = {
@@ -556,23 +556,23 @@ export default {
         data
       }, loading)
     },
-    renderPagination (val) {
+    renderPagination(val) {
       this.handleSearchParams(val, true)
     },
-    sortFunction (val) {
+    sortFunction(val) {
       const { prop, order } = val
       Object.assign(
         this.sort, { prop, order }
       )
       this.handleSearchParams(false, true)
     },
-    renderTargetResouce () {
+    renderTargetResouce() {
       const flag = this.taskForm.resourceList.filter(item => {
         return this.taskForm.targetResourceId === item.value
       })
       this.taskForm.targetDetail = flag && flag[0].bucketName
     },
-    async createTask () {
+    async createTask() {
       const res = await listStorageResource({
         deviceId: '66666666666666666'
       })
@@ -606,7 +606,7 @@ export default {
         this.taskFlag = true
       }
     },
-    confirmCreate () {
+    confirmCreate() {
       this.$refs['taskForm'].validate((valid) => {
         if (valid) {
           const {
@@ -632,7 +632,7 @@ export default {
         }
       })
     },
-    reset () {
+    reset() {
       this.$refs['form'].resetFields()
       // 重置分页数为1
       this.$refs['tab'].currentPage = 1
@@ -646,17 +646,17 @@ export default {
       //     }
       //   }, true)
     },
-    handleRefresh () {
+    handleRefresh() {
       this.handleSearchParams(false, true)
     },
-    searchParams () {
+    searchParams() {
       const { pageSize } = this.$refs['tab']
       this.$refs['tab'].currentPage = 1
       this.handleSearchParams(
         { pageSize, pageNumber: 1 }, true
       )
     },
-    init (data = {}, flag = false) {
+    init(data = {}, flag = false) {
       // this.loading = false
       // this.tableData = [
       // {
@@ -701,7 +701,7 @@ export default {
           }, 5000)
         })
     },
-    doRetryTask (row) {
+    doRetryTask(row) {
       const taskId = row.id
       this.$confirm('是否重试当前已失败的任务', `任务名:${row.taskName}`, {
         distinguishCancelAndClose: true,

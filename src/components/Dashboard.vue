@@ -5,7 +5,7 @@
         :span="24"
         class="manage-area-title"
       >
-        <h2>Dashboard</h2>
+        <!-- <h2>Dashboard</h2> -->
       </el-col>
     </el-row>
     <div
@@ -337,11 +337,11 @@ export default {
   name: 'Dashboard',
   components: { DynamicBar, Echarts },
   filters: {
-    renderType (val) {
+    renderType(val) {
       return val === 'IAM' ? 'AWS' : val
     }
   },
-  data () {
+  data() {
     return {
       allResourceList: [],
       loadGroupChart: [],
@@ -438,7 +438,7 @@ export default {
     }
   },
   computed: {
-    drawerColumn () {
+    drawerColumn() {
       return this.drawerTitle === '桶已用容量'
         ? [
           {
@@ -491,28 +491,28 @@ export default {
           // }
         ]
     },
-    isAdmin () {
-      return this.$store.state['api'] && this.$store.state['api']['isAdmin']
+    isAdmin() {
+      return this.$store.state['user']['api'] && this.$store.state['user']['api']['isAdmin']
     }
   },
   watch: {
   },
-  mounted () {
+  mounted() {
     this.$nextTick(() => {
       this.init(true)
     })
   },
-  destroyed () {
+  destroyed() {
   },
   methods: {
-    renderTripleLoadGroup () {
+    renderTripleLoadGroup() {
       if (this.loadGroupChart.length > 2) {
         return 'multiple'
       } else {
         return 'double'
       }
     },
-    renderLoadType (storageType) {
+    renderLoadType(storageType) {
       switch (storageType) {
         case 'NAS':
           return 'NAS 资源'
@@ -524,7 +524,7 @@ export default {
           break
       }
     },
-    init (loading) {
+    init(loading) {
       if (loading) {
         this.loading = true
       }
@@ -676,7 +676,7 @@ export default {
         this.loading = false
       })
     },
-    renderPie (usedSize) {
+    renderPie(usedSize) {
       const { PI, cos, sin } = Math
       const val1 = (300 / 360) * 100
       const angle1 = PI * val1 / 50 / 2
@@ -763,7 +763,7 @@ export default {
       }
       return option
     },
-    handleLoadDrawer (type, pagination) {
+    handleLoadDrawer(type, pagination) {
       getRankPage(
         { type, ...pagination }
       ).then(res => {
@@ -781,7 +781,7 @@ export default {
         }
       })
     },
-    async openDrawer (str) {
+    async openDrawer(str) {
       this.drawerType = str
       this.drawerFlag = true
       if (str === 'useSize') {
@@ -800,7 +800,7 @@ export default {
         })
       }
     },
-    renderPagination (val) {
+    renderPagination(val) {
       const { ref, pageNumber, pageSize } = val
       const type = ref === 'type1' ? 1 : 2
       if (type == 1) {
@@ -812,17 +812,17 @@ export default {
         pageNum: pageNumber, pageSize: pageSize
       })
     },
-    svgPath (icon) {
+    svgPath(icon) {
       return '#icon-' + icon
     },
-    rowClick (row) {
+    rowClick(row) {
       const { bucketName } = row
       this.goPage('BucketList', {
         id: bucketName
         // ID: JSON.parse(localStorage.getItem('user')).name
       })
     },
-    jumpBucket (data) {
+    jumpBucket(data) {
       let bucketName = ''
       if (data.componentType === 'yAxis') {
         bucketName = data.value
@@ -834,16 +834,16 @@ export default {
         // ID: JSON.parse(localStorage.getItem('user')).name
       })
     },
-    jumpPage (row) {
+    jumpPage(row) {
       const { name } = row
       if (name) {
         this.goPage(name)
       }
     },
-    goPage (name, params = {}) {
+    goPage(name, params = {}) {
       this.$router.push({ name, params })
     },
-    getEnumData (type, index) {
+    getEnumData(type, index) {
       switch (type) {
         case '桶':
           return this.trend['bucketCountVal'][index].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
@@ -862,14 +862,14 @@ export default {
           return this.buckeInfo['deleteCount'][index]
       }
     },
-    renderCapacity (val, Index) {
+    renderCapacity(val, Index) {
       if (Index) {
         return ((val / 1024 ** Index).toFixed(1))
       } else {
         return val
       }
     },
-    getOption (text, dataX, dataY) {
+    getOption(text, dataX, dataY) {
       let { unit } = text
       let Index
       if (!unit) {
@@ -1040,7 +1040,7 @@ export default {
       }
     },
 
-    renderData (obj) {
+    renderData(obj) {
       if (JSON.stringify(obj) === '{}') return []
       else {
         const { percent, title } = obj
@@ -1048,7 +1048,7 @@ export default {
       }
     },
 
-    renderPieOption (used, unused) {
+    renderPieOption(used, unused) {
       const data = this.renderLoadGroupChart(used, unused)
       const text = Number(used + unused) === 0 ? '0%' : (used / (used + unused) * 100).toFixed(1) + '%'
       return {
@@ -1191,7 +1191,7 @@ export default {
       }
     },
     // 负载组图表
-    renderOption ({ val, percent }) {
+    renderOption({ val, percent }) {
       const option = {
         series: [
           {
@@ -1258,7 +1258,7 @@ export default {
               // height: 40,
               // offsetCenter: [0, '35%'],
               valueAnimation: true,
-              formatter: function (value) {
+              formatter: function(value) {
                 if (value) {
                   return '{value|' + value.toFixed(0) + '%' + '}' + ' / ' + '{data|' + val + '}'
                 } else {
@@ -1290,15 +1290,15 @@ export default {
       }
       return option
     },
-    getResourceData (name) {
+    getResourceData(name) {
       return this.allResourceList.find(x => x.storageName === name)
     },
-    renderLoadGroupChart (loadGroupUseSize, loadGroupUnusedSize) {
+    renderLoadGroupChart(loadGroupUseSize, loadGroupUnusedSize) {
       return [
         { name: '已使用资源', value: loadGroupUseSize, fval: this.byteConvert(loadGroupUseSize) },
         { name: '未使用资源', value: loadGroupUnusedSize, fval: this.byteConvert(loadGroupUnusedSize) }]
     },
-    loadChartClick (e, resourceLoadGroup) {
+    loadChartClick(e, resourceLoadGroup) {
       this.$router.push({
         name: 'LoadGroup',
         params: {
@@ -1307,7 +1307,7 @@ export default {
         }
       })
     },
-    jumpToLoadGroup (name, e) {
+    jumpToLoadGroup(name, e) {
       if (e && e.type === 'legendselectchanged') return
       else {
         // 跳转负载组、查询负载组名称或者资源
@@ -1319,7 +1319,7 @@ export default {
         })
       }
     },
-    renderBarChart (arr, text) {
+    renderBarChart(arr, text) {
       const list = JSON.parse(JSON.stringify(arr))
       list.length > 5 ? list.length = 5 : null
       const yData = []
@@ -1438,7 +1438,7 @@ export default {
                 color: '#ffffff',
                 fontSize: '12'
               },
-              formatter: function (value) {
+              formatter: function(value) {
                 const percent = value.match(/\（(.*)\）/)
                 if (percent && percent.length > 1 && parseInt(percent[1]) >= 90) {
                   return '{alarm|' + value + '}'

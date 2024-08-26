@@ -111,7 +111,7 @@ import { listUserBuckets } from '@/api/bucket'
 import { validateObjectKey } from '@/utils/validate'
 export default {
   name: 'RestoreRecords',
-  data () {
+  data() {
     const validBucketName = (rule, data, callback) => {
       if (!data) {
         return callback(new Error('请选择存储桶'))
@@ -175,14 +175,14 @@ export default {
       }
     }
   },
-  async mounted () {
+  async mounted() {
     this.getTime()
     await this.listUserBuckets()
     this.form.bucketId = this.buckets[0]?.id.toString()
     this.getListRestoreRecords(1)
   },
   methods: {
-    getTime () {
+    getTime() {
       const date = new Date()
       const year = date.getFullYear()
       const month = (date.getMonth() + 1).toString().padStart(2, '0')
@@ -201,7 +201,7 @@ export default {
       this.form.deleteEndTime = deleteEndTime
       this.form.deleteStartTime = deleteStartTime
     },
-    getListRestoreRecords (page = void 0) {
+    getListRestoreRecords(page = void 0) {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           this.loading = true
@@ -225,12 +225,12 @@ export default {
         }
       })
     },
-    listUserBuckets () {
+    listUserBuckets() {
       return listUserBuckets().then((res) => {
         this.buckets = res.data.list
       })
     },
-    onReset () {
+    onReset() {
       this.getTime()
       this.form = {
         bucketId: this.buckets[0]?.id.toString(),
@@ -241,7 +241,7 @@ export default {
       }
       this.getListRestoreRecords(1)
     },
-    onGoPage (page) {
+    onGoPage(page) {
       this.page = { ...this.page, ...page }
       this.getListRestoreRecords()
     }

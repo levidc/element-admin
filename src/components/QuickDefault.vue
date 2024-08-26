@@ -65,7 +65,7 @@ export default {
       default: false
     }
   },
-  data () {
+  data() {
     return {
       inside: {
         value: ''
@@ -74,25 +74,25 @@ export default {
     }
   },
   watch: {
-    value () {
+    value() {
       this.inside.value = this.value
       this.refresh()
     },
-    isDefault () {
+    isDefault() {
       this.isDefaultVal = this.isDefault
     }
   },
-  mounted () {
+  mounted() {
     this.inside.value = this.value
     this.isDefaultVal = this.isDefault
     this.refresh()
   },
   methods: {
-    refresh () {
+    refresh() {
       if (this.manually) return
       this.isDefaultVal = this.checkValueIsDefault(this.inside.value, this.defaultValue)
     },
-    onSelect (sel) {
+    onSelect(sel) {
       this.isDefaultVal = sel
       if (!this.manually) {
         if (sel) {
@@ -104,7 +104,7 @@ export default {
       this.doChangeValue()
       this.$emit('select', this.isDefaultVal, this.inside.value)
     },
-    doChangeValue (val = undefined) {
+    doChangeValue(val = undefined) {
       if (this.manually) return
       if (val !== undefined) this.inside.value = val
       this.refresh()

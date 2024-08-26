@@ -1010,7 +1010,7 @@ export default {
     }
     // console.log(this.$route, 'route')
     this.init()
-    // this.$store.state._S3.headObject(
+    // this.$store.state.user._S3.headObject(
     //   {
     //     Bucket: this.$route.params.id,
     //     Key: this.$route.query.filename
@@ -1078,7 +1078,7 @@ export default {
 
       const p = new Promise(resolve => {
         if (this.$route.query.type === 'content') {
-          this.$store.state._S3.listObjectsV2(params, (err, data) => {
+          this.$store.state.user._S3.listObjectsV2(params, (err, data) => {
             if (err) {
               this.showS3Msg(err)
               this.loading = false
@@ -1088,7 +1088,7 @@ export default {
             }
           })
         } else {
-          this.$store.state._S3.listObjectVersions(params, (err, data) => {
+          this.$store.state.user._S3.listObjectVersions(params, (err, data) => {
             if (err) {
               this.showS3Msg(err)
               this.loading = false
@@ -1105,6 +1105,7 @@ export default {
         // this.resInfo.Prefix = tempArr[tempArr.length - 1]
         // console.log('admin %c resInfo', 'color:lime')
         let data
+        let existETag
         // this.resInfo = JSON.parse(sessionStorage.getItem('resInfo') || null)
         if (this.$route.query.type === 'content') {
           data = this.resInfo.Contents[0]
@@ -1134,6 +1135,12 @@ export default {
           } else {
             data = allData.find(item => item.IsLatest === true) || {}
           }
+          if (this.$route.query && this.$route.query.VersionId) {
+            const etagExist = this.resInfo.Versions.find(x => {
+              return x.VersionId === this.$route.query.VersionId
+            })
+            existETag = etagExist && etagExist.ETag
+          }
         }
         this.tableObj = data
         // console.log(this.tableObj, 'tableObj')
@@ -1151,16 +1158,16 @@ export default {
           'arn:aws:s3:::' + Name + Delimiter + this.$route.query.filename
         this.file.URL = 's3://' + Name + Delimiter + this.$route.query.filename
         // 传递info调用接口
-        this.getObjectVersions().then(() => {
+        this.getObjectVersions(res).then(() => {
         }).finally(() => {
           // this.loading = false
-          this.getObjectMeta()
+          this.getObjectMeta(existETag)
         })
         // loading
         // 对象元信息
       })
     },
-    getObjectMeta() {
+    getObjectMeta(existETag) {
       getObjectMeta({
         bucketName: this.$route.params.id,
         objectKey: this.$route.query.filename
@@ -1191,8 +1198,8 @@ export default {
         this.metaInfo = userMeta || {}
         this.baseInfo = {
           resourceId,
-          etag,
-          versionId,
+          etag: existETag || etag,
+          versionId: this.$route.query.VersionId || versionId,
           bucketName,
           objectKey
         }
@@ -1288,7 +1295,7 @@ export default {
     // 配置依法保留
     saveObjectLegalHold() {
       // 获取当前的versionId
-      this.$store.state._S3.putObjectLegalHold(
+      this.$store.state.user._S3.putObjectLegalHold(
         {
           Bucket: this.$route.params.id,
           Key: this.resInfo.Prefix,
@@ -1313,7 +1320,7 @@ export default {
     },
     getObjectLock() {
       this.tabLoading = true
-      this.$store.state._S3.getObjectLockConfiguration(
+      this.$store.state.user._S3.getObjectLockConfiguration(
         {
           Bucket: this.$route.params.id
         },
@@ -1346,7 +1353,7 @@ export default {
     },
     getObjectLegalHold() {
       this.legalHoldLoading = true
-      this.$store.state._S3.getObjectLegalHold(
+      this.$store.state.user._S3.getObjectLegalHold(
         {
           Bucket: this.$route.params.id,
           Key: this.resInfo.Prefix,
@@ -1374,7 +1381,7 @@ export default {
           // 未设置对象锁定配置 再点击报错 规避此问题
           if (!this.mode && this.objectRentionForm.objectRentionRaido === 'OFF') {
             this.objectRentionFlag = false
-            this.$store.state._S3.putObjectRetention(
+            this.$store.state.user._S3.putObjectRetention(
               {
                 Bucket: this.$route.params.id,
                 Key: this.resInfo.Prefix,
@@ -1410,7 +1417,7 @@ export default {
           //   VersionId: this.VersionId,
           //   Retention
           // }, 'req')
-          this.$store.state._S3.putObjectRetention(
+          this.$store.state.user._S3.putObjectRetention(
             {
               Bucket: this.$route.params.id,
               Key: this.resInfo.Prefix,
@@ -1439,7 +1446,7 @@ export default {
     getObjectRetention() {
       this.objectRetentionFlag = true
       this.disableObjectLock = false
-      this.$store.state._S3.getObjectRetention(
+      this.$store.state.user._S3.getObjectRetention(
         {
           Bucket: this.$route.params.id,
           Key: this.resInfo.Prefix,
@@ -1542,7 +1549,7 @@ export default {
           }
         }
       }
-      this.$store.state._S3.putObjectAcl(
+      this.$store.state.user._S3.putObjectAcl(
         {
           Bucket: this.$route.params.id,
           ACL: this.formAcl.selectAcl,
@@ -1587,7 +1594,7 @@ export default {
       // });
       this.tabLoading = true
       this.form.granteeTable = []
-      this.$store.state._S3.getObjectAcl(
+      this.$store.state.user._S3.getObjectAcl(
         {
           Key: this.$route.query.filename,
           Bucket: this.$route.params.id,
@@ -1685,7 +1692,7 @@ export default {
     getObjectVersions() {
       return new Promise((resolve, reject) => {
         this.versionTable = []
-        this.$store.state._S3.listObjectVersions(
+        this.$store.state.user._S3.listObjectVersions(
           {
             Bucket: this.$route.params.id,
             Prefix: this.$route.query.filename

@@ -320,7 +320,7 @@ export default {
   name: 'Services',
   components: { TableData },
   filters: {
-    getInstanceStatus (e) {
+    getInstanceStatus(e) {
       let status_level = ''
       switch (e.status) {
         case 'OK':
@@ -345,7 +345,7 @@ export default {
       return status_level
     }
   },
-  data () {
+  data() {
     return {
       rules: {
         groupName: {
@@ -421,7 +421,7 @@ export default {
     }
   },
   computed: {
-    tableSlice () {
+    tableSlice() {
       return this.tableDataDetail.slice(
         (this.currentPageDetail - 1) * this.pagesizeDetail,
         this.currentPageDetail * this.pagesizeDetail
@@ -429,7 +429,7 @@ export default {
     }
   },
   watch: {
-    changeTab (val) {
+    changeTab(val) {
       if (val) {
         this.listInstance()
       } else {
@@ -437,7 +437,7 @@ export default {
         this.listInstanceGroup()
       }
     },
-    visibleD (val) {
+    visibleD(val) {
       if (val) {
         // 设置instancegroup、调用instanceList
         this.loading = true
@@ -465,20 +465,20 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     this.serviceStatus = this.$route.params.level || ''
     this.serviceStatus = this.serviceStatus.toLowerCase()
     this.tempStatus = this.serviceStatus
     this.listInstance()
   },
-  destroyed () {
+  destroyed() {
     clearTimeout(instanceTimer)
   },
   methods: {
-    dialogOpen (ref) {
+    dialogOpen(ref) {
       this.$refs[ref] && this.$refs[ref].resetFields()
     },
-    listInstanceGroup () {
+    listInstanceGroup() {
       this.loading = true
       listInstanceGroup().then(res => {
         this.tableGroup = res.data
@@ -493,7 +493,7 @@ export default {
           this.loading = false
         })
     },
-    createGroup () {
+    createGroup() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           const { groupName, description } = this.form
@@ -514,7 +514,7 @@ export default {
         }
       })
     },
-    deleteD (i) {
+    deleteD(i) {
       var temp = this.draggableGroup.splice(i, 1)
       this.draggableInstance.push(...temp)
     },
@@ -529,15 +529,15 @@ export default {
     // })
     // this.draggableB = arr
     // },
-    addTo (index) {
+    addTo(index) {
       this.draggableGroup.push(this.draggableInstance[index])
       this.draggableInstance.splice([index], 1)
     },
-    resetD () {
+    resetD() {
       this.draggableGroup.splice(0)
       this.draggableInstance = JSON.parse(JSON.stringify(this.copyDraggableInstance))
     },
-    setInstanceGroup () {
+    setInstanceGroup() {
       const instanceIds = this.draggableGroup.map(item => item.instanceId)
       setInstanceGroup({
         groupId: this.selectGroup.groupId,
@@ -574,21 +574,21 @@ export default {
           this.listInstanceGroup()
         })
     },
-    changeStatus () {
+    changeStatus() {
       this.currentPageDetail = 1
       this.tempSearchVal = this.searchVal
       this.tempStatus = this.serviceStatus
       this.listInstance()
     },
-    handleSizeChangeDetail (size) {
+    handleSizeChangeDetail(size) {
       this.pagesizeDetail = size
       this.listInstance()
     },
-    handleCurrentChangeDetail (currentPage) {
+    handleCurrentChangeDetail(currentPage) {
       this.currentPageDetail = currentPage
       this.listInstance()
     },
-    sortFunction (val) {
+    sortFunction(val) {
       this.prop = val.prop
       this.order = val.order
       if (this.changeTab) {
@@ -597,7 +597,7 @@ export default {
         this.tableGroup.sort(this.sortMethod(val.prop, val.order))
       }
     },
-    selectFun (val) {
+    selectFun(val) {
       this.tempChoosed = val
       // ？？？
       var count = 0
@@ -605,7 +605,7 @@ export default {
       var sec = false
       var thir = false
       var fou = false
-      $.each(val, function (i, v) {
+      $.each(val, function(i, v) {
         instanceIds[count] = v.instanceId
         instanceNames[count] = v.instanceName
         instanceHostIps[count] = v.host
@@ -681,7 +681,7 @@ export default {
         }
       }
     },
-    startEvent () {
+    startEvent() {
       for (const i in this.tempChoosed) {
         startInstance({
           version: this.$store.state.dosVersion,
@@ -710,7 +710,7 @@ export default {
           })
       }
     },
-    stopEvent () {
+    stopEvent() {
       for (const i in this.tempChoosed) {
         stopInstance({
           version: this.$store.state.dosVersion,
@@ -740,7 +740,7 @@ export default {
           })
       }
     },
-    deleteEvent () {
+    deleteEvent() {
       for (const i in this.tempChoosed) {
         killInstance({
           version: this.$store.state.dosVersion,
@@ -775,7 +775,7 @@ export default {
           })
       }
     },
-    listInstance () {
+    listInstance() {
       clearTimeout(instanceTimer)
       getAllInstance({
         version: this.$store.state.dosVersion

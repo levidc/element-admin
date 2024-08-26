@@ -66,7 +66,7 @@ export default {
       default: false
     }
   },
-  data () {
+  data() {
     return {
       // 已选择的项
       selectAll: true,
@@ -89,16 +89,16 @@ export default {
     }
   },
   computed: {
-    filterShow () {
+    filterShow() {
       return this.columnHeaders.filter(item => !item.hide)
     },
-    renderStatusColor () {
+    renderStatusColor() {
       const color = this.form.columnSelecteds.length ? '#ff8746' : '#8997a5'
       return color
     }
   },
   watch: {
-    needReset (val) {
+    needReset(val) {
       if (val) {
         this.reset()
       }
@@ -106,7 +106,7 @@ export default {
     // fillSelStatus
 
   },
-  mounted () {
+  mounted() {
     // 初始化选项
     this.form.columnSelecteds = this.columnHeaders.map(item => item.value)
     this.fullCtrl = [...this.form.columnSelecteds]
@@ -120,30 +120,30 @@ export default {
     }
   },
   methods: {
-    reset () {
+    reset() {
       this.form.columnSelecteds = [...this.fullCtrl]
       this.selectAll = true
       this.isIndeterminate = false
     },
-    searchTaskStatus (flag) {
+    searchTaskStatus(flag) {
       if (flag) this.form.columnSelecteds = [...this.fullCtrl]
       this.$refs['form'].validate(valid => {
         valid && this.$emit('doRequest', this.form.columnSelecteds)
       })
     },
-    handleCheckAllChange (val) {
+    handleCheckAllChange(val) {
       this.isIndeterminate = false
       this.form.columnSelecteds = val ? [...this.fullCtrl] : []
       this.$emit('handleChange', this.form.columnSelecteds)
       this.changeDebounce()
     },
-    handleChange (val) {
+    handleChange(val) {
       this.isIndeterminate = val.length > 0 && val.length < this.fullCtrl.length
       this.selectAll = val.length === this.fullCtrl.length
       this.$emit('handleChange', this.form.columnSelecteds)
       this.changeDebounce()
     },
-    changeDebounce: debounce.call(this, function () {
+    changeDebounce: debounce.call(this, function() {
       this.searchTaskStatus()
       // todo
     }, 800)

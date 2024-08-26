@@ -84,7 +84,7 @@ export default {
   components: {
     PoliciesTable
   },
-  data () {
+  data() {
     const checkNameReg = (rule, data, callback) => {
       const reg = /^[0-9a-zA-Z]{8,40}$/
       if (!reg.test(data)) {
@@ -119,19 +119,19 @@ export default {
     }
   },
   computed: {
-    disableUpdate () {
+    disableUpdate() {
       return this.selection.length !== 1
     }
   },
   watch: {
-    createDialog (val) {
+    createDialog(val) {
       if (!val) {
         this.$refs['form'].resetFields()
         this.clearJSon()
       }
     }
   },
-  mounted () { },
+  mounted() { },
   methods: {
     // pushCreate () {
     //   const push = this.$router.resolve({
@@ -139,16 +139,16 @@ export default {
     //   })
     //   window.open(push.href, '_blank')
     // },
-    updatePolicy () {
+    updatePolicy() {
       this.$router.push({ name: 'PoliciesUpdate' })
     },
-    handleSelect (val) {
+    handleSelect(val) {
       this.selection = val
     },
-    refresh () {
+    refresh() {
       this.$refs['policyTable'].listPolicies()
     },
-    submitCreate () {
+    submitCreate() {
       if (this.hasJsonFlag == false) {
         return this.$ts({
           type: 'error',
@@ -181,17 +181,17 @@ export default {
         })
       }
     },
-    createPolicy () {
+    createPolicy() {
       this.$router.push({
         name: 'PolicyDetail',
         params: { name: 'create' }
       })
     },
-    eslintJson () {
+    eslintJson() {
       document.getElementsByClassName('jsoneditor-format').click()
       // $('.jsoneditor-format').click()
     },
-    copyCode () {
+    copyCode() {
       var str = this.$refs['jsonEditor'].editor.getText()
       navigator.clipboard.writeText(str)
       this.$ts({
@@ -199,17 +199,17 @@ export default {
         text: '复制成功'
       })
     },
-    onJsonChange (value) {
+    onJsonChange(value) {
       this.onJsonSave(value)
     },
-    onJsonSave (value) {
+    onJsonSave(value) {
       this.jsonString = value
       this.hasJsonFlag = true
     },
-    onError (value) {
+    onError(value) {
       this.hasJsonFlag = false
     },
-    clearJSon () {
+    clearJSon() {
       this.jsonString = {
         Version: '2012-10-17',
         Statement: [

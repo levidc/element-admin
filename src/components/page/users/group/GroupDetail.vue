@@ -340,7 +340,7 @@ import {
 } from '@/api/group'
 export default {
   name: 'GroupDetail',
-  data () {
+  data() {
     return {
       tabName: 'members',
       searchPolicy: '',
@@ -371,19 +371,19 @@ export default {
     }
   },
   computed: {
-    currentPolicyName () {
+    currentPolicyName() {
       return this.userPolicy
         .reduce((cur, pre) => {
           return cur + pre.name + ', '
         }, '')
         .replace(/, $/, '')
     },
-    currentName () {
+    currentName() {
       return this.$route.params.name
     }
   },
   watch: {
-    policyDialog (val) {
+    policyDialog(val) {
       if (val) {
         this.listPolicies()
       } else {
@@ -392,7 +392,7 @@ export default {
         this.groupDetail()
       }
     },
-    memberDialog (val) {
+    memberDialog(val) {
       if (val) {
         this.listUsers()
         // api 获取新的用户所选group及其他信息
@@ -401,28 +401,28 @@ export default {
         this.$refs['memberTable'].clearSelection()
       }
     },
-    userName (val) {
+    userName(val) {
       this.editMemeberData = [...this.cloneMemberData]
       if (!val) return
       this.editMemeberData = this.editMemeberData.filter(item => {
         return item.userName.toLowerCase().indexOf(val.toLowerCase()) !== -1
       })
     },
-    searchPolicy (val) {
+    searchPolicy(val) {
       this.userPolicy = [...this.clonePolicy]
       if (!val) return
       this.userPolicy = this.userPolicy.filter(item => {
         return item.name.toLowerCase().indexOf(val.toLowerCase()) !== -1
       })
     },
-    searchUser (val) {
+    searchUser(val) {
       this.memberData = [...this.cloneMData]
       if (!val) return
       this.memberData = this.memberData.filter(item => {
         return item.userName.toLowerCase().indexOf(val.toLowerCase()) !== -1
       })
     },
-    policyName (val) {
+    policyName(val) {
       this.policyData = [...this.clonePolicyData]
       if (!val) return
       this.policyData = this.policyData.filter(item => {
@@ -435,34 +435,34 @@ export default {
     //   }
     // }
   },
-  mounted () {
+  mounted() {
     this.groupDetail()
   },
   methods: {
-    checkBasePolicy (val) {
+    checkBasePolicy(val) {
       return val.name !== 'BasePolicy'
     },
-    handleScroll (ref) {
+    handleScroll(ref) {
       this.$refs[ref].$el.children[2].scrollTop = 0
     },
-    queryUserDetail (row) {
+    queryUserDetail(row) {
       this.$router.push({ name: 'UserDetail', params: { name: row.userName }})
     },
-    copyCode (val) {
+    copyCode(val) {
       navigator.clipboard.writeText(val)
       this.$ts({
         type: 'success',
         text: '复制成功'
       })
     },
-    handlePolicyChange (val) {
+    handlePolicyChange(val) {
       this.selectedPolicy = val
     },
-    handleMemberChange (val) {
+    handleMemberChange(val) {
       this.selectedMember = val
     },
     // 群组设置
-    confirmGroup () {
+    confirmGroup() {
       const removeUser = this.memberData
         .filter(item => {
           return this.selectedMember.every(item2 => {
@@ -547,7 +547,7 @@ export default {
       console.log(removeUser, 'remove', addUser, 'add')
       // console.log(this.selectedMember, 'selected')
     },
-    deleteUser (row) {
+    deleteUser(row) {
       removeUserFromGroup({
         groupName: this.currentName,
         userList: [row.userName]
@@ -564,13 +564,13 @@ export default {
         })
     },
     // 策略设置
-    deletePolicy (row) {
+    deletePolicy(row) {
       const policyNames = this.userPolicy
         .filter(item => item.name !== row.name)
         .map(item => item.name)
       this.confirmPolicy(policyNames)
     },
-    confirmPolicy (flag) {
+    confirmPolicy(flag) {
       let policyNames
       if (flag) {
         policyNames = flag
@@ -593,7 +593,7 @@ export default {
       })
       // console.log(this.selectedPolicy, "seletced");
     },
-    resetPolicy () {
+    resetPolicy() {
       this.$refs['policyTable'].clearSelection()
       this.$nextTick(() => {
         this.userPolicy.forEach(item => {
@@ -604,7 +604,7 @@ export default {
         this.policyData.pop()
       })
     },
-    resetUser () {
+    resetUser() {
       this.$refs['memberTable'].clearSelection()
       this.memberData.forEach(item => {
         this.$refs['memberTable'].toggleRowSelection(item)
@@ -621,7 +621,7 @@ export default {
     //     { name: 's5', id: 5 }
     //   ]
     // },
-    listUsers () {
+    listUsers() {
       this.$nextTick(() => {
         listUsers()
           .then(res => {
@@ -638,7 +638,7 @@ export default {
           })
       })
     },
-    switchGroupStatus (val) {
+    switchGroupStatus(val) {
       if (val) {
         enableGroup(this.currentName).then(res => {
           this.$ts({
@@ -655,7 +655,7 @@ export default {
         })
       }
     },
-    groupDetail () {
+    groupDetail() {
       getGroup({
         groupName: this.currentName
       }).then(res => {
@@ -683,7 +683,7 @@ export default {
         this.enableGroup = res.data.status === 1
       })
     },
-    listPolicies () {
+    listPolicies() {
       // console.log('listpolicies')
       this.$nextTick(() => {
         getPolicy().then(res => {
@@ -695,7 +695,7 @@ export default {
         })
       })
     },
-    deleteGroup () {
+    deleteGroup() {
       if (this.memberData && this.memberData.length) {
         const name = this.memberData.map(item => item.userName)
         this.deleteFlag = false

@@ -35,19 +35,19 @@ export default {
       default: () => []
     }
   },
-  data () {
+  data() {
     return {
       // 已选择的项
       columnSelecteds: []
     }
   },
   computed: {
-    filterShow () {
+    filterShow() {
       return this.columnHeaders.filter(item => !item.disabled)
     }
   },
   watch: {
-    columnSelecteds (val) {
+    columnSelecteds(val) {
       // 计算未被选中的列标题数组
       // // 根据计算结果进行表格重绘
       const hideTable = this.columnHeaders.map(item => {
@@ -62,7 +62,7 @@ export default {
       this.$emit('hideColumn', hideTable)
     }
   },
-  mounted () {
+  mounted() {
     // 初始化选项
     this.columnSelecteds = this.columnHeaders.map(item => item.title)
   },

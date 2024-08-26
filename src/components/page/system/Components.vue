@@ -20,7 +20,7 @@
         class="serverTabs mt_10"
       >
         <el-tab-pane
-          v-if="$store.state.api['admin:CheckTikvStatusController']"
+          v-if="$store.state.user.api['admin:CheckTikvStatusController']"
           name="tikv"
           label="tikv"
         >
@@ -30,7 +30,7 @@
           />
         </el-tab-pane>
         <el-tab-pane
-          v-if="$store.state.api['admin:CheckRedisStatusController']"
+          v-if="$store.state.user.api['admin:CheckRedisStatusController']"
           name="redis"
           label="redis"
         >
@@ -52,18 +52,18 @@ export default {
     tikvTable,
     redisTable
   },
-  data () {
+  data() {
     return {
       tabVal: ''
     }
   },
-  mounted () {
-    const flag = this.$store.state.api['admin:CheckTikvStatusController']
+  mounted() {
+    const flag = this.$store.state.user.api['admin:CheckTikvStatusController']
     this.tabVal = flag ? 'tikv' : 'redis'
   },
   methods: {
-    refreshList () {
-      if (this.tabVal == 'tikv') {
+    refreshList() {
+      if (this.tabVal === 'tikv') {
         this.$refs['tikv'].list()
       } else {
         this.$refs['redis'].list()

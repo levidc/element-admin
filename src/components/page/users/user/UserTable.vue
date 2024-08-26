@@ -108,7 +108,7 @@ export default {
       default: ''
     }
   },
-  data () {
+  data() {
     return {
       selectUser: '',
       deleteFlag: false,
@@ -125,7 +125,7 @@ export default {
   },
 
   watch: {
-    searchVal (val) {
+    searchVal(val) {
       this.tableData = [...this.cloneData]
       this.total = this.tableData.length
       this.currentPage = 1
@@ -136,13 +136,13 @@ export default {
       this.total = this.tableData.length
     }
   },
-  created () {
+  created() {
   },
-  mounted () {
+  mounted() {
     this.listUser()
   },
   methods: {
-    deleteUser () {
+    deleteUser() {
       deleteUser(this.selectUser.userName)
         .then(res => {
           this.$ts({
@@ -159,7 +159,7 @@ export default {
           this.selectUser = ''
         })
     },
-    confirmDelete () {
+    confirmDelete() {
       if (this.selectUser.groups && this.selectUser.groups.length) {
         this.deleteFlag = false
         this.$confirm(
@@ -177,10 +177,10 @@ export default {
         this.deleteUser()
       }
     },
-    viewDetail (name) {
+    viewDetail(name) {
       this.$router.push({ name: 'UserDetail', params: { name }})
     },
-    listUser () {
+    listUser() {
       this.loading = true
       this.currentPage = 1
       listUsers()
@@ -197,15 +197,15 @@ export default {
           this.loading = false
         })
     },
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.pageSize = val
       /* this.listUser();*/
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.currentPage = val
       /* this.listUser();*/
     },
-    toggleSelection (rows) {
+    toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
           this.$refs.multipleTable.toggleRowSelection(row)
@@ -214,7 +214,7 @@ export default {
         this.$refs.multipleTable.clearSelection()
       }
     },
-    sortFunction (val) {
+    sortFunction(val) {
       this.prop = val.prop
       this.order = val.order
       this.tableData.sort(this.sortMethod(val.prop, val.order))

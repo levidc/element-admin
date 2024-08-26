@@ -1,7 +1,7 @@
 import request from '../request'
 
 // list获取所有存储桶高可用策略
-export function listAllHighBucketConfig () {
+export function listAllHighBucketConfig() {
   return request({
     method: 'get',
     url: 'listAllHighBucketConfig'
@@ -9,7 +9,7 @@ export function listAllHighBucketConfig () {
 }
 
 // 添加存储桶高可用策略
-export function createHighBucketConfig (data) {
+export function createHighBucketConfig(data) {
   return request({
     method: 'post',
     url: 'createHighBucketConfig',
@@ -18,7 +18,7 @@ export function createHighBucketConfig (data) {
 }
 
 // 获取存储桶高可用策略
-export function getHighBucketConfig (params) {
+export function getHighBucketConfig(params) {
   return request({
     method: 'get',
     url: 'getHighBucketConfig',
@@ -27,7 +27,7 @@ export function getHighBucketConfig (params) {
 }
 
 // 删除存储桶高可用策略
-export function deleteHighBucketConfig (params) {
+export function deleteHighBucketConfig(params) {
   return request({
     method: 'delete',
     url: 'deleteHighBucketConfig',
@@ -37,7 +37,7 @@ export function deleteHighBucketConfig (params) {
 
 // 更新存储桶高可用策略
 
-export function updateHighBucketConfig (data) {
+export function updateHighBucketConfig(data) {
   return request({
     method: 'post',
     url: 'updateHighBucketConfig',

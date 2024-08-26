@@ -285,7 +285,7 @@ import {
 } from '@/api/storage'
 import { validBucketName, validateMaxInt } from '@/utils/validate'
 export default {
-  data () {
+  data() {
     return {
       refreshId: [],
       sortConfig: {},
@@ -449,29 +449,29 @@ export default {
     }
   },
   computed: {
-    isAdd () {
+    isAdd() {
       return this.opType === 'add'
     },
-    renderDel () {
+    renderDel() {
       return this.opType === 'del'
     },
     ...mapState(['api'])
   },
   watch: {
-    modelFormFlag (val) {
+    modelFormFlag(val) {
       if (val) {
         clearTimeout(this.timer)
       } else {
         this.init(true)
       }
     },
-    'form.storageType': function (val) {
+    'form.storageType': function(val) {
       if (val === 'S3') {
         this.form.nasAdvancedConfig = false
         this.$refs['form'].clearValidate()
       }
     },
-    deleteFlag (val) {
+    deleteFlag(val) {
       if (!val) {
         this.init(true)
         this.opType = 'add'
@@ -480,7 +480,7 @@ export default {
         clearTimeout(this.timer)
       }
     },
-    filterText (val) {
+    filterText(val) {
       this.tableData = JSON.parse(JSON.stringify(this.copyData))
       if (!val) {
         this.init(true)
@@ -491,20 +491,20 @@ export default {
       this.tableData = this.tableData.filter(item => item.storageName.toLowerCase().indexOf(val.toLowerCase()) > -1)
     }
   },
-  mounted () {
+  mounted() {
     this.init(true)
   },
-  destroyed () {
+  destroyed() {
     clearTimeout(this.timer)
   },
   methods: {
-    handleUrl (val) {
+    handleUrl(val) {
       this.form.url = val.replace(/[ \t]+/g, '').replace(/[\r\n]+/g, '\n')
     },
-    renderStatus (row) {
+    renderStatus(row) {
       return row.status === 'CONNECTING' || false
     },
-    renderUrlArr (obj) {
+    renderUrlArr(obj) {
       const {
         hdfsResourceStatus,
         url
@@ -525,27 +525,27 @@ export default {
         })
       }
     },
-    transByteToGB (data) {
+    transByteToGB(data) {
       // ByteToGB、
       const res = (Number(data) / 1024 ** 3).toFixed(2)
       return res == 0 ? 0 : res
     },
-    rendeKey (row) {
+    rendeKey(row) {
       return row.resourceId
     },
-    handleDel (type, { row }) {
+    handleDel(type, { row }) {
       if (type === 'object') {
         this.opType = 'del'
       }
       this.selectRow = row
       this.deleteFlag = true
     },
-    sortFunction (val) {
+    sortFunction(val) {
       this.prop = val.prop
       this.order = val.order
       this.tableData.sort(this.sortMethod(val.prop, val.order))
     },
-    init (flag) {
+    init(flag) {
       if (flag) {
         this.loading = true
       }
@@ -565,7 +565,7 @@ export default {
         }, 4000)
       })
     },
-    updateForm (row, flag = false) {
+    updateForm(row, flag = false) {
       this.opType = 'update'
       // 替换url匹配为\n显示
       Object.assign(this.form, { ...row, defaultV: row.default, mountDir: row.bucketName, url: row.url.replace(/,/g, '\n') })
@@ -574,13 +574,13 @@ export default {
         this.modelFormFlag = true
       }
     },
-    dialogOpen (e) {
+    dialogOpen(e) {
       const ipt = e
-      this.$nextTick(function () {
+      this.$nextTick(function() {
         this.$refs[ipt].$el.querySelector('input').focus()
       })
     },
-    showCreate (cName, id = '') {
+    showCreate(cName, id = '') {
       if (cName === 'object') {
         this.opType = 'add'
         this.modelFormFlag = true
@@ -611,7 +611,7 @@ export default {
         })
       }
     },
-    deleteForm () {
+    deleteForm() {
       if (this.renderDel) {
         const { resourceId, deviceId } = this.selectRow
         removeObjectStorageResource({
@@ -649,7 +649,7 @@ export default {
         })
       }
     },
-    confirmCreate () {
+    confirmCreate() {
       this.$refs['form'].validate((valid) => {
         const {
           userName,

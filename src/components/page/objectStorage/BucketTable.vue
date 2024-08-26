@@ -370,7 +370,7 @@ export default {
       }).finally(() => {
         this.loading = false
       })
-      // this.$store.state._gatewayS3.call({ path: '/', param: { bucketWarp: '' }}).then(res => {
+      // this.$store.state.user._gatewayS3.call({ path: '/', param: { bucketWarp: '' }}).then(res => {
       //   this.tableData = res.data.BucketQuotaInfos || []
       //   if (defaultSort) {
       //     this.tableData.sort((a, b) => new Date(b.CreateDate).getTime() - new Date(a.CreateDate).getTime())

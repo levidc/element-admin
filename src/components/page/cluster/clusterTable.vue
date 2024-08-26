@@ -57,7 +57,7 @@ export default {
       default: ''
     }
   },
-  data () {
+  data() {
     return {
       tableData: [],
       clusterData: [],
@@ -78,16 +78,16 @@ export default {
   watch: {
 
   },
-  mounted: function () {
+  mounted: function() {
     this.listClusters()
   },
 
   methods: {
-    guid () {
+    guid() {
       return Number(Math.random().toString().substr(3, 3) + Date.now()).toString(36)
     },
     // 集群列表
-    listClusters () {
+    listClusters() {
       this.loading = true
       listCluster()
         .then(res => {
@@ -106,7 +106,7 @@ export default {
         })
     },
     // 集群详情
-    onClusterDetail (val) {
+    onClusterDetail(val) {
       // this.detailDialog = true
       // this.detailClusterId = val
       // getClusterById({ clusterId: this.detailClusterId }).then((res) => {
@@ -116,18 +116,18 @@ export default {
       // })
     },
 
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.pageSize = val
       /* this.listRole();*/
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.currentPage = val
       /* this.listRole();*/
     },
-    handleSelectionChange (val) {
+    handleSelectionChange(val) {
       this.$emit('handleSelect', val)
     },
-    sortFunction (val) {
+    sortFunction(val) {
       this.prop = val.prop
       this.order = val.order
       this.tableData.sort(this.sortMethod(val.prop, val.order))

@@ -22,7 +22,7 @@
     />
 
     <!-- 创建角色|更新角色 -->
-    <el-dialog v-dialogDrag :title="isAdd ?$ts('role.model.create'):$ts('role.model.update')" :visible.sync="editDialog" width="900px" @open="dialogOpen('tableFocus')">
+    <el-dialog :title="isAdd ?$ts('role.model.create'):$ts('role.model.update')" :visible.sync="editDialog" width="900px" @open="dialogOpen('tableFocus')">
       <div>
         <div style="background-color:#f5f7fa;margin-top: 20px;position:relative;">
           <el-steps class="left steps_wrap" :active="active" finish-status="success" simple>
@@ -115,7 +115,7 @@
     </el-dialog>
 
     <!-- 删除角色 -->
-    <el-dialog v-dialogDrag :title="$ts('role.model.delete')" :visible.sync="isDelete" width="30%">
+    <el-dialog :title="$ts('role.model.delete')" :visible.sync="isDelete" width="30%">
       <p>{{ $ts('role.delete.info') }}</p>
       <div>{{ names }}</div>
       <span slot="footer" class="dialog-footer">
@@ -134,7 +134,7 @@ export default {
   components: {
     RoleTable
   },
-  data () {
+  data() {
     return {
       editDialog: false,
       operateType: 'create',
@@ -165,11 +165,11 @@ export default {
     }
   },
   computed: {
-    isAdd () {
+    isAdd() {
       return this.operateType === 'create'
     },
     // 权限集合的value转换
-    valueTransArr () {
+    valueTransArr() {
       const temp = []
       const obj = {}
       const len = this.apis.length
@@ -182,24 +182,24 @@ export default {
       return obj
     }
   },
-  mounted () {
+  mounted() {
     this.listapis()
   },
   methods: {
-    addRole () {
+    addRole() {
       this.editDialog = true
       this.operateType = 'create'
       this.resetForm('createForm')
     },
-    valueTrans (val) {
+    valueTrans(val) {
       return this.valueTransArr[val]
     },
-    dialogOpen (e) {
-      this.$nextTick(function () {
+    dialogOpen(e) {
+      this.$nextTick(function() {
         this.$refs[e].$el.querySelector('input').focus()
       })
     },
-    modifyRole (row) {
+    modifyRole(row) {
       // 异步axios 执行
       this.resetForm('createForm').then(res => {
         this.operateType = 'modify'
@@ -229,7 +229,7 @@ export default {
         // console.log('listRoleEnd')
       })
     },
-    handleCheckAllChange (flag, key, k) {
+    handleCheckAllChange(flag, key, k) {
       // flag 全选、key 全选name、k: index
       if (!flag) {
         this.createApi[key].checkGroup = []
@@ -242,20 +242,20 @@ export default {
       }
     },
     // 勾选单独check的处理函数
-    handleCheckedChange (value, key) {
+    handleCheckedChange(value, key) {
       // 不区分新建、修改
       this.createApi[key].checkAll = value.length === this.createApi[key].len
     },
 
     // 删除禁用
-    boxClick (len) {
+    boxClick(len) {
       if (len > 0) {
         this.delBtn = false
       } else {
         this.delBtn = true
       }
     },
-    resetForm (formName) {
+    resetForm(formName) {
       // 展示页 checkApis
       this.checkApis = []
       this.active = 0
@@ -267,19 +267,19 @@ export default {
       if (this.$refs[formName]) this.$refs[formName].resetFields()
       return this.listapis()
     },
-    refresh () {
+    refresh() {
       this.$refs.roletable.listRole(true)
       this.delBtn = true
     },
     // 上一步
-    prev () {
+    prev() {
       --this.active
       if (this.active < 0) {
         this.active = 0
       }
     },
     // 下一步
-    next (formName) {
+    next(formName) {
       if (this.active == 0) {
         this.$refs[formName].validate(valid => {
           if (valid) this.nextFun()
@@ -288,7 +288,7 @@ export default {
         this.nextFun()
       }
     },
-    nextFun () {
+    nextFun() {
       if (this.active++ > 3) {
         this.active = 0
       }
@@ -308,7 +308,7 @@ export default {
         // console.log(this.checkApis, 'createApi')
       }
     },
-    listapis () {
+    listapis() {
       var temp = this
       temp.i18n = localStorage.getItem('lang')
       return this.$http({
@@ -335,7 +335,7 @@ export default {
           console.error(error)
         })
     },
-    listNames () {
+    listNames() {
       const arr = []
       for (const i of this.$refs.roletable.multipleSelection) {
         arr.push(i.name)
@@ -343,7 +343,7 @@ export default {
       this.names = arr.join(',')
       this.isDelete = true
     },
-    doDelete () {
+    doDelete() {
       const loading = this.$loading(this.loadingOption)
       const deleteIds = []
       for (const i of this.$refs.roletable.multipleSelection) {
@@ -359,7 +359,7 @@ export default {
           version: this.$store.state.dosVersion
         }
       })
-        .then(function (response) {
+        .then(function(response) {
           if (response.data.error.code != 0) {
             temp.$ts({
               type: 'error',
@@ -375,12 +375,12 @@ export default {
           loading.close()
           temp.$refs.roletable.listRole()
         })
-        .catch(function (error) {
+        .catch(function(error) {
           loading.close()
           console.log(error)
         })
     },
-    editRole () {
+    editRole() {
       const loading = this.$loading(this.loadingOption)
       const arr = []
       this.checkApis.forEach(item => {
@@ -413,7 +413,7 @@ export default {
             loading.close()
             this.resetForm('createForm')
           })
-          .catch(function (error) {
+          .catch(function(error) {
             loading.close()
             console.log(error)
           })
@@ -445,7 +445,7 @@ export default {
             this.$refs.roletable.listRole()
             this.resetForm('modifyForm')
           })
-          .catch(function (error) {
+          .catch(function(error) {
             console.log(error)
           })
           .finally(() => {

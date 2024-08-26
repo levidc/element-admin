@@ -385,7 +385,7 @@ export default {
     getBucketAcl() {
       this.loading = true
       this.form.granteeTable = []
-      this.$store.state._S3.getBucketAcl(
+      this.$store.state.user._S3.getBucketAcl(
         { Bucket: this.$route.params.id },
         (err, data) => {
           if (err) {
@@ -631,7 +631,7 @@ export default {
       //   }
       // ])
       // console.log(Grants, 'grant')
-      this.$store.state._S3.putBucketAcl(
+      this.$store.state.user._S3.putBucketAcl(
         {
           Bucket: this.$route.params.id,
           ACL: this.formAcl.selectAcl,

@@ -142,7 +142,7 @@
 import { queryOperationLogs } from '@/api/storage'
 import moment from 'moment'
 export default {
-  data () {
+  data() {
     return {
       operationTargetType: [
         { value: 'TASK', label: '归档任务' },
@@ -249,47 +249,47 @@ export default {
     }
   },
   computed: {
-    watchForm () {
+    watchForm() {
       return JSON.parse(JSON.stringify(this.form))
     }
   },
   watch: {
     watchForm: {
-      handler (val) {
+      handler(val) {
         clearTimeout(this.timer)
       }
     }
   },
-  mounted () {
+  mounted() {
     this.handleSearchParams(false, true)
   },
-  destroyed () {
+  destroyed() {
     clearTimeout(this.timer)
   },
   methods: {
-    renderPagination (val) {
+    renderPagination(val) {
       this.handleSearchParams(val, true)
     },
-    sortFunction (val) {
+    sortFunction(val) {
       const { prop, order } = val
       Object.assign(
         this.sort, { prop, order }
       )
       this.handleSearchParams(false, true)
     },
-    renderTargetResouce () {
+    renderTargetResouce() {
       const flag = this.taskForm.resourceList.filter(item => {
         return this.taskForm.targetResourceId === item.value
       })
       this.taskForm.targetDetail = flag && flag[0].bucketName
     },
-    reset () {
+    reset() {
       this.$refs['form'].resetFields()
       const { pageSize } = this.$refs['tab']
       this.$refs['tab'].currentPage = 1
       this.init({ params: { pageSize, pageNumber: 1 }}, true)
     },
-    handleSearchParams (customPage, loading = false) {
+    handleSearchParams(customPage, loading = false) {
       const { pageSize, currentPage } = this.$refs['tab']
       const { userName, target, operationType,
         operationTargetType } = this.form
@@ -310,17 +310,17 @@ export default {
         data
       }, loading)
     },
-    searchParams () {
+    searchParams() {
       const { pageSize } = this.$refs['tab']
       this.$refs['tab'].currentPage = 1
       this.handleSearchParams(
         { pageSize, pageNumber: 1 }, true
       )
     },
-    handleRefresh () {
+    handleRefresh() {
       this.handleSearchParams(false, true)
     },
-    init (data = {}, flag = false) {
+    init(data = {}, flag = false) {
       if (flag) {
         this.loading = true
       }

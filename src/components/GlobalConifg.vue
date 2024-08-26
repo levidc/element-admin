@@ -114,7 +114,7 @@
 import { getGlobalConfig, setGlobalConfig } from '@/api/dashboard'
 export default {
   name: 'GlobalConifg',
-  data () {
+  data() {
     return {
       formControl: {
         editAuthSafe: true,
@@ -147,20 +147,20 @@ export default {
   },
   watch: {
   },
-  mounted () {
+  mounted() {
     this.getConfig()
   },
   methods: {
-    disabledEdit (key) {
+    disabledEdit(key) {
       return Object.keys(this.formControl).filter(x => x !== key).every(x => this.formControl[x])
     },
-    renderPositiveNum () {
+    renderPositiveNum() {
       this.form.gatewayCount = Number(String(this.form.gatewayCount)
         .replace(/(^0+)|\D/g, '')
         .replace(/\b(20[1-9]|2[1-9][0-9]|[3-9][0-9]{2}|[1-9][0-9]{3,})\b/g, '200')) ||
         ''
     },
-    getConfig () {
+    getConfig() {
       this.formControl = {
         editAuthSafe: true,
         editQos: true,
@@ -187,7 +187,7 @@ export default {
         this.loading = false
       })
     },
-    onCheckSave () {
+    onCheckSave() {
       this.$refs['form'].validate(valid => {
         if (valid) {
           this.loading = true
@@ -222,11 +222,11 @@ export default {
         }
       })
     },
-    edit (editKey) {
+    edit(editKey) {
       this.golden = true
       this.formControl[editKey] = false
     },
-    editVersionControls () {
+    editVersionControls() {
       this.golden = false
       this.getConfig()
     }

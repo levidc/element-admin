@@ -66,7 +66,7 @@
 <script>
 export default {
   props: ['searchVal'],
-  data () {
+  data() {
     return {
       tableData: [],
       cloneData: [],
@@ -80,7 +80,7 @@ export default {
     }
   },
   watch: {
-    searchVal (val) {
+    searchVal(val) {
       this.tableData = [...this.cloneData]
       if (!val) return
       this.tableData = this.tableData.filter(item => {
@@ -88,18 +88,18 @@ export default {
       })
     }
   },
-  mounted: function () {
+  mounted: function() {
     this.listRole()
   },
   methods: {
-    viewDetail: function (id) {
+    viewDetail: function(id) {
       this.$router.push({ name: 'RoleDetail', params: { id: id }})
     },
-    doModifyRole: function (row) {
+    doModifyRole: function(row) {
       // 子组件中触发父组件方法ee并传值cc12345
       this.$emit('doModifyRole', row)
     },
-    listRole: function (flag) {
+    listRole: function(flag) {
       if (flag) {
         this.currentPage = 1
         console.log('currentPage 为1')
@@ -113,7 +113,7 @@ export default {
           version: this.$store.state.dosVersion
         }
       })
-        .then(function (response) {
+        .then(function(response) {
           response = response.data.data
           temp.tableData = response
           temp.cloneData = [...temp.tableData]
@@ -127,19 +127,19 @@ export default {
           }
           console.log(temp.currentPage)
         })
-        .catch(function (error) {
+        .catch(function(error) {
           console.log(error)
         })
     },
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.pageSize = val
       /* this.listRole();*/
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.currentPage = val
       /* this.listRole();*/
     },
-    toggleSelection (rows) {
+    toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
           this.$refs.multipleTable.toggleRowSelection(row)
@@ -148,11 +148,11 @@ export default {
         this.$refs.multipleTable.clearSelection()
       }
     },
-    handleSelectionChange (val) {
+    handleSelectionChange(val) {
       this.multipleSelection = val
       this.$emit('boxClick', val.length)
     },
-    sortFunction (val) {
+    sortFunction(val) {
       this.prop = val.prop
       this.order = val.order
       this.tableData.sort(this.sortMethod(val.prop, val.order))

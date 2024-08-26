@@ -75,7 +75,7 @@
           </div>
         </div>
         <el-dialog
-          v-dialogDrag
+
           title="确定开启版本控制？"
           :visible.sync="isShowSaveTip"
           width="30%"
@@ -96,7 +96,7 @@ export default {
   name: 'BucketList',
   components: {},
   filters: {},
-  data () {
+  data() {
     return {
       loading: false,
       versionControl: false,
@@ -108,17 +108,17 @@ export default {
     }
   },
   computed: {},
-  mounted: function () {
+  mounted: function() {
     this.getVersionControl()
   },
-  destroyed () { },
+  destroyed() { },
   methods: {
-    getVersionControl () {
+    getVersionControl() {
       this.loading = true
       var params = {
         Bucket: this.$route.params.id
       }
-      this.$store.state._S3.getObjectLockConfiguration(params, (err, data) => {
+      this.$store.state.user._S3.getObjectLockConfiguration(params, (err, data) => {
         if (err) {
           this.loading = false
           this.showS3Msg(err)
@@ -132,7 +132,7 @@ export default {
           }
         }
       })
-      this.$store.state._S3.getBucketVersioning(params, (err, data) => {
+      this.$store.state.user._S3.getBucketVersioning(params, (err, data) => {
         if (err) {
           console.log(err)
           this.showS3Msg(err)
@@ -145,21 +145,21 @@ export default {
         }
       })
     },
-    doSaveVersion () {
+    doSaveVersion() {
       if (this.noVersionControl) {
         this.isShowSaveTip = true
       } else {
         this.saveVersionControl()
       }
     },
-    saveVersionControl () {
+    saveVersionControl() {
       var params = {
         Bucket: this.$route.params.id,
         VersioningConfiguration: {
           Status: this.versionControl ? 'Enabled' : 'Suspended'
         }
       }
-      this.$store.state._S3.putBucketVersioning(params, (err, response) => {
+      this.$store.state.user._S3.putBucketVersioning(params, (err, response) => {
         if (err) {
           this.showS3Msg(err)
           console.error(err)

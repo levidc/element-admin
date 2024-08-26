@@ -81,7 +81,7 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       loading: false,
       editConfig: false,
@@ -95,11 +95,11 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     // this.config = 'BucketOwnerPreferred'
     // this.aclDisable = this.config === 'BucketOwnerEnforced' ? 'off' : 'on'
     this.loading = false
-    this.$store.state._S3.getBucketOwnershipControls(
+    this.$store.state.user._S3.getBucketOwnershipControls(
       {
         Bucket: this.$route.params.id
       },
@@ -115,12 +115,12 @@ export default {
     )
   },
   methods: {
-    saveConfig () {
+    saveConfig() {
       this.config =
         this.aclDisable === 'off' ? 'BucketOwnerEnforced' : this.objectOwnership
       console.log(this.config, 'config')
       // error content cannot read
-      this.$store.state._S3.putBucketOwnershipControls(
+      this.$store.state.user._S3.putBucketOwnershipControls(
         {
           Bucket: this.$route.params.id,
           OwnershipControls: { Rules: [{ ObjectOwnership: this.config }] }

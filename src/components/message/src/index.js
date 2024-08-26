@@ -6,8 +6,8 @@ const defaults = {
   duration: '3000',
   type: ''
 }
-const MessageVueConstructor = Vue.extend(messageVue)
-MessageVueConstructor.prototype.close = function () {
+const messageVueConstructor = Vue.extend(messageVue)
+messageVueConstructor.prototype.close = function() {
   var vm = this
   this.$on('after-leave', _ => {
     if (vm.$el && vm.$el.parentNode) {
@@ -17,19 +17,29 @@ MessageVueConstructor.prototype.close = function () {
   })
   vm.show = false
 }
+var singleInstance = 0
+const instanceList = []
 const messageBox = (options = {}) => {
   if (Vue.prototype.$isServer) return
   options = Object.assign({}, defaults, options)
   const parent = document.body
-  const instance = new MessageVueConstructor({
+  const instance = new messageVueConstructor({
     el: document.createElement('div'),
     data: options
   })
+  instanceList.push(instance)
+  singleInstance += 1
   parent.appendChild(instance.$el)
   Vue.nextTick(() => {
     instance.show = true
-    setTimeout(function () {
+    if (singleInstance !== 1) {
+      instanceList[0].close()
+      instanceList.shift()
+    }
+    setTimeout(function() {
       instance.close()
+      instanceList.pop()
+      singleInstance = 0
     }, options.duration)
   })
 

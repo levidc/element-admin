@@ -46,7 +46,7 @@ export default {
       default: []
     }
   },
-  data () {
+  data() {
     return {
       option: {},
       echart: null,
@@ -63,7 +63,7 @@ export default {
   },
   watch: {
   },
-  mounted () {
+  mounted() {
     this.$nextTick(() => {
       this.init()
       window.addEventListener('resize', this.resizeHandler)
@@ -71,16 +71,16 @@ export default {
       this.elMain && this.elMain.addEventListener('transitionend', this.contentResizeHandler)
     })
   },
-  activated () {
+  activated() {
     // this.echart && this.echart.resize()
   },
-  beforeDestroy () {
+  beforeDestroy() {
     // window.removeEventListener('resize', this.resizeHandler)
     // this.elMain && this.elMain.removeEventListener('transitionend', this.contentResizeHandler)
     // this.elMain = null
   },
   methods: {
-    renderSize () {
+    renderSize() {
       let width = window.innerWidth
       if (width < 1800 && width > 1600) {
         this.option.series[0].label.normal.textStyle.fontSize = 35
@@ -105,10 +105,10 @@ export default {
       console.log(this.echart, '1233', width)
       this.option.series[0].radius = (40 + width) + '%'
     },
-    onClick (data) {
+    onClick(data) {
       this.$emit('click', { ...data, title: this.title })
     },
-    init () {
+    init() {
       if (!this.echart && this.$refs.echart) {
         this.echart = this.$echarts.init(this.$refs.echart)
         if (this.echart) {
@@ -174,7 +174,7 @@ export default {
                       fontSize: 38
                     },
                     fontWeight: 400,
-                    formatter: function (params) {
+                    formatter: function(params) {
                       return parseInt((params.value * 100).toFixed(2))
                     }
                   }
@@ -333,7 +333,7 @@ export default {
         }
       }
     },
-    resizeHandler () {
+    resizeHandler() {
       if (this.resizeTimer > 0) clearTimeout(this.resizeTimer)
       this.resizeTimer = setTimeout(() => {
         this.renderSize()
@@ -342,7 +342,7 @@ export default {
         this.resizeTimer = 0
       }, 100)
     },
-    contentResizeHandler (e) {
+    contentResizeHandler(e) {
       if (e.propertyName === 'width') {
         this.resizeHandler()
       }

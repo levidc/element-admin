@@ -186,7 +186,7 @@ import {
 } from '@/api/storage'
 import { validBucketName, validateMaxInt } from '@/utils/validate'
 export default {
-  data () {
+  data() {
     return {
       timer: null,
       enumStorageType: [
@@ -414,16 +414,16 @@ export default {
     }
   },
   computed: {
-    isAdd () {
+    isAdd() {
       return this.opType === 'add'
     },
-    isAddDevice () {
+    isAddDevice() {
       return this.optDType === 'add'
     },
-    renderDel () {
+    renderDel() {
       return this.opType === 'del'
     },
-    getStorageType () {
+    getStorageType() {
       return this.form.storageType
     },
     ...mapState(['api'])
@@ -440,26 +440,26 @@ export default {
     //     this.$refs['tipref'].style.display = 'none'
     //   }
     // }
-    modelFormFlag (val) {
+    modelFormFlag(val) {
       if (val) {
         clearTimeout(this.timer)
       } else {
         this.init(true)
       }
     },
-    'form.storageType': function (val) {
+    'form.storageType': function(val) {
       if (val === 'S3') {
         this.form.nasAdvancedConfig = false
         this.$refs['form'].clearValidate()
       }
     },
-    deleteFlag (val) {
+    deleteFlag(val) {
       if (!val) {
         this.opType = 'add'
         this.optDType = 'add'
       }
     },
-    filterText (val) {
+    filterText(val) {
       this.tableData = JSON.parse(JSON.stringify(this.copyData))
       if (!val) {
         this.init(true)
@@ -469,23 +469,23 @@ export default {
       this.$refs['tab'].currentPage = 1
       this.tableData = this.tableData.filter(item => item.storageName.toLowerCase().indexOf(val.toLowerCase()) > -1)
     },
-    defNextFlag (val) {
+    defNextFlag(val) {
       if (!val) {
         Object.assign(this.defNextForm, { flag: 'next', radio: '', search: '', resourceId: '' })
       }
     }
   },
-  mounted () {
+  mounted() {
     // this.prop = this.defaultSort.prop
     // this.order = this.defaultSort.order
     // console.log('%c nas', 'color:red')
     this.init(true)
   },
-  destroyed () {
+  destroyed() {
     clearTimeout(this.timer)
   },
   methods: {
-    inputPositiveNum (ipt, value) {
+    inputPositiveNum(ipt, value) {
       const val = value.split('.')
       if (val && val.length == 1) {
         this.$set(this.form, value, ipt.replace(/(^0+)|\D/g, ''))
@@ -493,21 +493,21 @@ export default {
         this.$set(this.form[val[0]], val[1], ipt.replace(/(^0+)|\D/g, ''))
       }
     },
-    handleExpand (row, expand) {
+    handleExpand(row, expand) {
       // console.log(row, expand)
     },
-    transByteToGB (data) {
+    transByteToGB(data) {
       // ByteToGB、
       const res = (Number(data) / 1024 ** 3).toFixed(2)
       return res == 0 ? 0 : res
     },
-    handleRowChange (row) {
+    handleRowChange(row) {
       // 请求成功清除数据 row调用为null
       const resourceId = row && row.resourceId
       this.defNextForm.radio = resourceId
       this.defNextForm.resourceId = resourceId
     },
-    defSearch () {
+    defSearch() {
       this.defNextResource = JSON.parse(JSON.stringify(this.copyDefNextResource))
       if (!this.defNextForm.search) {
         return
@@ -519,15 +519,15 @@ export default {
         })
       }
     },
-    sortFunctionDef (val) {
+    sortFunctionDef(val) {
       this.defNextSort.prop = val.prop
       this.defNextSort.order = val.order
       this.defNextResource.sort(this.sortMethod(val.prop, val.order))
     },
-    getCurrentRow (row) {
+    getCurrentRow(row) {
       this.defNextForm.resourceId = row.resourceId
     },
-    transferBool (val) {
+    transferBool(val) {
       return this.stringToBoolean(val)
     },
     // confirmDefNext () {
@@ -577,16 +577,16 @@ export default {
     //   this.defNextForm.deviceId = row.deviceId
     //   this.defNextFlag = true
     // },
-    handleDemi (row, _, value) {
+    handleDemi(row, _, value) {
       value = String(value)
       const reg = /\B(?=(\d{3})+(?!\d))/g
       return value.replace(reg, ',')
     },
-    filterNode (value, data) {
+    filterNode(value, data) {
       if (!value) return true
       return (data.deviceName || data.storageName).indexOf(value) !== -1
     },
-    getInfo (node, data) {
+    getInfo(node, data) {
       if (Object.keys(node).includes('storageResourceModelList')) {
         this.updateDevice(node)
         this.showDescDevice = 'device'
@@ -597,10 +597,10 @@ export default {
         // render object
       }
     },
-    rendeKey (row) {
+    rendeKey(row) {
       return row.resourceId
     },
-    handleDel (type, { row }) {
+    handleDel(type, { row }) {
       if (type === 'device') {
         this.optDType = 'del'
       } else if (type === 'object') {
@@ -630,12 +630,12 @@ export default {
     // renderStatus (__, _, v) {
     //   return this.stringToBoolean(v) ? <span class='green'>是</span> : <span class='red'>否</span>
     // },
-    sortFunction (val) {
+    sortFunction(val) {
       this.prop = val.prop
       this.order = val.order
       this.tableData.sort(this.sortMethod(val.prop, val.order))
     },
-    init (flag = false) {
+    init(flag = false) {
       // this.showDescDevice = ''
       if (flag) {
         this.loading = true
@@ -682,7 +682,7 @@ export default {
       //   this.loading = false
       // })
     },
-    async updateForm (row, flag = false) {
+    async updateForm(row, flag = false) {
       this.opType = 'update'
       // console.log(row, 'updateForm')
       // this.form.nasAdvancedConfig = false
@@ -694,7 +694,7 @@ export default {
         this.modelFormFlag = true
       }
     },
-    updateDevice (row, flag = false) {
+    updateDevice(row, flag = false) {
       this.optDType = 'update'
       Object.assign(this.deviceForm, {
         ...row, isDefault: this.stringToBoolean(row.default)
@@ -706,7 +706,7 @@ export default {
         })
       }
     },
-    createDevice () {
+    createDevice() {
       this.$refs['Dform'].validate((valid) => {
         if (valid) {
           const { deviceName, isDefault, deviceId } = this.deviceForm
@@ -741,26 +741,26 @@ export default {
         // console.log(valid, 'valid', this.deviceForm)
       })
     },
-    getRowClass ({ row }) {
+    getRowClass({ row }) {
       if (row.storageResourceModelList && !row.storageResourceModelList.length) {
         return ['hide-dropdown']
       } else {
         return ['']
       }
     },
-    expandChange (row, any) {
+    expandChange(row, any) {
       this.$set(row, 'loading', true)
       setTimeout(() => {
         this.$set(row, 'loading', false)
       }, 200)
     },
-    dialogOpen (e) {
+    dialogOpen(e) {
       const ipt = e
-      this.$nextTick(function () {
+      this.$nextTick(function() {
         this.$refs[ipt].$el.querySelector('input').focus()
       })
     },
-    async showCreate (cName, id = '') {
+    async showCreate(cName, id = '') {
       if (cName === 'device') {
         Object.assign(this.deviceForm, {
           deviceName: '',
@@ -813,7 +813,7 @@ export default {
         })
       }
     },
-    async loadAsyncOption () {
+    async loadAsyncOption() {
       const res = await getInstanceByServiceName()
       this.clientNas = (res.data || []).filter(item => item.healthy).map((item, index) => {
         const { hostName } = item.endPoints.CONTROL
@@ -830,7 +830,7 @@ export default {
     //     value: item.deviceId
     //   }
     // })
-    deleteForm () {
+    deleteForm() {
       if (this.renderDel) {
         const { resourceId, deviceId } = this.selectRow
         removeObjectStorageResource({
@@ -868,7 +868,7 @@ export default {
         })
       }
     },
-    confirmCreate () {
+    confirmCreate() {
       this.$refs['form'].validate((valid) => {
         const {
           userName,

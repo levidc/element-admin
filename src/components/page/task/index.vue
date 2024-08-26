@@ -663,7 +663,7 @@
 import { queryTasks, createTask, retryTask, createMoveBackTasks, listStorageResource, getEsIndices, cloneTask, getDatabaseTable, deleteTask } from '@/api/storage'
 import moment from 'moment'
 export default {
-  data () {
+  data() {
     return {
       fillSelStatus: false,
       resetFlag: false,
@@ -801,7 +801,7 @@ export default {
   },
   computed: {
     columns: {
-      get: function () {
+      get: function() {
         return [
           {
             slot: 'taskName',
@@ -931,7 +931,7 @@ export default {
           { slot: 'action', width: 200, show: true, title: '操作' }
         ]
       },
-      set: function (val) {
+      set: function(val) {
         // 绑定 过滤任务状态 禁用状态列隐藏
         this.defaultColumns = val
         return this.defaultColumns
@@ -940,7 +940,7 @@ export default {
     // disabledStatus () {
     //   return !!this.form.taskStatus.length
     // },
-    filterSourceResourceNames () {
+    filterSourceResourceNames() {
       const obj = {}
       return this.form.SourceResourceNames.reduce((pre, cur) => {
         if (!obj[cur.id]) {
@@ -950,13 +950,13 @@ export default {
         return pre
       }, [])
     },
-    watchForm () {
+    watchForm() {
       return JSON.stringify(this.form)
     },
-    accessResource () {
+    accessResource() {
       return this.taskForm.nasList.reduce((pre, cur) => [...pre, ...cur.options], [])
     },
-    filterSearch () {
+    filterSearch() {
       if (this.taskForm.isNas !== 'DATABASE') {
         return this.taskForm.backUpIndexList.filter(x => x.toLocaleLowerCase().indexOf(this.taskForm.searchESIndex.toLocaleLowerCase()) > -1)
       } else {
@@ -966,14 +966,14 @@ export default {
   },
   watch: {
     watchForm: {
-      handler (val) {
+      handler(val) {
         // console.log(val, '123')
         clearTimeout(this.timer)
         this.timer = null
         // console.log(this.timer)
       }
     },
-    'taskForm.searchESIndex' (val) {
+    'taskForm.searchESIndex'(val) {
       // 触发过滤保持过滤后的数据和之前选中的数据处于后者包含前者即可保持全选状态
       if (this.filterSearch && this.filterSearch.length) {
         this.taskForm.selectAll = this.filterSearch.every(item => {
@@ -984,17 +984,17 @@ export default {
       }
     },
     // 触发 清除定时器/ 恢复定时器、
-    taskFlag (val) {
+    taskFlag(val) {
       if (val) {
         clearTimeout(this.timer)
       }
     },
-    moveBackFlag (val) {
+    moveBackFlag(val) {
       if (val) {
         clearTimeout(this.timer)
       }
     },
-    cloneFlag (val) {
+    cloneFlag(val) {
       if (val) {
         clearTimeout(this.timer)
       }
@@ -1003,7 +1003,7 @@ export default {
     //   $('.el-progress-bar__inner').hide(200).show(200)
     // }
   },
-  mounted () {
+  mounted() {
     // this.init({ params: { pageNumber: 1, pageSize: 10 } }, true)
     sessionStorage.setItem('fillSelStatus', JSON.stringify([
       'CREATED',
@@ -1020,18 +1020,18 @@ export default {
       this.getHeight()
     })
   },
-  created () {
+  created() {
     window.addEventListener('resize', this.getHeight)
   },
-  destroyed () {
+  destroyed() {
     clearTimeout(this.timer)
   },
   methods: {
-    handleStatus (status) {
+    handleStatus(status) {
       this.form.taskStatus = [...status].concat('ABORT')
       sessionStorage.setItem('fillSelStatus', JSON.stringify([...status]))
     },
-    renderStatus (status) {
+    renderStatus(status) {
       switch (status) {
         case 'CREATED':
           return '已创建'
@@ -1055,12 +1055,12 @@ export default {
           return ''
       }
     },
-    searchTaskStatus (data) {
+    searchTaskStatus(data) {
       this.form.taskStatus = [...data].concat('ABORT')
       this.searchParams()
       // 默认全选
     },
-    filterChange (val) {
+    filterChange(val) {
       const { taskStatus = [] } = val
       Object.assign(this.form, { taskStatus })
       const { pageSize } = this.$refs['tab']
@@ -1069,28 +1069,28 @@ export default {
         { pageSize, pageNumber: 1 }, true
       )
     },
-    cancelMoveBack () {
+    cancelMoveBack() {
       this.moveBackFlag = false
       this.handleSearchParams(false, true)
     },
-    cancelDoCreate () {
+    cancelDoCreate() {
       this.taskFlag = false
       this.handleSearchParams(false, true)
     },
-    cancelClone () {
+    cancelClone() {
       this.cloneFlag = false
       this.handleSearchParams(false, true)
     },
-    getHeight () {
+    getHeight() {
       this.$nextTick(() => {
         const height = window.innerHeight - 400
         this.tableHeight = height > 200 ? height : 200
       })
     },
-    clearFill () {
+    clearFill() {
       this.fillSelStatus = false
     },
-    hideColumn (columns) {
+    hideColumn(columns) {
       this.defaultColumns = columns
       // false、读取
       if (!this.fillSelStatus) {
@@ -1106,7 +1106,7 @@ export default {
         this.$refs['tab'].$refs['dataTable'] && this.$refs['tab'].$refs['dataTable'].doLayout()
       })
     },
-    doDelete (row) {
+    doDelete(row) {
       const { id, taskName } = row
       this.$confirm(`删除如下任务：<b style="color:#ff8736">${taskName}</b>，请确认！`, '', {
         confirmButtonText: '确定',
@@ -1123,7 +1123,7 @@ export default {
         })
       })
     },
-    judgeDisableBtn (row) {
+    judgeDisableBtn(row) {
       // case 状态部位FAILURE、
       // 归档 快照任务执行失败
       if (row.status !== 'FAILURE') {
@@ -1134,7 +1134,7 @@ export default {
         return false
       }
     },
-    handleSelAll (val) {
+    handleSelAll(val) {
       // 有过滤条件、全选按钮反选后 之前的数据需要过滤掉当前反选的
       if (val) {
         if (this.taskForm.searchESIndex) {
@@ -1152,7 +1152,7 @@ export default {
         }
       }
     },
-    handelSelOne (val) {
+    handelSelOne(val) {
       if (this.taskForm.searchESIndex) {
         // 有搜索、判断当前选中的值是否全部包含过滤后的选项
         this.taskForm.selectAll = this.filterSearch.every(item => {
@@ -1162,17 +1162,17 @@ export default {
         this.taskForm.selectAll = val.length === this.filterSearch.length
       }
     },
-    instanceValidate (val) {
+    instanceValidate(val) {
       if (val.length == 0) {
         this.$nextTick(() => {
           this.$refs['moveBackForm'].clearValidate(['moveBackUpIndex'])
         })
       }
     },
-    inputPositiveNum (ipt, form, value) {
+    inputPositiveNum(ipt, form, value) {
       this.$set(this[form], value, ipt.replace(/(^0+)|\D/g, ''))
     },
-    showSourceDetail (val) {
+    showSourceDetail(val) {
       // 匹配是否nas、大数据同nas
       // 选择资源为nas、大数据时候、展示input源资源路径
       // 反之展示es及数据库资源选择备份索引
@@ -1213,7 +1213,7 @@ export default {
           })
       }
     },
-    showProgreeColor (row) {
+    showProgreeColor(row) {
       switch (row.status) {
         case 'PROCESSING':
           return '#517beb'
@@ -1225,10 +1225,10 @@ export default {
           return '#FF8746'
       }
     },
-    showProgress (row) {
+    showProgress(row) {
       return parseInt(((row.taskProgress / row.dataCount) * 100))
     },
-    handleSearchParams (customPage, loading = false) {
+    handleSearchParams(customPage, loading = false) {
       const { pageSize, currentPage } = this.$refs['tab']
       const { userName, createStartTime, createEndTime, taskName, sourceDetail, taskType, taskStatus } = this.form
       const data = {
@@ -1251,23 +1251,23 @@ export default {
         data
       }, loading)
     },
-    renderPagination (val) {
+    renderPagination(val) {
       this.handleSearchParams(val, true)
     },
-    sortFunction (val) {
+    sortFunction(val) {
       const { prop, order } = val
       Object.assign(
         this.sort, { prop, order }
       )
       this.handleSearchParams(false, true)
     },
-    renderTargetResouce () {
+    renderTargetResouce() {
       const flag = this.taskForm.resourceList.filter(item => {
         return this.taskForm.targetResourceId === item.value
       })
       this.taskForm.targetDetail = flag && flag[0].bucketName
     },
-    async createTask () {
+    async createTask() {
       const res = await listStorageResource({
         deviceId: '66666666666666666'
       })
@@ -1339,7 +1339,7 @@ export default {
         })
       }
     },
-    doCloneTask (row) {
+    doCloneTask(row) {
       this.cloneForm.taskName = ''
       this.cloneForm.sourceResourceId = row.sourceResourceId
       this.cloneForm.targetResourceId = row.targetResourceId
@@ -1347,7 +1347,7 @@ export default {
       this.cloneForm.id = row.id
       this.cloneFlag = true
     },
-    confirmClone () {
+    confirmClone() {
       this.$refs['cloneForm'].validate((valid) => {
         if (valid) {
           const {
@@ -1375,7 +1375,7 @@ export default {
         }
       })
     },
-    confirmCreate () {
+    confirmCreate() {
       this.$refs['taskForm'].validate((valid) => {
         if (valid) {
           this.reqData = null
@@ -1434,7 +1434,7 @@ export default {
         }
       })
     },
-    doCreateTask () {
+    doCreateTask() {
       this.confirmESFlag = false
       createTask(this.reqData).then((res) => {
         this.$ts({
@@ -1446,7 +1446,7 @@ export default {
         this.handleSearchParams(false, true)
       })
     },
-    reset () {
+    reset() {
       this.$refs['form'].resetFields()
       this.form.taskStatus = [
         'CREATED',
@@ -1486,14 +1486,14 @@ export default {
       //     }
       //   }, true)
     },
-    handleRefresh () {
+    handleRefresh() {
       if (this.form.taskStatus.length === 1) {
         this.$message.error('请至少选择一项任务状态')
         return
       }
       this.handleSearchParams(false, true)
     },
-    searchParams () {
+    searchParams() {
       if (this.form.taskStatus.length === 1) {
         this.$message.error('请至少选择一项任务状态')
         return
@@ -1504,7 +1504,7 @@ export default {
         { pageSize, pageNumber: 1 }, true
       )
     },
-    init (data = {}, flag = false) {
+    init(data = {}, flag = false) {
       // this.loading = false
       // this.tableData = [
       // {
@@ -1571,7 +1571,7 @@ export default {
       // }
       // cb()
     },
-    doRetryTask (row) {
+    doRetryTask(row) {
       const taskId = row.id
       this.$confirm('是否重试当前已失败的任务', `任务名:${row.taskName}`, {
         distinguishCancelAndClose: true,
@@ -1591,13 +1591,13 @@ export default {
         })
       })
     },
-    judgeMoveIsNas (val) {
+    judgeMoveIsNas(val) {
       const flag = this.moveBackForm.allresource.find(x => {
         return String(x.value) === String(val)
       })
       this.moveBackForm.isNas = flag && flag.type || ''
     },
-    async createMoveBackTask (row) {
+    async createMoveBackTask(row) {
       const res = await listStorageResource({
         deviceId: '66666666666666666'
       })
@@ -1663,7 +1663,7 @@ export default {
         })
       }
     },
-    doMoveBackTask () {
+    doMoveBackTask() {
       this.$refs['moveBackForm'].validate((valid) => {
         if (valid) {
           // console.log(this.moveBackForm, 'moveBackForm')

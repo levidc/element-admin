@@ -97,7 +97,7 @@
 <script>
 import { getLifecycleTaskCron, putLifecycleTaskCron } from '@/api/storage'
 export default {
-  data () {
+  data() {
     const validateCurrentTime = (rule, data, callback) => {
       const currentTime = new Date().getTime()
       const selectTime = new Date(data).getTime()
@@ -118,7 +118,7 @@ export default {
         intervalHour: '' // 时间间隔
       },
       disableCurrentDate: {
-        disabledDate (time) {
+        disabledDate(time) {
           // console.log(time, time.getTime())
           return time.getTime() < Date.now() - 86400000
         }
@@ -144,7 +144,7 @@ export default {
     }
   },
   watch: {
-    editControl (val) {
+    editControl(val) {
       if (val) {
         this.getLifecycleTaskCron()
       } else {
@@ -156,18 +156,18 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     this.getLifecycleTaskCron()
   },
   methods: {
-    onChangeRadio (val) {
+    onChangeRadio(val) {
       if (val == 'Default') {
         this.isshow = true
       } else {
         this.isshow = false
       }
     },
-    getLifecycleTaskCron () {
+    getLifecycleTaskCron() {
       this.loading = true
       getLifecycleTaskCron({
         Bucket: this.$route.params.id
@@ -187,7 +187,7 @@ export default {
         })
     },
     // firstStartTime 单位毫秒 ，intervalHour单位小时，dayStartHour单位小时
-    putLifecycleTaskCron () {
+    putLifecycleTaskCron() {
       this.$refs['form'].validate(valid => {
         if (valid) {
           let data = {}

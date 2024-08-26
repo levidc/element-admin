@@ -710,14 +710,14 @@ import {
 export default {
   name: 'UserDetail',
   filters: {
-    precisionNum (val) {
+    precisionNum(val) {
       if (!val) return '0'
       val = String(val)
       const reg = /\B(?=(\d{3})+(?!\d))/g
       return val.replace(reg, ',')
     }
   },
-  data () {
+  data() {
     // const checkPasswordReg = (rule, data, callback) => {
     //   const reg = /[\u4e00-\u9fa5]/
     //   if (reg.test(data)) {
@@ -852,12 +852,12 @@ export default {
     }
   },
   computed: {
-    currentName () {
+    currentName() {
       return this.$route.params.name
     }
   },
   watch: {
-    policyDialog (val) {
+    policyDialog(val) {
       if (val) {
         this.listPolicies()
       } else {
@@ -865,7 +865,7 @@ export default {
         this.$refs['policyTable'].clearSelection()
       }
     },
-    groupDialog (val) {
+    groupDialog(val) {
       if (val) {
         this.getUser()
         this.listGroups()
@@ -875,7 +875,7 @@ export default {
         this.cancelGroup()
       }
     },
-    tabName (val) {
+    tabName(val) {
       if (val == 'Bucket') {
         localStorage.removeItem('Policy')
       } else if (val == 'groups') {
@@ -884,35 +884,35 @@ export default {
         localStorage.removeItem('Policy')
       }
     },
-    searchUserGroup (val) {
+    searchUserGroup(val) {
       this.userGroup = [...this.cloneUserGroup]
       if (!val) return
       this.userGroup = this.userGroup.filter(item => {
         return item.groupName.toLowerCase().indexOf(val.toLowerCase()) !== -1
       })
     },
-    searchPolicy (val) {
+    searchPolicy(val) {
       this.userPolicy = [...this.cloneUserPolicy]
       if (!val) return
       this.userPolicy = this.userPolicy.filter(item => {
         return item.name.toLowerCase().indexOf(val.toLowerCase()) !== -1
       })
     },
-    groupName (val) {
+    groupName(val) {
       this.groupData = [...this.cloneGroupData]
       if (!val) return
       this.groupData = this.groupData.filter(item => {
         return item.groupName.toLowerCase().indexOf(val.toLowerCase()) !== -1
       })
     },
-    policyName (val) {
+    policyName(val) {
       this.policyData = [...this.clonePolicyData]
       if (!val) return
       this.policyData = this.policyData.filter(item => {
         return item.name.toLowerCase().indexOf(val.toLowerCase()) !== -1
       })
     },
-    serviceDialog (val) {
+    serviceDialog(val) {
       if (!val) {
         this.serviceCreateDone = false
         this.serviceForm.credentials = false
@@ -922,7 +922,7 @@ export default {
       }
     }
   },
-  async mounted () {
+  async mounted() {
     const res = await listAllPermissionGroup()
     this.permissionGroup = res.data
     this.getUser()
@@ -931,7 +931,7 @@ export default {
     }
   },
   methods: {
-    handleStrOrArr (inner, type) {
+    handleStrOrArr(inner, type) {
       const arr = inner.row[type]
       const typeArray = Array.isArray(arr)
       if (typeArray) {
@@ -940,13 +940,13 @@ export default {
         return arr.split(';')
       }
     },
-    getIntoPolicy (val) {
+    getIntoPolicy(val) {
       this.$router.push({ name: 'PolicyDetail', params: { name: val }})
     },
-    checkBasePolicy (val) {
+    checkBasePolicy(val) {
       return val.name !== 'BasePolicy'
     },
-    deleteAccessCredential () {
+    deleteAccessCredential() {
       const accessKeyList = this.selectedServiceAccounts.map(item => {
         return item.name
       })
@@ -964,15 +964,15 @@ export default {
         }
       })
     },
-    handleScroll (ref) {
+    handleScroll(ref) {
       this.$refs[ref].$el.children[2].scrollTop = 0
     },
-    resetModForm () {
+    resetModForm() {
       this.$nextTick(() => {
         this.$refs['modifyPassword'].resetFields()
       })
     },
-    switchUserStatus (val) {
+    switchUserStatus(val) {
       if (val) {
         enableUser(this.currentName)
           .then(res => {
@@ -999,23 +999,23 @@ export default {
           })
       }
     },
-    onJsonChange (value) {
+    onJsonChange(value) {
       this.onJsonSave(value)
     },
-    onJsonSave (value) {
+    onJsonSave(value) {
       this.jsonString = value
       this.hasJsonFlag = true
     },
-    onError (value) {
+    onError(value) {
       this.hasJsonFlag = false
     },
-    clearJSON () {
+    clearJSON() {
       this.jsonString = {}
     },
-    eslintJson () {
+    eslintJson() {
       this.$refs['jsonEditor'].editor.format()
     },
-    copyJSON () {
+    copyJSON() {
       var str = this.$refs['jsonEditor'].editor.getText()
       navigator.clipboard.writeText(str)
       this.$ts({
@@ -1023,7 +1023,7 @@ export default {
         text: '复制成功'
       })
     },
-    submitCreate () {
+    submitCreate() {
       if (this.hasJsonFlag == false) {
         return this.$ts({
           type: 'error',
@@ -1033,20 +1033,20 @@ export default {
         console.log('success', this.jsonString)
       }
     },
-    clearServiceValidate () {
+    clearServiceValidate() {
       this.serviceForm.accessKey = ''
       this.serviceForm.secretKey = ''
       this.$refs['serviceForm'].resetFields()
       // 重置json
     },
-    copyCode (val) {
+    copyCode(val) {
       navigator.clipboard.writeText(val)
       this.$ts({
         type: 'success',
         text: '复制成功'
       })
     },
-    downloadSecretAccount () {
+    downloadSecretAccount() {
       // {"console":[{"url":"undefined","access_key":"aptx789","secret_key":"policyTable123","api":"s3v4","path":"auto"}]}
       const json = {
         console: [
@@ -1069,17 +1069,17 @@ export default {
       Link.click()
       document.body.removeChild(Link)
     },
-    handlePolicyChange (val) {
+    handlePolicyChange(val) {
       this.selectedPolicy = val
     },
-    handleGroupChange (val) {
+    handleGroupChange(val) {
       this.selectedGroup = val
     },
-    handleServiceAccountsChange (val) {
+    handleServiceAccountsChange(val) {
       this.selectedServiceAccounts = val
     },
     // 密码设置
-    confirmPassword () {
+    confirmPassword() {
       this.$refs['modifyPassword'].validate(valid => {
         if (valid) {
           updateUser({
@@ -1100,7 +1100,7 @@ export default {
       })
     },
     // 群组设置
-    confirmGroup () {
+    confirmGroup() {
       const removeGroup = this.userGroup
         .filter(item => {
           return this.selectedGroup.every(item2 => {
@@ -1182,7 +1182,7 @@ export default {
       }
       // console.log(addGroup, removeGroup, this.selectedGroup, 'selected')
     },
-    deleteGroup (row) {
+    deleteGroup(row) {
       RemoveGroupFromUser({
         userName: this.currentName,
         groups: [row.groupName]
@@ -1199,13 +1199,13 @@ export default {
         })
     },
     // 策略设置
-    deletePolicy (row) {
+    deletePolicy(row) {
       const policyNames = this.userPolicy
         .filter(item => item.name !== row.name)
         .map(item => item.name)
       this.confirmPolicy(policyNames)
     },
-    confirmPolicy (flag) {
+    confirmPolicy(flag) {
       let policyNames
       if (flag) {
         policyNames = flag
@@ -1229,7 +1229,7 @@ export default {
       })
       // console.log(this.selectedPolicy, "seletced");
     },
-    createServiceAccount () {
+    createServiceAccount() {
       // var json = this.$refs['jsonEditor']?.editor.getText()
       // var type = Object.prototype.toString.call(JSON.parse(json || '{}'))
       // if (!json || type == '[object Object]') {
@@ -1269,7 +1269,7 @@ export default {
         }
       })
     },
-    resetPolicy () {
+    resetPolicy() {
       this.$refs['policyTable'].clearSelection()
       this.$nextTick(() => {
         this.userPolicy.forEach(item => {
@@ -1280,10 +1280,10 @@ export default {
         this.policyData.pop()
       })
     },
-    cancelGroup () {
+    cancelGroup() {
       this.$refs['groupTable'].clearSelection()
     },
-    listGroups () {
+    listGroups() {
       this.$nextTick(() => {
         listGroups()
           .then(res => {
@@ -1304,7 +1304,7 @@ export default {
         // ]
       })
     },
-    getUser () {
+    getUser() {
       this.loading = true
       getUser({
         userName: this.currentName
@@ -1365,7 +1365,7 @@ export default {
       //   objectSize: '', objectCount: '0'
       // }
     },
-    renderCondition (condition) {
+    renderCondition(condition) {
       if (!condition) return []
       const res = []
       Object.keys(condition).map(item => {
@@ -1379,7 +1379,7 @@ export default {
       })
       return res
     },
-    renderPrincipal (data) {
+    renderPrincipal(data) {
       const type = Object.prototype.toString.call(data)
       if (type.indexOf('Array') > -1) {
         return data
@@ -1387,7 +1387,7 @@ export default {
         return data.split(',')
       }
     },
-    getListBucketPolicies () {
+    getListBucketPolicies() {
       this.loading = true
       listBucketPoliciesByUser({
         pageNum: this.bucketObj.pageNum,
@@ -1408,22 +1408,22 @@ export default {
         this.loading = false
       })
     },
-    getRowClass (row, index) {
+    getRowClass(row, index) {
       if (row.row.policyInfo.Statement && row.row.policyInfo.Statement.length == 0) {
         return 'hide-icon'
       } else if (!Array.isArray(row.row.policyInfo.Statement)) {
         return 'hide-icon'
       }
     },
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.bucketObj.pageSize = val
       this.getListBucketPolicies()
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.bucketObj.pageNum = val
       this.getListBucketPolicies()
     },
-    listPolicies () {
+    listPolicies() {
       this.$nextTick(() => {
         getPolicy().then(res => {
           this.policyData = res.data
@@ -1436,7 +1436,7 @@ export default {
         })
       })
     },
-    deleteUser () {
+    deleteUser() {
       if (this.userGroup && this.userGroup.length) {
         this.deleteFlag = false
         const group = this.userGroup.map(item => item.groupName)
@@ -1455,7 +1455,7 @@ export default {
         this.confirmDelete()
       }
     },
-    confirmDelete () {
+    confirmDelete() {
       deleteUser(this.currentName)
         .then(res => {
           this.$ts({
@@ -1468,7 +1468,7 @@ export default {
           console.error(err)
         })
     },
-    resetPassword () {
+    resetPassword() {
       this.passwordDialog = true
       this.$nextTick(() => {
         this.$refs['ipt'].$el.querySelector('input').focus()

@@ -2,6 +2,7 @@
   <div :class="{'has-logo':showLogo}">
     <logo v-if="showLogo" :collapse="isCollapse" />
     <el-scrollbar wrap-class="scrollbar-wrapper">
+      <!-- toDo -->
       <el-menu
         :default-active="activeMenu"
         :collapse="isCollapse"
@@ -59,5 +60,26 @@ export default {
   -moz-transition: width 0.15s;
   -webkit-transition: width 0.15s;
   -o-transition: width 0.15s;
+}
+.nest-menu{
+  li.el-menu-item{
+    padding-left: 53px!important;
+  }
+}
+.sidebar-container{
+  svg.svg-icon{
+    position: relative;
+    top: 1px;
+    color: #d3d6d8;
+    font-size: 18px;
+  }
+}
+</style>
+<style>
+.icon {
+  width: 1em; height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
 }
 </style>

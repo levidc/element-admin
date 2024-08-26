@@ -171,7 +171,7 @@ import { validateObjectKey } from '@/utils/validate'
 
 export default {
   name: 'DeleteMark',
-  data () {
+  data() {
     const validDeleteEndTime = (rule, data, callback) => {
       const deleteStartTime = new Date(this.form.deleteStartTime).getTime()
       const deleteEndTime = new Date(data).getTime()
@@ -253,14 +253,14 @@ export default {
       ]
     }
   },
-  async mounted () {
+  async mounted() {
     this.getTime()
     await this.listUserBuckets()
     this.form.bucketId = this.buckets[0]?.id.toString()
     this.listDeletedObjects(1)
   },
   methods: {
-    getTime () {
+    getTime() {
       const date = new Date()
       const year = date.getFullYear()
       const month = (date.getMonth() + 1).toString().padStart(2, '0')
@@ -279,8 +279,8 @@ export default {
       this.form.deleteEndTime = deleteEndTime
       this.form.deleteStartTime = deleteStartTime
     },
-    listDeletedObjects (page = void 0) {
-      this.$refs['form'].validate((valid => {
+    listDeletedObjects(page = void 0) {
+      this.$refs['form'].validate(valid => {
         if (valid) {
           this.loading = true
           if (page) this.page.currentPage = page
@@ -301,21 +301,21 @@ export default {
             this.loading = false
           })
         }
-      }))
+      })
     },
-    listUserBuckets () {
+    listUserBuckets() {
       return listUserBuckets().then((res) => {
         this.buckets = res.data.list
       })
     },
-    changeRecordType (val) {
+    changeRecordType(val) {
       this.form.recordType = val
     },
-    onGoPage (page) {
+    onGoPage(page) {
       this.page = { ...this.page, ...page }
       this.listDeletedObjects()
     },
-    onReset () {
+    onReset() {
       this.getTime()
       this.form = {
         bucketId: this.buckets[0]?.id.toString(),
@@ -326,7 +326,7 @@ export default {
       }
       this.listDeletedObjects(1)
     },
-    onRestore (record, force = false) {
+    onRestore(record, force = false) {
       // console.log(record)
       this.$confirm(force ? '对象已存在，确定要强制恢复该资源吗？' : '确定要恢复该资源吗？', '确认', {
         confirmButtonText: force ? '强制恢复' : '恢复',
@@ -336,7 +336,7 @@ export default {
         .then(() => {
           const data = { deleteRecordId: record.id }
           if (force) data.force = true
-          this.$store.state._gatewayS3.call({ path: '/', param: { restoreDeleted: '' }, data, method: 'POST', ignoreNotice: true }).then(res => {
+          this.$store.state.user._gatewayS3.call({ path: '/', param: { restoreDeleted: '' }, data, method: 'POST', ignoreNotice: true }).then(res => {
             this.listDeletedObjects()
           }).catch(err => {
             console.log(err)

@@ -1,17 +1,28 @@
-import { logout, getInfo } from '@/api/user'
-import { login, refreshToken } from '@/api/dashboard'
+import { getInfo } from '@/api/users'
+import { login, refreshToken, checkUserRole } from '@/api/dashboard'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
-
+import { getPermission } from '@/api/policy'
+import config from '../../../proxy.config'
+import { Gateway } from '@/api/gateway-request'
 const state = {
   token: getToken(),
   name: '',
   avatar: '',
   introduction: '',
-  roles: ['admin']
+  roles: ['admin'],
+  role: 'user',
+  _S3: '',
+  _gatewayS3: '',
+  port: '',
+  user: '',
+  activeRoute: false
 }
 
 const mutations = {
+  SET_ACTIVEROUTE: (state, payload) => {
+    state.activeRoute = payload
+  },
   SET_TOKEN: (state, token) => {
     state.token = token
     localStorage.setItem('token', token)
@@ -32,21 +43,114 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
+  },
+  SET_ACTION: (state, payload) => {
+    state.api = payload
+    localStorage.setItem('api', JSON.stringify(payload))
+  },
+  SET_ROLE: (state, payload) => {
+    state.role = payload
+    localStorage.setItem('role', payload)
+  },
+  getS3(state, payload) {
+    state._S3 = payload
+  },
+  gatewayS3(state, payload) {
+    state._gatewayS3 = payload
+  },
+  getPort(state, payload) {
+    state.port = payload
+  },
+  SET_USER(state, payload) {
+    state.user = payload
+    localStorage.setItem('user', payload)
   }
 }
 
 const actions = {
   // user login
-  login({ commit }, userInfo) {
+  setS3EndPoint({ commit, state, dispatch }) {
+    const AWS = require('aws-sdk')
+    return new Promise((resolve, reject) => {
+      let port = ''
+      const htLocation = [
+        'eipsit.htsc.com.cn',
+        'eip.htsc.com.cn',
+        'eipnew.htsc.com.cn',
+        'eipuat.htsc.com.cn'
+      ]
+      const isHtEnv = htLocation.some(x => window.location.href.indexOf(x) > -1)
+      if (window.location.host.indexOf('localhost') > -1) {
+        port = config['devServerProxy']['/api/']['target'] + '/dos'
+      } else if (isHtEnv) {
+        port = window.location.origin + '/s3sg/dos'
+      } else {
+        port = window.location.origin + '/dos'
+      }
+      localStorage.setItem('port', port)
+      commit('getPort', port)
+      var S3 = new AWS.S3({
+        accessKeyId: 'test',
+        secretAccessKey: 'test',
+        endpoint: port,
+        region: 'EastChain-1',
+        s3ForcePathStyle: true
+      })
+      AWS.events.on('send', (req) => {
+        req.request.httpRequest.headers['Authentication'] = localStorage.getItem('token')
+        req.request.httpRequest.headers['request-target'] = 'gateway'
+      })
+      var gatewayS3 = Gateway.S3({
+        accessKeyId: 'test',
+        secretAccessKey: 'test',
+        endpoint: port,
+        region: 'EastChain-1'
+      })
+      commit('getS3', S3)
+      commit('gatewayS3', gatewayS3)
+      resolve(port)
+    })
+  },
+  getAccessPermission({ dispatch, commit, state }) {
+    return new Promise((resolve, rej) => {
+      const p1 = dispatch('setS3EndPoint')
+      const p2 = getPermission().then(res => {
+        const obj = {}
+        for (let i = 0; i < res.data.actionList.length; i++) {
+          obj[res.data.actionList[i]] = true
+        }
+        commit('SET_ACTION', obj)
+      }).catch((err) => {
+        rej(err)
+      })
+      const p3 = checkUserRole().then((res) => {
+        commit('SET_ROLE', res.data)
+      })
+      Promise.allSettled([p1, p2, p3])
+        .then(res => {
+          const api = state.api || {}
+          console.log(api, state.role)
+          api['isAdmin'] = ['superAdmin', 'fullPolicyAdmin'].includes(state.role)
+          commit('SET_ACTION', api)
+          resolve(res)
+        }).catch(err => {
+          rej(err)
+        })
+    })
+  },
+  login({ commit, dispatch }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ userName: username.trim(), password: password }).then(response => {
-        console.log(response, 'response')
+        // console.log(response, 'response')
         const { data } = response
+        commit('SET_USER', username)
         commit('SET_TOKEN', data.accessToken)
         commit('SET_EXPIRE_TOKEN', data.refreshToken)
         setToken(data.token)
-        resolve()
+        dispatch('getAccessPermission').then(() => {
+          resolve()
+        })
       }).catch(error => {
         reject(error)
       })

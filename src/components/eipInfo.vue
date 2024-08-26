@@ -11,13 +11,13 @@
 import { eipLogin } from '@/api/dashboard'
 import Cookies from 'js-cookie'
 export default {
-  data () {
+  data() {
     return {
       loading: true,
       timer: null
     }
   },
-  mounted () {
+  mounted() {
     if (this.$route.query.noAuth) {
       this.loading = false
       this.judgeLogout()
@@ -31,11 +31,11 @@ export default {
     }
     this.tryLogin()
   },
-  destroyed () {
+  destroyed() {
     clearInterval(this.timer)
   },
   methods: {
-    tryLogin () {
+    tryLogin() {
       this.loading = true
       const loading = this.$loading()
       eipLogin().then(res => {
@@ -68,13 +68,13 @@ export default {
         loading.close()
       })
     },
-    judgeLogout () {
+    judgeLogout() {
       sessionStorage.setItem('eipToken', Cookies.get('sensorsdata2015jssdkcross'))
       this.timer = setInterval(() => {
         const preToken = sessionStorage.getItem('eipToken')
         const curToken = decodeURI(Cookies.get('sensorsdata2015jssdkcross'))
         if (preToken && preToken !== 'undefined' && preToken !== curToken) {
-          this.$route.query.noAuth && this.$router.push({ name: 'eipInfo', query: {} })
+          this.$route.query.noAuth && this.$router.push({ name: 'eipInfo', query: {}})
           this.tryLogin()
         }
       }, 3000)

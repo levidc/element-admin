@@ -2,7 +2,10 @@
   <div ref="outer" class="scrollText">
     <div class="st-inner" :class="{'st-scrolling': needToScroll}">
       <!-- 预览添加截取的字段 -->
-      <span ref="inner" class="st-section">{{ text }}</span>
+      <span ref="inner" class="st-section">
+        <slot name="custom" />
+        {{ text }}
+      </span>
       <span v-if="needToScroll" class="st-section">{{ text }}</span>
       <!-- 加两条是为了滚动的时候实现无缝衔接 -->
     </div>
@@ -10,24 +13,38 @@
 </template>
 <script>
 export default {
-  data () {
+  data() {
     return {
       needToScroll: false,
       text: ''
     }
   },
-  mounted () {
-    this.startCheck()
+  computed: {
+    open() {
+      return this.$store.getters.sidebar.opened
+    }
   },
-  beforeDestroy () {
+  watch: {
+    needToScroll(val) {
+      if (!val) {
+        this.stopCheck()
+      }
+    }
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.startCheck()
+    })
+  },
+  beforeDestroy() {
     this.stopCheck()
   },
   methods: {
-    showOverText (text) {
+    showOverText(text) {
       return text.slice(0, text.length - 3) + '...'
     },
     // 检查当前元素是否需要滚动
-    check () {
+    check() {
       this.setText()
       this.$nextTick(() => {
         const flag = this.isOverflow()
@@ -36,7 +53,7 @@ export default {
     },
 
     // 判断子元素宽度是否大于父元素宽度，超出则需要滚动，否则不滚动
-    isOverflow () {
+    isOverflow() {
       const outer = this.$refs.outer
       const inner = this.$refs.inner
       const outerWidth = this.getWidth(outer)
@@ -45,13 +62,13 @@ export default {
     },
 
     // 获取元素宽度
-    getWidth (el) {
+    getWidth(el) {
       const { width } = el.getBoundingClientRect()
       return width
     },
 
     // 获取到父组件传过来的内容复传给this.text
-    setText () {
+    setText() {
       this.text =
       (this.$slots.default &&
         this.$slots.default.reduce((res, it) => res + it.text, '')) ||
@@ -59,13 +76,16 @@ export default {
     },
 
     // 增加定时器，隔一秒check一次
-    startCheck () {
-      this._checkTimer = setInterval(this.check, 1000)
+    startCheck() {
       this.check()
+      this._checkTimer = setInterval(this.check, 50)
+      // setTimeout(() => {
+      //   this.check()
+      // }, 200)
     },
 
     // 关闭定时器
-    stopCheck () {
+    stopCheck() {
       clearInterval(this._checkTimer)
     }
   }

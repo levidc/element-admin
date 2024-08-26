@@ -494,7 +494,7 @@ export default {
       }
       this.$refs['createForm'].validate(valid => {
         if (valid) {
-          this.$store.state._S3.createBucket(this.params, (err, data) => {
+          this.$store.state.user._S3.createBucket(this.params, (err, data) => {
             if (err) {
               this.showS3Msg(err)
             } else {
@@ -537,7 +537,7 @@ export default {
       const params = {
         Bucket: this.chooseObj[0].BucketName
       }
-      this.$store.state._S3.deleteBucket(params, (err, data) => {
+      this.$store.state.user._S3.deleteBucket(params, (err, data) => {
         if (err) {
           if (err.code === 409) {
             this.$ts({

@@ -166,7 +166,7 @@
     <!-- <ObjectDetail v-if="showFileConfig" type="delete" /> -->
 
     <el-dialog
-      v-dialogDrag
+
       title="添加标签"
       :visible.sync="isAddInfo"
       width="800px"
@@ -279,7 +279,7 @@
       </el-row>
     </el-dialog>
     <el-dialog
-      v-dialogDrag
+
       title="权限设置"
       :visible.sync="isSetAccess"
       width="800px"
@@ -499,7 +499,7 @@
       </div>
     </el-dialog>
     <el-dialog
-      v-dialogDrag
+
       title="重命名对象"
       :visible.sync="isRenameFile"
       width="550px"
@@ -802,7 +802,7 @@ export default {
         }
       }
       // console.log(params, "123");
-      this.$store.state._S3.listObjectVersions(params, (err, response) => {
+      this.$store.state.user._S3.listObjectVersions(params, (err, response) => {
         if (err) {
           this.showS3Msg(err)
           this.loading = false
@@ -847,10 +847,10 @@ export default {
           // 文件的版本信息
           for (let j = 0; j < response.Versions.length; j++) {
             response.Versions[j].type = 'f'
-            pathStrArr = response.Versions[j].Key.split('/')
+            // pathStrArr = response.Versions[j].Key.split('/')
             // 返回Key 带有当前object 目录前缀
-            response.Versions[j].Key = pathStrArr[pathStrArr.length - 1]
-            if (!response.Versions[j].Key) continue
+            // response.Versions[j].Key = pathStrArr[pathStrArr.length - 1]
+            // if (!response.Versions[j].Key) continue
             // response.Versions[j].ObjName = this.getShort(
             //   response.Versions[j].Key
             // )
@@ -858,6 +858,8 @@ export default {
             //   response.Versions[j].ObjName += ' (最新版本)'
             //   console.log(response.Versions[j], '')
             // }
+            if (Prefix && response.Versions[j].Key === Prefix && response.Versions[j].Size == 0 && response.Versions[j].Key[response.Versions[j].Key.length - 1] === '/') continue
+            response.Versions[j].Key = this.$route.query.filename ? response.Versions[j].Key.split(this.$route.query.filename)[1] : response.Versions[j].Key
             response.Versions[j].VersionId = response.Versions[j].VersionId == 'null' ? '' : response.Versions[j].VersionId
             response.Versions[j].rowKey = response.Versions[j].Key + '__' + response.Versions[j].VersionId
             this.tableData.push(response.Versions[j])

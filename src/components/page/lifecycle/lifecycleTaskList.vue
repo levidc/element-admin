@@ -140,7 +140,7 @@ import { getTaskList, getTaskDetail } from '@/api/lifecycle'
 import { listUserBuckets } from '@/api/bucket'
 export default {
   name: 'LifecycleTaskList',
-  data () {
+  data() {
     return {
       statusEnum: [
         { label: '未开始', value: 'STATUS_INIT' },
@@ -212,25 +212,25 @@ export default {
       ]
     }
   },
-  mounted () {
+  mounted() {
     this.form.createTime = [moment().subtract(7, 'days').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
     this.listUserBuckets()
     this.init()
   },
   methods: {
-    init () {
+    init() {
       this.getTaskList({
         pageNumber: 1,
         pageSize: 10
       })
     },
-    getPageSearch (val) {
+    getPageSearch(val) {
       this.getTaskList({
         pageNumber: val.pageNumber,
         pageSize: val.pageSize
       })
     },
-    getTaskList (params) {
+    getTaskList(params) {
       this.loading = true
       const data = {
         bucketId: this.form.bucketId || undefined,
@@ -246,17 +246,17 @@ export default {
         this.loading = false
       })
     },
-    listUserBuckets () {
+    listUserBuckets() {
       listUserBuckets().then((res) => {
         this.buckets = res.data.list
       })
     },
-    onReset () {
+    onReset() {
       this.$refs['form'].resetFields()
       this.form.createTime = [moment().subtract(7, 'days').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
       this.init()
     },
-    getTaskDetail (row) {
+    getTaskDetail(row) {
       getTaskDetail().then(res => {
         console.log(res, '123')
       })

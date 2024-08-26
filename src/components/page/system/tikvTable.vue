@@ -30,7 +30,7 @@
 import { checkTikvStatus } from '@/api/system'
 export default {
   name: 'Tikv',
-  data () {
+  data() {
     return {
       tableData: [],
       total: 0,
@@ -40,14 +40,14 @@ export default {
       loading: true
     }
   },
-  mounted () {
+  mounted() {
     this.list()
   },
-  destroyed () {
+  destroyed() {
     clearTimeout(this.timer)
   },
   methods: {
-    list () {
+    list() {
       clearTimeout(this.timer)
       checkTikvStatus().then(res => {
         if (res.error.code !== 0) {
@@ -65,10 +65,10 @@ export default {
           this.loading = false
         })
     },
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.pageSize = val
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.currentPage = val
     }
   }

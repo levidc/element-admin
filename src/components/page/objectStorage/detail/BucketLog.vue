@@ -99,7 +99,7 @@ export default {
   name: 'BucketLog',
   components: {},
   filters: {},
-  data () {
+  data() {
     return {
       loggingControl: false,
       editLoggingControl: false,
@@ -107,8 +107,8 @@ export default {
     }
   },
   computed: {},
-  mounted: function () { },
-  destroyed () { },
+  mounted: function() { },
+  destroyed() { },
   methods: {}
 }
 </script>

@@ -139,9 +139,9 @@
               </el-table-column>
             </el-table>
             <p class="moreTag"><el-button
-                type="text"
-                @click="handleAdd()"
-              >添加标签</el-button></p>
+              type="text"
+              @click="handleAdd()"
+            >添加标签</el-button></p>
           </div>
         </div>
       </div>
@@ -154,7 +154,7 @@ export default {
   name: 'BucketConfig',
   components: {},
   filters: {},
-  data () {
+  data() {
     return {
       tableData: [
         { tagKey: 1, tagValue: 1, isCreate: false, isEdit: false },
@@ -164,13 +164,13 @@ export default {
     }
   },
   computed: {},
-  mounted: function () {
+  mounted: function() {
     console.log(this.$route.query.id)
   },
-  destroyed () { },
+  destroyed() { },
   methods: {
     // 添加行
-    handleAdd () {
+    handleAdd() {
       const row = {
         tagKey: '',
         tagValue: '',
@@ -179,13 +179,13 @@ export default {
       }
       this.tableData.push(row)
     }, // 编辑
-    doEdit (index, row) {
+    doEdit(index, row) {
       console.log(index)
       console.log(row)
       row.isEdit = !row.isEdit
     },
     // 删除行
-    doDelete (index, row) {
+    doDelete(index, row) {
       console.log(index)
       console.log(row)
       this.tableData.splice(index, 1)

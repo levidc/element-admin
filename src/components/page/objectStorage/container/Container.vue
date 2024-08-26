@@ -309,7 +309,7 @@ import { listDomain, listStoragePool } from '@/api/resource'
 import { listContainer, deleteContainer } from '@/api/storage'
 export default {
   name: 'Container',
-  data () {
+  data() {
     return {
       timer: null,
       tableData: [],
@@ -359,18 +359,18 @@ export default {
       ]
     }
   },
-  mounted () {
+  mounted() {
     // 选择域、存储池后调用 containerlist接口
     this.listDomains()
   },
-  destroyed () {
+  destroyed() {
     clearTimeout(this.timer)
   },
   methods: {
-    checkDeleting (val) {
+    checkDeleting(val) {
       return val.containerStatus !== 'Deleting'
     },
-    getRowClass (row) {
+    getRowClass(row) {
       const data = row.row
       const res = []
       if (data.simpleContainerUnitMetadataList && data.simpleContainerUnitMetadataList.length > 0) {
@@ -381,7 +381,7 @@ export default {
         return res
       }
     },
-    clearStoragepoolId () {
+    clearStoragepoolId() {
       this.storagepoolId = ''
       this.tableData = []
       this.total = 0
@@ -391,22 +391,22 @@ export default {
       this.totalSpace = ''
       this.freeSpace = ''
     },
-    getType (row) {
+    getType(row) {
       const arr = this.typeList.filter(
         item => row.containerFormatType == item.value
       )
       return arr && arr[0].label
     },
-    getDurabilityType (row, column) {
+    getDurabilityType(row, column) {
       let durabilityType = []
-      this.ecTypeList.forEach(function (ele) {
+      this.ecTypeList.forEach(function(ele) {
         if (ele.value == row[column.property]) {
           durabilityType = ele
         }
       })
       return durabilityType.label
     },
-    byteFormat (size) {
+    byteFormat(size) {
       if (!size) {
         return '0'
       }
@@ -425,7 +425,7 @@ export default {
       size = size / 1024
       return size.toFixed(1) + 'GB'
     },
-    listContainers () {
+    listContainers() {
       // 未选中存储池
       if (this.storagepoolId == '') {
         this.tableData = []
@@ -495,7 +495,7 @@ export default {
           console.error(error)
         })
     },
-    listDomains () {
+    listDomains() {
       listDomain({
         version: this.$store.state.dosVersion
       })
@@ -524,7 +524,7 @@ export default {
           console.error(error)
         })
     },
-    changeDomain () {
+    changeDomain() {
       if (this.domain) {
         listStoragePool({
           version: this.$store.state.dosVersion,
@@ -569,7 +569,7 @@ export default {
     //     })
     //   }
     // },
-    async deleteContainer () {
+    async deleteContainer() {
       const temp = []
       for (let i = 0; i < this.multipleSelection.length; i++) {
         const p = new Promise((resolve, reject) => {
@@ -596,20 +596,20 @@ export default {
         })
       }
     },
-    sortFunction (val) {
+    sortFunction(val) {
       this.prop = val.prop
       this.order = val.order
       this.listContainers()
     },
-    handleSizeChange: function (size) {
+    handleSizeChange: function(size) {
       this.pageSize = size
       this.listContainers()
     },
-    handleCurrentChange: function (currentPage) {
+    handleCurrentChange: function(currentPage) {
       this.currentPage = currentPage
       this.listContainers()
     },
-    getRowKeys (row) {
+    getRowKeys(row) {
       return row.containerId
     }
   }

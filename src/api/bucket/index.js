@@ -1,6 +1,6 @@
 import request from '../request'
 
-export function listBucketNames (bucketName) {
+export function listBucketNames(bucketName) {
   return request({
     method: 'get',
     url: 'listBucketNames',
@@ -10,7 +10,7 @@ export function listBucketNames (bucketName) {
   })
 }
 
-export function createBucket (data) {
+export function createBucket(data) {
   return request({
     method: 'post',
     url: 'createBucket',
@@ -18,7 +18,7 @@ export function createBucket (data) {
   })
 }
 
-export function getBucket (params) {
+export function getBucket(params) {
   return request({
     method: 'get',
     url: 'getBucket',
@@ -26,7 +26,7 @@ export function getBucket (params) {
   })
 }
 
-export function listBucket () {
+export function listBucket() {
   return request({
     method: 'get',
     url: '?bucketWarp',
@@ -36,14 +36,14 @@ export function listBucket () {
   })
 }
 
-export function listUserBuckets () {
+export function listUserBuckets() {
   return request({
     method: 'get',
     url: 'listUserBuckets'
   })
 }
 
-export function updateBucket (data) {
+export function updateBucket(data) {
   return request({
     method: 'put',
     url: 'updateBucket',
@@ -51,7 +51,7 @@ export function updateBucket (data) {
   })
 }
 
-export function setBucketOwner (params) {
+export function setBucketOwner(params) {
   return request({
     method: 'put',
     url: 'setBucketOwner',
@@ -60,7 +60,7 @@ export function setBucketOwner (params) {
 }
 
 // 文件系统挂载
-export function mountFS (data) {
+export function mountFS(data) {
   return request({
     method: 'post',
     url: 'fs/mount',
@@ -72,7 +72,7 @@ export function mountFS (data) {
 }
 
 // FS列表
-export function getFsList (params) {
+export function getFsList(params) {
   return request({
     method: 'get',
     url: 'fs/list',
@@ -83,7 +83,7 @@ export function getFsList (params) {
   })
 }
 
-export function getObjectMeta (params) {
+export function getObjectMeta(params) {
   return request({
     method: 'get',
     url: 'getObjectMeta',
