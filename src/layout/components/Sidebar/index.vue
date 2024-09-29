@@ -73,6 +73,9 @@ export default {
     color: #d3d6d8;
     font-size: 18px;
   }
+  .el-scrollbar{
+    background-color: #25373f;
+  }
 }
 </style>
 <style>

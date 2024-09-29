@@ -25,11 +25,11 @@ export default {
     }
   },
   watch: {
-    needToScroll(val) {
-      if (!val) {
-        this.stopCheck()
-      }
-    }
+    // needToScroll(val) {
+    //   if (!val) {
+    //     this.stopCheck()
+    //   }
+    // }
   },
   mounted() {
     this.$nextTick(() => {

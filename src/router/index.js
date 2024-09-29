@@ -8,6 +8,7 @@ Router.prototype.push = function push(location) {
 }
 /* Layout */
 import Layout from '@/layout'
+import permission from '@/directive/permission'
 
 /* Router Modules */
 // import componentsRouter from './modules/components'
@@ -147,6 +148,7 @@ export const constantRoutes = [
     path: '/bucketDetail',
     name: 'bucketDetail',
     component: Layout,
+    permission: ['s3:ListAllMyBuckets'],
     children: [{
       path: '/bucket/BucketDetail/:id',
       name: 'BucketDetail',
@@ -344,36 +346,37 @@ export const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/migrationManagement',
-    name: 'migrationManagement',
-    component: Layout,
-    meta: {
-      title: 'migrationManagement',
-      icon: 'resourceManagement'
-    },
-    root: true,
-    children: [
-      {
-        path: 'resource',
-        component: () => import('@/components/page/objectStorage/objectResource/migrationResource'),
-        name: 'resource',
-        meta: { title: 'migrationResource', icon: '', noCache: true }
-      },
-      {
-        path: 'taskManagement',
-        component: () => import('@/components/page/task'),
-        name: 'taskManagement',
-        meta: { title: 'taskManagement', icon: '', noCache: true }
-      },
-      {
-        path: 'removeManagement',
-        component: () => import('@/components/page/removeData'),
-        name: 'removeManagement',
-        meta: { title: 'removeManagement', icon: '', noCache: true }
-      }
-    ]
-  },
+  // {
+  //   path: '/migrationManagement',
+  //   name: 'migrationManagement',
+  //   component: Layout,
+  //   meta: {
+  //     title: 'migrationManagement',
+  //     icon: 'resourceManagement'
+  //   },
+  //   root: true,
+  //   children: [
+  //     {
+  //       path: 'resource',
+  //       component: () => import('@/components/page/objectStorage/objectResource/migrationResource'),
+  //       name: 'resource',
+  //       meta: { title: 'migrationResource', icon: '', noCache: true }
+  //     },
+  //     {
+  //       path: 'taskManagement',
+  //       component: () => import('@/components/page/task'),
+  //       name: 'taskManagement',
+  //       meta: { title: 'taskManagement', icon: '', noCache: true },
+  //       permission: ['123']
+  //     },
+  //     {
+  //       path: 'removeManagement',
+  //       component: () => import('@/components/page/removeData'),
+  //       name: 'removeManagement',
+  //       meta: { title: 'removeManagement', icon: '', noCache: true }
+  //     }
+  //   ]
+  // },
 
   {
     path: '/userAndPerm/user',
@@ -538,48 +541,78 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
-  // {
-  //   path: '/permission',
-  //   component: Layout,
-  //   redirect: '/permission/page',
-  //   alwaysShow: true, // will always show the root menu
-  //   name: 'Permission',
-  //   meta: {
-  //     title: 'permission',
-  //     icon: 'lock',
-  //     roles: ['admin', 'editor'] // you can set roles in root nav
-  //   },
-  //   children: [
-  //     {
-  //       path: 'page',
-  //       component: () => import('@/views/permission/page'),
-  //       name: 'PagePermission',
-  //       meta: {
-  //         title: 'pagePermission',
-  //         roles: ['admin'] // or you can only set roles in sub nav
-  //       }
-  //     },
-  //     {
-  //       path: 'directive',
-  //       component: () => import('@/views/permission/directive'),
-  //       name: 'DirectivePermission',
-  //       meta: {
-  //         title: 'directivePermission'
-  //         // if do not set roles, means: this page does not require permission
-  //       }
-  //     },
-  //     {
-  //       path: 'role',
-  //       component: () => import('@/views/permission/role'),
-  //       name: 'RolePermission',
-  //       meta: {
-  //         title: 'rolePermission',
-  //         roles: ['admin']
-  //       }
-  //     }
-  //   ]
-  // },
-
+  {
+    path: '/permission',
+    component: Layout,
+    redirect: '/permission/page',
+    alwaysShow: true, // will always show the root menu
+    name: 'Permission',
+    meta: {
+      title: 'permission',
+      icon: 'lock',
+      roles: ['admin', 'editor'] // you can set roles in root nav
+    },
+    children: [
+      {
+        path: 'page',
+        component: () => import('@/views/permission/page'),
+        name: 'PagePermission',
+        meta: {
+          title: 'pagePermission',
+          roles: ['editor'] // or you can only set roles in sub nav
+        }
+      },
+      {
+        path: 'directive',
+        component: () => import('@/views/permission/directive'),
+        name: 'DirectivePermission',
+        meta: {
+          title: 'directivePermission'
+          // if do not set roles, means: this page does not require permission
+        }
+      },
+      {
+        path: 'role',
+        component: () => import('@/views/permission/role'),
+        name: 'RolePermission',
+        meta: {
+          title: 'rolePermission',
+          roles: ['admin']
+        }
+      }
+    ]
+  },
+  {
+    path: '/migrationManagement',
+    name: 'migrationManagement',
+    component: Layout,
+    meta: {
+      title: 'migrationManagement',
+      icon: 'resourceManagement'
+    },
+    root: true,
+    children: [
+      {
+        path: 'resource',
+        component: () => import('@/components/page/objectStorage/objectResource/migrationResource'),
+        name: 'resource',
+        meta: { title: 'migrationResource', icon: '', noCache: true }
+      },
+      {
+        path: 'taskManagement',
+        component: () => import('@/components/page/task'),
+        name: 'taskManagement',
+        meta: { title: 'taskManagement', icon: '', noCache: true },
+        permission: ['123']
+      },
+      {
+        path: 'removeManagement',
+        component: () => import('@/components/page/removeData'),
+        name: 'removeManagement',
+        meta: { title: 'removeManagement', icon: '', noCache: true }
+      }
+    ]
+  },
   // {
   //   path: '/icon',
   //   component: Layout,

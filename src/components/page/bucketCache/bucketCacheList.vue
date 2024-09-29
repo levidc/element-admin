@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="bucket-detail">
+    <div class="page_content_wrap">
       <div class="mb_15 clearfix">
         <div class="right">
           <el-tooltip

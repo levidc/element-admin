@@ -17,10 +17,10 @@
       </router-link>
     </scroll-pane>
     <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
-      <li @click="refreshSelectedTag(selectedTag)">{{ $t('tagsView.refresh') }}</li>
-      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">{{ $t('tagsView.close') }}</li>
-      <li @click="closeOthersTags">{{ $t('tagsView.closeOthers') }}</li>
-      <li @click="closeAllTags(selectedTag)">{{ $t('tagsView.closeAll') }}</li>
+      <li @click="refreshSelectedTag(selectedTag)">{{ $ts('tagsView.refresh') }}</li>
+      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">{{ $ts('tagsView.close') }}</li>
+      <li @click="closeOthersTags">{{ $ts('tagsView.closeOthers') }}</li>
+      <li @click="closeAllTags(selectedTag)">{{ $ts('tagsView.closeAll') }}</li>
     </ul>
   </div>
 </template>
@@ -53,6 +53,9 @@ export default {
     $route() {
       this.addTags()
       this.moveToCurrentTag()
+      this.$nextTick(() => {
+        this.$refs['scrollPane'].$refs['scrollContainer'].update()
+      })
     },
     visible(value) {
       if (value) {
@@ -245,7 +248,7 @@ export default {
   }
   .contextmenu {
     margin: 0;
-    background: #fff;
+    background: #19272e;
     z-index: 3000;
     position: absolute;
     list-style-type: none;
@@ -254,13 +257,14 @@ export default {
     font-size: 12px;
     font-weight: 400;
     color: #333;
-    box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, .3);
+    box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.3);
     li {
       margin: 0;
-      padding: 7px 16px;
+      padding: 6px 10px;
+      color: #d3d6d8;
       cursor: pointer;
       &:hover {
-        background: #eee;
+        background: #25363e;
       }
     }
   }

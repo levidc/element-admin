@@ -2,8 +2,8 @@
 export function generateTitle(title) {
   const hasKey = this.$ts('route.' + title)
   if (hasKey) {
-    // $t :this method from vue-i18n, inject in @/lang/index.js
-    const translatedTitle = this.$t('route.' + title)
+    // $ts :this method from vue-i18n, inject in @/lang/index.js
+    const translatedTitle = this.$ts('route.' + title)
 
     return translatedTitle
   } else {

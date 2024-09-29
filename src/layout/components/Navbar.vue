@@ -12,7 +12,7 @@
 
         <screenfull id="screenfull" class="right-menu-item hover-effect" />
 
-        <!-- <el-tooltip :content="$t('navbar.size')" effect="dark" placement="bottom">
+        <!-- <el-tooltip :content="$ts('navbar.size')" effect="dark" placement="bottom">
           <size-select id="size-select" class="right-menu-item hover-effect" />
         </el-tooltip> -->
 
@@ -32,24 +32,24 @@
         <el-dropdown-menu slot="dropdown">
           <!-- <router-link to="/profile/index">
             <el-dropdown-item>
-              {{ $t('navbar.profile') }}
+              {{ $ts('navbar.profile') }}
             </el-dropdown-item>
           </router-link>
           <router-link to="/">
             <el-dropdown-item>
-              {{ $t('navbar.dashboard') }}
+              {{ $ts('navbar.dashboard') }}
             </el-dropdown-item>
           </router-link>
           <a target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">
             <el-dropdown-item>
-              {{ $t('navbar.github') }}
+              {{ $ts('navbar.github') }}
             </el-dropdown-item>
           </a>
           <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
             <el-dropdown-item>Docs</el-dropdown-item>
           </a> -->
           <el-dropdown-item @click.native="logout">
-            <span style="display:block;">{{ $t('navbar.logOut') }}</span>
+            <span style="display:block;">{{ $ts('navbar.logOut') }}</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>

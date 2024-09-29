@@ -14,9 +14,30 @@ function hasPermission(roles, route) {
   }
 }
 
+function routeHasPermission(route, api) {
+  if (!route.permission || route.permission.length === 0) {
+    return true
+  } else if (route.permission.length) {
+    // 权限case 一种或多种
+    return route.permission.some(x => {
+      return api[x]
+    })
+  }
+}
+
 function handlePermissionRoute(route, api) {
-  console.log(route, api)
-  return route
+  // 过滤无权限的路由
+  const res = []
+  route.forEach(item => {
+    const tmp = { ...item }
+    if (routeHasPermission(item, api)) {
+      if (tmp.children) {
+        tmp.children = handlePermissionRoute(tmp.children, api)
+      }
+      res.push(tmp)
+    }
+  })
+  return res
 }
 
 /**
@@ -51,6 +72,7 @@ const mutations = {
     //
     const accessConstantRoutes = handlePermissionRoute(constantRoutes, store.state.user.api)
     state.routes = accessConstantRoutes.concat(routes)
+    // sideBar 取routes
   }
 }
 
@@ -61,7 +83,8 @@ const actions = {
 
       let accessedRoutes
       if (roles.includes('admin')) {
-        accessedRoutes = asyncRoutes || []
+        // asyncRoutes
+        accessedRoutes = handlePermissionRoute(asyncRoutes, store.state.user.api)
       } else {
         accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
       }
