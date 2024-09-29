@@ -121,6 +121,7 @@ export default {
   mounted() {
     localStorage.setItem('api', null)
     eventBus.$emit('cancelTimer')
+    this.$store.commit('user/SET_ACTIVEROUTE', false)
     const cacheName = localStorage.getItem('user')
     this.loginForm.username = cacheName || ''
     if (this.loginForm.username === '') {

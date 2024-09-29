@@ -2,12 +2,12 @@
   <div class="errPage-container">
     <ErrorA />
     <ErrorB />
-    <!-- $t is vue-i18n global function to translate lang -->
-    <h3>{{ $t('errorLog.tips') }}</h3>
+    <!-- $ts is vue-i18n global function to translate lang -->
+    <h3>{{ $ts('errorLog.tips') }}</h3>
     <aside>
-      {{ $t('errorLog.description') }}
+      {{ $ts('errorLog.description') }}
       <a target="_blank" class="link-type" href="https://panjiachen.github.io/vue-element-admin-site/guide/advanced/error.html">
-        {{ $t('errorLog.documentation') }}
+        {{ $ts('errorLog.documentation') }}
       </a>
     </aside>
     <a href="#">

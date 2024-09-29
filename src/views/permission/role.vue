@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-button type="primary" @click="handleAddRole">
-      {{ $t('permission.addRole') }}
+      {{ $ts('permission.addRole') }}
     </el-button>
 
     <el-table :data="rolesList" style="width: 100%;margin-top:30px;" border>
@@ -23,10 +23,10 @@
       <el-table-column align="center" label="Operations">
         <template slot-scope="scope">
           <el-button type="primary" size="small" @click="handleEdit(scope)">
-            {{ $t('permission.editPermission') }}
+            {{ $ts('permission.editPermission') }}
           </el-button>
           <el-button type="danger" size="small" @click="handleDelete(scope)">
-            {{ $t('permission.delete') }}
+            {{ $ts('permission.delete') }}
           </el-button>
         </template>
       </el-table-column>
@@ -51,10 +51,10 @@
       </el-form>
       <div style="text-align:right;">
         <el-button type="danger" @click="dialogVisible=false">
-          {{ $t('permission.cancel') }}
+          {{ $ts('permission.cancel') }}
         </el-button>
         <el-button type="primary" @click="confirmRole">
-          {{ $t('permission.confirm') }}
+          {{ $ts('permission.confirm') }}
         </el-button>
       </div>
     </el-dialog>

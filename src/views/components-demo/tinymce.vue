@@ -1,8 +1,8 @@
 <template>
   <div class="components-container">
     <aside>
-      {{ $t('components.tinymceTips') }}
-      <a target="_blank" class="link-type" href="https://panjiachen.github.io/vue-element-admin-site/feature/component/rich-editor.html"> {{ $t('components.documentation') }}</a>
+      {{ $ts('components.tinymceTips') }}
+      <a target="_blank" class="link-type" href="https://panjiachen.github.io/vue-element-admin-site/feature/component/rich-editor.html"> {{ $ts('components.documentation') }}</a>
     </aside>
     <div>
       <tinymce v-model="content" :height="300" />
