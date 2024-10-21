@@ -90,7 +90,18 @@ export default {
     deleteMark: ' 删除留痕',
     operationM: '操作管理',
     operationLog: '审计日志',
-    globalConifg: '全局配置'
+    globalConifg: '全局配置',
+    BucketList: '对象列表',
+    BucketHighConfig: '版本控制',
+    BucketObjectLock: '对象锁定',
+    BucketQuota: '配额管理',
+    BucketLifeCycle: '生命周期规则',
+    BucketQoS: 'QoS配置',
+    BucketLoadGroup: '负载路由',
+    highAvailability: '高可用管理',
+    BucketPermisson: '存储桶策略',
+    BucketAccess: '访问控制列表',
+    login: '登录'
   },
   navbar: {
     dashboard: '首页',

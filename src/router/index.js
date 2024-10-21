@@ -8,8 +8,7 @@ Router.prototype.push = function push(location) {
 }
 /* Layout */
 import Layout from '@/layout'
-import permission from '@/directive/permission'
-
+// import permission from '@/directive/permission'
 /* Router Modules */
 // import componentsRouter from './modules/components'
 // import chartsRouter from './modules/charts'
@@ -57,7 +56,10 @@ export const constantRoutes = [
   {
     path: '/login',
     component: () => import('@/views/login/index'),
-    hidden: true
+    hidden: true,
+    meta: {
+      title: 'login'
+    }
   },
   {
     path: '/auth-redirect',
@@ -73,16 +75,80 @@ export const constantRoutes = [
     path: '/401',
     component: () => import('@/views/error-page/401'),
     hidden: true
-  },
+  }
+]
+
+/**
+ * asyncRoutes
+ * the routes that need to be dynamically loaded based on user roles
+ */
+export const asyncRoutes = [
+  // {
+  //   path: '/permission',
+  //   component: Layout,
+  //   redirect: '/permission/page',
+  //   alwaysShow: true, // will always show the root menu
+  //   name: 'Permission',
+  //   meta: {
+  //     title: 'permission',
+  //     icon: 'lock',
+  //     roles: ['admin', 'editor'] // you can set roles in root nav
+  //   },
+  //   children: [
+  //     {
+  //       path: 'page',
+  //       component: () => import('@/views/permission/page'),
+  //       name: 'PagePermission',
+  //       meta: {
+  //         title: 'pagePermission',
+  //         roles: ['editor'] // or you can only set roles in sub nav
+  //       }
+  //     },
+  //     {
+  //       path: 'directive',
+  //       component: () => import('@/views/permission/directive'),
+  //       name: 'DirectivePermission',
+  //       meta: {
+  //         title: 'directivePermission'
+  //         // if do not set roles, means: this page does not require permission
+  //       }
+  //     },
+  //     {
+  //       path: 'role',
+  //       component: () => import('@/views/permission/role'),
+  //       name: 'RolePermission',
+  //       meta: {
+  //         title: 'rolePermission',
+  //         roles: ['admin']
+  //       }
+  //     }
+  //   ]
+  // },
   {
     path: '/',
     component: Layout,
     redirect: '/dashboard',
-    permission: ['admin:HomepageReportController'],
+    // permission: ['admin:HomepageReportController'],
+    root: true
+    // children: [
+    //   {
+    //     path: 'dashboard',
+    //     component: () => import('@/components/Dashboard'),
+    //     // component: () => import('@/views/dashboard/index'),
+    //     name: 'Dashboard',
+    //     meta: { title: 'dashboard', icon: 'Dashboard', affix: true }
+    //   }
+    // ]
+  },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: Layout,
+    permission: ['admin:HomepageReportController3333'],
     root: true,
     children: [
       {
-        path: 'dashboard',
+        path: '',
         component: () => import('@/components/Dashboard'),
         // component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
@@ -140,6 +206,7 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/components/page/objectStorage/Bucket.vue'),
         name: 'bucketList',
+        // permission: ['bucketlIst'],
         meta: { title: 'bucket', icon: 'bucket', noCache: true }
       }
     ]
@@ -175,7 +242,8 @@ export const constantRoutes = [
           name: 'ObjectDetail',
           component: () => import('@/components/page/objectStorage/detail/ObjectDetail'),
           meta: {
-            activeMenu: '/bucket/index'
+            activeMenu: '/bucket/index',
+            title: 'ObjectDetail'
           }
         },
         {
@@ -183,7 +251,8 @@ export const constantRoutes = [
           name: 'BucketConfig',
           component: () => import('@/components/page/objectStorage/detail/BucketConfig'),
           meta: {
-            activeMenu: '/bucket/index'
+            activeMenu: '/bucket/index',
+            title: 'BucketConfig'
           }
         },
         {
@@ -191,7 +260,8 @@ export const constantRoutes = [
           name: 'BucketPermisson',
           component: () => import('@/components/page/objectStorage/detail/BucketPolicy'),
           meta: {
-            activeMenu: '/bucket/index'
+            activeMenu: '/bucket/index',
+            title: 'BucketPermisson'
           }
         },
         {
@@ -199,7 +269,8 @@ export const constantRoutes = [
           name: 'BucketAccess',
           component: () => import('@/components/page/objectStorage/detail/BucketAccess'),
           meta: {
-            activeMenu: '/bucket/index'
+            activeMenu: '/bucket/index',
+            title: 'BucketAccess'
           }
         },
         {
@@ -207,7 +278,8 @@ export const constantRoutes = [
           name: 'BucketOwnership',
           component: () => import('@/components/page/objectStorage/detail/BucketOwnership'),
           meta: {
-            activeMenu: '/bucket/index'
+            activeMenu: '/bucket/index',
+            title: 'BucketOwnership'
           }
         },
         {
@@ -215,7 +287,8 @@ export const constantRoutes = [
           name: 'BucketLog',
           component: () => import('@/components/page/objectStorage/detail/BucketLog'),
           meta: {
-            activeMenu: '/bucket/index'
+            activeMenu: '/bucket/index',
+            title: 'BucketLog'
           }
         },
         {
@@ -223,7 +296,8 @@ export const constantRoutes = [
           name: 'BucketHighConfig',
           component: () => import('@/components/page/objectStorage/detail/BucketHighConfig'),
           meta: {
-            activeMenu: '/bucket/index'
+            activeMenu: '/bucket/index',
+            title: 'BucketHighConfig'
           }
         },
         {
@@ -231,7 +305,8 @@ export const constantRoutes = [
           name: 'BucketLifeCycle',
           component: () => import('@/components/page/objectStorage/detail/BucketLifeCycle'),
           meta: {
-            activeMenu: '/bucket/index'
+            activeMenu: '/bucket/index',
+            title: 'BucketLifeCycle'
           }
 
         },
@@ -248,7 +323,8 @@ export const constantRoutes = [
           name: 'BucketObjectLock',
           component: () => import('@/components/page/objectStorage/detail/BucketObjectLock'),
           meta: {
-            activeMenu: '/bucket/index'
+            activeMenu: '/bucket/index',
+            title: 'BucketObjectLock'
           }
         },
         {
@@ -256,7 +332,8 @@ export const constantRoutes = [
           name: 'BucketQuota',
           component: () => import('@/components/page/objectStorage/detail/BucketQuota'),
           meta: {
-            activeMenu: '/bucket/index'
+            activeMenu: '/bucket/index',
+            title: 'BucketQuota'
           }
         },
         {
@@ -264,7 +341,8 @@ export const constantRoutes = [
           name: 'BucketQoS',
           component: () => import('@/components/page/objectStorage/detail/BucketQoS'),
           meta: {
-            activeMenu: '/bucket/index'
+            activeMenu: '/bucket/index',
+            title: 'BucketQoS'
           }
         },
         {
@@ -272,7 +350,8 @@ export const constantRoutes = [
           name: 'BucketDataClassification',
           component: () => import('@/components/page/objectStorage/detail/BucketDataClassification'),
           meta: {
-            activeMenu: '/bucket/index'
+            activeMenu: '/bucket/index',
+            title: 'BucketDataClassification'
           }
         },
         {
@@ -280,18 +359,18 @@ export const constantRoutes = [
           name: 'BucketLoadGroup',
           component: () => import('@/components/page/objectStorage/detail/BucketLoadGroup'),
           meta: {
-            activeMenu: '/bucket/index'
+            activeMenu: '/bucket/index',
+            title: 'BucketLoadGroup'
           }
-
         },
         {
           path: 'highAvailability',
           name: 'highAvailability',
           component: () => import('@/components/page/highAvailability'),
           meta: {
-            activeMenu: '/bucket/index'
+            activeMenu: '/bucket/index',
+            title: 'highAvailability'
           }
-
         }
       ]
     }]
@@ -300,7 +379,8 @@ export const constantRoutes = [
     path: '/fileSystem',
     name: 'FileSystem',
     component: Layout,
-    permission: ['admin:GetFileList'],
+    // permission: ['admin:GetFileList'],
+    // alwaysShow: true,
     root: true,
     children: [
       {
@@ -315,16 +395,17 @@ export const constantRoutes = [
     path: '/objectResources',
     name: 'ObjectResource',
     component: Layout,
-    redirect: '/objectResources/index',
+    redirect: '/objectResources/device',
     meta: {
       title: 'ObjectResource',
       icon: 'objectResources'
     },
+    alwaysShow: true,
     permission: ['admin:ListStorageDeviceController', 'isAdmin'],
     root: true,
     children: [
       {
-        path: 'index',
+        path: 'device',
         component: () => import('@/components/page/objectStorage/objectResource'),
         name: 'ObjectResourceList',
         meta: { title: 'ObjectResourceM', icon: '', noCache: true },
@@ -346,42 +427,47 @@ export const constantRoutes = [
       }
     ]
   },
-  // {
-  //   path: '/migrationManagement',
-  //   name: 'migrationManagement',
-  //   component: Layout,
-  //   meta: {
-  //     title: 'migrationManagement',
-  //     icon: 'resourceManagement'
-  //   },
-  //   root: true,
-  //   children: [
-  //     {
-  //       path: 'resource',
-  //       component: () => import('@/components/page/objectStorage/objectResource/migrationResource'),
-  //       name: 'resource',
-  //       meta: { title: 'migrationResource', icon: '', noCache: true }
-  //     },
-  //     {
-  //       path: 'taskManagement',
-  //       component: () => import('@/components/page/task'),
-  //       name: 'taskManagement',
-  //       meta: { title: 'taskManagement', icon: '', noCache: true },
-  //       permission: ['123']
-  //     },
-  //     {
-  //       path: 'removeManagement',
-  //       component: () => import('@/components/page/removeData'),
-  //       name: 'removeManagement',
-  //       meta: { title: 'removeManagement', icon: '', noCache: true }
-  //     }
-  //   ]
-  // },
+  {
+    path: '/migrationManagement',
+    name: 'migrationManagement',
+    component: Layout,
+    meta: {
+      title: 'migrationManagement',
+      icon: 'resourceManagement'
+    },
+    redirect: '/migrationManagement/resource',
+    alwaysShow: true,
+    root: true,
+    children: [
+      {
+        path: 'resource',
+        component: () => import('@/components/page/objectStorage/objectResource/migrationResource'),
+        name: 'resource',
+        meta: { title: 'migrationResource', icon: '', noCache: true }
+      },
+      {
+        path: 'taskManagement',
+        component: () => import('@/components/page/task'),
+        name: 'taskManagement',
+        meta: { title: 'taskManagement', icon: '', noCache: true }
+        // permission: ['123']
+      },
+      {
+        path: 'removeManagement',
+        component: () => import('@/components/page/removeData'),
+        name: 'removeManagement',
+        meta: { title: 'removeManagement', icon: '', noCache: true }
+      }
+    ]
+  },
 
   {
     path: '/userAndPerm/user',
     name: 'migrationResource',
     component: Layout,
+    alwaysShow: true,
+    activeMenu: '/userAndPerm/user',
+    redirect: '/userAndPerm/user/Users',
     meta: {
       title: 'user',
       icon: 'user'
@@ -391,6 +477,7 @@ export const constantRoutes = [
         path: 'Users',
         component: () => import('@/components/page/users/user/User'),
         name: 'Users',
+        permission: ['admin:ListUsers'],
         meta: { title: 'Users', icon: '', noCache: true }
       },
       {
@@ -403,6 +490,7 @@ export const constantRoutes = [
         path: 'Group',
         component: () => import('@/components/page/users/group/group'),
         name: 'Group',
+        permission: ['admin:ListGroups'],
         meta: { title: 'Group', icon: '', noCache: true }
       },
       {
@@ -415,13 +503,23 @@ export const constantRoutes = [
         path: 'S3permission',
         component: () => import('@/components/page/permission/S3permission'),
         name: 'S3permission',
+        permission: ['admin:ListPermissionGroupController', 'isAdmin'],
         meta: { title: 'S3permission', icon: '', noCache: true }
       },
       {
         path: 'GeneralStrategy',
         component: () => import('@/components/page/permission/GeneralStrategy/Policies'),
         name: 'GeneralStrategy',
+        permission: ['admin:GetPolicy'],
         meta: { title: 'GeneralStrategy', icon: '', noCache: true }
+      },
+      {
+        path: 'GeneralStrategy/GeneralStrategy/policyDetail/:name',
+        component: () => import('@/components/page/permission/GeneralStrategy/PoliciesDetail'),
+        name: 'PolicyDetail',
+        permission: ['admin:GetPolicy'],
+        hidden: true,
+        meta: { title: 'PolicyDetail', icon: '', noCache: true }
       }
     ]
   },
@@ -429,6 +527,9 @@ export const constantRoutes = [
     path: '/lifecycle',
     name: 'lifecycle',
     component: Layout,
+    alwaysShow: true,
+    redirect: '/lifecycle/lifecycleBucket',
+    permission: ['admin:LifecycleTaskCronController'],
     meta: {
       title: 'lifecycle',
       icon: 'lifecycle'
@@ -457,6 +558,9 @@ export const constantRoutes = [
     path: '/bucketCache',
     name: 'bucketCache',
     component: Layout,
+    alwaysShow: true,
+    redirect: '/bucketCache/bucketCacheConfig',
+    permission: ['admin:BucketCache'],
     meta: {
       title: 'bucketCache',
       icon: 'bucketCache'
@@ -484,17 +588,22 @@ export const constantRoutes = [
       title: 'dataRecycle',
       icon: 'dataRecycle'
     },
+    redirect: '/dataRecycle/deleteMark',
+    // permission: ['admin:ListDeletedObjects', 'admin:ListDeletedObjects'],
+    alwaysShow: true,
     children: [
       {
         path: 'deleteMark',
         component: () => import('@/components/page/dataRecycle/deleteMark'),
         name: 'deleteMark',
+        // permission: ['admin:ListRestoreRecords'],
         meta: { title: 'deleteMark', icon: '', noCache: true }
       },
       {
         path: 'restoreRecords',
         component: () => import('@/components/page/dataRecycle/restoreRecords'),
         name: 'restoreRecords',
+        // permission: ['admin:ListDeletedObjects'],
         meta: { title: 'restoreRecords', icon: '', noCache: true }
       }
     ]
@@ -504,6 +613,7 @@ export const constantRoutes = [
     name: 'operationLog',
     component: Layout,
     alwaysShow: true,
+    redirect: '/operationLog/index',
     meta: {
       title: 'operationM',
       icon: 'operationLog'
@@ -521,95 +631,16 @@ export const constantRoutes = [
     path: '/globalConifg',
     name: 'globalConifg',
     component: Layout,
-    meta: {
-      title: 'globalConifg',
-      icon: 'el-icon-s-help'
-    },
+    // meta: {
+    //   title: 'globalConifg',
+    //   icon: 'el-icon-s-help'
+    // },
     children: [
       {
         path: 'index',
         component: () => import('@/components/page/operation/auditLogs'),
         name: 'globalConifgC',
         meta: { title: 'globalConifg', icon: 'globalConifg', noCache: true }
-      }
-    ]
-  }
-]
-
-/**
- * asyncRoutes
- * the routes that need to be dynamically loaded based on user roles
- */
-export const asyncRoutes = [
-  {
-    path: '/permission',
-    component: Layout,
-    redirect: '/permission/page',
-    alwaysShow: true, // will always show the root menu
-    name: 'Permission',
-    meta: {
-      title: 'permission',
-      icon: 'lock',
-      roles: ['admin', 'editor'] // you can set roles in root nav
-    },
-    children: [
-      {
-        path: 'page',
-        component: () => import('@/views/permission/page'),
-        name: 'PagePermission',
-        meta: {
-          title: 'pagePermission',
-          roles: ['editor'] // or you can only set roles in sub nav
-        }
-      },
-      {
-        path: 'directive',
-        component: () => import('@/views/permission/directive'),
-        name: 'DirectivePermission',
-        meta: {
-          title: 'directivePermission'
-          // if do not set roles, means: this page does not require permission
-        }
-      },
-      {
-        path: 'role',
-        component: () => import('@/views/permission/role'),
-        name: 'RolePermission',
-        meta: {
-          title: 'rolePermission',
-          roles: ['admin']
-        }
-      }
-    ]
-  },
-  {
-    path: '/migrationManagement',
-    name: 'migrationManagement',
-    component: Layout,
-    meta: {
-      title: 'migrationManagement',
-      icon: 'resourceManagement'
-    },
-    root: true,
-    children: [
-      {
-        path: 'resource',
-        component: () => import('@/components/page/objectStorage/objectResource/migrationResource'),
-        name: 'resource',
-        meta: { title: 'migrationResource', icon: '', noCache: true }
-      },
-      {
-        path: 'taskManagement',
-        component: () => import('@/components/page/task'),
-        name: 'taskManagement',
-        meta: { title: 'taskManagement', icon: '', noCache: true },
-        permission: ['123']
-      },
-      {
-        path: 'removeManagement',
-        component: () => import('@/components/page/removeData'),
-        name: 'removeManagement',
-        meta: { title: 'removeManagement', icon: '', noCache: true }
       }
     ]
   },

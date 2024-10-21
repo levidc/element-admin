@@ -90,7 +90,19 @@ export default {
     deleteMark: 'Delete Mark',
     operationM: 'Operation Management',
     operationLog: 'Operation Log',
-    globalConifg: 'Global Conifg'
+    globalConifg: 'Global Conifg',
+    filesystem: 'File System',
+    BucketList: 'Objects List',
+    BucketHighConfig: 'Version Control',
+    BucketObjectLock: 'Object Lock',
+    BucketQuota: 'Quita management',
+    BucketLifeCycle: 'lifeCycle rule',
+    BucketQoS: 'QoS config',
+    BucketLoadGroup: 'load Group Route',
+    highAvailability: 'High Available',
+    BucketPermisson: 'Bucket Policy',
+    BucketAccess: 'Access Control List',
+    login: 'Login'
   },
   navbar: {
     dashboard: 'Dashboard',

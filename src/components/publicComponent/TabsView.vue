@@ -89,6 +89,9 @@ export default {
     $route() {
       this.addTags()
       this.moveToCurrentTag()
+      this.$nextTick(() => {
+        this.$refs['scrollPane'].$refs['scrollContainer'].update()
+      })
     },
     // 监听右键菜单的值是否为true，如果是就创建全局监听点击事件，触发closeMenu事件隐藏菜单，如果是false就删除监听
     visible(value) {

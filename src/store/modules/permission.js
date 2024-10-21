@@ -26,12 +26,13 @@ function routeHasPermission(route, api) {
 }
 
 function handlePermissionRoute(route, api) {
-  // 过滤无权限的路由
+  // 过滤无权限的路由、菜单不显示、如需路由过滤 还需额外处理路由拦截（通过异步路由渲染合并到常态）
   const res = []
   route.forEach(item => {
     const tmp = { ...item }
     if (routeHasPermission(item, api)) {
       if (tmp.children) {
+        // permission 区分单权限及多权限渲染路由、
         tmp.children = handlePermissionRoute(tmp.children, api)
       }
       res.push(tmp)
@@ -41,7 +42,6 @@ function handlePermissionRoute(route, api) {
 }
 
 /**
- * Filter asynchronous routing tables by recursion
  * @param routes asyncRoutes
  * @param roles
  */
@@ -69,8 +69,17 @@ const state = {
 const mutations = {
   SET_ROUTES: (state, routes) => {
     state.addRoutes = routes
-    //
+    // routes 展示实际过滤展示的菜单
     const accessConstantRoutes = handlePermissionRoute(constantRoutes, store.state.user.api)
+    if (routes.length > 1) {
+      // 重定向路由为权限路由第一位
+      const routeList = routes[1]
+      // redirect配置登录首页及404和重定向
+      console.log(routeList, routeList.children, '333')
+      routes[0].redirect = routeList.path + '/' + routeList?.children[0]?.path
+    } else {
+      // 没有权限。。。
+    }
     state.routes = accessConstantRoutes.concat(routes)
     // sideBar 取routes
   }
@@ -82,6 +91,7 @@ const actions = {
       // const accessedRoutes = []
 
       let accessedRoutes
+      // 默认根据权限渲染菜单、此处暂无角色控制、默认admin
       if (roles.includes('admin')) {
         // asyncRoutes
         accessedRoutes = handlePermissionRoute(asyncRoutes, store.state.user.api)

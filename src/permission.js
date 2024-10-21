@@ -35,7 +35,6 @@ router.beforeEach(async(to, from, next) => {
         store.commit('user/SET_ACTIVEROUTE', true)
         const accessRoutes = await store.dispatch('permission/generateRoutes', ['admin'])
         // dynamically add accessible routes
-        console.log(accessRoutes, '123')
         // router.reloadRouter()
         router.addRoutes(accessRoutes)
         next({ ...to, replace: true })

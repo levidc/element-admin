@@ -498,6 +498,15 @@ export default {
   watch: {
   },
   mounted() {
+    // let count = 0
+    // const timer = setInterval(() => {
+    //   this.$msg({
+    //     type: 'error',
+    //     text: new Date()
+    //   })
+    //   count++
+    //   if (count > 10) clearInterval(timer)
+    // }, 500)
     this.$nextTick(() => {
       this.init(true)
     })

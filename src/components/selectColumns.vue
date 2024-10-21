@@ -19,7 +19,7 @@
     >
       <el-button
         type="primary"
-        class="right ml_10"
+        class="ml_10"
       >
         <i class="el-icon-caret-bottom" />
       </el-button>

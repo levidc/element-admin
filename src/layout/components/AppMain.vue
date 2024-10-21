@@ -5,6 +5,10 @@
         <router-view :key="key" />
       </keep-alive>
     </transition>
+    <el-backtop
+      target=".app-main"
+      :bottom="20"
+    />
   </section>
 </template>
 
@@ -36,10 +40,16 @@ export default {
   padding-top: 50px;
 }
 
+.el-backtop:hover {
+  background: #25373f;
+}
+
 .hasTagsView {
   .app-main {
     /* 84 = navbar + tags-view = 50 + 34 */
     min-height: calc(100vh - 84px);
+    // height: calc(100vh);
+    overflow-y: auto;
   }
 
   .fixed-header+.app-main {
