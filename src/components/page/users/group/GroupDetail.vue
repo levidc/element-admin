@@ -4,10 +4,7 @@
       <el-header>
         <div class="topMenu">
           <div class="iconName">
-            <svg
-              class="svgicon icon"
-              aria-hidden="true"
-            >
+            <svg class="svgicon icon" aria-hidden="true">
               <use xlink:href="#icon-group" />
             </svg>
             <div>
@@ -17,14 +14,8 @@
           <div class="rightMenu">
             <div>
               <span>用户组状态:
-                <span
-                  v-if="enableGroup"
-                  class="green"
-                >启用</span>
-                <span
-                  v-else
-                  class="red"
-                >未启用</span>
+                <span v-if="enableGroup" class="green">启用</span>
+                <span v-else class="red">未启用</span>
               </span>
               <el-switch
                 v-model="enableGroup"
@@ -32,59 +23,25 @@
                 @change="switchGroupStatus"
               />
             </div>
-            <el-tooltip
-              content="删除用户"
-              placement="top"
-              effect="dark"
-            >
-              <i
-                v-access="'admin:DeleteGroup'"
-                class="fa fa-trash-o"
-                title="删除用户组"
-                @click="deleteFlag = true"
-              />
+            <el-tooltip content="删除用户" placement="top" effect="dark">
+              <i v-access="'admin:DeleteGroup'" class="fa fa-trash-o" title="删除用户组" @click="deleteFlag = true" />
             </el-tooltip>
-            <el-tooltip
-              content="返回用户组列表"
-              placement="top"
-              effect="dark"
-            >
-              <svg
-                class="icon backicon"
-                aria-hidden="true"
-                @click="$router.push({ name: 'Group' })"
-              >
+            <el-tooltip content="返回用户组列表" placement="top" effect="dark">
+              <svg class="icon backicon" aria-hidden="true" @click="$router.push({ name: 'Group' })">
                 <use xlink:href="#icon-fanhui" />
               </svg>
             </el-tooltip>
-            <el-tooltip
-              content="刷新"
-              placement="top"
-              effect="dark"
-            >
-              <i
-                class="fa fa-refresh"
-                @click="groupDetail"
-              />
+            <el-tooltip content="刷新" placement="top" effect="dark">
+              <i class="fa fa-refresh" @click="groupDetail" />
             </el-tooltip>
           </div>
         </div>
       </el-header>
       <el-container>
-        <el-aside width="200px">
-          <el-tabs
-            v-model="tabName"
-            tab-position="left"
-            class="tabs"
-          >
-            <el-tab-pane
-              label="用户"
-              name="members"
-            />
-            <el-tab-pane
-              label="策略"
-              name="Policy"
-            />
+        <el-aside width="200px" style="background: #36464e;">
+          <el-tabs v-model="tabName" tab-position="left" class="tabs">
+            <el-tab-pane label="用户" name="members" />
+            <el-tab-pane label="策略" name="Policy" />
           </el-tabs>
         </el-aside>
         <el-main>
@@ -97,32 +54,13 @@
                 type="primary"
                 @click="searchUser = ''; memberDialog = true"
               >配置组成员</el-button>
-              <el-input
-                v-model="searchUser"
-                class="right search "
-                placeholder="用户名搜索"
-                clearable
-              />
+              <el-input v-model="searchUser" class="right search " placeholder="用户名搜索" clearable />
             </div>
-            <el-table
-              :data="memberData"
-              border
-              max-height="600"
-            >
-              <el-table-column
-                prop="userName"
-                label="名称"
-              >
+            <el-table :data="memberData" border max-height="600">
+              <el-table-column prop="userName" label="名称">
                 <template slot-scope="scope">
-                  <el-tooltip
-                    content="用户详情"
-                    placement="top"
-                  >
-                    <a
-                      v-access:disable="'admin:GetUser'"
-                      class="blue"
-                      @click="queryUserDetail(scope.row)"
-                    >
+                  <el-tooltip content="用户详情" placement="top">
+                    <a v-access:disable="'admin:GetUser'" class="blue" @click="queryUserDetail(scope.row)">
                       {{ scope.row.userName }}
                     </a>
                   </el-tooltip>
@@ -148,27 +86,12 @@
                 class="right golden"
                 @click="searchPolicy = ''; policyDialog = true"
               >配置策略</el-button>
-              <el-input
-                v-model="searchPolicy"
-                class="right search"
-                placeholder="策略名搜索"
-                clearable
-              />
+              <el-input v-model="searchPolicy" class="right search" placeholder="策略名搜索" clearable />
             </div>
-            <el-table
-              :data="userPolicy"
-              border
-              max-height="600"
-            >
-              <el-table-column
-                prop="name"
-                label="策略名"
-              >
+            <el-table :data="userPolicy" border max-height="600">
+              <el-table-column prop="name" label="策略名">
                 <template slot-scope="scope">
-                  <el-tooltip
-                    content="策略详情"
-                    placement="top"
-                  >
+                  <el-tooltip content="策略详情" placement="top">
                     <a
                       v-access:disable="'admin:GetPolicy'"
                       class="blue"
@@ -204,20 +127,11 @@
     >
       <div class="clearfix ipt">
         <span class="left">所选用户组</span>
-        <el-input
-          class="right"
-          :value="currentName"
-          readonly
-        />
+        <el-input class="right" :value="currentName" readonly />
       </div>
       <div class="clearfix ipt">
         <span class="left">分配用户</span>
-        <el-input
-          v-model="userName"
-          class="right"
-          placeholder="用户名过滤"
-          clearable
-        />
+        <el-input v-model="userName" class="right" placeholder="用户名过滤" clearable />
       </div>
 
       <el-table
@@ -229,34 +143,18 @@
         :row-key="(row) => row.userName"
         @selection-change="handleMemberChange"
       >
-        <el-table-column
-          type="selection"
-          width="55"
-          reserve-selection
-          align="center"
-        />
-        <el-table-column
-          prop="userName"
-          label="用户名"
-        />
+        <el-table-column type="selection" width="55" reserve-selection align="center" />
+        <el-table-column prop="userName" label="用户名" />
       </el-table>
       <div slot="footer">
         <el-button @click="resetUser">{{ $ts('reset') }}</el-button>
         <el-button type="primary" class="golden" @click="confirmGroup">{{ $ts('button.confirm') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog
-      title="设置策略"
-      :visible.sync="policyDialog"
-      width="700px"
-      @close="handleScroll('policyTable')"
-    >
+    <el-dialog title="设置策略" :visible.sync="policyDialog" width="700px" @close="handleScroll('policyTable')">
       <div class="flexMenu">
         <span>所选用户组</span>
-        <el-input
-          :value="currentName"
-          readonly
-        />
+        <el-input :value="currentName" readonly />
       </div>
       <div class="flexMenu">
         <span>当前策略</span>
@@ -267,22 +165,13 @@
           :content="currentPolicyName"
           popper-class="selectGroupPolicyTip"
         >
-          <el-input
-            :value="currentPolicyName"
-            readonly
-          />
+          <el-input :value="currentPolicyName" readonly />
         </el-tooltip>
-        <el-input
-          v-else
-          readonly
-        />
+        <el-input v-else readonly />
       </div>
       <div class="flexMenu">
         <span>分配策略</span>
-        <el-input
-          v-model="policyName"
-          placeholder="策略名过滤"
-        />
+        <el-input v-model="policyName" placeholder="策略名过滤" />
       </div>
       <el-table
         ref="policyTable"
@@ -293,28 +182,15 @@
         :row-key="(row) => row.name"
         @selection-change="handlePolicyChange"
       >
-        <el-table-column
-          type="selection"
-          width="55"
-          reserve-selection
-          align="center"
-          :selectable="checkBasePolicy"
-        />
-        <el-table-column
-          prop="name"
-          label="策略名"
-        />
+        <el-table-column type="selection" width="55" reserve-selection align="center" :selectable="checkBasePolicy" />
+        <el-table-column prop="name" label="策略名" />
       </el-table>
       <div slot="footer">
         <el-button @click="resetPolicy">{{ $ts('reset') }}</el-button>
         <el-button type="primary" class="golden" @click="confirmPolicy(false)">{{ $ts('button.confirm') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog
-      title="删除用户组"
-      :visible.sync="deleteFlag"
-      width="650px"
-    >
+    <el-dialog title="删除用户组" :visible.sync="deleteFlag" width="650px">
       <p>删除当前用户组:
         <span style="color: #ff8746;">
           {{ currentName }}

@@ -90,7 +90,7 @@ export default {
     deleteMark: ' 删除留痕',
     operationM: '操作管理',
     operationLog: '审计日志',
-    globalConifg: '全局配置',
+    globalConfig: '全局配置',
     BucketList: '对象列表',
     BucketHighConfig: '版本控制',
     BucketObjectLock: '对象锁定',
@@ -101,7 +101,20 @@ export default {
     highAvailability: '高可用管理',
     BucketPermisson: '存储桶策略',
     BucketAccess: '访问控制列表',
-    login: '登录'
+    login: '登录',
+    UserDetail: '用户详情',
+    GroupDetail: '用户组详情',
+    client: '客户端',
+    fileSystemManagement: '文件系统管理',
+    permissionManagement: '权限管理',
+    PolicyDetail: '权限详情',
+    schedulingStrategy: '调度策略',
+    strategyDictionary: '策略字典',
+    strategyExpress: '策略表达式',
+    bucketStrategyExpress: '桶策略表达式',
+    'OOPS': '糟糕',
+    '404Tips': '请检查您输入的URL是否正确，或者点击下方按钮返回首页。',
+    returnHomePage: '返回主页'
   },
   navbar: {
     dashboard: '首页',
@@ -109,7 +122,8 @@ export default {
     logOut: '退出登录',
     profile: '个人中心',
     theme: '换肤',
-    size: '布局大小'
+    size: '布局大小',
+    title: '分级存储调度平台'
   },
   login: {
     title: '系统登录',

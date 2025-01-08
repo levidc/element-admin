@@ -15,21 +15,18 @@
         v-if="selection"
         type="selection"
         width="55"
-        reserve-selection
+        :reserve-selection="keepSelection"
         :selectable="selectInit"
       />
       <template v-for="(col, index) in columns ">
         <!-- 操作列/自定义列 -->
-        <slot
-          v-if="col.slot && !col.hide"
-          :name="col.slot"
-        />
+        <slot v-if="col.slot && !col.hide" :name="col.slot" />
         <!-- 普通列 -->
         <el-table-column
           v-if="!col.slot && !col.hide"
           :key="index"
           :prop="col.prop"
-          :label="col.title"
+          :label="col.title || col.label"
           :width="col.width"
           :sortable="col.sortable"
           :min-width="col.minWidth"
@@ -60,6 +57,10 @@
 export default {
   name: 'DataTable',
   props: {
+    keepSelection: {
+      type: Boolean,
+      default: true
+    },
     total: {
       type: Number,
       default: 0
@@ -86,7 +87,12 @@ export default {
     },
     pageObj: {
       type: Object,
-      default: () => { }
+      default: () => {
+        return {
+          pageSize: 10,
+          currentPage: 1
+        }
+      }
     },
     handleSelectionChange: {
       type: Function,
@@ -98,7 +104,7 @@ export default {
     },
     getRowKey: {
       type: Function,
-      default: (row) => { row.id }
+      default: (row) => { String(row.id) }
     },
     selectInit: {
       type: Function,
@@ -127,13 +133,20 @@ export default {
   //     },
   //   },
   // },
+  watch: {
+    loading(val, pre) {
+      if (!val && pre) {
+        this.$refs[this.innerRef] && this.$refs[this.innerRef].clearSelection()
+      }
+    }
+  },
   created() {
     if (this.pageObj && Object.keys(this.pageObj).length) {
       this.pageSize = this.pageObj.pageSize
       this.currentPage = this.pageObj.currentPage
     } else {
-      this.pageSize = 1
-      this.currentPage = 10
+      this.pageSize = 10
+      this.currentPage = 1
     }
     // console.log(this.tableData, 'tableData', this.pagination)
   },
@@ -174,6 +187,12 @@ export default {
 </script>
 <style lang="scss" scoped>
 .el-table {
+  &+.el-pagination {
+    ::v-deep .el-icon-circle-close {
+      display: none;
+    }
+  }
+
   ::v-deep table {
     .el-button--text {
       color: #fff;
@@ -191,6 +210,10 @@ export default {
         /* color: #D3D6D8; */
         color: #8997a5;
         border: none;
+
+        .is-disabled {
+          display: none;
+        }
       }
     }
 
@@ -213,6 +236,7 @@ export default {
     }
 
     .el-table {
+
       th,
       tr,
       td {

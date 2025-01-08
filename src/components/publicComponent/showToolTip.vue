@@ -1,21 +1,8 @@
 <template>
   <div class="tooltip-container">
-    <el-tooltip
-      class="my-tooltip"
-      :disabled="showTooltip"
-      :content="text"
-      placement="top"
-    >
-      <span
-        ref="outWidth"
-        class="text-box"
-        :style="style"
-        @mouseenter="checkWidth"
-      >
-        <slot
-          v-if="useSlot"
-          name="data"
-        />
+    <el-tooltip class="my-tooltip" :disabled="showTooltip" :content="text" placement="top">
+      <span ref="outWidth" class="text-box" :style="style" @mouseenter="checkWidth">
+        <slot v-if="useSlot" name="data" />
         <span v-else>{{ text }}</span>
       </span>
     </el-tooltip>
@@ -73,8 +60,11 @@ export default {
   display: inline-block;
   width: 100%;
   height: 100%;
+
   .text-box {
     position: relative;
+    padding: 1px;
+    box-sizing: border-box;
     top: 5px;
     display: inline-block !important;
     height: 100% !important;
@@ -84,4 +74,3 @@ export default {
   }
 }
 </style>
-

@@ -70,12 +70,12 @@ export const constantRoutes = [
     path: '/404',
     component: () => import('@/views/error-page/404'),
     hidden: true
-  },
-  {
-    path: '/401',
-    component: () => import('@/views/error-page/401'),
-    hidden: true
   }
+  // {
+  //   path: '/401',
+  //   component: () => import('@/views/error-page/401'),
+  //   hidden: true
+  // }
 ]
 
 /**
@@ -140,22 +140,22 @@ export const asyncRoutes = [
     //   }
     // ]
   },
-  {
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: Layout,
-    permission: ['admin:HomepageReportController3333'],
-    root: true,
-    children: [
-      {
-        path: '',
-        component: () => import('@/components/Dashboard'),
-        // component: () => import('@/views/dashboard/index'),
-        name: 'Dashboard',
-        meta: { title: 'dashboard', icon: 'Dashboard', affix: true }
-      }
-    ]
-  },
+  // {
+  //   path: '/dashboard',
+  //   name: 'Dashboard',
+  //   component: Layout,
+  //   // permission: ['admin:HomepageReportController'],
+  //   root: true,
+  //   children: [
+  //     {
+  //       path: '',
+  //       component: () => import('@/components/Dashboard'),
+  //       // component: () => import('@/views/dashboard/index'),
+  //       name: 'Dashboard',
+  //       meta: { title: 'dashboard', icon: 'Dashboard', affix: true }
+  //     }
+  //   ]
+  // },
   // {
   //   path: '/documentation',
   //   component: Layout,
@@ -259,6 +259,7 @@ export const asyncRoutes = [
           path: 'BucketPermisson',
           name: 'BucketPermisson',
           component: () => import('@/components/page/objectStorage/detail/BucketPolicy'),
+          permission: ['s3:GetBucketPolicy'],
           meta: {
             activeMenu: '/bucket/index',
             title: 'BucketPermisson'
@@ -268,6 +269,7 @@ export const asyncRoutes = [
           path: 'BucketAccess',
           name: 'BucketAccess',
           component: () => import('@/components/page/objectStorage/detail/BucketAccess'),
+          permission: ['s3:GetBucketAcl'],
           meta: {
             activeMenu: '/bucket/index',
             title: 'BucketAccess'
@@ -294,6 +296,7 @@ export const asyncRoutes = [
         {
           path: 'BucketHighConfig',
           name: 'BucketHighConfig',
+          permission: ['s3:GetBucketVersioning'],
           component: () => import('@/components/page/objectStorage/detail/BucketHighConfig'),
           meta: {
             activeMenu: '/bucket/index',
@@ -303,6 +306,7 @@ export const asyncRoutes = [
         {
           path: 'BucketLifeCycle',
           name: 'BucketLifeCycle',
+          permission: ['s3:GetLifecycleConfiguration'],
           component: () => import('@/components/page/objectStorage/detail/BucketLifeCycle'),
           meta: {
             activeMenu: '/bucket/index',
@@ -321,6 +325,7 @@ export const asyncRoutes = [
         {
           path: 'BucketObjectLock',
           name: 'BucketObjectLock',
+          permission: ['s3:GetBucketObjectLockConfiguration'],
           component: () => import('@/components/page/objectStorage/detail/BucketObjectLock'),
           meta: {
             activeMenu: '/bucket/index',
@@ -330,6 +335,7 @@ export const asyncRoutes = [
         {
           path: 'BucketQuota',
           name: 'BucketQuota',
+          permission: ['admin:UpdateBucketQuota'],
           component: () => import('@/components/page/objectStorage/detail/BucketQuota'),
           meta: {
             activeMenu: '/bucket/index',
@@ -339,6 +345,7 @@ export const asyncRoutes = [
         {
           path: 'BucketQoS',
           name: 'BucketQoS',
+          permission: ['admin:QosController'],
           component: () => import('@/components/page/objectStorage/detail/BucketQoS'),
           meta: {
             activeMenu: '/bucket/index',
@@ -348,6 +355,7 @@ export const asyncRoutes = [
         {
           path: 'BucketDataClassification',
           name: 'BucketDataClassification',
+          permission: ['admin:BucketCache'],
           component: () => import('@/components/page/objectStorage/detail/BucketDataClassification'),
           meta: {
             activeMenu: '/bucket/index',
@@ -379,15 +387,24 @@ export const asyncRoutes = [
     path: '/fileSystem',
     name: 'FileSystem',
     component: Layout,
+    redirect: '/fileSystem/index',
+    meta: {
+      title: 'fileSystemManagement',
+      icon: 'fileSystem'
+    },
     // permission: ['admin:GetFileList'],
     // alwaysShow: true,
-    root: true,
     children: [
       {
         path: 'index',
         component: () => import('@/components/page/objectStorage/fileSystem'),
         name: 'FileSystemList',
-        meta: { title: 'fileSystem', icon: 'fileSystem', noCache: true }
+        meta: { title: 'fileSystem', icon: '', noCache: true }
+      },
+      {
+        path: 'client',
+        component: () => import('@/components/page/objectStorage/client'),
+        meta: { title: 'client', icon: '', noCache: true }
       }
     ]
   },
@@ -428,38 +445,67 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/migrationManagement',
-    name: 'migrationManagement',
+    path: '/schedulingStrategy',
+    name: 'schedulingStrategy',
     component: Layout,
+    redirect: '/schedulingStrategy/strategyDictionary',
     meta: {
-      title: 'migrationManagement',
-      icon: 'resourceManagement'
+      title: 'schedulingStrategy',
+      icon: 'schedulingStrategy'
     },
-    redirect: '/migrationManagement/resource',
-    alwaysShow: true,
-    root: true,
     children: [
       {
-        path: 'resource',
-        component: () => import('@/components/page/objectStorage/objectResource/migrationResource'),
-        name: 'resource',
-        meta: { title: 'migrationResource', icon: '', noCache: true }
+        path: 'strategyDictionary',
+        name: 'strategyDictionary',
+        component: () => import('@/components/page/StrategyDictionary/index'),
+        meta: { title: 'strategyDictionary', icon: '', noCache: true }
       },
       {
-        path: 'taskManagement',
-        component: () => import('@/components/page/task'),
-        name: 'taskManagement',
-        meta: { title: 'taskManagement', icon: '', noCache: true }
-        // permission: ['123']
+        path: 'strategyExpress',
+        name: 'strategyExpress',
+        component: () => import('@/components/page/StrategyDictionary/strategyExpress'),
+        meta: { title: 'strategyExpress', icon: '', noCache: true }
       },
       {
-        path: 'removeManagement',
-        component: () => import('@/components/page/removeData'),
-        name: 'removeManagement',
-        meta: { title: 'removeManagement', icon: '', noCache: true }
+        path: 'bucketStrategyExpress',
+        name: 'bucketStrategyExpress',
+        component: () => import('@/components/page/StrategyDictionary/bucketStrategyExpress'),
+        meta: { title: 'strategyDictionary', icon: '', noCache: true }
       }
     ]
   },
+  // {
+  //   path: '/migrationManagement',
+  //   name: 'migrationManagement',
+  //   component: Layout,
+  //   meta: {
+  //     title: 'migrationManagement',
+  //     icon: 'resourceManagement'
+  //   },
+  //   redirect: '/migrationManagement/resource',
+  //   alwaysShow: true,
+  //   root: true,
+  //   children: [
+  //     {
+  //       path: 'resource',
+  //       component: () => import('@/components/page/objectStorage/objectResource/migrationResource'),
+  //       name: 'resource',
+  //       meta: { title: 'migrationResource', icon: '', noCache: true }
+  //     },
+  //     {
+  //       path: 'taskManagement',
+  //       component: () => import('@/components/page/task'),
+  //       name: 'taskManagement',
+  //       meta: { title: 'taskManagement', icon: '', noCache: true }
+  //     },
+  //     {
+  //       path: 'removeManagement',
+  //       component: () => import('@/components/page/removeData'),
+  //       name: 'removeManagement',
+  //       meta: { title: 'removeManagement', icon: '', noCache: true }
+  //     }
+  //   ]
+  // },
 
   {
     path: '/userAndPerm/user',
@@ -484,7 +530,8 @@ export const asyncRoutes = [
         path: 'Users/userDetail/:name',
         name: 'UserDetail',
         component: () => import('@/components/page/users/user/UserDetail'),
-        hidden: true
+        hidden: true,
+        meta: { title: 'UserDetail', icon: '', noCache: true, activeMenu: '/userAndPerm/user/Users' }
       },
       {
         path: 'Group',
@@ -495,10 +542,24 @@ export const asyncRoutes = [
       },
       {
         path: 'Group/groupDetail/:name',
-        name: 'groupDetail',
-        component: () => import('@/components/page/users/user/UserDetail'),
-        hidden: true
-      },
+        name: 'GroupDetail',
+        component: () => import('@/components/page/users/group/GroupDetail'),
+        hidden: true,
+        meta: { title: 'GroupDetail', icon: '', noCache: true, activeMenu: '/userAndPerm/user/Group' }
+      }
+    ]
+  },
+  {
+    path: '/permissionManagement',
+    name: 'permissionManagement',
+    component: Layout,
+    alwaysShow: true,
+    redirect: '/permissionManagement/S3permission',
+    meta: {
+      title: 'permissionManagement',
+      icon: 'permission'
+    },
+    children: [
       {
         path: 'S3permission',
         component: () => import('@/components/page/permission/S3permission'),
@@ -519,118 +580,125 @@ export const asyncRoutes = [
         name: 'PolicyDetail',
         permission: ['admin:GetPolicy'],
         hidden: true,
-        meta: { title: 'PolicyDetail', icon: '', noCache: true }
+        meta: { title: 'PolicyDetail', icon: '', noCache: true, activeMenu: '/permissionManagement/GeneralStrategy' }
       }
     ]
   },
+  // {
+  //   path: '/lifecycle',
+  //   name: 'lifecycle',
+  //   component: Layout,
+  //   alwaysShow: true,
+  //   redirect: '/lifecycle/lifecycleBucket',
+  //   permission: ['admin:LifecycleTaskCronController'],
+  //   meta: {
+  //     title: 'lifecycle',
+  //     icon: 'lifecycle'
+  //   },
+  //   children: [
+  //     {
+  //       path: 'lifecycleBucket',
+  //       component: () => import('@/components/page/lifecycle/lifecycleBucket'),
+  //       name: 'lifecycleBucket',
+  //       // permission: ['admin:LifeCycleBucketController'],
+  //       meta: { title: 'lifecycleBucket', icon: '', noCache: true }
+  //     },
+  //     {
+  //       path: 'lifecycleTaskConfig',
+  //       component: () => import('@/components/page/lifecycle/lifecycleTaskConfig'),
+  //       name: 'lifecycleTaskConfig',
+  //       // permission: ['admin:LifeCycleTaskRuleController'],
+  //       meta: { title: 'lifecycleTaskConfig', icon: '', noCache: true }
+  //     },
+  //     {
+  //       path: 'lifecycleTaskList',
+  //       component: () => import('@/components/page/lifecycle/lifecycleTaskList'),
+  //       name: 'lifecycleTaskList',
+  //       // permission: ['admin:LifeCycleTaskInfoController'],
+  //       meta: { title: 'lifecycleTaskList', icon: '', noCache: true }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/bucketCache',
+  //   name: 'bucketCache',
+  //   component: Layout,
+  //   alwaysShow: true,
+  //   redirect: '/bucketCache/bucketCacheConfig',
+  //   permission: ['admin:BucketCache'],
+  //   meta: {
+  //     title: 'bucketCache',
+  //     icon: 'bucketCache'
+  //   },
+  //   children: [
+  //     {
+  //       path: 'bucketCacheConfig',
+  //       component: () => import('@/components/page/bucketCache/bucketCacheConfig'),
+  //       name: 'bucketCacheConfig',
+  //       permission: ['admin:BucketCache'],
+  //       meta: { title: 'bucketCacheConfig', icon: '', noCache: true }
+  //     },
+  //     {
+  //       path: 'bucketCacheList',
+  //       component: () => import('@/components/page/bucketCache/bucketCacheList'),
+  //       name: 'bucketCacheList',
+  //       permission: ['admin:BucketCache'],
+  //       meta: { title: 'bucketCacheList', icon: '', noCache: true }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/dataRecycle',
+  //   name: 'dataRecycle',
+  //   component: Layout,
+  //   meta: {
+  //     title: 'dataRecycle',
+  //     icon: 'dataRecycle'
+  //   },
+  //   redirect: '/dataRecycle/deleteMark',
+  //   // permission: ['admin:ListDeletedObjects', 'admin:ListDeletedObjects'],
+  //   alwaysShow: true,
+  //   children: [
+  //     {
+  //       path: 'restoreRecords',
+  //       component: () => import('@/components/page/dataRecycle/restoreRecords'),
+  //       name: 'restoreRecords',
+  //       // permission: ['admin:ListRestoreRecords'],
+  //       meta: { title: 'restoreRecords', icon: '', noCache: true }
+  //     },
+  //     {
+  //       path: 'deleteMark',
+  //       component: () => import('@/components/page/dataRecycle/deleteMark'),
+  //       name: 'deleteMark',
+  //       // permission: ['admin:ListDeletedObjects'],
+  //       meta: { title: 'deleteMark', icon: '', noCache: true }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/operationLog',
+  //   name: 'operationLog',
+  //   component: Layout,
+  //   alwaysShow: true,
+  //   redirect: '/operationLog/index',
+  //   meta: {
+  //     title: 'operationM',
+  //     icon: 'operationLog'
+  //   },
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/components/page/operation/auditLogs'),
+  //       name: 'auditLogs',
+  //       meta: { title: 'operationLog', icon: '', noCache: true }
+  //     }
+  //   ]
+  // },
   {
-    path: '/lifecycle',
-    name: 'lifecycle',
+    path: '/globalConfig',
+    name: 'globalConfig',
     component: Layout,
-    alwaysShow: true,
-    redirect: '/lifecycle/lifecycleBucket',
-    permission: ['admin:LifecycleTaskCronController'],
-    meta: {
-      title: 'lifecycle',
-      icon: 'lifecycle'
-    },
-    children: [
-      {
-        path: 'lifecycleBucket',
-        component: () => import('@/components/page/lifecycle/lifecycleBucket'),
-        name: 'lifecycleBucket',
-        meta: { title: 'lifecycleBucket', icon: '', noCache: true }
-      },
-      {
-        path: 'lifecycleTaskConfig',
-        component: () => import('@/components/page/lifecycle/lifecycleTaskConfig'),
-        name: 'lifecycleTaskConfig',
-        meta: { title: 'lifecycleTaskConfig', icon: '', noCache: true }
-      }, {
-        path: 'lifecycleTaskList',
-        component: () => import('@/components/page/lifecycle/lifecycleTaskList'),
-        name: 'lifecycleTaskList',
-        meta: { title: 'lifecycleTaskList', icon: '', noCache: true }
-      }
-    ]
-  },
-  {
-    path: '/bucketCache',
-    name: 'bucketCache',
-    component: Layout,
-    alwaysShow: true,
-    redirect: '/bucketCache/bucketCacheConfig',
-    permission: ['admin:BucketCache'],
-    meta: {
-      title: 'bucketCache',
-      icon: 'bucketCache'
-    },
-    children: [
-      {
-        path: 'bucketCacheConfig',
-        component: () => import('@/components/page/bucketCache/bucketCacheConfig'),
-        name: 'bucketCacheConfig',
-        meta: { title: 'bucketCacheConfig', icon: '', noCache: true }
-      },
-      {
-        path: 'bucketCacheList',
-        component: () => import('@/components/page/bucketCache/bucketCacheList'),
-        name: 'bucketCacheList',
-        meta: { title: 'bucketCacheList', icon: '', noCache: true }
-      }
-    ]
-  },
-  {
-    path: '/dataRecycle',
-    name: 'dataRecycle',
-    component: Layout,
-    meta: {
-      title: 'dataRecycle',
-      icon: 'dataRecycle'
-    },
-    redirect: '/dataRecycle/deleteMark',
-    // permission: ['admin:ListDeletedObjects', 'admin:ListDeletedObjects'],
-    alwaysShow: true,
-    children: [
-      {
-        path: 'deleteMark',
-        component: () => import('@/components/page/dataRecycle/deleteMark'),
-        name: 'deleteMark',
-        // permission: ['admin:ListRestoreRecords'],
-        meta: { title: 'deleteMark', icon: '', noCache: true }
-      },
-      {
-        path: 'restoreRecords',
-        component: () => import('@/components/page/dataRecycle/restoreRecords'),
-        name: 'restoreRecords',
-        // permission: ['admin:ListDeletedObjects'],
-        meta: { title: 'restoreRecords', icon: '', noCache: true }
-      }
-    ]
-  },
-  {
-    path: '/operationLog',
-    name: 'operationLog',
-    component: Layout,
-    alwaysShow: true,
-    redirect: '/operationLog/index',
-    meta: {
-      title: 'operationM',
-      icon: 'operationLog'
-    },
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/components/page/operation/auditLogs'),
-        name: 'auditLogs',
-        meta: { title: 'operationLog', icon: '', noCache: true }
-      }
-    ]
-  },
-  {
-    path: '/globalConifg',
-    name: 'globalConifg',
-    component: Layout,
+    permission: ['admin:GetGlobalConfig'],
     // meta: {
     //   title: 'globalConifg',
     //   icon: 'el-icon-s-help'
@@ -638,9 +706,9 @@ export const asyncRoutes = [
     children: [
       {
         path: 'index',
-        component: () => import('@/components/page/operation/auditLogs'),
-        name: 'globalConifgC',
-        meta: { title: 'globalConifg', icon: 'globalConifg', noCache: true }
+        component: () => import('@/components/GlobalConfig'),
+        name: 'globalConfigC',
+        meta: { title: 'globalConfig', icon: 'globalConfig', noCache: true }
       }
     ]
   },

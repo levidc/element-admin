@@ -90,7 +90,7 @@ export default {
     deleteMark: 'Delete Mark',
     operationM: 'Operation Management',
     operationLog: 'Operation Log',
-    globalConifg: 'Global Conifg',
+    globalConfig: 'Global Config',
     filesystem: 'File System',
     BucketList: 'Objects List',
     BucketHighConfig: 'Version Control',
@@ -102,7 +102,20 @@ export default {
     highAvailability: 'High Available',
     BucketPermisson: 'Bucket Policy',
     BucketAccess: 'Access Control List',
-    login: 'Login'
+    login: 'Login',
+    UserDetail: 'User detail',
+    GroupDetail: 'Group detail',
+    client: 'Client',
+    fileSystemManagement: 'file System Management',
+    permissionManagement: 'Permission Management',
+    PolicyDetail: 'Policy Detail',
+    schedulingStrategy: 'Scheduling Strategy',
+    strategyDictionary: 'Strategy Dictionary',
+    strategyExpress: 'Strategy Express',
+    bucketStrategyExpress: 'Bucket Strategy Express',
+    'OOPS': 'OOPS!',
+    '404Tips': 'Please check that the URL you entered is correct, or click the button below to return to the homepage.',
+    returnHomePage: 'Back to home'
   },
   navbar: {
     dashboard: 'Dashboard',
@@ -110,7 +123,8 @@ export default {
     logOut: 'Log Out',
     profile: 'Profile',
     theme: 'Theme',
-    size: 'Global Size'
+    size: 'Global Size',
+    title: 'USP'
   },
   login: {
     title: 'Login Form',

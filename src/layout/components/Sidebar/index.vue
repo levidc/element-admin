@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'has-logo':showLogo}">
+  <div :class="{ 'has-logo': showLogo }">
     <logo v-if="showLogo" :collapse="isCollapse" />
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <!-- toDo -->
@@ -61,26 +61,30 @@ export default {
   -webkit-transition: width 0.15s;
   -o-transition: width 0.15s;
 }
-.nest-menu{
-  li.el-menu-item{
-    padding-left: 53px!important;
+
+.nest-menu {
+  li.el-menu-item {
+    padding-left: 53px !important;
   }
 }
-.sidebar-container{
-  svg.svg-icon{
+
+.sidebar-container {
+  svg.svg-icon {
     position: relative;
     top: 1px;
-    color: #d3d6d8;
+    color: #fff;
     font-size: 18px;
   }
-  .el-scrollbar{
+
+  .el-scrollbar {
     background-color: #25373f;
   }
 }
 </style>
 <style>
 .icon {
-  width: 1em; height: 1em;
+  width: 1em;
+  height: 1em;
   vertical-align: -0.15em;
   fill: currentColor;
   overflow: hidden;

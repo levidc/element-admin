@@ -27,11 +27,11 @@ const constantRoutes = [
     component: 'views/error-page/404',
     hidden: true
   },
-  {
-    path: '/401',
-    component: 'views/error-page/401',
-    hidden: true
-  },
+  // {
+  //   path: '/401',
+  //   component: 'views/error-page/401',
+  //   hidden: true
+  // },
   {
     path: '',
     component: 'layout/Layout',
@@ -368,12 +368,12 @@ const asyncRoutes = [
       icon: '404'
     },
     children: [
-      {
-        path: '401',
-        component: 'views/error-page/401',
-        name: 'Page401',
-        meta: { title: 'page401', noCache: true }
-      },
+      // {
+      //   path: '401',
+      //   component: 'views/error-page/401',
+      //   name: 'Page401',
+      //   meta: { title: 'page401', noCache: true }
+      // },
       {
         path: '404',
         component: 'views/error-page/404',

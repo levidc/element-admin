@@ -5,7 +5,8 @@ module.exports = {
       // target: 'http://10.0.3.235:8310',
       // target: 'http://10.0.2.173:8080', // usp
       // target: 'http://10.0.2.151:8080/', // usp
-      target: 'http://39.102.203.17:8080/', // noc
+      // target: 'http://39.102.203.17:8080/', // noc
+      target: 'http://10.0.2.173:8080/',
       // target: 'http://10.0.2.151:8080/', //noc
       changeOrigin: true,
       pathRewrite: {

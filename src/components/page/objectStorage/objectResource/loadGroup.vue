@@ -74,6 +74,7 @@
                     <el-tag v-if="data.groupTag==='CACHE'">缓存</el-tag>
                     <el-tag v-if="data.groupTag==='GLACIER'">冰存储</el-tag>
                     <el-tag v-if="data.groupTag==='WARM'">温存储</el-tag>
+                    <el-tag v-if="data.groupTag==='RESTORE'">解冻存储</el-tag>
                   </div>
                 </span>
               </span>
@@ -83,7 +84,7 @@
                     <el-tag style="margin-right:5px;">{{ renderStorageType(data.storageType) }}</el-tag>
                     <showToolTip
                       :text="data.loadGroupName"
-                      width="60%"
+                      width="48%"
                     />
                   </span>
                   <div>
@@ -170,7 +171,7 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="负载用途">
-                  <span>{{ fillForm.groupTag==='DATA'?'冷存储': fillForm.groupTag==='GLACIER'?'冰存储':'温存储' }}</span>
+                  <span>{{ renderGroupTag(fillForm.groupTag) }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -243,6 +244,16 @@
                       >
                         {{ item.val }}
                       </span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    prop="resourceStatus"
+                    label="资源阈值"
+                    align="center"
+                    min-width="180px"
+                  >
+                    <template slot-scope="scope">
+                      {{ scope.row.threshold }}
                     </template>
                   </el-table-column>
                 </el-table>
@@ -681,7 +692,7 @@
             >
               <el-radio-group
                 v-model="form.groupTag"
-                class="groupTag"
+                class="radio_storageType"
                 @change="changeGroupTag"
               >
                 <el-radio
@@ -697,9 +708,9 @@
                   label="GLACIER"
                 >冰存储</el-radio>
                 <el-radio
-                  :disabled="disableGroupTag('CACHE')"
-                  label="CACHE"
-                >缓存</el-radio>
+                  :disabled="disableGroupTag('RESTORE')"
+                  label="RESTORE"
+                >解冻存储</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -713,29 +724,25 @@
                 :disabled="!isAdd"
               >
                 <el-radio
-                  v-if="form.groupTag==='DATA'"
+                  v-if="form.groupTag==='DATA'||form.groupTag==='RESTORE'"
                   label="S3"
                 >S3</el-radio>
                 <el-radio
-                  v-if="form.groupTag==='WARM'"
+                  v-if="form.groupTag==='WARM'||form.groupTag==='RESTORE'"
                   label="WARM"
                 >温存储</el-radio>
-                <el-radio
-                  v-if="form.groupTag==='DATA'"
+                <!-- <el-radio
+                  v-if="form.groupTag!=='GLACIER'"
                   label="NAS"
-                >NAS</el-radio>
-                <el-radio
+                >NAS</el-radio> -->
+                <!-- <el-radio
                   v-if="form.groupTag==='DATA'"
                   label="IAM"
-                >AWS</el-radio>
+                >AWS</el-radio> -->
                 <el-radio
                   v-if="form.groupTag==='GLACIER'"
                   label="GLACIER"
                 >冰存储</el-radio>
-                <el-radio
-                  v-if="form.groupTag==='CACHE'"
-                  label="NAS"
-                >NAS</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -751,8 +758,8 @@
                 style="position:absolute;"
               >
                 <p style="line-height:1.6;">负载组中不能添加不同类型的资源</p>
-                <!-- <p style="line-height:1.6;">直接存储的负载组不支持缓存类型的资源</p>
-                <p style="line-height:1.6;">缓存的负载组不支持直接存储类型的资源</p> -->
+                <p style="line-height:1.6;">直接存储的负载组不支持缓存类型的资源</p>
+                <p style="line-height:1.6;">缓存的负载组不支持直接存储类型的资源</p>
                 <i
                   slot="reference"
                   class="fa fa-question-circle"
@@ -768,7 +775,7 @@
           <el-form-item>
             <div
               v-for="(item,index) in form.items"
-              :key="index + new Date()"
+              :key="index"
             >
               <div class="selResourceContainer">
                 <el-form-item
@@ -809,7 +816,7 @@
                         v-if="node.isLeaf"
                         style="margin-right:10px"
                       >
-                        <el-tag class="cascaderTag"> {{ data.storageType === 'IAM' ? 'AWS': data.storageType === 'GLACIER'?'冰存储': data.storageType === 'WARM'?'温存储': data.storageType }} </el-tag>
+                        <el-tag class="cascaderTag"> {{ data.storageType === 'IAM' ? 'AWS': data.storageType === 'GLACIER'?'冰存储': data.storageType }} </el-tag>
                         <el-tag
                           v-if="data.type==='CACHE'"
                           class="cascaderTag"
@@ -827,11 +834,36 @@
                 <el-form-item :prop="`items.${index}.isOpen`">
                   <el-radio-group
                     v-model="item.isOpen"
-                    style="margin-left:55px"
+                    style="margin-left:30px"
                   >
                     <el-radio :label="1">启用</el-radio>
                     <el-radio :label="0">禁用</el-radio>
                   </el-radio-group>
+                </el-form-item>
+                <el-form-item :prop="`items.${index}.threshold`" :rules="rules.threshold">
+                  <el-input
+                    :value="item.threshold"
+                    style="width: 150px"
+                    placeholder="请输入资源阈值"
+                    @input="(val)=>handleValueChange(val,item)"
+                  >
+                    <template slot="suffix">%</template>
+                  </el-input>
+
+                  <el-popover
+                    placement="top"
+                    width="200"
+                    trigger="hover"
+                    style="position:absolute;"
+                  >
+                    <p style="line-height:1.6;">容量到达资源的阈值后不能写入</p>
+                    <i
+                      v-if="index==0"
+                      slot="reference"
+                      class="fa fa-question-circle"
+                      style="margin-left:10px"
+                    />
+                  </el-popover>
                 </el-form-item>
                 <i
                   v-if="form.items.length!==1"
@@ -944,6 +976,18 @@ export default {
           message: "请输入2-64位英文、中文、数字、'_-.'",
           pattern: /^[a-zA-Z0-9_\u4e00-\u9fa5\-\.]{2,64}$/
         },
+        threshold: {
+          trigger: ['blur', 'change'],
+          validator: (data, val, cb) => {
+            if (!val) {
+              return cb('请输入资源阈值')
+            } else if (Number(val) < 1 || Number(val) > 100) {
+              return cb('资源阈值范围1-100')
+            } else {
+              return cb()
+            }
+          }
+        },
         resourceId: [{
           validator: (data, val, cb) => {
             if (!val || (val && !val.length)) {
@@ -1020,6 +1064,9 @@ export default {
     },
     choseResource() {
       return this.form.items.filter(x => x.resourceId.length)
+    },
+    enableNasResource() {
+      return this.$route.query.nas === 'true'
     }
   },
   watch: {
@@ -1037,7 +1084,8 @@ export default {
         }).then(() => {
           this.form.items = [{
             resourceId: '',
-            isOpen: 1
+            isOpen: 1,
+            threshold: 90
           }]
         }).catch(() => {
           this.changeStorageTypeFlag = true
@@ -1062,7 +1110,7 @@ export default {
   },
   methods: {
     renderStorageType(type) {
-      return type === 'IAM' ? 'AWS' : type === 'GLACIER' ? '冰存储' : type === 'WARM' ? '温存储' : type
+      return type === 'IAM' ? 'AWS' : type
     },
     disableGroupTag(type) {
       if (!this.isAdd) return true
@@ -1096,9 +1144,9 @@ export default {
         }).then(() => {
           this.form.items = [{
             resourceId: '',
-            isOpen: 1
+            isOpen: 1,
+            threshold: 90
           }]
-          // data 冷存储默认负载类型S3
           if (val === 'DATA') {
             this.form.storageType = 'S3'
           } else if (val === 'CACHE') {
@@ -1119,6 +1167,12 @@ export default {
             setTimeout(() => {
               this.changeStorageTypeFlag = false
             }, 200)
+          } else if (val === 'RESTORE') {
+            this.changeStorageTypeFlag = true
+            this.form.storageType = 'S3'
+            setTimeout(() => {
+              this.changeStorageTypeFlag = false
+            }, 200)
           }
         }).catch(() => {
           this.changeStorageTypeFlag = true
@@ -1136,6 +1190,8 @@ export default {
           this.form.storageType = 'GLACIER'
         } else if (val === 'WARM') {
           this.form.storageType = 'WARM'
+        } else if (val === 'RESTORE') {
+          this.form.storageType = 'S3'
         }
       }
     },
@@ -1148,26 +1204,9 @@ export default {
       // 筛选可选资源条件、重复添加及对应类型
       return this.filterSelResource.map(x => {
         x.children && x.children.map(t => {
-          //
-          if (this.form.storageType === 'NAS') {
-            if (this.form.groupTag === 'DATA') {
-              t.disabled = choseResource.includes(t.value) || t.type !== 'DEFAULT' || t.storageType !== this.form.storageType
-            } else {
-              t.disabled = choseResource.includes(t.value) || t.type !== 'CACHE' || t.storageType !== this.form.storageType
-            }
-          } else {
-            t.disabled = choseResource.includes(t.value) || t.storageType !== this.form.storageType
-          }
-          // warm也支持
-          // const duplicated = choseResource.includes(t.value)
-          // let flag = false
-          // if (this.form.storageType == 'S3') {
-          //   flag = this.form.groupTag === 'DATA' ? t.storageType !== 'S3' : t.storageType !== 'WARM'
-          // } else if (this.form.storageType === 'GLACIER') {
-          //   flag = t.storageType !== 'GLACIER'
-          // }
-          // t.disabled = duplicated || flag
-          //  || (this.form.groupTag === 'DATA' && t.type === 'CACHE') || (this.form.groupTag === 'CACHE' && t.type !== 'CACHE')
+          // 配置不同负载组类型资源
+          t.disabled = choseResource.includes(t.value) || (this.form.groupTag === 'DATA' ? this.enableNasResource ? t.type === 'CACHE' : t.storageType !== this.form.storageType : t.storageType !== this.form.storageType)
+          // || t.storageType !== this.form.storageType || (this.form.groupTag === 'DATA' && t.type === 'CACHE') || (this.form.groupTag === 'CACHE' && t.type !== 'CACHE')
         })
         return x
       })
@@ -1227,7 +1266,7 @@ export default {
     //     const text = val === 'DATA' ? '直接存储' : '缓存'
     //     setTimeout(() => {
     //       this.form.groupTag = change
-    //       this.$ts({
+    //       this.$msg({
     //         type: 'warn',
     //         text: `当前${text}的默认负载已存在，请更改`
     //       })
@@ -1355,8 +1394,21 @@ export default {
     //   })
     // },
     // 展示负载组（默认及选中）
+    renderGroupTag(type) {
+      switch (type) {
+        case 'DATA':
+          return '冷存储'
+        case 'GLACIER':
+          return '冰存储'
+        case 'WARM':
+          return '温存储'
+        case 'RESTORE':
+          return '解冻存储'
+      }
+    },
     showDefaultGroup() {
       if (this.tableData && this.tableData.length) {
+        // console.log(JSON.stringify(this.selectLoadGroup), 'selectLoadGroup')
         if (JSON.stringify(this.selectLoadGroup) !== '{}') {
           const id = this.selectLoadGroup.id || ''
           const flag = this.tableData.find(x => x.id === id)
@@ -1399,7 +1451,6 @@ export default {
         this.resourceListSel = val.reduce((pre, cur) => {
           const mapItems = cur.storageResourceModelList.map(x => {
             x.deviceName = cur.deviceName
-            x.loadGroupName = x.storageName
             return x
           })
           pre.push(...mapItems)
@@ -1469,8 +1520,29 @@ export default {
       })
       this.loading = false
       this.$nextTick(() => {
+        this.stateParams = JSON.parse(JSON.stringify(this.$route.params))
+        // console.log(this.$route.params, '1233', this.stateParams)
+        if (this.$route.params.loadGroupName) {
+          this.filterText = this.$route.params.loadGroupName
+          this.selectLoadGroup = this.tableData.find(x => x.loadGroupName === this.filterText) || {}
+          if (JSON.stringify(this.selectLoadGroup) === '{}') {
+            this.filterText = ''
+          }
+          // 匹配负载路由查询负载组、空则展示默认负载组
+        }
+        if (this.$route.params.resourceName) {
+          this.filterText = this.$route.params.resourceName
+          const flag = this.tableData.find(x => x.loadGroupName === this.$route.params.resourceLoadGroup)
+          if (flag) {
+            this.selectLoadGroup = flag.items.find(x => x.loadGroupName === this.filterText)
+            // console.log(this.selectLoadGroup, 'selectLoadGroup', this.filterText, flag)
+          }
+        }
         this.showDefaultGroup()
       })
+      // this.$nextTick(() => {
+      //   this.showDefaultGroup()
+      // })
       //
       // const keepLoad = () => {
       //   const flag = Object.keys(this.asyncTaskList).some(x => !this.asyncTaskList[x])
@@ -1507,8 +1579,13 @@ export default {
     addResourceSel() {
       this.form.items.push({
         resourceId: '',
-        isOpen: 1
+        isOpen: 1,
+        threshold: 90
       })
+    },
+
+    handleValueChange(value, item) {
+      item.threshold = value.replace(/(^0+)|\D/g, '').replace(/^[1-9]\d{2,}$|^100\d+$/, '100')
     },
     initForm() {
       this.form = {
@@ -1521,7 +1598,8 @@ export default {
         storageType: 'S3',
         items: [{
           resourceId: '',
-          isOpen: 1
+          isOpen: 1,
+          threshold: 90
         }]
       }
       this.$nextTick(() => {
@@ -1646,14 +1724,20 @@ export default {
         items,
         storageType
       } = JSON.parse(JSON.stringify(this.selectLoadGroup))
+      // const items = JSON.parse(JSON.stringify(this.selectLoadGroup)).items.map(x => {
+      //   x.threshold = null
+      //   return x
+      // })
       const mapItems = items && items.map(x => {
         return {
           isOpen: x.isOpen,
-          resourceId: [x.deviceId, x.resourceId]
+          resourceId: [x.deviceId, x.resourceId],
+          threshold: x.threshold
         }
       }) || [{
         resourceId: '',
-        isOpen: 1
+        isOpen: 1,
+        threshold: 90
       }]
       this.currentDefaultGroup = !defaultGroup
       // 关联资源数据回填、
@@ -1696,7 +1780,8 @@ export default {
           const mapItems = items.map(x => {
             return {
               isOpen: x.isOpen,
-              resourceId: x.resourceId[1]
+              resourceId: x.resourceId[1],
+              threshold: Number(x.threshold)
             }
           })
           // console.log(this.form, '1233')
@@ -1711,7 +1796,7 @@ export default {
               storageType
             })
             putLoadGroup(obj).then(res => {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: '操作成功'
               })
@@ -1739,7 +1824,21 @@ export default {
                       return x.resourceId[1] === y.resourceId[1] && x.isOpen !== y.isOpen
                     })
                   })
+                  const diffThreshold = this.form['items'].filter(x => {
+                    return this.requestForm['items'].some(y => {
+                      return x.resourceId[1] === y.resourceId[1] && x.threshold !== y.threshold
+                    })
+                  })
                   // 更改资源状态
+                  if (diffThreshold.length) {
+                    cur[pre] = newVal.map(x => {
+                      return {
+                        isOpen: x.isOpen,
+                        resourceId: x.resourceId[1],
+                        threshold: x.threshold
+                      }
+                    })
+                  }
                   if (diff.length) {
                     // 额外调用switch开关
                     mapAsync = diff.map(x => {
@@ -1755,7 +1854,8 @@ export default {
                   cur[pre] = newVal.map(x => {
                     return {
                       isOpen: x.isOpen,
-                      resourceId: x.resourceId[1]
+                      resourceId: x.resourceId[1],
+                      threshold: x.threshold
                     }
                   })
                 }
@@ -1780,7 +1880,7 @@ export default {
                 if (mapAsync.length) {
                   Promise.allSettled(mapAsync).then(() => {
                     putLoadGroup(obj).then(() => {
-                      this.$ts({
+                      this.$msg({
                         type: 'success',
                         text: '操作成功'
                       })
@@ -1791,7 +1891,7 @@ export default {
                   })
                 } else {
                   putLoadGroup(obj).then(() => {
-                    this.$ts({
+                    this.$msg({
                       type: 'success',
                       text: '操作成功'
                     })
@@ -1809,7 +1909,7 @@ export default {
                         loadGroupId: id,
                         open: isOpen === 'CLOSE' ? 0 : 1
                       }).then(() => {
-                        this.$ts({
+                        this.$msg({
                           type: 'success',
                           text: '操作成功'
                         })
@@ -1825,7 +1925,7 @@ export default {
                       loadGroupId: id,
                       open: isOpen === 'CLOSE' ? 0 : 1
                     }).then(() => {
-                      this.$ts({
+                      this.$msg({
                         type: 'success',
                         text: '操作成功'
                       })
@@ -1842,7 +1942,7 @@ export default {
                       loadGroupId: id,
                       open: isOpen === 'CLOSE' ? 0 : 1
                     }).then(() => {
-                      this.$ts({
+                      this.$msg({
                         type: 'success',
                         text: '操作成功'
                       })
@@ -1857,7 +1957,7 @@ export default {
                     loadGroupId: id,
                     open: isOpen === 'CLOSE' ? 0 : 1
                   }).then(() => {
-                    this.$ts({
+                    this.$msg({
                       type: 'success',
                       text: '操作成功'
                     })
@@ -1874,7 +1974,7 @@ export default {
                 Promise.allSettled(mapAsync).then(res => {
                   const flag = res.every(x => x.stauts !== 'rejected')
                   if (flag) {
-                    this.$ts({
+                    this.$msg({
                       type: 'success',
                       text: '操作成功'
                     })
@@ -1939,7 +2039,7 @@ export default {
 
           span {
             color: #fff;
-            font-weight: bold;
+            // font-weight: bold;
           }
         }
       }
@@ -2055,9 +2155,9 @@ export default {
   label.el-form-item__label {
     margin-left: -20px;
   }
-  .groupTag{
+  .radio_storageType{
     .el-radio{
-      margin-right: 20px;
+      margin-right: 12px;
     }
   }
   .selResourceContainer {
@@ -2066,8 +2166,14 @@ export default {
     // justify-content: space-between;
     align-items: center;
     .el-form-item {
+      .el-cascader{
+        width: 85%!important;
+      }
+      .el-radio{
+        margin-right: 20px;
+      }
       &:first-of-type {
-        width: 45%;
+        width: 43%;
         .el-cascader {
           width: 100%;
         }

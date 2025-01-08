@@ -94,7 +94,7 @@
         </div>
       </el-header>
       <el-container v-show="!loading">
-        <el-aside width="200px">
+        <el-aside width="200px" style="background: #36464e;">
           <el-tabs
             v-model="tabName"
             tab-position="left"

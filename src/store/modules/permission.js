@@ -76,7 +76,7 @@ const mutations = {
       const routeList = routes[1]
       // redirect配置登录首页及404和重定向
       console.log(routeList, routeList.children, '333')
-      routes[0].redirect = routeList.path + '/' + routeList?.children[0]?.path
+      routes[0].redirect = routeList?.children[0]?.path ? routeList.path + '/' + routeList?.children[0]?.path : routeList.path
     } else {
       // 没有权限。。。
     }

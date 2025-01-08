@@ -90,3 +90,107 @@ export function getObjectMeta(params) {
     params
   })
 }
+
+// 获取客户端list
+export const getNfsClientList = (params) => {
+  return request({
+    method: 'get',
+    url: 'fs/share/nfs/client/list',
+    params,
+    headers: {
+      'Request-Target': 'fs'
+    }
+  })
+}
+
+// 创建nfs客户端
+export const createNfsClient = (data) => {
+  return request({
+    method: 'post',
+    url: 'fs/share/nfs/client/create',
+    data,
+    headers: {
+      'Request-Target': 'fs'
+    }
+  })
+}
+
+export const getNfsClient = (params) => {
+  return request({
+    method: 'get',
+    url: 'fs/share/nfs/client/get',
+    params,
+    headers: {
+      'Request-Target': 'fs'
+    }
+  })
+}
+
+// 删除客户端
+export const deleteNfsClient = (params) => {
+  return request({
+    method: 'delete',
+    url: 'fs/share/nfs/client/delete',
+    params,
+    headers: {
+      'Request-Target': 'fs'
+    }
+  })
+}
+
+export const shareApply = (data) => {
+  return request({
+    method: 'post',
+    url: 'fs/share/apply',
+    data,
+    headers: {
+      'Request-Target': 'fs'
+    }
+  })
+}
+
+export const shareUnapply = (data) => {
+  return request({
+    method: 'post',
+    url: 'fs/share/unapply',
+    data,
+    headers: {
+      'Request-Target': 'fs'
+    }
+  })
+}
+
+// list all applied fs about share client
+export const listClientFS = (params) => {
+  return request({
+    method: 'get',
+    url: 'fs/share/fs/about/client/list',
+    params,
+    headers: {
+      'Request-Target': 'fs'
+    }
+  })
+}
+
+// list all share client about fs
+export const listFSClient = (params) => {
+  return request({
+    method: 'get',
+    url: 'fs/share/client/about/fs/list',
+    params,
+    headers: {
+      'Request-Target': 'fs'
+    }
+  })
+}
+
+export const getUnusedClient = (params) => {
+  return request({
+    method: 'get',
+    url: 'fs/share/client/about/fs/list/no',
+    params,
+    headers: {
+      'Request-Target': 'fs'
+    }
+  })
+}

@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="login_container"
-    @keyup.13="loginIn()"
-  >
+  <div id="login_container" @keyup.13="loginIn()">
     <div id="login_head_wrap">
       <div id="login_head">
         <img src="../../assets/images/logo.png" width="290px" alt="">
@@ -22,7 +19,14 @@
             <span class="svg-container">
               <svg-icon icon-class="user" />
             </span>
-            <el-input ref="username" v-model="loginForm.username" class="login_border" :placeholder="$ts('validate.username')" clearable tabindex="1" />
+            <el-input
+              ref="username"
+              v-model="loginForm.username"
+              class="login_border"
+              :placeholder="$ts('validate.username')"
+              clearable
+              tabindex="1"
+            />
           </el-form-item>
           <el-tooltip v-model="capsTooltip" :content="$ts('login.tipCapLock')" placement="right" manual>
             <el-form-item prop="password">
@@ -61,11 +65,9 @@
 <!-- <script type="text/javascript">
 
 </script> -->
-<script  type="text/javascript">
+<script type="text/javascript">
 import LangSelect from '@/components/LangSelect'
-import logo from '@/assets/images/logo_title.png'
 import eventBus from '@/utils/eventBus'
-import { login } from '@/api/dashboard'
 import { mapState } from 'vuex'
 export default {
   name: 'Login',
@@ -76,18 +78,16 @@ export default {
       otherQuery: {},
       passwordType: 'password',
       capsTooltip: false,
-      logo: logo,
       arr: '',
       loading: false,
       loginForm: {
         username: '',
-        password: 'superAdmin123!'
+        password: ''
       },
       msg: '',
       lang: localStorage.getItem('lang') || 'zh-CN',
       yearTime: '',
       title: '',
-      login_title: require('@/assets/images/logo_title.png'),
       rules: {
         username: {
           required: true, message: this.$ts('user.name.tool.tip'), trigger: ['blur', 'change']
@@ -123,7 +123,7 @@ export default {
     eventBus.$emit('cancelTimer')
     this.$store.commit('user/SET_ACTIVEROUTE', false)
     const cacheName = localStorage.getItem('user')
-    this.loginForm.username = cacheName || ''
+    this.loginForm.username = cacheName === 'null' ? '' : cacheName
     if (this.loginForm.username === '') {
       this.$refs.username.focus()
     } else if (this.loginForm.password === '') {
@@ -173,6 +173,7 @@ export default {
                 text: '登录成功',
                 duration: 1000
               })
+              localStorage.setItem('user', this.loginForm.username)
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
             })
@@ -184,53 +185,7 @@ export default {
               })
               console.log(err, '123')
               this.loading = false
-            })
-          return
-          login({
-            userName: this.username,
-            password: this.password
-          })
-            .then(res => {
-              if (res.code === '200') {
-                const user = {
-                  name: this.username
-                }
-                // refreshToken
-                // 有accessToken和refreshToken
-                //
-                // 登录验证成功、保存用户信息、权限在其中、渲染显示菜单
-                this.$store.commit('SET_TOKEN', res.data.accessToken)
-                this.$store.commit('SET_EXPIRE_TOKEN', res.data.refreshToken)
-                this.$store.dispatch('login', user).then((r) => {
-                  // 确保getEndPoint执行创建s3jdk成功、getPermisson 渲染权限菜单成功
-                  this.$ts({
-                    type: 'success',
-                    text: '登录成功',
-                    duration: 1000
-                  })
-                  this.loading = false
-                  delete window.firstJumpTo
-                  this.$router.push({ name: 'blank' })
-                }).catch((err) => {
-                  console.log(err, 'err')
-                  this.loading = false
-                })
-              } else {
-                this.$ts({
-                  type: 'error',
-                  text: this.$ts(res.msg)
-                })
-                this.msg = this.$ts(res.msg)
-                this.loading = false
-                setTimeout(function() {
-                  this.msg = ''
-                }, 3000)
-              }
-            })
-            .catch(error => {
-              console.error(error)
-              this.loading = false
-              this.password = ''
+              this.loginForm.password = ''
             })
         }
       })
@@ -240,22 +195,26 @@ export default {
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-$bg:#2d3a4b;
-$dark_gray:#889aa4;
-$light_gray:#eee;
+$bg: #2d3a4b;
+$dark_gray: #889aa4;
+$light_gray: #eee;
 $cursor: #fff;
+
 #login_container {
   height: 100vh;
   min-height: 780px;
   background: url('~@/assets/images/login_bg.png') no-repeat;
   background-size: 100% 100%;
+
   ::v-deep .el-input {
     display: inline-block;
+
     // height: 47px;
     // width: 85%;
-    .el-input__inner{
+    .el-input__inner {
       padding-left: 30px;
-      &[type^=password]{
+
+      &[type^=password] {
         padding-right: 30px;
       }
     }
@@ -346,15 +305,16 @@ $cursor: #fff;
 }
 
 .svg-container {
-    // padding: 6px 5px 6px 15px;
-    color: $dark_gray;
-    vertical-align: middle;
-    width: 30px;
-    position: absolute;
-    left: 5px;
-    z-index: 999;
-    // display: inline-block;
-  }
+  // padding: 6px 5px 6px 15px;
+  color: $dark_gray;
+  vertical-align: middle;
+  width: 30px;
+  position: absolute;
+  left: 5px;
+  z-index: 999;
+  // display: inline-block;
+}
+
 .show-pwd {
   position: absolute;
   right: 10px;
@@ -364,6 +324,7 @@ $cursor: #fff;
   cursor: pointer;
   user-select: none;
 }
+
 .set-language {
   color: #fff;
   position: absolute;
@@ -372,5 +333,4 @@ $cursor: #fff;
   right: 0px;
   cursor: pointer;
 }
-
 </style>

@@ -69,7 +69,7 @@
         <el-table-column
           prop="bucketId"
           label="桶名称"
-          min-width="150px"
+          min-width="120px"
         >
           <template slot-scope="scope">
             <showToolTip
@@ -80,7 +80,7 @@
         </el-table-column>
         <el-table-column
           label="桶用量"
-          width="150px"
+          width="120px"
         >
           <template slot-scope="scope">
             {{ renderUseSize(scope.row.bucketUsedSize) }}
@@ -88,7 +88,7 @@
         </el-table-column>
         <el-table-column
           label="桶配额"
-          width="150px"
+          width="120px"
         >
           <template slot-scope="scope">
             {{ renderQuota(scope.row.bucketQuotaSize) }}
@@ -96,15 +96,38 @@
         </el-table-column>
         <el-table-column
           label="桶协议类型"
-          width="120px"
+          width="100px"
         >
           <template>
             S3
           </template>
         </el-table-column>
+        <el-table-column label="关联负载组" min-width="600px" align="center">
+          <template slot-scope="data">
+            <el-table class="innerTable" :data="[data.row]">
+              <el-table-column v-for="{prop,label,minWidth,useSlot,formatter} in renderColumn(data.row)" :key="prop" :prop="prop" :label="label" :min-width="minWidth" align="center">
+                <template slot-scope="scope">
+                  <!-- useSlot 对应负载组名称如默认负载（添加默认） -->
+                  <showToolTip
+                    v-if="useSlot"
+                    :text="showLoadGroupName(scope.row,prop)"
+                    use-slot
+                  >
+                    <a
+                      slot="data"
+                      class="blue"
+                      @click="viewLoadGroup('loadGroup',scope.row[prop])"
+                    >{{ showLoadGroupName(scope.row,prop) }}</a>
+                  </showToolTip>
+                  <span v-else>{{ formatter? formatter(scope.row[prop]):scope.row[prop] }}</span>
+                </template>
+              </el-table-column>
+            </el-table>
+          </template>
+        </el-table-column>
 
-        <el-table-column
-          prop="loadGroupName"
+        <!-- <el-table-column
+          prop="dataLoadGroupName"
           label="冷负载组"
           min-width="80px"
         >
@@ -131,7 +154,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="loadGroupStatus"
+          prop="glacierLoadGroupName"
           label="冰负载组"
           min-width="120px"
         >
@@ -150,15 +173,16 @@
           <template slot-scope="scope">
             {{ scope.row.glacierLoadGroupName && renderQuota(scope.row.glacierLoadGroupQuotaSize) }}
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           prop="loadGroupCapacity"
           label="操作"
           fixed="right"
           width="150px"
+          align="center"
         >
           <template slot-scope="scope">
-            <div class="actionMenu">
+            <div class="menuList">
               <el-tooltip
                 content="修改负载路由"
                 placement="top"
@@ -168,38 +192,7 @@
                   @click="openEdit(scope.row)"
                 />
               </el-tooltip>
-              <!-- <el-tooltip
-                content="设为默认"
-                placement="top"
-              >
-                <i
-                  v-show="!disableDefault"
-                  class="el-icon-refresh-left"
-                  @click="deleteConfig(scope.row)"
-                />
-              </el-tooltip> -->
             </div>
-            <!-- <el-dropdown v-access="'s3:DeleteBucket||admin:UpdateBucket'" size="small">
-              <el-button type="primary" class="blue">
-                {{ $ts('action') }}<i class="el-icon-arrow-down el-icon--right" />
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="openEdit(scope.row)">指定负载</el-dropdown-item>
-                <div :class="[disableDefault ? 'cursorDisabled' : null]">
-                  <el-dropdown-item
-                    :disabled="disableDefault"
-                    @click.native="deleteConfig(scope.row)"
-                  >设为默认</el-dropdown-item>
-                </div>
-              </el-dropdown-menu> -->
-            <!-- <div class="actionMenu">
-              <i class="fa fa-pencil fa-fw" @click="openEdit(scope.row)" />
-              <i
-                class="fa fa-trash-o"
-                @click="deleteConfig(scope.row)"
-              />
-              <i class="fa fa-pencil fa-fw" style="visibility:hidden" />
-            </div> -->
           </template>
         </el-table-column>
       </el-table>
@@ -216,7 +209,7 @@
     <el-dialog
       title="创建负载路由"
       :visible.sync="flag"
-      width="600px"
+      width="750px"
       @open="resetField"
       @close="resetForm"
     >
@@ -227,8 +220,17 @@
         label-width="150px"
         :rules="rules"
       >
-        <el-row>
-          <el-col :span="24">
+        <div class="tipMenu">
+          <i
+            class="fa fa-exclamation-circle"
+            style="color:#ff8746"
+          />
+          <span style="color:#ff8746">
+            没有指定负载路由的存储桶将按默认负载路由配置
+          </span>
+        </div>
+        <el-row :gutter="20">
+          <el-col :span="14">
             <el-form-item
               label="冷负载组"
               prop="loadGroup"
@@ -237,6 +239,7 @@
                 v-model="form.loadGroup"
                 value-key="value"
                 filterable
+                :disabled="form.loadGroupBlackList==-2"
               >
                 <el-option-group
                   v-for="group in filterLoadGroupList"
@@ -253,34 +256,89 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="10">
+            <el-form-item label="负载组黑名单">
+              <el-radio-group
+                v-model="form.loadGroupBlackList"
+              >
+                <el-radio :label="false">关闭</el-radio>
+                <el-radio :label="-2">开启</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="14">
             <el-form-item label="冰负载组">
               <el-select
                 v-model="form.glacierLoadGroupId"
                 value-key="value"
                 filterable
-                clearable
+                :disabled="form.glacierGroupBlackList==-2"
               >
                 <el-option
                   v-for="{label,value} in glacierGroupList"
-                  :key="label"
+                  :key="value"
                   :label="label"
                   :value="value"
                 />
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="10">
+            <el-form-item label="负载组黑名单">
+              <el-radio-group
+                v-model="form.glacierGroupBlackList"
+              >
+                <el-radio :label="false">关闭</el-radio>
+                <el-radio :label="-2">开启</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="14">
             <el-form-item label="温负载组">
               <el-select
                 v-model="form.warmLoadGroupId"
                 value-key="value"
                 filterable
                 clearable
+                :disabled="form.warmGroupBlackList==-2"
               >
                 <el-option
                   v-for="{label,value} in warmGroupList"
-                  :key="label"
+                  :key="value"
+                  :label="label"
+                  :value="value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="负载组黑名单">
+              <el-radio-group
+                v-model="form.warmGroupBlackList"
+              >
+                <el-radio :label="false">关闭</el-radio>
+                <el-radio :label="-2">开启</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="解冻负载组">
+              <el-select
+                v-model="form.restoreLoadGroupId"
+                value-key="value"
+                filterable
+                clearable
+              >
+                <el-option
+                  v-for="{label,value} in restoreGroupList"
+                  :key="value"
                   :label="label"
                   :value="value"
                 />
@@ -357,76 +415,158 @@
 
     <el-dialog
       :visible.sync="openModal"
-      title="编辑负载路由"
-      width="600px"
+      title="修改负载路由"
+      width="750px"
     >
+
       <el-form
         ref="editForm"
-        label-width="180px"
+        label-width="150px"
         class="editForm"
         :model="editForm"
         :rules="rules"
       >
+        <div style="margin:0 0 20px 0">
+          <i
+            class="fa fa-exclamation-circle"
+            style="color:#ff8746"
+          />
+          <span style="color:#ff8746">
+            没有指定负载路由的存储桶将按默认负载路由配置
+          </span>
+        </div>
         <el-form-item label="存储桶名称">
           {{ currentBucket.bucketName }}
         </el-form-item>
-        <el-form-item prop="editLoadGroup">
-          <span slot="label">
-            冷负载组
-            <!-- <el-popover placement="top" width="250" trigger="hover" style="position:absolute;">
+
+        <el-row :gutter="20">
+          <el-col :span="14">
+            <el-form-item prop="editLoadGroup">
+              <span slot="label">
+                冷负载组
+                <!-- <el-popover placement="top" width="250" trigger="hover" style="position:absolute;">
               <p style="line-height:1.6;"> 无默认负载组时，需手动指定负载组</p>
               <i slot="reference" class="fa fa-question-circle" style="margin-left:10px" />
             </el-popover> -->
-          </span>
-          <!-- <span slot="label" class="slot_required">*</span> -->
-          <el-select
-            v-model="editForm.editLoadGroup"
-            value-key="value"
-          >
-            <el-option-group
-              v-for="group in filterLoadGroupList"
-              :key="group.label"
-              :label="group.label"
-            >
-              <el-option
-                v-for="{label,value,groupTag} in group.options"
-                :key="label"
-                :label="label"
-                :value="{value,groupTag}"
-              />
-            </el-option-group>
-          </el-select>
-          <!-- <el-radio-group v-model="chargeLoadGroup">
-            <el-radio :label="false" :disabled="disableDefault">{{ '默认负载组' + (!disableDefault ? '('+defaultGroupName + ')' :'') }}</el-radio>
-            <el-radio :label="true">指定负载组</el-radio>
-          </el-radio-group> -->
-        </el-form-item>
+              </span>
+              <!-- <span slot="label" class="slot_required">*</span> -->
+              <el-select
+                v-model="editForm.editLoadGroup"
+                value-key="value"
+                filterable
+                clearable
+                :disabled="editForm.loadGroupBlackList===-2"
+              >
+                <el-option-group
+                  v-for="group in filterLoadGroupList"
+                  :key="group.label"
+                  :label="group.label"
+                >
+                  <el-option
+                    v-for="{label,value,groupTag} in group.options"
+                    :key="label"
+                    :label="label"
+                    :value="{value,groupTag}"
+                  />
+                </el-option-group>
+              </el-select>
 
-        <el-form-item label="冰负载组">
-          <el-select
-            v-model="editForm.glacierLoadGroupId"
-            value-key="value"
-            filterable
-            clearable
+              <!-- <el-select
+            v-model="editForm.editLoadGroup"
           >
             <el-option
-              v-for="{label,value} in glacierGroupList"
+              v-for="{label,value} in loadGroupList"
               :key="label"
               :label="label"
               :value="value"
             />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="温负载组">
+          </el-select> -->
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="负载组黑名单">
+              <el-radio-group
+                v-model="editForm.loadGroupBlackList"
+              >
+                <el-radio :label="false">关闭</el-radio>
+                <el-radio :label="-2">开启</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="14">
+            <el-form-item label="冰负载组">
+              <el-select
+                v-model="editForm.glacierLoadGroupId"
+                filterable
+                clearable
+                :disabled="editForm.glacierGroupBlackList===-2"
+              >
+                <el-option
+                  v-for="{label,value} in glacierGroupList"
+                  :key="value"
+                  :label="label"
+                  :value="value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="10">
+            <el-form-item label="负载组黑名单">
+              <el-radio-group
+                v-model="editForm.glacierGroupBlackList"
+              >
+                <el-radio :label="false">关闭</el-radio>
+                <el-radio :label="-2">开启</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="14">
+            <el-form-item label="温负载组">
+              <el-select
+                v-model="editForm.warmLoadGroupId"
+                value-key="value"
+                filterable
+                clearable
+                :disabled="editForm.warmGroupBlackList===-2"
+              >
+                <el-option
+                  v-for="{label,value} in warmGroupList"
+                  :key="value"
+                  :label="label"
+                  :value="value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="负载组黑名单">
+              <el-radio-group
+                v-model="editForm.warmGroupBlackList"
+              >
+                <el-radio :label="false">关闭</el-radio>
+                <el-radio :label="-2">开启</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-form-item label="解冻负载组">
           <el-select
-            v-model="editForm.warmLoadGroupId"
+            v-model="editForm.restoreLoadGroupId"
             value-key="value"
             filterable
             clearable
           >
             <el-option
-              v-for="{label,value} in warmGroupList"
-              :key="label"
+              v-for="{label,value} in restoreGroupList"
+              :key="value"
               :label="label"
               :value="value"
             />
@@ -463,11 +603,18 @@ export default {
   name: 'LoadGroupRoute',
   data() {
     return {
+      loadGroupNameKey:
+      [
+        'dataLoadGroupName',
+        'glacierLoadGroupName',
+        'warmLoadGroupName',
+        'restoreLoadGroupName'
+      ],
+      restoreGroupList: [],
       warmGroupList: [],
       glacierGroupList: [],
       disableGroupId: '',
       mapLoadGroupType: {},
-      disableDefault: true,
       loadGroupList: [],
       optionsAll: false,
       flag: false,
@@ -480,33 +627,49 @@ export default {
       optionsData: [],
       selectedOptions: [],
       form: {
+        loadGroupBlackList: false,
+        glacierGroupBlackList: false,
+        warmGroupBlackList: false,
         loadGroup: '',
         glacierLoadGroupId: '',
         selectBucket: [],
-        warmLoadGroupId: ''
+        warmLoadGroupId: '',
+        restoreLoadGroupId: ''
       },
       editForm: {
+        loadGroupBlackList: false,
+        glacierGroupBlackList: false,
+        warmGroupBlackList: false,
         editLoadGroup: '',
         glacierLoadGroupId: '',
-        warmLoadGroupId: ''
+        warmLoadGroupId: '',
+        restoreLoadGroupId: ''
       },
       allBucket: [],
       selBucket: '',
       selLoadGroup: '',
       rules:
       {
-        loadGroup: { required: true, message: '请选择负载组', trigger: ['blur', 'change'] },
-        selectBucket: { required: true, message: '请选择存储桶', trigger: ['blur', 'change'] },
-        editLoadGroup: {
-          message: '请选择负载组', trigger: ['blur', 'change'],
-          required: true, validator: (rule, val, cb) => {
-            if (!val.value) {
-              return cb('请选择负载组')
-            } else {
-              return cb()
-            }
-          }
-        }
+        // loadGroup: { required: true, message: '请选择负载组', trigger: ['blur', 'change'],
+        //   validator: (rule, val, cb) => {
+        //     if (!val.value) {
+        //       return cb('请选择负载组')
+        //     } else {
+        //       return cb()
+        //     }
+        //   }
+        // },
+        selectBucket: { required: true, message: '请选择存储桶', trigger: ['blur', 'change'] }
+        // editLoadGroup: {
+        //   message: '请选择负载组', trigger: ['blur', 'change'],
+        //   required: true, validator: (rule, val, cb) => {
+        //     if (!val.value) {
+        //       return cb('请选择负载组')
+        //     } else {
+        //       return cb()
+        //     }
+        //   }
+        // }
       }
     }
   },
@@ -516,12 +679,14 @@ export default {
     },
     // 过滤当前已展示的负载路由数据
     BucketNameSel() {
-      return this.filterSearchTable.map(x => x.bucketName).filter(x => x)
+      return this.tableData.map(x => x.bucketName).filter(x => x)
     },
     LoadGroupSel() {
-      return this.filterSearchTable.reduce((pre, cur) => {
-        if (!pre.includes(cur.dataLoadGroupName)) {
-          pre.push(cur.dataLoadGroupName)
+      return this.tableData.reduce((pre, cur) => {
+        for (const item of this.loadGroupNameKey) {
+          if (cur[item] && !pre.includes(cur[item])) {
+            pre.push(cur[item])
+          }
         }
         return pre
       }, [])
@@ -541,9 +706,10 @@ export default {
       })
     },
     filterSearchTable() {
-      // 过滤负载组不存在
+      // 过滤负载组不存在、过滤负载组名称、桶名称、负载组名称不存在新增黑名单设置后也无名称
       return this.tableData.filter(x => {
-        return x.bucketName && x.bucketName.indexOf(this.selBucket) > -1 && x.dataLoadGroupName.indexOf(this.selLoadGroup) > -1
+        return (this.selBucket ? x.bucketName && x.bucketName === this.selBucket : true) &&
+        (this.selLoadGroup ? this.loadGroupNameKey.some(y => x[y] && x[y] === this.selLoadGroup) : true)
       })
     }
   },
@@ -553,6 +719,77 @@ export default {
     this.init()
   },
   methods: {
+    showLoadGroupName(row, prop) {
+      const isDefault = this.mapLoadGroupType[row[prop]] ? `(默认)` : ''
+      return row[prop] + isDefault
+    },
+    renderColumn(data) {
+      //
+      const {
+        dataLoadGroupName,
+        glacierLoadGroupName,
+        warmLoadGroupName,
+        restoreLoadGroupName
+      } = data
+      return [
+        {
+          prop: 'dataLoadGroupName',
+          label: '冷负载组',
+          minWidth: '80px',
+          useSlot: true,
+          show: !!dataLoadGroupName
+        },
+        {
+          prop: 'dataLoadGroupQuotaSize',
+          label: '总容量',
+          minWidth: '100px',
+          formatter: (val) => this.renderQuota(val),
+          show: !!dataLoadGroupName
+        },
+        {
+          prop: 'glacierLoadGroupName',
+          label: '冰负载组',
+          minWidth: '120px',
+          useSlot: true,
+          show: !!glacierLoadGroupName
+        },
+        {
+          prop: 'glacierLoadGroupQuotaSize',
+          label: '总容量',
+          minWidth: '100px',
+          formatter: (val) => this.renderQuota(val),
+          show: !!glacierLoadGroupName
+        },
+        {
+          prop: 'warmLoadGroupName',
+          label: '温负载组',
+          minWidth: '120px',
+          useSlot: true,
+          show: !!warmLoadGroupName
+        },
+        {
+          prop: 'warmLoadGroupQuotaSize',
+          label: '总容量',
+          minWidth: '100px',
+          formatter: (_, __, val) => this.renderQuota(val),
+          show: !!warmLoadGroupName
+        },
+        {
+          prop: 'restoreLoadGroupName',
+          label: '解冻负载组',
+          minWidth: '120px',
+          useSlot: true,
+          show: !!restoreLoadGroupName
+        },
+        {
+          prop: 'restoreLoadGroupQuotaSize',
+          label: '总容量',
+          minWidth: '100px',
+          formatter: (_, __, val) => this.renderQuota(val),
+          show: !!restoreLoadGroupName
+        }
+      ].filter(x => x.show)
+    },
     renderUseSize(data) {
       return this.byteConvert(data)
     },
@@ -568,25 +805,41 @@ export default {
       getGroupList().then(res => {
         this.mapLoadGroupType = res.data.reduce((pre, cur) => {
           if (!pre[cur.loadGroupName]) {
-            pre[cur.loadGroupName] = cur.storageType
-          }
-          if (cur.defaultGroup && cur.groupTag === 'DATA') {
-            this.disableGroupId = cur.dataLoadGroupId
-            this.disableDefault = false
+            pre[cur.loadGroupName] = cur.defaultGroup
           }
           return pre
         }, {})
         getBucketExtendList().then((res) => {
-          this.tableData = (res.data || []).filter(x => {
-            // 需过滤无指定负载路由的桶、设置后设置默认仍有记录的桶
-            const {
-              cacheLoadGroupId,
-              dataLoadGroupId,
-              dataLoadGroupName
-            } = x
-            const id = cacheLoadGroupId || dataLoadGroupId
-            return id && id !== this.disableGroupId && dataLoadGroupName
-          })
+          this.tableData = res.data || []
+          // this.tableData = (res.data || []).filter(x => {
+          //   // 需过滤无指定负载路由的桶、设置后设置默认仍有记录的桶
+          //   const {
+          //     cacheLoadGroupId,
+          //     dataLoadGroupId,
+          //     dataLoadGroupName
+          //   } = x
+          //   return dataLoadGroupName || (dataLoadGroupId === -2) || (cacheLoadGroupId === -2)
+          //   // const id = cacheLoadGroupId || dataLoadGroupId
+          //   // return id && id !== this.disableGroupId && dataLoadGroupName
+          // })
+          // 测试不同负载路由下多负载组展示
+          // this.tableData.push({
+          //   'bucketId': 215424780872978430,
+          //   'cacheLoadGroupId': null,
+          //   'dataLoadGroupId': 1,
+          //   'glacierLoadGroupId': 30001,
+          //   'warmLoadGroupId': 2,
+          //   'restoreLoadGroupId': 60001,
+          //   'packageMinSize': null,
+          //   'packageMaxCacheSecond': null,
+          //   'bucketName': 'test-cold-to-warm222',
+          //   'bucketUsedSize': 209796102,
+          //   'bucketQuotaSize': 107374182400,
+          //   'dataLoadGroupName': 'coldLoadGroup',
+          //   'dataLoadGroupQuotaSize': -1,
+          //   'glacierLoadGroupName': 'glacierLoadGroup',
+          //   'glacierLoadGroupQuotaSize': -1
+          // })
         }).finally(() => {
           this.loading = false
         })
@@ -599,20 +852,34 @@ export default {
       Promise.allSettled(all).then(res => {
         const loadGroupList = res[0].value.data || []
         const bucketList = res[1].value.data.list || []
+        this.glacierGroupList = []
+        this.warmGroupList = []
+        this.restoreGroupList = []
+
+        Object.assign(this.form,
+          {
+            loadGroup: '',
+            loadGroupBlackList: false,
+            glacierLoadGroupId: '',
+            glacierGroupBlackList: false,
+            warmLoadGroupId: '',
+            warmGroupBlackList: false
+          })
+
+        // this.form.glacierLoadGroupId = ''
+        // this.form.restoreLoadGroupId = ''
+        // this.form.warmLoadGroupId = ''
         this.loadGroupList = [
           { label: 'S3负载组', options: [] },
           { label: 'NAS负载组', options: [] },
           { label: 'AWS负载组', options: [] }
         ]
-        this.glacierGroupList = []
-        this.warmGroupList = []
-        this.form.glacierLoadGroupId = ''
-        this.form.warmLoadGroupId = ''
         // 移除默认  && !x.defaultGroup
         loadGroupList.forEach(x => {
+          const isDefault = x.defaultGroup ? '（默认）' : ''
           if (x.groupTag === 'DATA') {
             const item = {
-              label: x.loadGroupName,
+              label: x.loadGroupName + isDefault,
               value: x.id,
               groupTag: x.groupTag
             }
@@ -623,16 +890,26 @@ export default {
             } else if (x.storageType === 'IAM') {
               this.loadGroupList[2].options.push(item)
             }
+            // this.loadGroupList.push({
+            //   label: x.loadGroupName + isDefault,
+            //   value: x.id
+            // })
           }
-          if (x.storageType === 'GLACIER') {
+          if (x.groupTag === 'GLACIER') {
             this.glacierGroupList.push({
-              label: x.loadGroupName,
+              label: x.loadGroupName + isDefault,
               value: x.id
             })
           }
-          if (x.storageType === 'WARM') {
+          if (x.groupTag === 'WARM') {
             this.warmGroupList.push({
-              label: x.loadGroupName,
+              label: x.loadGroupName + isDefault,
+              value: x.id
+            })
+          }
+          if (x.groupTag === 'RESTORE') {
+            this.restoreGroupList.push({
+              label: x.loadGroupName + isDefault,
               value: x.id
             })
           }
@@ -646,6 +923,7 @@ export default {
         // }
         // .concat(temp)
         // 过滤已配置路由的桶
+        // 统计无配置的桶
         this.allBucket = (bucketList || []).filter(x => {
           return this.tableData.every(y => {
             return x.name !== y.bucketName
@@ -683,12 +961,24 @@ export default {
       }
       // 指定负载组、默认负载组、
       this.chargeLoadGroup = true
+
+      const {
+        cacheLoadGroupId,
+        dataLoadGroupId,
+        glacierLoadGroupId,
+        warmLoadGroupId,
+        restoreLoadGroupId
+      } = row
+
       getGroupList().then((res) => {
         const group = res.data || []
         let selectGroup = ''
         let selectGlacier = ''
         let selectWarm = ''
+        let selectRestore = ''
         this.glacierGroupList = []
+        this.restoreGroupList = []
+        this.warmGroupList = []
         this.loadGroupList = [
           { label: 'S3负载组', options: [] },
           { label: 'NAS负载组', options: [] },
@@ -696,20 +986,24 @@ export default {
         ]
         group.forEach(x => {
           // case2
-          if (x.id === (row.cacheLoadGroupId || row.dataLoadGroupId)) {
+          const isDefault = x.defaultGroup ? '（默认）' : ''
+          if (x.id === (cacheLoadGroupId || dataLoadGroupId)) {
             selectGroup = x
           }
-          if (x.id === row.glacierLoadGroupId) {
+          if (x.id === glacierLoadGroupId) {
             selectGlacier = x
           }
-          if (x.id === row.warmLoadGroupId) {
+          if (x.id === warmLoadGroupId) {
             selectWarm = x
+          }
+          if (x.id === restoreLoadGroupId) {
+            selectRestore = x
           }
           // 移除默认负载组 && !x.defaultGroup
           // groupTag 添加冰存储
           if (x.groupTag === 'DATA') {
             const item = {
-              label: x.loadGroupName,
+              label: x.loadGroupName + isDefault,
               value: x.id,
               groupTag: x.groupTag
             }
@@ -722,15 +1016,21 @@ export default {
               this.loadGroupList[2].options.push(item)
             }
           }
-          if (x.storageType === 'GLACIER') {
+          if (x.groupTag === 'GLACIER') {
             this.glacierGroupList.push({
-              label: x.loadGroupName,
+              label: x.loadGroupName + isDefault,
               value: x.id
             })
           }
-          if (x.storageType === 'WARM') {
+          if (x.groupTag === 'WARM') {
             this.warmGroupList.push({
-              label: x.loadGroupName,
+              label: x.loadGroupName + isDefault,
+              value: x.id
+            })
+          }
+          if (x.groupTag === 'RESTORE') {
+            this.restoreGroupList.push({
+              label: x.loadGroupName + isDefault,
               value: x.id
             })
           }
@@ -742,11 +1042,19 @@ export default {
             value: selectGroup.id,
             groupTag: selectGroup.groupTag
           }
-          this.editForm.glacierLoadGroupId = selectGlacier ? selectGlacier.id : ''
-          this.editForm.warmLoadGroupId = selectWarm ? selectWarm.id : ''
+          //
         } else {
           this.editForm.editLoadGroup = {}
         }
+        // 新增黑名单 响应的负载组id为-2、启用黑名单
+        this.editForm.glacierLoadGroupId = selectGlacier ? selectGlacier.id : ''
+        this.editForm.warmLoadGroupId = selectWarm ? selectWarm.id : ''
+        this.editForm.restoreLoadGroupId = selectRestore ? selectRestore.id : ''
+
+        this.editForm.loadGroupBlackList = (cacheLoadGroupId === -2 || dataLoadGroupId === -2) ? -2 : false
+        this.editForm.glacierGroupBlackList = glacierLoadGroupId === -2 ? -2 : false
+        this.editForm.warmGroupBlackList = warmLoadGroupId === -2 ? -2 : false
+
         this.openModal = true
       })
     },
@@ -762,7 +1070,7 @@ export default {
           cacheLoadGroupId: null,
           dataLoadGroupId: null
         }).then(() => {
-          this.$ts({
+          this.$msg({
             type: 'success',
             text: this.$ts('response.success')
           })
@@ -777,29 +1085,48 @@ export default {
         loadGroup,
         selectBucket,
         glacierLoadGroupId,
-        warmLoadGroupId
+        warmLoadGroupId,
+        restoreLoadGroupId,
+        loadGroupBlackList,
+        glacierGroupBlackList,
+        warmGroupBlackList
       } = this.form
       const bucketIds = selectBucket.reduce((pre, cur) => [...pre, ...[cur.value.toString()]], [])
       const loadGroupConfig = {}
-      if (loadGroup.groupTag === 'DATA') {
-        loadGroupConfig.dataLoadGroupId = loadGroup.value
+      if (loadGroup.groupTag === 'CACHE') {
+        loadGroupConfig.cacheLoadGroupId = loadGroupBlackList === -2 ? -2 : loadGroup.value
       } else {
-        loadGroupConfig.cacheLoadGroupId = loadGroup.value
+        loadGroupConfig.dataLoadGroupId = loadGroupBlackList === -2 ? -2 : loadGroup.value
       }
-      glacierLoadGroupId && Object.assign(
-        loadGroupConfig,
-        { glacierLoadGroupId }
+      if (glacierGroupBlackList === -2) {
+        Object.assign(loadGroupConfig, { glacierLoadGroupId: -2 })
+      } else {
+        glacierLoadGroupId && Object.assign(
+          loadGroupConfig,
+          { glacierLoadGroupId }
+        )
+      }
+      if (warmGroupBlackList === -2) {
+        Object.assign(loadGroupConfig, { warmLoadGroupId: -2 })
+      } else {
+        warmLoadGroupId && Object.assign(
+          loadGroupConfig, { warmLoadGroupId }
+        )
+      }
+
+      restoreLoadGroupId && Object.assign(
+        loadGroupConfig, { restoreLoadGroupId }
       )
-      warmLoadGroupId && Object.assign(
-        loadGroupConfig, { warmLoadGroupId }
-      )
+
+      // 新增黑名单
+
       this.$refs['form'].validate(valid => {
         if (valid) {
           putBucketExtend({
             bucketIds,
             ...loadGroupConfig
           }).then(res => {
-            this.$ts({
+            this.$msg({
               type: 'success',
               text: this.$ts('response.success')
             })
@@ -817,28 +1144,45 @@ export default {
         if (valid) {
           if (this.chargeLoadGroup) {
             const loadGroupConfig = {}
-            if (this.editForm.editLoadGroup.groupTag === 'DATA') {
-              loadGroupConfig.dataLoadGroupId = this.editForm.editLoadGroup.value
-              loadGroupConfig.cacheLoadGroupId = null
-            } else {
-              loadGroupConfig.cacheLoadGroupId = this.editForm.editLoadGroup.value
-              loadGroupConfig.dataLoadGroupId = null
-            }
             const {
               glacierLoadGroupId,
-              warmLoadGroupId
+              warmLoadGroupId,
+              restoreLoadGroupId,
+              loadGroupBlackList,
+              glacierGroupBlackList,
+              warmGroupBlackList
             } = this.editForm
-            glacierLoadGroupId && Object.assign(
-              loadGroupConfig, { glacierLoadGroupId }
-            )
-            warmLoadGroupId && Object.assign(
-              loadGroupConfig, { warmLoadGroupId }
+            if (this.editForm.editLoadGroup.groupTag === 'CACHE') {
+              loadGroupConfig.cacheLoadGroupId = loadGroupBlackList === -2 ? -2 : this.editForm.editLoadGroup.value
+              loadGroupConfig.dataLoadGroupId = null
+            } else {
+              loadGroupConfig.dataLoadGroupId = loadGroupBlackList === -2 ? -2 : this.editForm.editLoadGroup.value
+              loadGroupConfig.cacheLoadGroupId = null
+            }
+
+            if (glacierGroupBlackList === -2) {
+              Object.assign(loadGroupConfig, { glacierLoadGroupId: -2 })
+            } else {
+              glacierLoadGroupId && Object.assign(
+                loadGroupConfig, { glacierLoadGroupId }
+              )
+            }
+
+            if (warmGroupBlackList === -2) {
+              Object.assign(loadGroupConfig, { warmLoadGroupId: -2 })
+            } else {
+              warmLoadGroupId && Object.assign(
+                loadGroupConfig, { warmLoadGroupId }
+              )
+            }
+            restoreLoadGroupId && Object.assign(
+              loadGroupConfig, { restoreLoadGroupId }
             )
             putBucketExtend({
               bucketIds: [this.currentBucket.bucketId],
               ...loadGroupConfig
             }).then(res => {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
@@ -853,7 +1197,7 @@ export default {
               cacheLoadGroupId: null,
               dataLoadGroupId: null
             }).then(() => {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
@@ -882,6 +1226,9 @@ export default {
 }
 
 :deep(.createForm) {
+  .tipMenu{
+    margin:0 0 20px 0;
+  }
   .el-select {
     width: 100%;
   }
@@ -923,9 +1270,12 @@ export default {
   padding: 0;
 }
 :deep(.editForm) {
+  .el-select {
+    width: 100%;
+  }
   label.el-form-item__label {
+    margin-left: -20px;
     width: 160px !important;
-    margin-left: 0;
   }
   .slot_required {
     color: #f56c6c;
@@ -937,11 +1287,12 @@ export default {
   margin: 20px 0;
   font-size: 14px;
 }
-.actionMenu {
-  width: 80px;
+.menuList {
   font-size: 22px;
   cursor: pointer;
   color: #ff8746;
+  display: flex;
+  justify-content: center;
   .el-icon-refresh-left {
     font-size: 22px;
   }
@@ -949,6 +1300,33 @@ export default {
 :deep(.resetStyle) {
   span {
     color: unset;
+  }
+}
+:deep(.innerTable) {
+  .el-table__header-wrapper {
+    thead tr th{
+      &:nth-of-type(2n){
+        border-right: 1px solid #4f5c62!important;
+      }
+      &:nth-last-of-type(2){
+        border-right: none!important;
+      }
+    }
+  }
+  tbody tr td {
+    &:nth-of-type(2n){
+      border-right: 1px solid #4f5c62!important;
+    }
+    &:last-of-type{
+      border-right: none!important;
+    }
+  }
+  tr {
+    &:hover {
+      td {
+        background: #2c383e !important;
+      }
+    }
   }
 }
 </style>

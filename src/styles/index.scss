@@ -1216,6 +1216,7 @@ html {
 .el-submenu__icon-arrow {
   right: 8px;
   top: 55%;
+  color: #ff8746 !important;
 }
 
 .medium.el-button {
@@ -1843,7 +1844,7 @@ table {
 .el-button--primary.is-disabled,
 .blue.el-button.is-disabled,
 .red.el-button--danger.is-disabled {
-  opacity: 0.7;
+  opacity: 0.4;
 }
 
 .red.el-button--danger,
