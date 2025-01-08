@@ -78,7 +78,7 @@ const mutations = {
       console.log(routeList, routeList.children, '333')
       routes[0].redirect = routeList?.children[0]?.path ? routeList.path + '/' + routeList?.children[0]?.path : routeList.path
     } else {
-      // 没有权限。。。
+      //  
     }
     state.routes = accessConstantRoutes.concat(routes)
     // sideBar 取routes

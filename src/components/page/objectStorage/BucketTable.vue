@@ -1,33 +1,13 @@
 <template>
   <div>
-    <el-table
-      ref="multipleTable"
-      v-loading="loading"
-      border
-      :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-      tooltip-effect="dark"
-      style="width: 100%"
-      :default-sort="{prop: 'CreateDate', order: 'descending'}"
-      @selection-change="handleSelectionChange"
-      @sort-change="sortFunction"
-    >
-      <el-table-column
-        label="名称"
-        sortable="custom"
-        prop="BucketName"
-        min-width="120px"
-        fixed
-      >
+    <el-table ref="multipleTable" v-loading="loading" stripe border
+      :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)" tooltip-effect="dark" style="width: 100%"
+      :default-sort="{ prop: 'CreateDate', order: 'descending' }" @selection-change="handleSelectionChange"
+      @sort-change="sortFunction">
+      <el-table-column label="名称" sortable="custom" prop="BucketName" min-width="120px" fixed>
         <template slot-scope="scope">
-          <showToolTip
-            :text="scope.row.BucketName"
-            use-slot
-          >
-            <a
-              slot="data"
-              class="blue"
-              @click="viewDetail(scope.row)"
-            >{{ scope.row.BucketName }}</a>
+          <showToolTip :text="scope.row.BucketName" use-slot>
+            <a slot="data" class="blue" @click="viewDetail(scope.row)">{{ scope.row.BucketName }}</a>
           </showToolTip>
           <!-- <el-tooltip placement="top" content="存储桶详情">
           </el-tooltip> -->
@@ -44,77 +24,41 @@
           </div>
         </template>
       </el-table-column> -->
-      <el-table-column
-        label="是否融合桶"
-        sortable="custom"
-        prop="Integrated"
-        min-width="120px"
-      >
+      <el-table-column label="是否融合桶" sortable="custom" prop="Integrated" min-width="120px">
         <template slot-scope="scope">
-          {{ scope.row.Integrated == true?'融合桶':'非融合桶' }}
+          {{ scope.row.Integrated == true ? '融合桶' : '非融合桶' }}
         </template>
       </el-table-column>
-      <el-table-column
-        label="对象总数(个)"
-        sortable="custom"
-        prop="UsedCount"
-        min-width="125px"
-      >
+      <el-table-column label="对象总数(个)" sortable="custom" prop="UsedCount" min-width="125px">
         <template slot-scope="scope">
           {{ scope.row.UsedCount }}
         </template>
       </el-table-column>
-      <el-table-column
-        label="对象总容量"
-        sortable="custom"
-        prop="UsedSize"
-        min-width="120px"
-      >
+      <el-table-column label="对象总容量" sortable="custom" prop="UsedSize" min-width="120px">
         <template slot-scope="scope">
           {{ byteConvert(scope.row.UsedSize) }}
         </template>
       </el-table-column>
-      <el-table-column
-        label="配置对象总数(个)"
-        sortable="custom"
-        prop="QuotaCount"
-        min-width="160px"
-      >
+      <el-table-column label="配置对象总数(个)" sortable="custom" prop="QuotaCount" min-width="160px">
         <template slot-scope="scope">
-          {{ scope.row.QuotaCount < 0 || scope.row.QuotaCount == 0 ?'无限制' : scope.row.QuotaCount }}
-        </template>
+          {{ scope.row.QuotaCount < 0 || scope.row.QuotaCount == 0 ? '无限制' : scope.row.QuotaCount }} </template>
       </el-table-column>
-      <el-table-column
-        label="配置对象总容量"
-        sortable="custom"
-        prop="QuotaSize"
-        min-width="160px"
-      >
+      <el-table-column label="配置对象总容量" sortable="custom" prop="QuotaSize" min-width="160px">
         <template slot-scope="scope">
-          {{ scope.row.QuotaSize < 0 || scope.row.QuotaSize == 0 ?'无限制' : byteConvert(scope.row.QuotaSize,symbols) }}
-        </template>
+          {{ scope.row.QuotaSize < 0 || scope.row.QuotaSize == 0 ? '无限制' : byteConvert(scope.row.QuotaSize, symbols) }}
+            </template>
       </el-table-column>
       <el-table-column label="是否文件系统" min-width="120px" prop="SupportFs">
         <template slot-scope="scope">
           {{ scope.row.SupportFs ? '是' : '否' }}
         </template>
       </el-table-column>
-      <el-table-column
-        prop="CreateDate"
-        label="创建时间"
-        sortable
-        width="150px"
-      >
+      <el-table-column prop="CreateDate" label="创建时间" sortable width="150px">
         <template slot-scope="scope">
-          {{ scope.row.CreateDate ? timeTrans(scope.row.CreateDate) : '/' }}
+          {{ timeTrans(scope.row.CreateDate) }}
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$ts('action')"
-        width="140"
-        align="center"
-        fixed="right"
-      >
+      <el-table-column :label="$ts('action')" width="140" align="center" fixed="right">
         <template slot-scope="scope">
           <el-dropdown v-access="'s3:DeleteBucket||admin:UpdateBucket'" size="small">
             <el-button type="primary" class="blue">
@@ -124,9 +68,11 @@
             <el-dropdown-menu slot="dropdown">
               <!-- <el-dropdown-item v-if="showOwner" v-access="'admin:UpdateBucket'" @click.native="updateUser(scope.row)">修改桶拥有者</el-dropdown-item> -->
               <div :class="[scope.row.SupportFs ? 'cursorDisabled' : null]">
-                <el-dropdown-item :disabled="scope.row.SupportFs" @click.native="transFormFS(scope.row)">转换文件系统</el-dropdown-item>
+                <el-dropdown-item :disabled="scope.row.SupportFs"
+                  @click.native="transFormFS(scope.row)">转换文件系统</el-dropdown-item>
               </div>
-              <el-dropdown-item v-access="'s3:DeleteBucket'" @click.native="deleteBucket(scope.row)">删除存储桶</el-dropdown-item>
+              <el-dropdown-item v-access="'s3:DeleteBucket'"
+                @click.native="deleteBucket(scope.row)">删除存储桶</el-dropdown-item>
               <!-- <el-dropdown-item  @click.native="">修改配额</el-dropdown-item>
 							<el-dropdown-item  @click.native="">修改访问权限</el-dropdown-item>
 							<el-dropdown-item  @click.native="">修改拥有者</el-dropdown-item>
@@ -142,15 +88,9 @@
       </el-table-column>
     </el-table>
     <div class="page_block">
-      <el-pagination
-        :current-page="currentPage"
-        :page-sizes="[5, 10, 50, 100]"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      <el-pagination :current-page="currentPage" :page-sizes="[5, 10, 50, 100]" :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
     </div>
     <el-dialog width="40%" title="转换文件系统" :visible.sync="modal">
       <el-form ref="form" :model="form" label-width="150px" :rules="rules" label-position="right">
@@ -165,15 +105,16 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button class="blue" @click="modal=false">{{ $ts('button.cancel') }}</el-button>
-        <el-button type="primary" class="golden" @click="confirmTrans">{{ $ts('button.confirm') }}</el-button>
+        <el-button class="blue" @click="modal = false">{{ $ts('button.cancel') }}</el-button>
+        <el-button :loading="loadingMount" type="primary" class="golden" @click="confirmTrans">{{ $ts('button.confirm')
+          }}</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-
+import moment from 'moment'
 import { listBucket } from '@/api/bucket'
 // import { Gateway } from '@/api/gateway-request'
 import {
@@ -186,8 +127,9 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
+      loadingMount: false,
       modal: false,
       Fsbucket: [],
       rules: {
@@ -227,7 +169,7 @@ export default {
   computed: {
   },
   watch: {
-    searchVal(val) {
+    searchVal (val) {
       this.tableData = [...this.copy]
       this.total = this.tableData.length
       this.currentPage = 1
@@ -238,18 +180,26 @@ export default {
       this.total = this.tableData.length
     }
   },
-  mounted() {
+  mounted () {
     if (localStorage.getItem('port') != 'null') {
       this.listBuckets(true)
     }
   },
   methods: {
+    timeTrans (date) {
+      if (!date) {
+        return '/'
+      } else {
+        const result = moment(date)
+        return result._isValid ? result.format('YYYY-MM-DD HH:mm:ss') : '/'
+      }
+    },
     // dialogOpen (e) {
     //   this.$nextTick(function () {
     //     this.$refs[e].$el.querySelector('input').focus()
     //   })
     // },
-    confirmTrans() {
+    confirmTrans () {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           const {
@@ -262,18 +212,21 @@ export default {
             bucket: BucketName,
             ro
           }
+          this.loadingMount = true
           mountFS(data).then((res) => {
-            this.$ts({
+            this.$msg({
               type: 'success',
               text: this.$ts('response.success')
             })
-            this.listBuckets()
             this.modal = false
+          }).finally(() => {
+            this.loadingMount = false
+            this.listBuckets()
           })
         }
       })
     },
-    transFormFS(row) {
+    transFormFS (row) {
       this.modal = true
       this.form = {
         fsName: row.BucketName,
@@ -307,10 +260,10 @@ export default {
     //     })
     //   })
     // },
-    updateUser(row) {
+    updateUser (row) {
       this.$emit('updateBucket', row)
     },
-    viewDetail: function(row) {
+    viewDetail: function (row) {
       this.$router.push({
         name: 'BucketList',
         params: {
@@ -319,31 +272,31 @@ export default {
         }
       })
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       this.pageSize = val
       // this.listBuckets()
       this.currentPage = 1
       // console.log(this.pageSize, '33333')
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       this.currentPage = val
       // this.listBuckets()
       // console.log(val, '1111')
     },
-    next(val) {
+    next (val) {
       val++
     },
-    back(val) {
+    back (val) {
       val--
     },
-    deleteBucket: function(row) {
+    deleteBucket: function (row) {
       // 子组件中触发父组件方法ee并传值cc12345a'q'q'q'q'q'q'q
       this.$emit('deleteBucket', row)
     },
-    buttonControl(selection) {
+    buttonControl (selection) {
       this.$emit('buttonControl', selection)
     },
-    toggleSelection(rows) {
+    toggleSelection (rows) {
       if (rows) {
         rows.forEach(row => {
           this.$refs.multipleTable.toggleRowSelection(row)
@@ -352,7 +305,7 @@ export default {
         this.$refs.multipleTable.clearSelection()
       }
     },
-    listBuckets(defaultSort) {
+    listBuckets (defaultSort) {
       this.loading = true
       listBucket().then(res => {
         this.tableData = res.BucketQuotaInfos || []
@@ -370,7 +323,7 @@ export default {
       }).finally(() => {
         this.loading = false
       })
-      // this.$store.state.user._gatewayS3.call({ path: '/', param: { bucketWarp: '' }}).then(res => {
+      // this.$store.state._gatewayS3.call({ path: '/', param: { bucketWarp: '' }}).then(res => {
       //   this.tableData = res.data.BucketQuotaInfos || []
       //   if (defaultSort) {
       //     this.tableData.sort((a, b) => new Date(b.CreateDate).getTime() - new Date(a.CreateDate).getTime())
@@ -397,11 +350,11 @@ export default {
       //   this.loading = false
       // })
     },
-    handleSelectionChange(val) {
+    handleSelectionChange (val) {
       this.multipleSelection = val
       this.buttonControl(this.multipleSelection)
     },
-    sortFunction(val) {
+    sortFunction (val) {
       this.prop = val.prop
       this.order = val.order
       this.tableData.sort(this.sortMethod(val.prop, val.order))
@@ -414,20 +367,24 @@ export default {
 .viewableUsers {
   display: flex;
   flex-wrap: wrap;
+
   p {
     width: 33%;
     padding: 5px 0;
   }
+
   .el-tag {
     color: #e39606;
     background-color: #384348;
     border-color: transparent;
   }
 }
-:deep(.el-form){
+
+:deep(.el-form) {
   padding-left: 30px;
+
   label.el-form-item__label {
-    width: unset!important;
+    width: unset !important;
     margin-left: 0;
   }
 }

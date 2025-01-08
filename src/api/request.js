@@ -28,7 +28,7 @@ if (isHtEnv) {
   axios.defaults.baseURL = process.env.NODE_ENV === 'development' ? '/api/dos' : '/dos'
 }
 const request = axios.create({
-  transformResponse: function(data) {
+  transformResponse: function (data) {
     // 这里的data是字符串，在这个字符串的是没有丢失精度的，所以需要在这里先把精度调好
     try {
       return JSONbig.parse(data)
@@ -51,7 +51,7 @@ request.interceptors.request.use(config => {
         return
       } else {
         (
-          async() => {
+          async () => {
             temp.$msg({
               type: 'error',
               text: 'token已失效，请重新登录'
@@ -111,7 +111,7 @@ request.interceptors.response.use(res => {
             text: 'token已过期，请重新登录'
           });
           (
-            async() => {
+            async () => {
               await store.dispatch('user/logout')
               router.push(`/login?redirect=${router.currentRoute.fullPath}`)
             }
@@ -175,17 +175,23 @@ request.interceptors.response.use(res => {
   }
 }, error => {
   if (error.response.data && error.response.data.message && error.response.data.message.indexOf('token timeout') > -1) {
-    temp.$msg({
-      type: 'error',
-      text: 'token已失效，请重新登录'
-    })
-    return store.dispatch('logout')
+    (
+      async () => {
+        temp.$msg({
+          type: 'error',
+          text: 'token已失效，请重新登录'
+        })
+        await store.dispatch('user/logout')
+        router.push(`/login?redirect=${router.currentRoute.fullPath}`)
+      }
+    )()
+    return
   }
   if (error.request.readyState === 4 && error.request.status === 0) {
     temp.$msg({
       type: 'error',
       text: temp.$ts('timeoutexception')
-    })
+    }) 
     return
   }
   // 设置重新请求的次数及延时

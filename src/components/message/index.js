@@ -1,5 +1,4 @@
 import messageBox from './src/index'
-import BreadCrumbs from '@/components/BreadCrumbs'
 import vueJsonEditor from 'vue-json-editor'
 import JsonViewer from 'vue-json-viewer'
 import selectColumns from '@/components/selectColumns'
@@ -12,7 +11,6 @@ import scrollText from '../scrollText.vue'
 const components = {
   'vueJsonEditor': vueJsonEditor,
   'JsonViewer': JsonViewer,
-  'BreadCrumbs': BreadCrumbs,
   'SelectColumns': selectColumns,
   'TableData': tableData,
   'draggable': draggable,
@@ -22,7 +20,7 @@ const components = {
   'scrollText': scrollText
 }
 export default {
-  install(Vue) {
+  install (Vue) {
     Vue.prototype.$msg = messageBox
     for (const name in components) {
       Vue.component(name, components[name])

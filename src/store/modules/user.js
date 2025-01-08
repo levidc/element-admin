@@ -52,16 +52,16 @@ const mutations = {
     state.role = payload
     localStorage.setItem('role', payload)
   },
-  getS3(state, payload) {
+  getS3 (state, payload) {
     state._S3 = payload
   },
-  gatewayS3(state, payload) {
+  gatewayS3 (state, payload) {
     state._gatewayS3 = payload
   },
-  getPort(state, payload) {
+  getPort (state, payload) {
     state.port = payload
   },
-  SET_USER(state, payload) {
+  SET_USER (state, payload) {
     state.user = payload
     localStorage.setItem('user', payload)
   }
@@ -69,7 +69,7 @@ const mutations = {
 
 const actions = {
   // user login
-  setS3EndPoint({ commit, state, dispatch }) {
+  setS3EndPoint ({ commit, state, dispatch }) {
     const AWS = require('aws-sdk')
     return new Promise((resolve, reject) => {
       let port = ''
@@ -100,18 +100,18 @@ const actions = {
         req.request.httpRequest.headers['Authentication'] = localStorage.getItem('token')
         req.request.httpRequest.headers['request-target'] = 'gateway'
       })
-      var gatewayS3 = Gateway.S3({
-        accessKeyId: 'test',
-        secretAccessKey: 'test',
-        endpoint: port,
-        region: 'EastChain-1'
-      })
+      // var gatewayS3 = Gateway.S3({
+      //   accessKeyId: 'test',
+      //   secretAccessKey: 'test',
+      //   endpoint: port,
+      //   region: 'EastChain-1'
+      // })
       commit('getS3', S3)
-      commit('gatewayS3', gatewayS3)
+      // commit('gatewayS3', gatewayS3)
       resolve(port)
     })
   },
-  getAccessPermission({ dispatch, commit, state }) {
+  getAccessPermission ({ dispatch, commit, state }) {
     return new Promise((resolve, rej) => {
       const p1 = dispatch('setS3EndPoint')
       const p2 = getPermission().then(res => {
@@ -138,7 +138,7 @@ const actions = {
         })
     })
   },
-  login({ commit, dispatch }, userInfo) {
+  login ({ commit, dispatch }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ userName: username.trim(), password: password }).then(response => {
@@ -156,7 +156,7 @@ const actions = {
       })
     })
   },
-  getToken({ commit }) {
+  getToken ({ commit }) {
     const token = localStorage.getItem('refreshToken')
     return new Promise(resolve => {
       refreshToken(token)
@@ -171,7 +171,7 @@ const actions = {
     })
   },
   // get user info
-  getInfo({ commit, state }) {
+  getInfo ({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         const { data } = response
@@ -199,7 +199,7 @@ const actions = {
   },
 
   // user logout
-  logout({ commit, state, dispatch }) {
+  logout ({ commit, state, dispatch }) {
     return new Promise((resolve, reject) => {
       commit('SET_TOKEN', '')
       commit('SET_ROLES', [])
@@ -211,7 +211,7 @@ const actions = {
   },
 
   // remove token
-  resetToken({ commit }) {
+  resetToken ({ commit }) {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')
       commit('SET_ROLES', [])
@@ -221,7 +221,7 @@ const actions = {
   },
 
   // dynamically modify permissions
-  async changeRoles({ commit, dispatch }, role) {
+  async changeRoles ({ commit, dispatch }, role) {
     const token = role + '-token'
 
     commit('SET_TOKEN', token)

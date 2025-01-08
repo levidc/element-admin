@@ -6,12 +6,12 @@ import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
 var AWS = require('aws-sdk')
-import { Gateway } from '@/api/gateway-request'
+// import { Gateway } from '@/api/gateway-request'
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
 
-router.beforeEach(async(to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   // start progress bar
   NProgress.start()
 
@@ -93,7 +93,7 @@ const presistStoreState = () => {
     store.commit('user/SET_ACTION', JSON.parse(api))
     store.commit('user/SET_USER', user)
     store.commit('user/SET_ROLE', role)
-    const gateways3 = store.state._gatewayS3
+    // const gateways3 = store.state._gatewayS3
     const port = localStorage.getItem('port')
     const s3 = store.state._S3
     if (!s3 && port !== 'null') {
@@ -110,15 +110,15 @@ const presistStoreState = () => {
       })
       store.commit('user/getS3', S3)
     }
-    if (!gateways3 && port !== 'null') {
-      var gatewayS3 = Gateway.S3({
-        accessKeyId: 'test',
-        secretAccessKey: 'test',
-        endpoint: port,
-        region: 'EastChain-1'
-      })
-      store.commit('user/gatewayS3', gatewayS3)
-    }
+    // if (!gateways3 && port !== 'null') {
+    //   var gatewayS3 = Gateway.S3({
+    //     accessKeyId: 'test',
+    //     secretAccessKey: 'test',
+    //     endpoint: port,
+    //     region: 'EastChain-1'
+    //   })
+    //   store.commit('user/gatewayS3', gatewayS3)
+    // }
     resolve()
   })
 

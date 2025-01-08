@@ -11,7 +11,7 @@
       <i class="el-icon-caret-bottom" />
     </div>
     <el-dropdown-menu slot="dropdown">
-      <el-dropdown-item v-for="{value,label} in langList" :key="value" :command="value" :disabled="language===value">
+      <el-dropdown-item v-for="{ value, label } in langList" :key="value" :command="value" :disabled="language === value">
         {{ label }}
       </el-dropdown-item>
     </el-dropdown-menu>
@@ -20,7 +20,7 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       langList: [
         {
@@ -42,15 +42,15 @@ export default {
     }
   },
   computed: {
-    language() {
+    language () {
       return this.$store.getters.language
     },
-    showSelLang() {
+    showSelLang () {
       return this.langList.find(x => x.value === this.language)?.label
     }
   },
   methods: {
-    handleSetLanguage(lang) {
+    handleSetLanguage (lang) {
       this.$i18n.locale = lang
       this.$store.dispatch('app/setLanguage', lang)
       window.location.reload()
