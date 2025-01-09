@@ -49,11 +49,11 @@ Object.keys(filters).forEach(key => {
 })
 Vue.directive('access',
   {
-    inserted(el, binding) {
+    inserted (el, binding) {
       let hasPermission
       let value
       const fun = binding.arg || 'conceal'
-      const api = store.state.api || JSON.parse(localStorage.getItem('api') || null)
+      const api = store.state.user.api || JSON.parse(localStorage.getItem('api') || null)
       if (binding.value.indexOf('||') > -1) {
         // tab等情况需要其中一种权限即可
         value = binding.value.split('||')
@@ -86,17 +86,11 @@ Vue.directive('access',
     }
   })
 
-Vue.directive('router', {
-  inserted(el, binding) {
-    if (!el.parentNode) return
-    if (!window.firstJumpTo && binding.value) window.firstJumpTo = binding.value
-  }
-})
 Vue.prototype.$echarts = echarts
 Vue.config.productionTip = false
 Vue.prototype.showS3Msg = error => {
   if (error.code === 'XMLParserError') {
-    setTimeout(async() => {
+    setTimeout(async () => {
       Vue.prototype.$msg({
         type: 'error',
         text: 'token已失效，请重新登录'
@@ -156,7 +150,7 @@ Vue.prototype.descValidate = (max) => (rule, value, callback) => {
   }
 }
 
-Vue.prototype.formatterG = function(row, column) {
+Vue.prototype.formatterG = function (row, column) {
   let data
   if (!column) {
     data = row
@@ -182,7 +176,7 @@ Vue.prototype.nameValidate = (min, max) => (rule, value, callback) => {
   }
 }
 
-Vue.prototype.byteConvertImpl = function(bytes, symbols = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']) {
+Vue.prototype.byteConvertImpl = function (bytes, symbols = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']) {
   if (isNaN(bytes)) {
     return ['', '']
   }
@@ -198,11 +192,11 @@ Vue.prototype.byteConvertImpl = function(bytes, symbols = ['B', 'KB', 'MB', 'GB'
   return [bytes, symbols[i]]
 }
 
-Vue.prototype.byteConvert = function(bytes, symbols = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']) {
+Vue.prototype.byteConvert = function (bytes, symbols = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']) {
   bytes = Number(bytes) > 0 ? Number(bytes) : 0
   return Vue.prototype.byteConvertImpl(bytes, symbols).join(' ')
 }
-Vue.prototype.getFileType = function(name) {
+Vue.prototype.getFileType = function (name) {
   if (!name) return ''
   const reg = /\.([0-9a-z]+)(?:[\?#]|$)/i
   const arr = name.match(reg)
@@ -213,7 +207,7 @@ Vue.prototype.getFileType = function(name) {
   }
 }
 
-Vue.prototype.formatDate = function(date) {
+Vue.prototype.formatDate = function (date) {
   if (isNaN(date)) {
     return '/'
   } else {
@@ -233,7 +227,7 @@ Vue.prototype.formatDate = function(date) {
   }
 }
 
-Vue.prototype.timeTrans = function(time, type) {
+Vue.prototype.timeTrans = function (time, type) {
   let date = new Date(new Date(time).getTime() + 8 * 3600 * 1000)
   date = date.toJSON()
   if (type === 1) {
@@ -244,11 +238,11 @@ Vue.prototype.timeTrans = function(time, type) {
   return date
 }
 
-Vue.prototype.clearSelect = function(context, ref) {
+Vue.prototype.clearSelect = function (context, ref) {
   context.$refs[ref].$refs['TableData'].$refs['dataTable'].clearSelection()
 }
 
-Vue.prototype.$ts = function(val) {
+Vue.prototype.$ts = function (val) {
   val += ''
   const originVal = val
   val = val.toLowerCase()
@@ -280,7 +274,7 @@ var checkLen = (value) => {
   return len
 }
 
-Vue.prototype.filterSearch = function(tableData, searchVal, columns) {
+Vue.prototype.filterSearch = function (tableData, searchVal, columns) {
   // sColumns contain slot ,cColumns is common
   const search = searchVal.toLowerCase()
   if (search) {
@@ -301,7 +295,7 @@ Vue.prototype.filterSearch = function(tableData, searchVal, columns) {
   }
   return tableData
 }
-Vue.prototype.filterTarget = function(all, target, key) {
+Vue.prototype.filterTarget = function (all, target, key) {
   if (!Array.isArray(all) || !Array.isArray(target)) return
   return all.filter(item => {
     return target.some(i => {
@@ -310,7 +304,7 @@ Vue.prototype.filterTarget = function(all, target, key) {
   })
 }
 
-Vue.prototype.filterDiff = function(all, target, key) {
+Vue.prototype.filterDiff = function (all, target, key) {
   if (!Array.isArray(all) || !Array.isArray(target)) return
   return all.filter(item => {
     return target.every(i => {
@@ -319,7 +313,7 @@ Vue.prototype.filterDiff = function(all, target, key) {
   })
 }
 
-Vue.prototype.precisionNum = function(num) {
+Vue.prototype.precisionNum = function (num) {
   if (!num) return
   const arr = num.toString().split('.')
   const int = arr[0]; const decimal = arr[1]
@@ -336,8 +330,8 @@ Vue.prototype.precisionNum = function(num) {
   return arr.length > 1 ? handleInt(int) + handleDemi(decimal) : handleInt(int)
 }
 
-Vue.prototype.sortMethod = function(prop, order, props) {
-  return function(obj1, obj2) {
+Vue.prototype.sortMethod = function (prop, order, props) {
+  return function (obj1, obj2) {
     if (prop == '' || order == '') {
       return 0
     }
@@ -379,7 +373,7 @@ Vue.prototype.sortMethod = function(prop, order, props) {
   }
 }
 
-String.prototype.getQuery = function(name) {
+String.prototype.getQuery = function (name) {
   var reg = new RegExp('(\\{|(,\\s*))' + name + '=\\S*(,|\\})')
   var r = this.substr(this.indexOf('\{')).match(reg)
   if (!r) return null
@@ -393,7 +387,7 @@ Vue.prototype.preciseDemi = (value) => {
   return value.replace(reg, ',')
 }
 
-Vue.prototype.getTimeNotTable = function(e) {
+Vue.prototype.getTimeNotTable = function (e) {
   if (e * 1 == 0) {
     return ''
   } else {
@@ -544,7 +538,7 @@ Vue.prototype.XMLToJSON = (XMLData = '') => {
 }
 
 Vue.prototype.json2xml = (o, tab) => {
-  var toXml = function(v, name, ind) {
+  var toXml = function (v, name, ind) {
     var xml = ''
     if (v instanceof Array) {
       for (var i = 0, n = v.length; i < n; i++) { xml += ind + toXml(v[i], name, ind + '\t') + '\n' }

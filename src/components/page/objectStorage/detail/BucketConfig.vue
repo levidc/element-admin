@@ -60,7 +60,11 @@
                     trigger="hover"
                     content="标签键区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符"
                   >
-                    <span slot="reference">名称&nbsp;<i class="fa  fa-question-circle" /></span>
+                    <span slot="reference">名称&nbsp;
+                      <svg class="icon icon-question" aria-hidden="true">
+                        <use xlink:href="#icon-question" />
+                      </svg>
+                    </span>
                   </el-popover>
                 </template>
                 <template slot-scope="scope">
@@ -88,7 +92,11 @@
                     trigger="hover"
                     content="标签值区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符"
                   >
-                    <span slot="reference">标签值&nbsp;<i class="fa  fa-question-circle" /></span>
+                    <span slot="reference">标签值&nbsp;
+                      <svg class="icon icon-question" aria-hidden="true">
+                        <use xlink:href="#icon-question" />
+                      </svg>
+                    </span>
                   </el-popover>
                 </template>
                 <template slot-scope="scope">

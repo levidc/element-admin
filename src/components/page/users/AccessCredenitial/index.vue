@@ -89,12 +89,9 @@
           align="center"
         >
           <template slot-scope="scope">
-            <i
-              v-access="'admin:RemoveAccessCredential'"
-              class="fa fa-trash-o"
-              title="删除凭证"
-              @click="deleteAccount(scope.row)"
-            />
+            <svg v-access="'admin:RemoveAccessCredential'" @click="deleteAccount(scope.row)" class="icon icon-trash" aria-hidden="true">
+              <use xlink:href="#icon-trash" />
+            </svg>
           </template>
         </el-table-column>
       </el-table>

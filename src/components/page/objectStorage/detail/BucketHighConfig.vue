@@ -24,11 +24,9 @@
               v-if="objectLock"
               class="mv_10"
             >
-              <i
-                slot="reference"
-                class="mv_10 fa fa-question-circle"
-                style="font-size:16px"
-              />
+              <svg slot="reference" class="icon icon-question" aria-hidden="true">
+                <use xlink:href="#icon-question" />
+              </svg>
               无法暂停存储桶版本控制，因为此存储桶已启用对象锁定。
             </p>
             <div

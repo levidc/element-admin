@@ -165,12 +165,9 @@
                   </el-table-column>
                   <el-table-column label="操作">
                     <template slot-scope="scope">
-                      <i
-                        v-if="!scope.row.owner"
-                        title="删除"
-                        class="fa fa-trash-o"
-                        @click="form.granteeTable.splice(scope.$index,1)"
-                      />
+                      <svg v-if="!scope.row.owner" @click="form.granteeTable.splice(scope.$index,1)" class="icon icon-trash" aria-hidden="true">
+                        <use xlink:href="#icon-trash" />
+                      </svg>
                     </template>
                   </el-table-column>
                 </el-table>

@@ -45,11 +45,9 @@
               >
                 <span>删除的对象会进入回收站（逻辑删除），可在删除留痕里查看和恢复，超出设置的过期时间后会进行物理删除，物理删除后不可恢复。</span>
                 <p> 关闭回收站时，会在设置的时间段（闭市后）进行物理删除。</p>
-                <i
-                  slot="reference"
-                  class="fa fa-question-circle"
-                  style="margin-left:5px"
-                />
+                <svg class="icon icon-question" aria-hidden="true">
+                  <use xlink:href="#icon-question" />
+                </svg>
               </el-popover>
             </span>
             <QuickDefault

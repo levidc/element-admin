@@ -28,11 +28,9 @@
                 trigger="hover"
               >
                 <p style="line-height:1.6;">冷热分层全局开关开启时才能配置</p>
-                <i
-                  slot="reference"
-                  class="fa fa-question-circle"
-                  style="position: relative;top:2px"
-                />
+                <svg slot="reference" class="icon icon-question" aria-hidden="true" style="position: relative;top:2px">
+                  <use xlink:href="#icon-question" />
+                </svg>
               </el-popover>
             </div>
             <div

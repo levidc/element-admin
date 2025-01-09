@@ -281,10 +281,9 @@
                     {{ '端口:' + item.port }}
                   </p>
                 </div>
-                <i
-                  class="fa fa-trash-o"
-                  @click="deleteD(index)"
-                />
+                <svg @click="deleteD(index)" class="icon icon-trash" aria-hidden="true">
+                  <use xlink:href="#icon-trash" />
+                </svg>
               </div>
             </transition-group>
           </draggable>

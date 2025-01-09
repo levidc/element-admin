@@ -59,13 +59,9 @@
               content="删除策略"
               placement="top"
             >
-              <i
-                v-if="showMenu(scope.row)"
-                v-access="'admin:DeletePolicy'"
-                class="fa fa-trash-o"
-                title="删除策略"
-                @click="selectPolicy = scope.row.name; deleteFlag = true"
-              />
+              <svg v-if="showMenu(scope.row)" v-access="'admin:DeletePolicy'" @click="selectPolicy = scope.row.name; deleteFlag = true" class="icon icon-trash" aria-hidden="true">
+                <use xlink:href="#icon-trash" />
+              </svg>
             </el-tooltip>
           </div>
         </template>

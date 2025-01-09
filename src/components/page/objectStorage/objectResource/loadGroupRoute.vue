@@ -386,12 +386,9 @@
               width="80px"
             >
               <template slot-scope="scope">
-                <i
-                  v-access="'admin:DeleteUser'"
-                  class="fa fa-trash-o"
-                  title="删除"
-                  @click="handleRemoveBucket(scope)"
-                />
+                <svg v-access="'admin:DeleteUser'" @click="handleRemoveBucket(scope)" class="icon icon-trash" aria-hidden="true">
+                  <use xlink:href="#icon-trash" />
+                </svg>
               </template>
             </el-table-column>
           </el-table>

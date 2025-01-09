@@ -66,13 +66,9 @@
         align="center"
       >
         <template slot-scope="scope">
-          <i
-            v-if="String($store.state.isEip)!=='true'&&scope.row.userName !== 'superAdmin' && $store.state.role==='superAdmin'"
-            v-access="'admin:DeleteUser'"
-            class="fa fa-trash-o"
-            title="删除"
-            @click="selectUser = scope.row; deleteFlag = true"
-          />
+          <svg v-if="scope.row.userName !== 'superAdmin' && $store.state.role==='superAdmin'"  v-access="'admin:DeleteUser'" @click="selectUser = scope.row; deleteFlag = true" class="icon icon-trash" aria-hidden="true">
+            <use xlink:href="#icon-trash" />
+          </svg>
         </template>
       </el-table-column>
     </el-table>

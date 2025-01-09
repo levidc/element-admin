@@ -31,7 +31,9 @@
               <p style="line-height:1.6;">不能以'xn--'开头和以-s3alias结尾</p>
               <p style="line-height:1.6;">存储桶名称不能与 IP 地址相似</p>
               <p style="line-height:1.6;">名称长度为3-63位字符</p>
-              <i slot="reference" class="fa fa-question-circle" style="margin-left: -20px !important;" />
+              <svg style="margin-left: -20px !important;" slot="reference" class="icon icon-question" aria-hidden="true">
+                <use xlink:href="#icon-question" />
+              </svg>
             </el-popover>
           </div>
           <!-- <p v-if="isAdd" class="input_tip_font">存储桶名称必须唯一，并且不能包含空格或大写字母。</p> -->

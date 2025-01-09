@@ -83,11 +83,9 @@
           align="center"
         >
           <template slot-scope="scope">
-            <i
-              v-access="'admin:DeleteGroup'"
-              class="fa fa-trash-o"
-              @click="selectGroup = scope.row; deleteFlag = true"
-            />
+            <svg v-access="'admin:DeleteGroup'"  @click="selectGroup = scope.row; deleteFlag = true"  class="icon icon-trash" aria-hidden="true">
+              <use xlink:href="#icon-trash" />
+            </svg>
           </template>
         </el-table-column>
 

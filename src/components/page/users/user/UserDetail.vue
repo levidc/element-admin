@@ -44,12 +44,9 @@
               placement="top"
               effect="dark"
             >
-              <i
-                v-if="String($store.state.isEip)!=='true'&&currentName !== 'superAdmin'&&$store.state.role==='superAdmin'"
-                v-access="'admin:DeleteUser'"
-                class="fa fa-trash-o"
-                @click="deleteFlag = true"
-              />
+             <svg v-if="currentName !== 'superAdmin'&&$store.state.user.role==='superAdmin'" v-access="'admin:DeleteUser'" @click="deleteFlag = true" class="icon icon-trash" aria-hidden="true">
+                <use xlink:href="#icon-trash" />
+              </svg>
             </el-tooltip>
             <el-tooltip
               v-if="userType!==2"
@@ -158,12 +155,9 @@
               </el-table-column>
               <el-table-column label="移除用户组">
                 <template slot-scope="scope">
-                  <i
-                    v-access="'admin:AddGroupToUser;admin:RemoveGroupFromUser'"
-                    class="fa fa-trash-o"
-                    title="删除"
-                    @click="deleteGroup(scope.row)"
-                  />
+                  <svg v-access="'admin:AddGroupToUser;admin:RemoveGroupFromUser'"  @click="deleteGroup(scope.row)" class="icon icon-trash" aria-hidden="true">
+                    <use xlink:href="#icon-trash" />
+                  </svg>
                 </template>
               </el-table-column>
             </el-table>
@@ -242,13 +236,9 @@
               </el-table-column>
               <el-table-column label="移除策略">
                 <template slot-scope="scope">
-                  <i
-                    v-if="scope.row.name !== 'BasePolicy'"
-                    v-access="'admin:SetUserOrGroupPolicy'"
-                    class="fa fa-trash-o"
-                    title="删除"
-                    @click="deletePolicy(scope.row)"
-                  />
+                  <svg v-if="scope.row.name !== 'BasePolicy'" v-access="'admin:SetUserOrGroupPolicy'"  @click="deletePolicy(scope.row)" class="icon icon-trash" aria-hidden="true">
+                    <use xlink:href="#icon-trash" />
+                  </svg>
                 </template>
               </el-table-column>
             </el-table>

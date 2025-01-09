@@ -223,7 +223,9 @@
                 <p>设置配额的桶按百分比显示</p>
                 <p>无配额的桶排列在有配额桶下方</p>
               </div>
-              <i class="fa fa-question-circle more" />
+              <svg class="icon more" aria-hidden="true">
+                <use xlink:href="#icon-question" />
+              </svg>
             </el-tooltip> -->
             <div class="topTitle">
               <span>桶已用容量百分比 TOP10</span>

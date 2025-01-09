@@ -191,7 +191,7 @@ request.interceptors.response.use(res => {
     temp.$msg({
       type: 'error',
       text: temp.$ts('timeoutexception')
-    }) 
+    })
     return
   }
   // 设置重新请求的次数及延时
@@ -226,44 +226,5 @@ request.interceptors.response.use(res => {
   }
 })
 
-// Vue.prototype.listAlarm = function() {
-//   // 告警权限控制
-//   const api = store.state.api || JSON.parse(localStorage.getItem('api') || null)
-//   if (!api['admin:ListAlertController']) return
-//   let red = 0
-//   let yellow = 0
-//   let orange = 0
-//   listAlerts({
-//     ipAddress: '',
-//     alertRuleName: '',
-//     alertObject: '',
-//     alertLevel: '',
-//     alertClass: '',
-//     acknowledge: 'UNCONFIRM',
-//     startTime: '0',
-//     endTime: new Date().getTime() + 86400000
-//   }).then(res => {
-//     if (res.error.code === 0) {
-//       res.data.forEach(item => {
-//         switch (item.alertLevel) {
-//           case 'CRITICAL':
-//             red += 1
-//             break
-//           case 'MAJOR':
-//             orange += 1
-//             break
-//           case 'MINOR':
-//             yellow += 1
-//             break
-//         }
-//       })
-//       store.state.redCount = red || 0
-//       store.state.orangeCount = orange || 0
-//       store.state.yellowCount = yellow || 0
-//     }
-//   }).catch(error => {
-//     console.error(error)
-//   })
-// }
 export default request
 export const CancelToken = axios.CancelToken

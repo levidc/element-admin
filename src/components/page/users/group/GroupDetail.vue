@@ -24,7 +24,9 @@
               />
             </div>
             <el-tooltip content="删除用户" placement="top" effect="dark">
-              <i v-access="'admin:DeleteGroup'" class="fa fa-trash-o" title="删除用户组" @click="deleteFlag = true" />
+              <svg v-access="'admin:DeleteGroup'" @click="deleteFlag = true" class="icon icon-trash" aria-hidden="true">
+                <use xlink:href="#icon-trash" />
+              </svg>
             </el-tooltip>
             <el-tooltip content="返回用户组列表" placement="top" effect="dark">
               <svg class="icon backicon" aria-hidden="true" @click="$router.push({ name: 'Group' })">
@@ -68,12 +70,9 @@
               </el-table-column>
               <el-table-column label="移除用户">
                 <template slot-scope="scope">
-                  <i
-                    v-access="'admin:AddUserToGroup;admin:RemoveUserFromGroup'"
-                    class="fa fa-trash-o"
-                    title="删除"
-                    @click="deleteUser(scope.row)"
-                  />
+                  <svg v-access="'admin:AddUserToGroup;admin:RemoveUserFromGroup'" @click="deleteUser(scope.row)"  class="icon icon-trash" aria-hidden="true">
+                    <use xlink:href="#icon-trash" />
+                  </svg>
                 </template>
               </el-table-column>
             </el-table>
@@ -104,13 +103,9 @@
               </el-table-column>
               <el-table-column label="移除策略">
                 <template slot-scope="scope">
-                  <i
-                    v-if="scope.row.name !== 'BasePolicy'"
-                    v-access="'admin:SetUserOrGroupPolicy'"
-                    class="fa fa-trash-o"
-                    title="删除"
-                    @click="deletePolicy(scope.row)"
-                  />
+                  <svg v-if="scope.row.name !== 'BasePolicy'" v-access="'admin:SetUserOrGroupPolicy'" @click="deletePolicy(scope.row)"  class="icon icon-trash" aria-hidden="true">
+                    <use xlink:href="#icon-trash" />
+                  </svg>
                 </template>
               </el-table-column>
             </el-table>

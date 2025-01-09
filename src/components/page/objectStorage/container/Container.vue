@@ -685,11 +685,6 @@ export default {
   font-weight: 700;
 }
 
-.tc-data-card-hd .fa-question-circle {
-  font-style: normal;
-  font-weight: 400;
-}
-
 .tc-data-card-bd {
   height: 54px;
   line-height: 54px;

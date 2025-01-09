@@ -3,83 +3,38 @@
     <el-main class="bucketContainer">
       <div class="breadTitle">
         <div class="bucketName">
-          <el-tooltip
-            placement="top"
-            content="返回桶列表"
-          >
-            <i
-              class="el-icon-back backBox"
-              @click="$router.push({name:'bucketList'}),goback()"
-            />
+          <el-tooltip placement="top" content="返回桶列表">
+            <i class="el-icon-back backBox" @click="$router.push({ name: 'bucketList' }), goback()" />
           </el-tooltip>
           <span>{{ $route.params.id }}</span>
         </div>
-        <el-menu
-          class="bucketMenu"
-          :default-active="activeIndex"
-          mode="horizontal"
-          @select="handleSelect"
-        >
-          <el-menu-item
-            v-access="'s3:ListBucket'"
-            index="BucketList"
-          >对象列表</el-menu-item>
+        <el-menu class="bucketMenu" :default-active="activeIndex" mode="horizontal" @select="handleSelect">
+          <el-menu-item v-access="'s3:ListBucket'" index="BucketList">对象列表</el-menu-item>
           <el-submenu
             v-if="apis['s3:GetBucketVersioning'] || apis['s3:GetBucketObjectLockConfiguration'] || apis['admin:UpdateBucketQuota']"
-            index="2"
-          >
+            index="2">
             <template slot="title">高级配置</template>
-            <el-menu-item
-              v-access="'s3:GetBucketVersioning'"
-              index="BucketHighConfig"
-            >版本控制</el-menu-item>
-            <el-menu-item
-              v-access="'s3:GetBucketObjectLockConfiguration'"
-              index="BucketObjectLock"
-            >对象锁定</el-menu-item>
-            <el-menu-item
-              v-access="'admin:UpdateBucketQuota'"
-              index="BucketQuota"
-            >配额管理</el-menu-item>
+            <el-menu-item v-access="'s3:GetBucketVersioning'" index="BucketHighConfig">版本控制</el-menu-item>
+            <el-menu-item v-access="'s3:GetBucketObjectLockConfiguration'" index="BucketObjectLock">对象锁定</el-menu-item>
+            <el-menu-item v-access="'admin:UpdateBucketQuota'" index="BucketQuota">配额管理</el-menu-item>
           </el-submenu>
-          <el-menu-item
-            v-if="apis['s3:GetLifecycleConfiguration']"
-            index="BucketLifeCycle"
-          >生命周期规则</el-menu-item>
-          <el-submenu
-            v-if="apis['s3:GetBucketPolicy'] || apis['s3:GetBucketAcl']"
-            index="3"
-          >
+          <el-menu-item v-if="apis['s3:GetLifecycleConfiguration']" index="BucketLifeCycle">生命周期规则</el-menu-item>
+          <el-submenu v-if="apis['s3:GetBucketPolicy'] || apis['s3:GetBucketAcl']" index="3">
             <template slot="title">权限管理</template>
-            <el-menu-item
-              v-access="'s3:GetBucketPolicy'"
-              index="BucketPermisson"
-            >存储桶策略</el-menu-item>
-            <el-menu-item
-              v-access="'s3:GetBucketAcl'"
-              index="BucketAccess"
-            >访问控制列表</el-menu-item>
+            <el-menu-item v-access="'s3:GetBucketPolicy'" index="BucketPermisson">存储桶策略</el-menu-item>
+            <el-menu-item v-access="'s3:GetBucketAcl'" index="BucketAccess">访问控制列表</el-menu-item>
           </el-submenu>
-          <el-menu-item
-            v-if="apis['admin:QosController']"
-            index="BucketQoS"
-          >QoS配置</el-menu-item>
+          <el-menu-item v-if="apis['admin:QosController']" index="BucketQoS">QoS配置</el-menu-item>
           <!-- <el-menu-item
             v-if="apis['admin:BucketCache']"
             index="BucketDataClassification"
           >冷热分层开关</el-menu-item> -->
-          <el-menu-item
-            v-if="apis['isAdmin']"
-            index="BucketLoadGroup"
-          >负载路由</el-menu-item>
+          <el-menu-item v-if="apis['isAdmin']" index="BucketLoadGroup">负载路由</el-menu-item>
           <el-menu-item index="highAvailability">高可用管理</el-menu-item>
         </el-menu>
       </div>
       <router-view />
-      <el-backtop
-        target=".bucketContainer"
-        :bottom="10"
-      />
+      <el-backtop target=".bucketContainer" :bottom="10" />
     </el-main>
   </div>
 </template>
@@ -88,32 +43,32 @@
 export default {
   name: 'BucketDetail',
   filters: {},
-  data() {
+  data () {
     return {
       tabVal: 'BucketList',
       activeIndex: 'BucketList'
     }
   },
   computed: {
-    apis() {
+    apis () {
       return this.$store.state['user']['api'] || JSON.parse(localStorage.getItem('api') || null)
     }
   },
-  mounted: function() {
+  mounted: function () {
     this.activeIndex = this.$route.name === 'ObjectDetail' ? 'BucketList' : this.$route.name
   },
-  destroyed() { },
+  destroyed () { },
   methods: {
-    goback() {
+    goback () {
       // localStorage.removeItem('isHtGateway')
     },
-    handleSelect(key, keyPath) {
+    handleSelect (key, keyPath) {
       // console.log(key, 'key')
       this.$router.push({
         name: key
       })
     },
-    handleClick() {
+    handleClick () {
       this.$router.push({
         name: this.tabVal
       })
@@ -128,6 +83,7 @@ export default {
     font-size: 26px;
     margin-right: 12px;
   }
+
   span {
     font-size: 22px;
     color: #ff8746;
@@ -151,5 +107,9 @@ li.el-menu-item.is-active {
 
 .bucketContainer {
   height: 100%;
+
+  .breadTitle {
+    margin: 20px;
+  }
 }
 </style>
