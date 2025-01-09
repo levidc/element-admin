@@ -1,48 +1,23 @@
 <template>
   <div style="display: flex;flex-direction: column;">
     <el-header class="bdetail_header">
-      <span
-        class="bdetail_title"
-        style="margin-top:-2px"
-      >对象路径:</span>
-      <span
-        v-for="(item, index) in routeArr"
-        :key="item + index"
-        class="bdetail_title"
-      >
-        <router-link
-          :is="loading ? 'span' : 'router-link'"
-          v-if="index == 0"
-          class="blue"
-          :to="{ name: 'BucketList' }"
-        >
+      <span class="bdetail_title" style="margin-top:-2px">对象路径:</span>
+      <span v-for="(item, index) in routeArr" :key="item + index" class="bdetail_title">
+        <router-link :is="loading ? 'span' : 'router-link'" v-if="index == 0" class="blue" :to="{ name: 'BucketList' }">
           {{ item }}
-          <span
-            role="presentation"
-            class="el-breadcrumb__separator"
-          >&gt;</span>
+          <span role="presentation" class="el-breadcrumb__separator">&gt;</span>
         </router-link>
-        <router-link
-          :is="loading ? 'span' : 'router-link'"
-          v-else-if="index !== 0 && index !== routeArr.length - 1"
-          class="blue"
-          :to="{ name: 'BucketList', query: { filename: directoryPath(item) + '/' } }"
-        >
+        <router-link :is="loading ? 'span' : 'router-link'" v-else-if="index !== 0 && index !== routeArr.length - 1"
+          class="blue" :to="{ name: 'BucketList', query: { filename: directoryPath(item) + '/' } }">
           {{ item + '/' }}
-          <span
-            role="presentation"
-            class="el-breadcrumb__separator"
-          >&gt;</span>
+          <span role="presentation" class="el-breadcrumb__separator">&gt;</span>
         </router-link>
         <span v-else>{{ item }}</span>
       </span>
     </el-header>
     <div class="bucket-detail">
       <div class="bucket-detail-inner">
-        <div
-          v-loading="loading"
-          class="bucket-panel"
-        >
+        <div v-loading="loading" class="bucket-panel">
           <!-- tab  -->
           <div class="topMenu">
             <h2>
@@ -78,15 +53,8 @@
           </div>
 
           <!-- object tab -->
-          <el-tabs
-            v-model="activeName"
-            class="tabCard"
-            @tab-click="handleClick"
-          >
-            <el-tab-pane
-              label="属性"
-              name="property"
-            >
+          <el-tabs v-model="activeName" class="tabCard" @tab-click="handleClick">
+            <el-tab-pane label="属性" name="property">
               <div>
                 <h3 class="titleh1">基本信息</h3>
                 <div class="configList">
@@ -95,17 +63,10 @@
                       <p>
                         对象Key
                         <span>
-                          <el-tooltip
-                            placement="top"
-                            content="复制"
-                            :open-delay="300"
-                          >
-                            <i
-                              class="el-icon-document-copy"
-                              @click="copyCode(baseInfo.objectKey)"
-                            />
+                          <el-tooltip placement="top" content="复制" :open-delay="300">
+                            <i class="el-icon-document-copy" @click="copyCode(baseInfo.objectKey)" />
                           </el-tooltip>
-                          {{ baseInfo.objectKey ||'-' }}
+                          {{ baseInfo.objectKey || '-' }}
                         </span>
                       </p>
                       <p>
@@ -126,7 +87,7 @@
                       </p>
                       <p>
                         版本ID
-                        <span>{{ baseInfo.versionId==='null'?'-':baseInfo.versionId }}</span>
+                        <span>{{ baseInfo.versionId === 'null' ? '-' : baseInfo.versionId }}</span>
                       </p>
                       <p>
                         ETag
@@ -167,45 +128,20 @@
                     </div> -->
                   </div>
                 </div>
-                <div
-                  class="headFlex"
-                  style="margin-top:50px;"
-                >
+                <div class="headFlex" style="margin-top:50px;">
                   <h3 class="titleh1">底层资源</h3>
                 </div>
-                <el-table
-                  :data="bottomObjectInfos"
-                  style="width:80%;"
-                >
-                  <el-table-column
-                    prop="resourceName"
-                    label="资源名称"
-                    min-width="120px"
-                  />
-                  <el-table-column
-                    prop="size"
-                    label="资源容量"
-                    min-width="100px"
-                  >
+                <el-table :data="bottomObjectInfos" style="width:80%;">
+                  <el-table-column prop="resourceName" label="资源名称" min-width="120px" />
+                  <el-table-column prop="size" label="资源容量" min-width="100px">
                     <template slot-scope="scope">
                       {{ byteConvert(scope.row.size || 0) }}
                     </template>
                   </el-table-column>
-                  <el-table-column
-                    prop="bottomKey"
-                    label="底层key"
-                    min-width="120px"
-                  />
-                  <el-table-column
-                    prop="coordinatorType"
-                    label="资源类型"
-                    min-width="100px"
-                  />
+                  <el-table-column prop="bottomKey" label="底层key" min-width="120px" />
+                  <el-table-column prop="coordinatorType" label="资源类型" min-width="100px" />
                 </el-table>
-                <div
-                  class="headFlex"
-                  style="margin-top:50px;"
-                >
+                <div class="headFlex" style="margin-top:50px;">
                   <h3 class="titleh1">扩展信息</h3>
                   <!-- <h3 class="titleh1">元信息</h3> -->
                 </div>
@@ -236,10 +172,7 @@
                         contentType
                         <span>{{ header.contentType || '-' }}</span>
                       </p>
-                      <p
-                        v-for="item in mapMetaInfo"
-                        :key="item.label"
-                      >
+                      <p v-for="item in mapMetaInfo" :key="item.label">
                         {{ item.label }}
                         <span>{{ item.value }}</span>
                       </p>
@@ -254,18 +187,11 @@
                 </div>
               </div>
             </el-tab-pane>
-            <el-tab-pane
-              v-loading="tabLoading"
-              label="对象锁定"
-              name="lock"
-            >
+            <el-tab-pane v-loading="tabLoading" label="对象锁定" name="lock">
               <div v-if="bucketConfig.objectLock">
                 <div v-loading="legalHoldLoading">
                   <h3 class="titleh1">对象锁定依法保留
-                    <el-button
-                      type="text"
-                      @click="legalHoldFlag = true"
-                    >
+                    <el-button type="text" @click="legalHoldFlag = true">
                       <span style="color:#ff8746">编辑</span>
                     </el-button>
                   </h3>
@@ -276,10 +202,7 @@
                 </div>
                 <div v-loading="objectRetentionFlag">
                   <h3 class="titleh1">对象锁定保留
-                    <el-button
-                      type="text"
-                      @click="objectRentionFlag = true"
-                    >
+                    <el-button type="text" @click="objectRentionFlag = true">
                       <span style="color:#ff8746">编辑</span>
                     </el-button>
                   </h3>
@@ -287,10 +210,7 @@
                     <p>保留模式</p>
                     <div>{{ mode ? mode === 'GOVERNANCE' ? '监管模式' : '合规模式' : '已禁用' }}</div>
                   </div>
-                  <div
-                    v-if="mode"
-                    class="mb_15"
-                  >
+                  <div v-if="mode" class="mb_15">
                     <p>保留到期日</p>
                     <div>{{ RetainUntilDate }}</div>
                   </div>
@@ -303,34 +223,18 @@
                 </p>
               </div>
             </el-tab-pane>
-            <el-tab-pane
-              v-loading="tabLoading"
-              label="权限"
-              name="permission"
-            >
+            <el-tab-pane v-loading="tabLoading" label="权限" name="permission">
               <div class="param-box">
                 <div class="param-hd">
                   <h3>访问控制列表(ACL)</h3>
-                  <el-button
-                    v-show="!editStatus&&!disableAcl"
-                    :disabled="disableAclBtn"
-                    type="text"
-                    style="position:relative;top:3px"
-                    @click="editConfig"
-                  >
+                  <el-button v-show="!editStatus && !disableAcl" :disabled="disableAclBtn" type="text"
+                    style="position:relative;top:3px" @click="editConfig">
                     <span style="color:#ff8746">编辑</span>
                   </el-button>
                 </div>
               </div>
-              <el-form
-                :model="formAcl"
-                label-width="120px"
-              >
-                <el-form-item
-                  v-if="!editStatus && !loading"
-                  label="对象ACL"
-                  style="width:50%"
-                >
+              <el-form :model="formAcl" label-width="120px">
+                <el-form-item v-if="!editStatus && !loading" label="对象ACL" style="width:50%">
                   <span v-if="!disableAcl">
                     {{ formAcl.readAcl }}
                   </span>
@@ -340,17 +244,10 @@
                 </el-form-item>
 
                 <!-- 额外用户start -->
-                <el-table
-                  v-show="!editStatus && tableData.length"
-                  :data="tableData"
-                >
-                  <el-table-column
-                    prop="owner"
-                    label="被授权者"
-                    width="500px"
-                  >
+                <el-table v-show="!editStatus && tableData.length" :data="tableData">
+                  <el-table-column prop="owner" label="被授权者" width="500px">
                     <template slot-scope="scope">
-                      {{ scope.row.userName }} {{ scope.row.FULL_CONTROL || scope.row.owner ? "(桶owner)":"" }}
+                      {{ scope.row.userName }} {{ scope.row.FULL_CONTROL || scope.row.owner ? "(桶owner)" : "" }}
                     </template>
                   </el-table-column>
                   <el-table-column label="">
@@ -366,10 +263,7 @@
                       <span>{{ objectMap(scope.row) || '/' }}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column
-                    prop="owner"
-                    label=""
-                  >
+                  <el-table-column prop="owner" label="">
                     <template slot-scope="scope">
                       <!-- <div v-if="editStatus" class="reverseColumn">
                       <el-checkbox v-model="scope.row.bucketRead">
@@ -385,11 +279,7 @@
                 </el-table>
                 <!-- 额外用户end -->
 
-                <el-form-item
-                  v-if="editStatus"
-                  label="对象ACL"
-                  prop="setAcl"
-                >
+                <el-form-item v-if="editStatus" label="对象ACL" prop="setAcl">
                   <el-radio-group v-model="formAcl.selectAcl">
                     <el-radio label="private">私有</el-radio>
                     <el-radio label="public-read">公共读</el-radio>
@@ -399,30 +289,14 @@
                 </el-form-item>
               </el-form>
 
-              <div
-                v-show="editStatus"
-                class="addOtherAccount"
-              >
+              <div v-show="editStatus" class="addOtherAccount">
                 <h3>其他账号的访问权限</h3>
-                <el-button
-                  v-access="'admin:ListUsers'"
-                  class="golden"
-                  @click="flag = true"
-                >添加授权用户</el-button>
-                <el-form
-                  ref="form"
-                  :model="form"
-                >
-                  <el-table
-                    v-if="form.granteeTable && form.granteeTable.length"
-                    :data="form.granteeTable"
-                  >
-                    <el-table-column
-                      label="被授权者"
-                      width="500px"
-                    >
+                <el-button v-access="'admin:ListUsers'" class="golden" @click="flag = true">添加授权用户</el-button>
+                <el-form ref="form" :model="form">
+                  <el-table v-if="form.granteeTable && form.granteeTable.length" :data="form.granteeTable">
+                    <el-table-column label="被授权者" width="500px">
                       <template slot-scope="scope">
-                        {{ scope.row.userName }}{{ scope.row.FULL_CONTROL || scope.row.owner ? "(桶owner)":"" }}
+                        {{ scope.row.userName }}{{ scope.row.FULL_CONTROL || scope.row.owner ? "(桶owner)" : "" }}
                         <!-- <el-form-item :rules="ruleId" :prop="'granteeTable.'+ scope.$index +'.ID'">
                         <el-input v-model="scope.row.ID" placeholder="输入规范ID" />
                       </el-form-item> -->
@@ -431,10 +305,7 @@
                     <el-table-column label="">
                       <template slot-scope="scope">
                         <div>
-                          <el-checkbox
-                            v-model="scope.row.READ"
-                            :disabled="scope.row.FULL_CONTROL || scope.row.owner"
-                          >
+                          <el-checkbox v-model="scope.row.READ" :disabled="scope.row.FULL_CONTROL || scope.row.owner">
                             读
                           </el-checkbox>
                           <!-- <el-checkbox v-model="scope.row.WRITE">
@@ -446,16 +317,12 @@
                     <el-table-column label="">
                       <template slot-scope="scope">
                         <div>
-                          <el-checkbox
-                            v-model="scope.row.READ_ACP"
-                            :disabled="scope.row.FULL_CONTROL || scope.row.owner"
-                          >
+                          <el-checkbox v-model="scope.row.READ_ACP"
+                            :disabled="scope.row.FULL_CONTROL || scope.row.owner">
                             读ACL
                           </el-checkbox>
-                          <el-checkbox
-                            v-model="scope.row.WRITE_ACP"
-                            :disabled="scope.row.FULL_CONTROL || scope.row.owner"
-                          >
+                          <el-checkbox v-model="scope.row.WRITE_ACP"
+                            :disabled="scope.row.FULL_CONTROL || scope.row.owner">
                             写ACL
                           </el-checkbox>
                         </div>
@@ -463,7 +330,8 @@
                     </el-table-column>
                     <el-table-column>
                       <template slot-scope="scope">
-                        <svg v-if="!(scope.row.FULL_CONTROL || scope.row.owner)" @click="form.granteeTable.splice(scope.$index, 1)" class="icon icon-trash" aria-hidden="true">
+                        <svg v-if="!(scope.row.FULL_CONTROL || scope.row.owner)"
+                          @click="form.granteeTable.splice(scope.$index, 1)" class="icon icon-trash" aria-hidden="true">
                           <use xlink:href="#icon-trash" />
                         </svg>
                       </template>
@@ -475,51 +343,30 @@
                 <!-- Versions  版本管理-->
                 <h3 style="margin: 20px 0">指定的对象</h3>
                 <el-table :data="[tableObj]">
-                  <el-table-column
-                    label="名称"
-                    width="300px"
-                  >
+                  <el-table-column label="名称" width="300px">
                     <template slot-scope="scope">
-                      <a
-                        class="blue"
-                        @click="activeName = 'property'"
-                      >
+                      <a class="blue" @click="activeName = 'property'">
                         <!-- <i class="fa fa-file-o" /> -->
                         <span>{{ showFileName(resInfo.Prefix) }}</span>
                       </a>
                     </template>
                   </el-table-column>
-                  <el-table-column
-                    v-if="isVersion"
-                    label="版本ID"
-                    prop=""
-                    width="300px"
-                  >
+                  <el-table-column v-if="isVersion" label="版本ID" prop="" width="300px">
                     <template>
                       {{ $route.query.VersionId || '/' }}
                     </template>
                   </el-table-column>
-                  <el-table-column
-                    label="类型"
-                    prop=""
-                  >
+                  <el-table-column label="类型" prop="">
                     <template>
                       {{ getFileType(resInfo.Prefix) }}
                     </template>
                   </el-table-column>
-                  <el-table-column
-                    label="上次修改时间"
-                    prop=""
-                    width="300px"
-                  >
+                  <el-table-column label="上次修改时间" prop="" width="300px">
                     <template slot-scope="scope">
                       {{ formatDate(new Date(scope.row.LastModified)) || '/' }}
                     </template>
                   </el-table-column>
-                  <el-table-column
-                    label="大小"
-                    prop=""
-                  >
+                  <el-table-column label="大小" prop="">
                     <template slot-scope="scope">
                       {{ byteConvert(scope.row.Size) || '/' }}
                     </template>
@@ -527,46 +374,23 @@
                 </el-table>
 
                 <div class="bottomMenu">
-                  <el-button
-                    class="blue"
-                    @click="editStatus = false; getObjectAcl()"
-                  >取消</el-button>
-                  <el-button
-                    class="golden"
-                    @click="saveConfig"
-                  >保存</el-button>
+                  <el-button class="blue" @click="editStatus = false; getObjectAcl()">取消</el-button>
+                  <el-button class="golden" @click="saveConfig">保存</el-button>
                 </div>
               </div>
 
             </el-tab-pane>
-            <el-tab-pane
-              label="版本"
-              name="version"
-            >
+            <el-tab-pane label="版本" name="version">
               <h3 class="titleh1">对象版本信息</h3>
-              <el-table
-                :data="versionTable"
-                :max-height="500"
-                @sort-change="sortFunction"
-              >
-                <el-table-column
-                  label="版本ID"
-                  width="350px"
-                  prop="VersionId"
-                  sortable="custom"
-                  :default-sort="defaultSort"
-                >
+              <el-table :data="versionTable" :max-height="500" @sort-change="sortFunction">
+                <el-table-column label="版本ID" width="350px" prop="VersionId" sortable="custom"
+                  :default-sort="defaultSort">
                   <template slot-scope="scope">
                     <!-- <i class="fa fa-file-o" /> -->
                     <el-tooltip
-                      v-if="$route.query.VersionId && scope.row.VersionId !== $route.query.VersionId&&!scope.row.delMarker"
-                      placement="top"
-                      content="查看版本"
-                    >
-                      <span
-                        class="alink"
-                        @click="handleClickRow(scope.row)"
-                      >
+                      v-if="$route.query.VersionId && scope.row.VersionId !== $route.query.VersionId && !scope.row.delMarker"
+                      placement="top" content="查看版本">
+                      <span class="alink" @click="handleClickRow(scope.row)">
                         {{ scope.row.VersionId }} <span class="orange">
                           {{ mapVersion(scope.row) }}
                         </span>
@@ -579,39 +403,22 @@
                     </span>
                   </template>
                 </el-table-column>
-                <el-table-column
-                  label="类型"
-                  prop="type"
-                  sortable="custom"
-                >
+                <el-table-column label="类型" prop="type" sortable="custom">
                   <template slot-scope="scope">
                     {{ scope.row.delMarker ? '删除标记' : getFileType(scope.row.Key) }}
                   </template>
                 </el-table-column>
-                <el-table-column
-                  label="上次修改时间"
-                  prop="LastModified"
-                  width="300px"
-                  sortable="custom"
-                >
+                <el-table-column label="上次修改时间" prop="LastModified" width="300px" sortable="custom">
                   <template slot-scope="scope">
                     {{ formatDate(scope.row.LastModified) || '/' }}
                   </template>
                 </el-table-column>
-                <el-table-column
-                  label="大小"
-                  prop="Size"
-                  sortable="custom"
-                >
+                <el-table-column label="大小" prop="Size" sortable="custom">
                   <template slot-scope="scope">
                     {{ scope.row.delMarker ? '/' : byteConvert(scope.row.Size) || '/' }}
                   </template>
                 </el-table-column>
-                <el-table-column
-                  label="存储类"
-                  prop="StorageClass"
-                  sortable="custom"
-                >
+                <el-table-column label="存储类" prop="StorageClass" sortable="custom">
                   <template slot-scope="scope">
                     {{ transClass(scope.row.StorageClass) || '/' }}
                   </template>
@@ -621,16 +428,9 @@
           </el-tabs>
         </div>
       </div>
-      <el-dialog
-        title="编辑对象锁定依法保留"
-        :visible.sync="legalHoldFlag"
-        width="500px"
-      >
+      <el-dialog title="编辑对象锁定依法保留" :visible.sync="legalHoldFlag" width="500px">
         <h3 class="titleh1">对象锁定依法保留</h3>
-        <el-radio-group
-          v-model="legalHoldRaido"
-          class="reverseColumn"
-        >
+        <el-radio-group v-model="legalHoldRaido" class="reverseColumn">
           <el-radio label="OFF">禁用</el-radio>
           <el-radio label="ON">启用</el-radio>
         </el-radio-group>
@@ -639,71 +439,36 @@
           <el-button type="primary" class="golden" @click="saveObjectLegalHold">{{ $ts('save') }}</el-button>
         </div>
       </el-dialog>
-      <el-dialog
-        title="编辑对象锁定保留"
-        :visible.sync="objectRentionFlag"
-        width="700px"
-      >
+      <el-dialog title="编辑对象锁定保留" :visible.sync="objectRentionFlag" width="700px">
         <h3 class="titleh1">对象锁定保留</h3>
-        <el-form
-          ref="objectRentionForm"
-          :model="objectRentionForm"
-          :rules="rules"
-        >
-          <el-radio-group
-            v-model="objectRentionForm.objectRentionRaido"
-            class="reverseColumn"
-            :disabled="disableObjectLock&&disableMode"
-          >
+        <el-form ref="objectRentionForm" :model="objectRentionForm" :rules="rules">
+          <el-radio-group v-model="objectRentionForm.objectRentionRaido" class="reverseColumn"
+            :disabled="disableObjectLock && disableMode">
             <el-radio label="OFF">禁用</el-radio>
             <el-radio label="ON">启用</el-radio>
           </el-radio-group>
           <div v-if="objectRentionForm.objectRentionRaido == 'ON'">
-            <el-form-item
-              label="保留模式"
-              class="reverseColumn"
-            >
-              <el-radio-group
-                v-model="objectRentionForm.Mode"
-                class="reverseColumn"
-                :disabled="disableMode"
-              >
+            <el-form-item label="保留模式" class="reverseColumn">
+              <el-radio-group v-model="objectRentionForm.Mode" class="reverseColumn" :disabled="disableMode">
                 <el-radio label="GOVERNANCE">监管模式</el-radio>
                 <el-radio label="COMPLIANCE">合规模式</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item
-              label="保留到期日"
-              prop="timePicker"
-              class="reverseColumn"
-            >
-              <el-date-picker
-                v-model="objectRentionForm.timePicker"
-                :picker-options="disableCurrentDate"
-                type="datetime"
-                placeholder="选择日期时间"
-              />
+            <el-form-item label="保留到期日" prop="timePicker" class="reverseColumn">
+              <el-date-picker v-model="objectRentionForm.timePicker" :picker-options="disableCurrentDate"
+                type="datetime" placeholder="选择日期时间" />
             </el-form-item>
             <div v-if="disableObjectLock">
               <i class="fa el-icon-warning-outline red" />
               <b>
                 在{{ mode === 'GOVERNANCE' ? '监管模式' : '合规模式' }}下，在保留期到期之前，对象不可变
               </b>
-              <p
-                v-if="mode==='COMPLIANCE'"
-                class="red"
-              >只能将保留日期更改为{{ RetainUntilDate }}之后的日期。</p>
+              <p v-if="mode === 'COMPLIANCE'" class="red">只能将保留日期更改为{{ RetainUntilDate }}之后的日期。</p>
             </div>
-            <div
-              v-else-if="objectRentionForm.objectRentionRaido === 'ON'"
-              class="red"
-            >
+            <div v-else-if="objectRentionForm.objectRentionRaido === 'ON'" class="red">
               <i class="fa el-icon-warning-outline" />
               在{{ objectRentionForm.Mode === 'GOVERNANCE' ? '监管模式' : '合规模式' }}下，在保留期到期之前，对象不可变
-              <p
-                v-if="mode==='COMPLIANCE'"
-                class="red"
-              >只能将保留日期更改为{{ RetainUntilDate }}之后的日期。</p>
+              <p v-if="mode === 'COMPLIANCE'" class="red">只能将保留日期更改为{{ RetainUntilDate }}之后的日期。</p>
             </div>
           </div>
         </el-form>
@@ -713,75 +478,34 @@
         </div>
       </el-dialog>
 
-      <el-dialog
-        ref="userDialog"
-        title="选择额外授权用户"
-        :visible.sync="flag"
-        @close="handleScroll('userDialog')"
-      >
+      <el-dialog ref="userDialog" title="选择额外授权用户" :visible.sync="flag" @close="handleScroll('userDialog')">
         <div class="clearfix">
           <el-row>
             <el-col :span="8">
-              <el-select
-                v-model="userGroup"
-                style="width: 100%;"
-                multiple
-                collapse-tags
-                placeholder="已选用户"
-                @change="changeSelect"
-              >
-                <el-option
-                  v-for="item in listGroup"
-                  :key="item.userName"
-                  :label="item.userName"
-                  :value="item.userName"
-                />
+              <el-select v-model="userGroup" style="width: 100%;" multiple collapse-tags placeholder="已选用户"
+                @change="changeSelect">
+                <el-option v-for="item in listGroup" :key="item.userName" :label="item.userName"
+                  :value="item.userName" />
               </el-select>
             </el-col>
-            <el-col
-              :span="8"
-              class="ipt"
-            >
-              <el-input
-                v-model="userName"
-                placeholder="用户名过滤"
-              />
+            <el-col :span="8" class="ipt">
+              <el-input v-model="userName" placeholder="用户名过滤" />
             </el-col>
           </el-row>
         </div>
-        <el-table
-          ref="userTable"
-          :data="userData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
-          :row-key="(row) => row.userName"
-          @selection-change="handleSelectionChange"
-        >
-          <el-table-column
-            type="selection"
-            reserve-selection
-            width="55"
-          />
-          <el-table-column
-            label="用户名"
-            prop="userName"
-          />
+        <el-table ref="userTable" :data="userData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
+          :row-key="(row) => row.userName" @selection-change="handleSelectionChange">
+          <el-table-column type="selection" reserve-selection width="55" />
+          <el-table-column label="用户名" prop="userName" />
         </el-table>
         <div slot="footer">
           <el-button class="blue" @click="flag = false">{{ $ts('button.cancel') }}</el-button>
           <el-button class="golden" @click="addAccount()">{{ $ts('button.confirm') }}</el-button>
         </div>
-        <div
-          v-show="total"
-          class="page_block"
-        >
-          <el-pagination
-            :current-page="currentPage"
-            :page-sizes="[5, 10, 50, 100]"
-            :page-size="pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="total"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-          />
+        <div v-show="total" class="page_block">
+          <el-pagination :current-page="currentPage" :page-sizes="[5, 10, 50, 100]" :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+            @current-change="handleCurrentChange" />
         </div>
       </el-dialog>
     </div>
@@ -792,7 +516,7 @@
 import { listUsers } from '@/api/user'
 import { getObjectMeta } from '@/api/bucket'
 export default {
-  data() {
+  data () {
     const validateCurrentTime = (rule, data, callback) => {
       const currentTime = new Date().getTime()
       const selectTime = new Date(data).getTime()
@@ -804,11 +528,11 @@ export default {
       ) {
         return callback(`请选择${this.RetainUntilDate}之后的时间。`)
       } else
-      if (selectTime < currentTime) {
-        return callback('保留到期日必须为未来的日期')
-      } else {
-        callback()
-      }
+        if (selectTime < currentTime) {
+          return callback('保留到期日必须为未来的日期')
+        } else {
+          callback()
+        }
     }
     const checkValidID = (rule, data, callback) => {
       const index = rule.field.match(/\d/)[0]
@@ -934,7 +658,7 @@ export default {
     }
   },
   computed: {
-    mapMetaInfo() {
+    mapMetaInfo () {
       return Object.keys(this.metaInfo).map(x => {
         return {
           label: x,
@@ -942,12 +666,12 @@ export default {
         }
       })
     },
-    isVersion() {
+    isVersion () {
       return sessionStorage.getItem('showHistory') == 'true'
     }
   },
   watch: {
-    userName(val) {
+    userName (val) {
       this.userData = [...this.copy]
       if (!val) return
       this.userData = this.userData.filter(item => {
@@ -955,7 +679,7 @@ export default {
       })
       this.total = this.userData.length
     },
-    flag(val) {
+    flag (val) {
       if (val) {
         listUsers().then(res => {
           // console.log('res', res)
@@ -982,7 +706,7 @@ export default {
         this.$refs.userTable.clearSelection()
       }
     },
-    objectRentionFlag(val) {
+    objectRentionFlag (val) {
       if (!val) {
         this.getObjectRetention()
       } else {
@@ -991,13 +715,13 @@ export default {
         }
       }
     },
-    legalHoldFlag(val) {
+    legalHoldFlag (val) {
       if (!val) {
         this.getObjectLegalHold()
       }
     }
   },
-  mounted() {
+  mounted () {
     this.routeArr = []
     this.routeArr.push(this.$route.params.id)
     if (this.$route.query.filename) {
@@ -1018,25 +742,25 @@ export default {
     // )
   },
   methods: {
-    directoryPath(path) {
+    directoryPath (path) {
       let index = this.routeArr.findIndex(x => x === path)
       index = index > 1 ? index + 1 : 2
       var temp = [...this.routeArr].slice(1, index).join('/')
       return temp
     },
-    showFileName(val) {
+    showFileName (val) {
       val = val || ''
       const arr = String(val).split('/')
       return arr[arr.length - 1]
     },
-    renderContentDisposition(data) {
+    renderContentDisposition (data) {
       try {
         return decodeURIComponent(data && data.replace(/%(?!\d|[ABCDEF]+)/g, '%25') || '-')
       } catch (error) {
         return '-'
       }
     },
-    handleClickRow(row) {
+    handleClickRow (row) {
       // this.$route.query.IsLatest = row.IsLatest
       // this.$route.query.VersionId = row.VersionId
       // query重新设置、
@@ -1051,10 +775,10 @@ export default {
       this.init()
       // console.log(row, this.$route)
     },
-    sortFunction(data) {
+    sortFunction (data) {
       this.versionTable.sort(this.sortMethod(data.prop, data.order))
     },
-    mapVersion(row) {
+    mapVersion (row) {
       if (row.IsLatest) {
         return '(当前版本)'
       }
@@ -1065,7 +789,7 @@ export default {
       //   return '(当前版本)'
       // }
     },
-    init() {
+    init () {
       this.loading = true
       const params = {
         Bucket: this.$route.params.id,
@@ -1109,7 +833,7 @@ export default {
           // console.log(data, '1233', res, '122333')
           if (!data) {
             this.$router.go(-1)
-            this.$ts({
+            this.$msg({
               type: 'error',
               text: '当前对象异常'
             })
@@ -1164,7 +888,7 @@ export default {
         // 对象元信息
       })
     },
-    getObjectMeta(existETag) {
+    getObjectMeta (existETag) {
       getObjectMeta({
         bucketName: this.$route.params.id,
         objectKey: this.$route.query.filename
@@ -1267,9 +991,9 @@ export default {
         this.loading = false
       })
     },
-    copyCode(str) {
+    copyCode (str) {
       if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
-        this.$ts({
+        this.$msg({
           type: 'success',
           text: '复制成功'
         })
@@ -1279,7 +1003,7 @@ export default {
         textarea.value = str
         document.body.append(textarea)
         textarea.select()
-        this.$ts({
+        this.$msg({
           type: 'success',
           text: '复制成功'
         })
@@ -1290,7 +1014,7 @@ export default {
       }
     },
     // 配置依法保留
-    saveObjectLegalHold() {
+    saveObjectLegalHold () {
       // 获取当前的versionId
       this.$store.state.user._S3.putObjectLegalHold(
         {
@@ -1307,7 +1031,7 @@ export default {
             console.error(err)
           } else {
             this.legalHoldFlag = false
-            this.$ts({
+            this.$msg({
               type: 'success',
               text: this.$ts('response.success')
             })
@@ -1315,7 +1039,7 @@ export default {
         }
       )
     },
-    getObjectLock() {
+    getObjectLock () {
       this.tabLoading = true
       this.$store.state.user._S3.getObjectLockConfiguration(
         {
@@ -1348,7 +1072,7 @@ export default {
         }
       )
     },
-    getObjectLegalHold() {
+    getObjectLegalHold () {
       this.legalHoldLoading = true
       this.$store.state.user._S3.getObjectLegalHold(
         {
@@ -1372,7 +1096,7 @@ export default {
         }
       )
     },
-    saveObjectRention() {
+    saveObjectRention () {
       this.$refs['objectRentionForm'].validate(valid => {
         if (valid) {
           // 未设置对象锁定配置 再点击报错 规避此问题
@@ -1392,7 +1116,7 @@ export default {
                   console.error(err)
                 } else {
                   this.objectRentionFlag = false
-                  this.$ts({
+                  this.$msg({
                     type: 'success',
                     text: this.$ts('response.success')
                   })
@@ -1429,7 +1153,7 @@ export default {
                 console.error(err)
               } else {
                 this.objectRentionFlag = false
-                this.$ts({
+                this.$msg({
                   type: 'success',
                   text: this.$ts('response.success')
                 })
@@ -1440,7 +1164,7 @@ export default {
         }
       })
     },
-    getObjectRetention() {
+    getObjectRetention () {
       this.objectRetentionFlag = true
       this.disableObjectLock = false
       this.$store.state.user._S3.getObjectRetention(
@@ -1491,7 +1215,7 @@ export default {
         }
       )
     },
-    saveConfig() {
+    saveConfig () {
       const permission = ['READ', 'READ_ACP', 'WRITE', 'WRITE_ACP']
       const Grants = []
       for (let i = 0; i < this.form.granteeTable.length; i++) {
@@ -1561,7 +1285,7 @@ export default {
             this.showS3Msg(err)
             console.error(err)
           } else {
-            this.$ts({
+            this.$msg({
               type: 'success',
               text: this.$ts('response.success')
             })
@@ -1572,7 +1296,7 @@ export default {
         }
       )
     },
-    handleClick() {
+    handleClick () {
       // getObjectAcl
       if (this.activeName === 'permission') {
         //  版本非版本统一api
@@ -1583,7 +1307,7 @@ export default {
         this.editStatus = false
       }
     },
-    getObjectAcl() {
+    getObjectAcl () {
       // console.log({
       //   Key: this.$route.query.filename,
       //   Bucket: this.$route.params.id,
@@ -1686,7 +1410,7 @@ export default {
         }
       )
     },
-    getObjectVersions() {
+    getObjectVersions () {
       return new Promise((resolve, reject) => {
         this.versionTable = []
         this.$store.state.user._S3.listObjectVersions(
@@ -1735,7 +1459,7 @@ export default {
         )
       })
     },
-    transClass(val) {
+    transClass (val) {
       switch (val) {
         case 'STANDARD':
           return '标准'
@@ -1743,7 +1467,7 @@ export default {
           break
       }
     },
-    bucketMap(val) {
+    bucketMap (val) {
       if (val.READ_ACP && val.WRITE_ACP) {
         return '读写ACL'
       } else if (val.READ_ACP) {
@@ -1754,7 +1478,7 @@ export default {
         return ''
       }
     },
-    objectMap(val) {
+    objectMap (val) {
       if (val.READ && val.WRITE) {
         return '读写'
       } else if (val.WRITE) {
@@ -1765,11 +1489,11 @@ export default {
         return '/'
       }
     },
-    editConfig() {
+    editConfig () {
       this.editStatus = true
       this.form.granteeTable = [...this.tableData]
     },
-    addAccount() {
+    addAccount () {
       // this.form.granteeTable.push({})
       for (let i = 0; i < this.selected.length; i++) {
         this.form.granteeTable.push({
@@ -1779,7 +1503,7 @@ export default {
       this.flag = false
     },
     // 对象操作
-    handleStatus(command) {
+    handleStatus (command) {
       switch (command) {
         case 'download':
           // console.log('下载为')
@@ -1789,10 +1513,10 @@ export default {
           break
       }
     },
-    handleScroll(ref) {
+    handleScroll (ref) {
       this.$refs[ref].$el.scrollTop = 0
     },
-    changeSelect(val) {
+    changeSelect (val) {
       // console.log(val, 'val')
       const restGroup = this.userGroup.map(item => {
         return {
@@ -1805,13 +1529,13 @@ export default {
         this.$refs.userTable.toggleRowSelection(item)
       })
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       this.pageSize = val
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       this.currentPage = val
     },
-    handleSelectionChange(val) {
+    handleSelectionChange (val) {
       // console.log(val, 'val')
       this.selected = val
       this.listGroup = [...val]
@@ -1824,13 +1548,17 @@ export default {
 <style scoped lang="scss">
 ::v-deep .clearfix {
   margin-bottom: 20px;
+
   .el-select {
     float: left;
+
     .el-select__tags-text {
       color: #e39606;
     }
+
     .el-icon-close {
       background-color: #909399;
+
       &:hover {
         background-color: #ff8746;
       }
@@ -1865,6 +1593,7 @@ export default {
 
 .topMenu {
   margin-bottom: 30px;
+
   h2 {
     font-size: 26px;
     width: 50%;
@@ -1881,6 +1610,7 @@ export default {
 }
 
 .reverseColumn {
+
   .el-checkbox,
   .el-radio {
     margin-bottom: 10px;
@@ -1903,43 +1633,52 @@ export default {
 
 .headFlex {
   display: flex;
+
   h3 {
     width: 50%;
   }
 }
+
 .configList {
   .content {
     width: 100%;
     display: flex;
     justify-content: space-between;
+
     .contentL {
       display: flex;
       width: 100%;
       margin-right: 20px;
       flex-wrap: wrap;
+
       p {
         width: 200px;
         border-right: 1px solid #4d5d64;
       }
     }
+
     .headContainer {
       width: 100%;
       display: flex;
       flex-wrap: wrap;
+
       p {
         min-width: 170px;
         width: 10%;
         border-right: 1px solid #4d5d64;
       }
     }
+
     .layout_meta {
       display: flex;
       flex-wrap: wrap;
+
       p {
         border-right: 1px solid #4d5d64;
         width: 200px;
       }
     }
+
     .contentR {
       flex: 1;
     }
@@ -1954,7 +1693,8 @@ export default {
       box-sizing: border-box;
       font-size: 14px;
       font-weight: bold;
-      & > span {
+
+      &>span {
         font-weight: normal;
         margin-top: 10px;
         color: #d3d6d8;
@@ -1979,6 +1719,7 @@ export default {
     background: unset !important;
   }
 }
+
 // 前端怎么让内容的高度和div的高度自适应
 .bdetail_header {
   margin: 10px 0;
@@ -2006,6 +1747,7 @@ export default {
   text-decoration: none;
   font-weight: 700;
 }
+
 :deep(.tooltip-container) {
   width: fit-content !important;
   max-width: 100% !important;

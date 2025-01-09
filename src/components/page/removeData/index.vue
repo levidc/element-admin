@@ -1,204 +1,89 @@
 <template>
   <div>
-    <div
-      class="page_content_wrap"
-      @keyup.enter="searchParams()"
-    >
-      <el-form
-        ref="form"
-        :model="form"
-        label-width="120px"
-        class="searchForm"
-      >
+    <div class="page_content_wrap" @keyup.enter="searchParams()">
+      <el-form ref="form" :model="form" label-width="120px" class="searchForm">
         <div class="searchContent">
           <el-col :span="6">
-            <el-form-item
-              class="noLabel"
-              prop="taskName"
-            >
-              <el-input
-                v-model="form.taskName"
-                placeholder="任务名称查询"
-                clearable
-              />
+            <el-form-item class="noLabel" prop="taskName">
+              <el-input v-model="form.taskName" placeholder="任务名称查询" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item
-              class="noLabel"
-              prop="userName"
-            >
-              <el-input
-                v-model="form.userName"
-                placeholder="创建人查询"
-                clearable
-              />
+            <el-form-item class="noLabel" prop="userName">
+              <el-input v-model="form.userName" placeholder="创建人查询" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item
-              class="noLabel"
-              prop="createStartTime"
-            >
-              <el-date-picker
-                v-model="form.createStartTime"
-                type="datetime"
-                placeholder="任务创建时间"
-              />
+            <el-form-item class="noLabel" prop="createStartTime">
+              <el-date-picker v-model="form.createStartTime" type="datetime" placeholder="任务创建时间" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item
-              class="noLabel"
-              prop="createEndTime"
-            >
-              <el-date-picker
-                v-model="form.createEndTime"
-                type="datetime"
-                placeholder="任务完成时间"
-              />
+            <el-form-item class="noLabel" prop="createEndTime">
+              <el-date-picker v-model="form.createEndTime" type="datetime" placeholder="任务完成时间" />
             </el-form-item>
           </el-col>
         </div>
         <div class="search">
           <!-- <el-button class="golden mr_10" type="primary" @click="createTask">创建任务</el-button> -->
-          <el-button
-            class="mr_10"
-            @click="reset"
-          >重置</el-button>
-          <el-button
-            class="golden mr_10"
-            type="primary"
-            @click="searchParams"
-          >查询</el-button>
-          <SelectColumns
-            :column-headers="columns"
-            class="mr_10"
-            @hideColumn="hideColumn"
-          />
-          <el-tooltip
-            content="刷新"
-            placement="top"
-            effect="dark"
-          >
-            <i
-              class="el-icon-refresh"
-              @click="handleRefresh"
-            />
+          <el-button class="mr_10" @click="reset">重置</el-button>
+          <el-button class="golden mr_10" type="primary" @click="searchParams">查询</el-button>
+          <SelectColumns :column-headers="columns" class="mr_10" @hideColumn="hideColumn" />
+          <el-tooltip content="刷新" placement="top" effect="dark">
+            <i class="el-icon-refresh" @click="handleRefresh" />
           </el-tooltip>
         </div>
       </el-form>
-      <TableData
-        ref="tab"
-        :table-data="tableData"
-        :columns="columns"
-        :selection="false"
-        :loading="loading"
-        :sort-function="sortFunction"
-        :page-obj="{ currentPage: 1, pageSize: 10 }"
-        :default-sort="{ prop: 'createTime', order: 'descending' }"
-        :total="total"
-        :max-height="tableHeight"
-        pagination
-        @renderPagination="renderPagination"
-      >
-        <el-table-column
-          slot="taskName"
-          prop="taskName"
-          label="任务名称"
-          sortable="custom"
-          min-width="120px"
-          fixed="left"
-        >
+      <TableData ref="tab" :table-data="tableData" :columns="columns" :selection="false" :loading="loading"
+        :sort-function="sortFunction" :page-obj="{ currentPage: 1, pageSize: 10 }"
+        :default-sort="{ prop: 'createTime', order: 'descending' }" :total="total" :max-height="tableHeight" pagination
+        @renderPagination="renderPagination">
+        <el-table-column slot="taskName" prop="taskName" label="任务名称" sortable="custom" min-width="120px" fixed="left">
           <template slot-scope="scope">
             <showToolTip :text="scope.row.taskName" />
           </template>
         </el-table-column>
-        <el-table-column
-          slot="sourceDetail"
-          prop="sourceDetail"
-          label="源资源路径"
-          sortable="custom"
-          min-width="150"
-        >
+        <el-table-column slot="sourceDetail" prop="sourceDetail" label="源资源路径" sortable="custom" min-width="150">
           <template slot-scope="scope">
             <showToolTip :text="scope.row.sourceDetail" />
           </template>
         </el-table-column>
-        <el-table-column
-          slot="targetDetail"
-          prop="targetDetail"
-          label="目标资源路径"
-          sortable="custom"
-          min-width="150"
-        >
+        <el-table-column slot="targetDetail" prop="targetDetail" label="目标资源路径" sortable="custom" min-width="150">
           <template slot-scope="scope">
             <showToolTip :text="scope.row.targetDetail" />
           </template>
         </el-table-column>
-        <el-table-column
-          slot="taskProgress"
-          label="任务进度"
-          prop="taskProgress"
-          sortable="custom"
-          width="120px"
-        >
+        <el-table-column slot="taskProgress" label="任务进度" prop="taskProgress" sortable="custom" width="120px">
           <template slot-scope="scope">
             <span v-if="!scope.row.taskProgress" />
-            <el-progress
-              v-else
-              :percentage="showProgress(scope.row)"
-              :color="showProgreeColor(scope.row)"
-            />
+            <el-progress v-else :percentage="showProgress(scope.row)" :color="showProgreeColor(scope.row)" />
           </template>
         </el-table-column>
-        <el-table-column
-          slot="remark"
-          label="备注"
-          prop="remark"
-          width="120px"
-        >
+        <el-table-column slot="remark" label="备注" prop="remark" width="120px">
           <template slot-scope="scope">
-            <el-tooltip
-              :content="scope.row.remark"
-              placement="top"
-            >
+            <el-tooltip :content="scope.row.remark" placement="top">
               <span class="showOverFlown">
                 {{ scope.row.remark }}
               </span>
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column
-          slot="action"
-          :label="$ts('action')"
-          fixed="right"
-          width="100px"
-        >
+        <el-table-column slot="action" :label="$ts('action')" fixed="right" width="100px">
           <template slot-scope="scope">
             <el-dropdown size="small">
-              <el-button
-                v-access="'admin:UpdateStorageResourceController' || 'admin:DeleteResourceController'"
-                type="primary"
-                class="blue"
-              >
+              <el-button v-access="'admin:UpdateStorageResourceController' || 'admin:DeleteResourceController'"
+                type="primary" class="blue">
                 {{ $ts('action') }}<i class="el-icon-arrow-down el-icon--right" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <!-- 添加下拉菜单禁用、需外层容器添加类名 -->
                 <!-- cursorDisabled -->
                 <div :class="[judgeDisableBtn(scope.row) ? 'cursorDisabled' : null]">
-                  <el-dropdown-item
-                    :disabled="judgeDisableBtn(scope.row)"
-                    @click.native="doRetryTask(scope.row)"
-                  > 重试任务
+                  <el-dropdown-item :disabled="judgeDisableBtn(scope.row)" @click.native="doRetryTask(scope.row)"> 重试任务
                   </el-dropdown-item>
                 </div>
                 <div :class="[scope.row.status !== 'FAILURE' ? 'cursorDisabled' : null]">
-                  <el-dropdown-item
-                    :disabled="scope.row.status !== 'FAILURE'"
-                    @click.native="doDelete(scope.row)"
-                  >
+                  <el-dropdown-item :disabled="scope.row.status !== 'FAILURE'" @click.native="doDelete(scope.row)">
                     删除任务
                   </el-dropdown-item>
                 </div>
@@ -208,65 +93,24 @@
         </el-table-column>
       </TableData>
     </div>
-    <el-dialog
-      :visible.sync="taskFlag"
-      width="40%"
-      title="创建回迁任务"
-    >
-      <el-form
-        ref="taskForm"
-        :model="taskForm"
-        :rules="rules"
-        label-width="160px"
-        class="taskForm"
-      >
-        <el-form-item
-          label="任务名称"
-          prop="taskName"
-        >
-          <el-input
-            v-model="taskForm.taskName"
-            placeholder="请输入任务名称"
-            clearable
-          />
+    <el-dialog :visible.sync="taskFlag" width="40%" title="创建回迁任务">
+      <el-form ref="taskForm" :model="taskForm" :rules="rules" label-width="160px" class="taskForm">
+        <el-form-item label="任务名称" prop="taskName">
+          <el-input v-model="taskForm.taskName" placeholder="请输入任务名称" clearable />
         </el-form-item>
-        <el-form-item
-          label="源资源名称"
-          prop="sourceResourceId"
-        >
-          <el-select
-            v-model="taskForm.sourceResourceId"
-            clearable
-          >
-            <el-option
-              v-for="item in taskForm.nasList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
+        <el-form-item label="源资源名称" prop="sourceResourceId">
+          <el-select v-model="taskForm.sourceResourceId" clearable>
+            <el-option v-for="item in taskForm.nasList" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
-        <el-form-item
-          label="源资源路径"
-          prop="sourceDetail"
-        >
+        <el-form-item label="源资源路径" prop="sourceDetail">
           <span>taskForm.sourceDetail</span>
           <!-- <el-input v-model="taskForm.sourceDetail" placeholder="请设置源资源路径" clearable /> -->
         </el-form-item>
-        <el-form-item
-          label="目标资源名称"
-          prop="targetResourceId"
-        >
-          <el-select
-            v-model="taskForm.targetResourceId"
-            @change="renderTargetResouce"
-          >
-            <el-option
-              v-for="item in taskForm.resourceList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
+        <el-form-item label="目标资源名称" prop="targetResourceId">
+          <el-select v-model="taskForm.targetResourceId" @change="renderTargetResouce">
+            <el-option v-for="item in taskForm.resourceList" :key="item.value" :label="item.label"
+              :value="item.value" />
           </el-select>
         </el-form-item>
         <el-form-item label="目标资源路径">
@@ -274,10 +118,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer">
-        <el-button
-          class="golden"
-          @click="confirmCreate"
-        >{{ $ts('true') }}</el-button>
+        <el-button class="golden" @click="confirmCreate">{{ $ts('true') }}</el-button>
         <el-button @click="taskFlag = false">{{ $ts('wtstype.none') }}</el-button>
       </div>
     </el-dialog>
@@ -287,7 +128,7 @@
 import { queryMoveBackTasks, createMoveBackTasks, listStorageResource, retryTaskMove, deleteMoveBackTask } from '@/api/storage'
 import moment from 'moment'
 export default {
-  data() {
+  data () {
     return {
       tableHeight: 500,
       total: 0,
@@ -454,13 +295,13 @@ export default {
     }
   },
   computed: {
-    watchForm() {
+    watchForm () {
       return JSON.stringify(this.form)
     }
   },
   watch: {
     watchForm: {
-      handler(val) {
+      handler (val) {
         clearTimeout(this.timer)
       }
     }
@@ -468,33 +309,33 @@ export default {
     //   $('.el-progress-bar__inner').hide(200).show(200)
     // }
   },
-  created() {
+  created () {
     window.addEventListener('resize', this.getHeight)
   },
-  mounted() {
+  mounted () {
     // this.init({ params: { pageNumber: 1, pageSize: 10 }}, true)
     this.$nextTick(() => {
       this.handleSearchParams(false, true)
       this.getHeight()
     })
   },
-  destroyed() {
+  destroyed () {
     clearTimeout(this.timer)
   },
   methods: {
-    getHeight() {
+    getHeight () {
       this.$nextTick(() => {
         const height = window.innerHeight - 400
         this.tableHeight = height > 200 ? height : 200
       })
     },
-    hideColumn(columns) {
+    hideColumn (columns) {
       this.columns = columns
       this.$nextTick(() => {
         this.$refs['tab'].$refs['dataTable'] && this.$refs['tab'].$refs['dataTable'].doLayout()
       })
     },
-    doDelete(row) {
+    doDelete (row) {
       const { id, taskName } = row
       this.$confirm(`删除如下任务：<b style="color:#ff8736">${taskName}</b>，请确认！`, '', {
         confirmButtonText: '确定',
@@ -502,7 +343,7 @@ export default {
         dangerouslyUseHTMLString: true
       }).then(() => {
         deleteMoveBackTask({ taskId: id }).then(() => {
-          this.$ts({
+          this.$msg({
             type: 'success',
             text: this.$ts('response.success')
           })
@@ -511,7 +352,7 @@ export default {
         })
       })
     },
-    judgeDisableBtn(row) {
+    judgeDisableBtn (row) {
       if (row.status !== 'FAILURE') {
         return true
       } else if (row.taskType === 'ES') {
@@ -522,7 +363,7 @@ export default {
     },
     // 回迁 索引恢复失败 || 源资源与恢复资源路径一致
 
-    showProgreeColor(row) {
+    showProgreeColor (row) {
       switch (row.status) {
         case 'PROCESSING':
           return '#517beb'
@@ -534,10 +375,10 @@ export default {
           return '#FF8746'
       }
     },
-    showProgress(row) {
+    showProgress (row) {
       return parseInt(((row.taskProgress / row.dataCount) * 100))
     },
-    handleSearchParams(customPage, loading = false) {
+    handleSearchParams (customPage, loading = false) {
       const { pageSize, currentPage } = this.$refs['tab']
       const { userName, createStartTime, createEndTime, taskName } = this.form
       const data = {
@@ -556,23 +397,23 @@ export default {
         data
       }, loading)
     },
-    renderPagination(val) {
+    renderPagination (val) {
       this.handleSearchParams(val, true)
     },
-    sortFunction(val) {
+    sortFunction (val) {
       const { prop, order } = val
       Object.assign(
         this.sort, { prop, order }
       )
       this.handleSearchParams(false, true)
     },
-    renderTargetResouce() {
+    renderTargetResouce () {
       const flag = this.taskForm.resourceList.filter(item => {
         return this.taskForm.targetResourceId === item.value
       })
       this.taskForm.targetDetail = flag && flag[0].bucketName
     },
-    async createTask() {
+    async createTask () {
       const res = await listStorageResource({
         deviceId: '66666666666666666'
       })
@@ -606,7 +447,7 @@ export default {
         this.taskFlag = true
       }
     },
-    confirmCreate() {
+    confirmCreate () {
       this.$refs['taskForm'].validate((valid) => {
         if (valid) {
           const {
@@ -623,7 +464,7 @@ export default {
             targetResourceId,
             taskName
           }).then((res) => {
-            this.$ts({
+            this.$msg({
               type: 'success',
               text: '操作成功'
             })
@@ -632,7 +473,7 @@ export default {
         }
       })
     },
-    reset() {
+    reset () {
       this.$refs['form'].resetFields()
       // 重置分页数为1
       this.$refs['tab'].currentPage = 1
@@ -646,17 +487,17 @@ export default {
       //     }
       //   }, true)
     },
-    handleRefresh() {
+    handleRefresh () {
       this.handleSearchParams(false, true)
     },
-    searchParams() {
+    searchParams () {
       const { pageSize } = this.$refs['tab']
       this.$refs['tab'].currentPage = 1
       this.handleSearchParams(
         { pageSize, pageNumber: 1 }, true
       )
     },
-    init(data = {}, flag = false) {
+    init (data = {}, flag = false) {
       // this.loading = false
       // this.tableData = [
       // {
@@ -701,7 +542,7 @@ export default {
           }, 5000)
         })
     },
-    doRetryTask(row) {
+    doRetryTask (row) {
       const taskId = row.id
       this.$confirm('是否重试当前已失败的任务', `任务名:${row.taskName}`, {
         distinguishCancelAndClose: true,
@@ -711,7 +552,7 @@ export default {
         retryTaskMove({
           taskId
         }).then(() => {
-          this.$ts({
+          this.$msg({
             type: 'success',
             text: this.$ts('response.success')
           })
@@ -731,18 +572,22 @@ export default {
     height: 100%;
   }
 }
+
 ::v-deep .searchForm {
   display: flex;
   justify-content: space-between;
+
   .searchContent {
     .el-form-item__content {
       margin-right: 20px;
     }
+
     display: flex;
     flex-wrap: wrap;
     flex: 1;
     margin-right: 8%;
   }
+
   .search {
     .el-button {
       position: relative;
@@ -753,6 +598,7 @@ export default {
       position: relative;
       top: 10px;
     }
+
     width: 240px;
   }
 

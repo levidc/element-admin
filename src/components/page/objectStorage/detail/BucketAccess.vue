@@ -3,47 +3,24 @@
     <div class="bucket-detail">
       <div class="bucket-detail-inner">
         <div class="bucket-panel">
-          <div
-            id="basic-info-field"
-            class="param-box"
-          >
+          <div id="basic-info-field" class="param-box">
             <div class="param-hd">
               <h3>访问控制列表(ACL)</h3>
-              <el-button
-                v-show="!editStatus&&!loading"
-                v-access="'s3:PutBucketAcl'"
-                type="text"
-                style="position:relative;top:3px"
-                @click="editConfig"
-              >
+              <el-button v-show="!editStatus && !loading" v-access="'s3:PutBucketAcl'" type="text"
+                style="position:relative;top:3px" @click="editConfig">
                 <span style="color:#ff8746;">编辑</span>
               </el-button>
             </div>
-            <el-form
-              :model="formAcl"
-              label-width="120px"
-            >
-              <el-form-item
-                v-if="!editStatus&&!loading"
-                label="桶ACL"
-                style="width:50%"
-              >
+            <el-form :model="formAcl" label-width="120px">
+              <el-form-item v-if="!editStatus && !loading" label="桶ACL" style="width:50%">
                 <el-button type="text">{{ formAcl.readAcl }}</el-button>
               </el-form-item>
 
               <!-- 额外用户start -->
-              <el-table
-                v-show="!editStatus&&tableData.length"
-                v-loading="loading"
-                :data="tableData"
-              >
-                <el-table-column
-                  prop="owner"
-                  label="被授权者"
-                  width="500px"
-                >
+              <el-table v-show="!editStatus && tableData.length" v-loading="loading" :data="tableData">
+                <el-table-column prop="owner" label="被授权者" width="500px">
                   <template slot-scope="scope">
-                    {{ scope.row.userName }} {{ scope.row.owner?'(桶owner)' : '' }}
+                    {{ scope.row.userName }} {{ scope.row.owner ? '(桶owner)' : '' }}
                   </template>
                 </el-table-column>
                 <el-table-column label="">
@@ -59,10 +36,7 @@
                     <span>{{ objectMap(scope.row) || '-' }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column
-                  prop="owner"
-                  label=""
-                >
+                <el-table-column prop="owner" label="">
                   <template slot-scope="scope">
                     <!-- <div v-if="editStatus" class="reverseColumn">
                       <el-checkbox v-model="scope.row.bucketRead">
@@ -78,11 +52,7 @@
               </el-table>
               <!-- 额外用户end -->
 
-              <el-form-item
-                v-if="editStatus"
-                label="桶ACL"
-                prop="setAcl"
-              >
+              <el-form-item v-if="editStatus" label="桶ACL" prop="setAcl">
                 <el-radio-group v-model="formAcl.selectAcl">
                   <el-radio label="private">私有</el-radio>
                   <el-radio label="public-read">公共读</el-radio>
@@ -92,36 +62,16 @@
               </el-form-item>
             </el-form>
 
-            <div
-              v-show="editStatus"
-              v-access="'admin:ListUsers'"
-              class="addOtherAccount"
-            >
+            <div v-show="editStatus" v-access="'admin:ListUsers'" class="addOtherAccount">
               <h3>其他账号的访问权限</h3>
-              <el-button
-                v-access="'admin:ListUsers'"
-                class="golden"
-                @click="flag=true"
-              >添加授权用户</el-button>
-              <el-form
-                ref="form"
-                :model="form"
-              >
-                <el-table
-                  v-if="form.granteeTable&&form.granteeTable.length"
-                  :data="form.granteeTable"
-                >
-                  <el-table-column
-                    label="被授权者ID"
-                    width="450px"
-                  >
+              <el-button v-access="'admin:ListUsers'" class="golden" @click="flag = true">添加授权用户</el-button>
+              <el-form ref="form" :model="form">
+                <el-table v-if="form.granteeTable && form.granteeTable.length" :data="form.granteeTable">
+                  <el-table-column label="被授权者ID" width="450px">
                     <template slot-scope="scope">
                       <!--  :rules="ruleId" -->
-                      <el-form-item
-                        :rules="ruleId"
-                        :prop="'granteeTable.'+ scope.$index +'.userName'"
-                      >
-                        {{ scope.row.userName }} {{ scope.row.owner?'(桶owner)' : '' }}
+                      <el-form-item :rules="ruleId" :prop="'granteeTable.' + scope.$index + '.userName'">
+                        {{ scope.row.userName }} {{ scope.row.owner ? '(桶owner)' : '' }}
                         <!-- <el-input style="margin-top:20px" v-model="scope.row.userName" placeholder="输入规范ID" readonly/> -->
                       </el-form-item>
                     </template>
@@ -130,16 +80,10 @@
                   <el-table-column label="">
                     <template slot-scope="scope">
                       <div class="">
-                        <el-checkbox
-                          v-model="scope.row.READ"
-                          :disabled="scope.row.owner"
-                        >
+                        <el-checkbox v-model="scope.row.READ" :disabled="scope.row.owner">
                           读
                         </el-checkbox>
-                        <el-checkbox
-                          v-model="scope.row.WRITE"
-                          :disabled="scope.row.owner"
-                        >
+                        <el-checkbox v-model="scope.row.WRITE" :disabled="scope.row.owner">
                           写
                         </el-checkbox>
                       </div>
@@ -148,16 +92,10 @@
                   <el-table-column label="">
                     <template slot-scope="scope">
                       <div class="">
-                        <el-checkbox
-                          v-model="scope.row.READ_ACP"
-                          :disabled="scope.row.owner"
-                        >
+                        <el-checkbox v-model="scope.row.READ_ACP" :disabled="scope.row.owner">
                           读ACL
                         </el-checkbox>
-                        <el-checkbox
-                          v-model="scope.row.WRITE_ACP"
-                          :disabled="scope.row.owner"
-                        >
+                        <el-checkbox v-model="scope.row.WRITE_ACP" :disabled="scope.row.owner">
                           写ACL
                         </el-checkbox>
                       </div>
@@ -165,7 +103,8 @@
                   </el-table-column>
                   <el-table-column label="操作">
                     <template slot-scope="scope">
-                      <svg v-if="!scope.row.owner" @click="form.granteeTable.splice(scope.$index,1)" class="icon icon-trash" aria-hidden="true">
+                      <svg v-if="!scope.row.owner" @click="form.granteeTable.splice(scope.$index, 1)"
+                        class="icon icon-trash" aria-hidden="true">
                         <use xlink:href="#icon-trash" />
                       </svg>
                     </template>
@@ -173,94 +112,41 @@
                 </el-table>
               </el-form>
             </div>
-            <div
-              v-show="editStatus"
-              class="bottomMenu"
-            >
-              <el-button
-                class="blue"
-                @click="editStatus=false;getBucketAcl()"
-              >取消</el-button>
-              <el-button
-                type="primary"
-                class="golden"
-                @click="saveConfig"
-              >保存</el-button>
+            <div v-show="editStatus" class="bottomMenu">
+              <el-button class="blue" @click="editStatus = false; getBucketAcl()">取消</el-button>
+              <el-button type="primary" class="golden" @click="saveConfig">保存</el-button>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <el-dialog
-      ref="userDialog"
-      title="选择额外授权用户"
-      :visible.sync="flag"
-      @close="handleScroll('userDialog')"
-    >
+    <el-dialog ref="userDialog" title="选择额外授权用户" :visible.sync="flag" @close="handleScroll('userDialog')">
       <div class="clearfix">
         <el-row>
           <el-col :span="8">
-            <el-select
-              v-model="userGroup"
-              style="width: 100%;"
-              multiple
-              collapse-tags
-              placeholder="已选用户"
-              @change="changeSelect"
-            >
-              <el-option
-                v-for="item in listGroup"
-                :key="item.userName"
-                :label="item.userName"
-                :value="item.userName"
-              />
+            <el-select v-model="userGroup" style="width: 100%;" multiple collapse-tags placeholder="已选用户"
+              @change="changeSelect">
+              <el-option v-for="item in listGroup" :key="item.userName" :label="item.userName" :value="item.userName" />
             </el-select>
           </el-col>
-          <el-col
-            :span="8"
-            class="ipt"
-          >
-            <el-input
-              v-model="userName"
-              placeholder="用户名过滤"
-              clearable
-            />
+          <el-col :span="8" class="ipt">
+            <el-input v-model="userName" placeholder="用户名过滤" clearable />
           </el-col>
         </el-row>
       </div>
-      <el-table
-        ref="userTable"
-        :data="userData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-        :row-key="(row)=>row.userName"
-        @selection-change="handleSelectionChange"
-      >
-        <el-table-column
-          type="selection"
-          reserve-selection
-          width="55"
-        />
-        <el-table-column
-          label="用户名"
-          prop="userName"
-        />
+      <el-table ref="userTable" :data="userData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
+        :row-key="(row) => row.userName" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" reserve-selection width="55" />
+        <el-table-column label="用户名" prop="userName" />
       </el-table>
       <div slot="footer">
-        <el-button class="blue" @click="flag=false">{{ $ts('button.cancel') }}</el-button>
+        <el-button class="blue" @click="flag = false">{{ $ts('button.cancel') }}</el-button>
         <el-button type="primary" class="golden" @click="addAccount()">{{ $ts('button.confirm') }}</el-button>
       </div>
-      <div
-        v-show="total"
-        class="page_block"
-      >
-        <el-pagination
-          :current-page="currentPage"
-          :page-sizes="[5, 10, 50, 100]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
+      <div v-show="total" class="page_block">
+        <el-pagination :current-page="currentPage" :page-sizes="[5, 10, 50, 100]" :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+          @current-change="handleCurrentChange" />
       </div>
     </el-dialog>
   </div>
@@ -272,7 +158,7 @@ export default {
   name: 'BucketAccess',
   components: {},
   filters: {},
-  data() {
+  data () {
     const checkValidID = (rule, data, callback) => {
       const index = rule.field.match(/\d/)[0]
       const len = this.form.granteeTable.length
@@ -337,7 +223,7 @@ export default {
   },
   computed: {},
   watch: {
-    userName(val) {
+    userName (val) {
       this.userData = [...this.copy]
       this.total = this.userData.length
       this.currentPage = 1
@@ -347,7 +233,7 @@ export default {
       })
       this.total = this.userData.length
     },
-    flag(val) {
+    flag (val) {
       if (val) {
         listUsers().then(res => {
           res.data = res.data.filter(item => item.userName !== 'superAdmin')
@@ -375,11 +261,11 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.getBucketAcl()
   },
   methods: {
-    getBucketAcl() {
+    getBucketAcl () {
       this.loading = true
       this.form.granteeTable = []
       this.$store.state.user._S3.getBucketAcl(
@@ -471,7 +357,7 @@ export default {
         }
       )
     },
-    changeSelect(val) {
+    changeSelect (val) {
       console.log(val, 'val')
       const restGroup = this.userGroup.map(item => {
         return {
@@ -484,23 +370,23 @@ export default {
         this.$refs.userTable.toggleRowSelection(item)
       })
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       this.pageSize = val
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       this.currentPage = val
     },
-    handleSelectionChange(val) {
+    handleSelectionChange (val) {
       // console.log(val, 'val')
       this.selected = val
       this.listGroup = [...val]
       this.userGroup = this.listGroup.map(item => item.userName)
       // this.userGroup = [...val]
     },
-    handleScroll(ref) {
+    handleScroll (ref) {
       this.$refs[ref].$el.scrollTop = 0
     },
-    bucketMap(val) {
+    bucketMap (val) {
       if (val.READ_ACP && val.WRITE_ACP) {
         return '读写ACL'
       } else if (val.READ_ACP) {
@@ -511,7 +397,7 @@ export default {
         return ''
       }
     },
-    objectMap(val) {
+    objectMap (val) {
       if (val.READ && val.WRITE) {
         return '读写'
       } else if (val.WRITE) {
@@ -522,7 +408,7 @@ export default {
         return '-'
       }
     },
-    txtSwitch(permission, index) {
+    txtSwitch (permission, index) {
       index = Number(index)
       switch (permission) {
         case 'READ':
@@ -545,13 +431,13 @@ export default {
           break
       }
     },
-    editConfig() {
+    editConfig () {
       this.editStatus = true
       // 排序恢复默认排序、tableData移除外部账户，多余归到授权表格granteeTable
       // this.tableData.sort((a, b) => a.key - b.key)
       this.form.granteeTable = [...this.tableData]
     },
-    saveConfig() {
+    saveConfig () {
       const permission = ['READ', 'READ_ACP', 'WRITE', 'WRITE_ACP']
       const Grants = []
       for (let i = 0; i < this.form.granteeTable.length; i++) {
@@ -641,7 +527,7 @@ export default {
             this.showS3Msg(err)
             console.error(err)
           } else {
-            this.$ts({
+            this.$msg({
               type: 'success',
               text: this.$ts('response.success')
             })
@@ -654,7 +540,7 @@ export default {
       //   console.log(valid, 'valid')
       // })
     },
-    addAccount() {
+    addAccount () {
       for (let i = 0; i < this.selected.length; i++) {
         this.form.granteeTable.push({
           userName: this.selected[i].userName
@@ -674,13 +560,17 @@ export default {
 
 ::v-deep .clearfix {
   margin-bottom: 20px;
+
   .el-select {
     float: left;
+
     .el-select__tags-text {
       color: #e39606;
     }
+
     .el-icon-close {
       background-color: #909399;
+
       &:hover {
         background-color: #ff8746;
       }

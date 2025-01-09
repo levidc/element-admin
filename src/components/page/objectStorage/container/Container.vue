@@ -4,111 +4,45 @@
       <el-form label-width="100px">
         <el-row>
           <el-col :span="6">
-            <el-form-item
-              label="选择域"
-              required
-            >
-              <el-select
-                v-model="domain"
-                filterable
-                clearable
-                size="mini"
-                placeholder="请选择一个域"
-                @change="changeDomain"
-              >
-                <el-option
-                  v-for="item in domainList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
+            <el-form-item label="选择域" required>
+              <el-select v-model="domain" filterable clearable size="mini" placeholder="请选择一个域" @change="changeDomain">
+                <el-option v-for="item in domainList" :key="item.value" :label="item.label" :value="item.value">
                   {{ item.label }}
                 </el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col
-            v-show="domain"
-            :span="6"
-          >
+          <el-col v-show="domain" :span="6">
             <el-form-item label="类型">
-              <el-select
-                v-model="containerFormatType"
-                size="mini"
-                filterable
-                clearable
-                placeholder="选择type"
-                @change="clearStoragepoolId"
-              >
-                <el-option
-                  v-for="item in typeList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >{{ item.label }}
+              <el-select v-model="containerFormatType" size="mini" filterable clearable placeholder="选择type"
+                @change="clearStoragepoolId">
+                <el-option v-for="item in typeList" :key="item.value" :label="item.label" :value="item.value">{{
+                  item.label }}
                 </el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col
-            v-show="domain"
-            :span="6"
-          >
+          <el-col v-show="domain" :span="6">
             <el-form-item label="EC类型">
-              <el-select
-                v-model="durabilityType"
-                size="mini"
-                filterable
-                clearable
-                placeholder="选择EC类型"
-                @change="clearStoragepoolId"
-              >
-                <el-option
-                  v-for="item in ecTypeList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >{{ item.label }}
+              <el-select v-model="durabilityType" size="mini" filterable clearable placeholder="选择EC类型"
+                @change="clearStoragepoolId">
+                <el-option v-for="item in ecTypeList" :key="item.value" :label="item.label" :value="item.value">{{
+                  item.label }}
                 </el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <div
-            class="right"
-            style="margin-top:12px"
-          >
-            <el-tooltip
-              content="刷新"
-              placement="top"
-              effect="dark"
-            >
-              <i
-                class="el-icon-refresh"
-                @click="listContainers"
-              />
+          <div class="right" style="margin-top:12px">
+            <el-tooltip content="刷新" placement="top" effect="dark">
+              <i class="el-icon-refresh" @click="listContainers" />
             </el-tooltip>
           </div>
         </el-row>
 
-        <el-form-item
-          v-show="domain"
-          label="存储池"
-          required
-        >
-          <el-select
-            v-model="storagepoolId"
-            filterable
-            clearable
-            size="mini"
-            placeholder="请选择一个存储池"
-            @change="listContainers"
-          >
-            <el-option
-              v-for="item in storagepoolList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
+        <el-form-item v-show="domain" label="存储池" required>
+          <el-select v-model="storagepoolId" filterable clearable size="mini" placeholder="请选择一个存储池"
+            @change="listContainers">
+            <el-option v-for="item in storagepoolList" :key="item.value" :label="item.label" :value="item.value">
               {{ item.label }}
             </el-option>
           </el-select>
@@ -188,80 +122,37 @@
         </div>
       </div>
       <!-- <el-button v-show="tableData&&tableData.length" type="danger" :disabled="hasChecked" @click="deleteFlag=true">删除</el-button> -->
-      <el-table
-        v-show="tableData&&tableData.length"
-        ref="multipleTable"
-        class="volumeDetail_column"
-        :data="tableData"
-        border
-        tooltip-effect="dark"
-        row-key="containerId"
-        :row-class-name="getRowClass"
-        :expand-row-keys="expands"
-        style="width: 100%"
-        @sort-change="sortFunction"
-      >
+      <el-table v-show="tableData && tableData.length" ref="multipleTable" class="volumeDetail_column" :data="tableData"
+        border tooltip-effect="dark" row-key="containerId" :row-class-name="getRowClass" :expand-row-keys="expands"
+        style="width: 100%" @sort-change="sortFunction">
         <el-table-column type="expand">
           <template slot-scope="props">
-            <el-table
-              :data="props.row.simpleContainerUnitMetadataList"
-              style="margin-left: 48px;"
-            >
-              <el-table-column
-                label="aircraftId"
-                prop="aircraftId"
-              >
+            <el-table :data="props.row.simpleContainerUnitMetadataList" style="margin-left: 48px;">
+              <el-table-column label="aircraftId" prop="aircraftId">
                 <template slot-scope="scope">
                   {{ scope.row.aircraftId + '' }}
                 </template>
               </el-table-column>
-              <el-table-column
-                label="archiveId"
-                prop="archiveId"
-              >
+              <el-table-column label="archiveId" prop="archiveId">
                 <template slot-scope="scope">
                   {{ scope.row.archiveId + '' }}
                 </template>
               </el-table-column>
-              <el-table-column
-                label="position"
-                prop="position"
-              />
-              <el-table-column
-                label="statusValue"
-                prop="statusValue"
-              />
-              <el-table-column
-                label="timerWillDeleting"
-                prop="timerWillDeleting"
-              >
+              <el-table-column label="position" prop="position" />
+              <el-table-column label="statusValue" prop="statusValue" />
+              <el-table-column label="timerWillDeleting" prop="timerWillDeleting">
                 <template slot-scope="scope">
                   {{ scope.row.timerWillDeleting + '' }}
                 </template>
               </el-table-column>
-              <el-table-column
-                label="logicPageSize"
-                prop="logicPageSize"
-              />
-              <el-table-column
-                label="freeSpace(GB)"
-                prop="freeSpace"
-                :formatter="formatterG"
-              />
+              <el-table-column label="logicPageSize" prop="logicPageSize" />
+              <el-table-column label="freeSpace(GB)" prop="freeSpace" :formatter="formatterG" />
             </el-table>
           </template>
         </el-table-column>
         <!-- <el-table-column type="selection" :selectable="checkDeleting" /> -->
-        <el-table-column
-          label="ContainerId"
-          prop="containerId"
-          align="center"
-        />
-        <el-table-column
-          label="containerFormatType"
-          prop="containerFormatType"
-          align="center"
-        >
+        <el-table-column label="ContainerId" prop="containerId" align="center" />
+        <el-table-column label="containerFormatType" prop="containerFormatType" align="center">
           <template slot-scope="scope">
             {{ getType(scope.row) }}
           </template>
@@ -271,30 +162,15 @@
         <el-table-column :label="$ts('domain.free')" prop="freeSpace" align="center" :formatter="formatterG" />
         <el-table-column :label="$ts('domain.used')" prop="usedSpace" align="center" :formatter="formatterG" />
       </el-table>
-      <div
-        v-show="total"
-        class="page_block"
-      >
-        <el-pagination
-          :current-page="currentPage"
-          :page-size="pageSize"
-          :page-sizes="[5, 10, 20, 50]"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
+      <div v-show="total" class="page_block">
+        <el-pagination :current-page="currentPage" :page-size="pageSize" :page-sizes="[5, 10, 20, 50]"
+          layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+          @current-change="handleCurrentChange" />
       </div>
     </div>
-    <el-dialog
-      :visible.sync="deleteFlag"
-      title="删除容器"
-    >
+    <el-dialog :visible.sync="deleteFlag" title="删除容器">
       <p>确定删除下列id的容器</p>
-      <div
-        v-for="item in multipleSelection"
-        :key="item.containerId"
-      >
+      <div v-for="item in multipleSelection" :key="item.containerId">
         {{ item.containerId }}
       </div>
       <div slot="footer" class="dialog-footer">
@@ -309,7 +185,7 @@ import { listDomain, listStoragePool } from '@/api/resource'
 import { listContainer, deleteContainer } from '@/api/storage'
 export default {
   name: 'Container',
-  data() {
+  data () {
     return {
       timer: null,
       tableData: [],
@@ -359,18 +235,18 @@ export default {
       ]
     }
   },
-  mounted() {
+  mounted () {
     // 选择域、存储池后调用 containerlist接口
     this.listDomains()
   },
-  destroyed() {
+  destroyed () {
     clearTimeout(this.timer)
   },
   methods: {
-    checkDeleting(val) {
+    checkDeleting (val) {
       return val.containerStatus !== 'Deleting'
     },
-    getRowClass(row) {
+    getRowClass (row) {
       const data = row.row
       const res = []
       if (data.simpleContainerUnitMetadataList && data.simpleContainerUnitMetadataList.length > 0) {
@@ -381,7 +257,7 @@ export default {
         return res
       }
     },
-    clearStoragepoolId() {
+    clearStoragepoolId () {
       this.storagepoolId = ''
       this.tableData = []
       this.total = 0
@@ -391,22 +267,22 @@ export default {
       this.totalSpace = ''
       this.freeSpace = ''
     },
-    getType(row) {
+    getType (row) {
       const arr = this.typeList.filter(
         item => row.containerFormatType == item.value
       )
       return arr && arr[0].label
     },
-    getDurabilityType(row, column) {
+    getDurabilityType (row, column) {
       let durabilityType = []
-      this.ecTypeList.forEach(function(ele) {
+      this.ecTypeList.forEach(function (ele) {
         if (ele.value == row[column.property]) {
           durabilityType = ele
         }
       })
       return durabilityType.label
     },
-    byteFormat(size) {
+    byteFormat (size) {
       if (!size) {
         return '0'
       }
@@ -425,7 +301,7 @@ export default {
       size = size / 1024
       return size.toFixed(1) + 'GB'
     },
-    listContainers() {
+    listContainers () {
       // 未选中存储池
       if (this.storagepoolId == '') {
         this.tableData = []
@@ -450,7 +326,7 @@ export default {
       })
         .then(res => {
           if (res.error.code !== 0) {
-            this.$ts({
+            this.$msg({
               type: 'error',
               text: this.$ts(res.error.name)
             })
@@ -495,13 +371,13 @@ export default {
           console.error(error)
         })
     },
-    listDomains() {
+    listDomains () {
       listDomain({
         version: this.$store.state.dosVersion
       })
         .then(res => {
           if (res.error.code !== 0) {
-            this.$ts({
+            this.$msg({
               type: 'error',
               text: this.$ts(res.error.name)
             })
@@ -524,7 +400,7 @@ export default {
           console.error(error)
         })
     },
-    changeDomain() {
+    changeDomain () {
       if (this.domain) {
         listStoragePool({
           version: this.$store.state.dosVersion,
@@ -532,7 +408,7 @@ export default {
         })
           .then(res => {
             if (res.error.code !== 0) {
-              this.$ts({
+              this.$msg({
                 type: 'error',
                 text: this.$ts(res.error.name)
               })
@@ -569,7 +445,7 @@ export default {
     //     })
     //   }
     // },
-    async deleteContainer() {
+    async deleteContainer () {
       const temp = []
       for (let i = 0; i < this.multipleSelection.length; i++) {
         const p = new Promise((resolve, reject) => {
@@ -596,20 +472,20 @@ export default {
         })
       }
     },
-    sortFunction(val) {
+    sortFunction (val) {
       this.prop = val.prop
       this.order = val.order
       this.listContainers()
     },
-    handleSizeChange: function(size) {
+    handleSizeChange: function (size) {
       this.pageSize = size
       this.listContainers()
     },
-    handleCurrentChange: function(currentPage) {
+    handleCurrentChange: function (currentPage) {
       this.currentPage = currentPage
       this.listContainers()
     },
-    getRowKeys(row) {
+    getRowKeys (row) {
       return row.containerId
     }
   }

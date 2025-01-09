@@ -259,7 +259,7 @@ export default {
             openQos
           })
             .then(() => {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })

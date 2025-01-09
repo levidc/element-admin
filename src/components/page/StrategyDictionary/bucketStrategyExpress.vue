@@ -90,8 +90,10 @@
         <el-form-item prop="policyExpressionIds">
           <span slot="label">
             策略表达式
-            <el-popover width="200" trigger="hover" placement="top-start" content="每个策略表达式是相互独立的">
-              <i slot="reference" style="color: #fff;" class="fa fa-question-circle" />
+            <el-popover width="250px" trigger="hover" placement="top-start" content="每个策略表达式是相互独立的">
+              <svg slot="reference" class="icon icon-question" aria-hidden="true">
+                <use xlink:href="#icon-question" />
+              </svg>
             </el-popover>
           </span>
           <el-popover

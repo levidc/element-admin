@@ -3,81 +3,39 @@
     <div class="bucket-detail">
       <div class="bucket-detail-inner">
         <div class="bucket-panel">
-          <div
-            id="openCache-info-field"
-            class="param-box"
-          >
+          <div id="openCache-info-field" class="param-box">
             <div class="param-hd">
               <h3 id="openCache">负载路由</h3>
-              <el-button
-                v-show="!editVersionControl&&!loading"
-                class="modBtn"
-                type="text"
-                @click="editVersionControl=!editVersionControl"
-              >
+              <el-button v-show="!editVersionControl && !loading" class="modBtn" type="text"
+                @click="editVersionControl = !editVersionControl">
                 <span style="color: #ff8746;position: relative;top:3px">编辑</span>
               </el-button>
             </div>
-            <div
-              v-loading="loading"
-              class="param-bd"
-            >
-              <el-form
-                label-position="left"
-                :model="editForm"
-              >
+            <div v-loading="loading" class="param-bd">
+              <el-form label-position="left" :model="editForm">
                 <el-form-item>
                   <span slot="label">
                     当前配置
                   </span>
-                  <span
-                    v-show="!editVersionControl&&!loading"
-                    style="color:#ff8746"
-                    class="item-descr-txt"
-                  >
+                  <span v-show="!editVersionControl && !loading" style="color:#ff8746" class="item-descr-txt">
                     <el-tag v-if="loadGroupName">
                       {{ loadGroupName }}
                     </el-tag>
                     <span v-else>无</span>
                   </span>
-                  <el-select
-                    v-if="editVersionControl"
-                    v-model="editForm.editLoadGroup"
-                    value-key="value"
-                    style="width:22%"
-                    filterable
-                  >
-                    <el-option-group
-                      v-for="group in filterLoadGroupList"
-                      :key="group.label"
-                      :label="group.label"
-                    >
-                      <el-option
-                        v-for="{label,value,groupTag} in group.options"
-                        :key="label"
-                        :label="label"
-                        :value="{value,groupTag}"
-                      />
+                  <el-select v-if="editVersionControl" v-model="editForm.editLoadGroup" value-key="value"
+                    style="width:22%" filterable>
+                    <el-option-group v-for="group in filterLoadGroupList" :key="group.label" :label="group.label">
+                      <el-option v-for="{ label, value, groupTag } in group.options" :key="label" :label="label"
+                        :value="{ value, groupTag }" />
                     </el-option-group>
                   </el-select>
                 </el-form-item>
                 <el-form-item v-if="editVersionControl">
-                  <span
-                    slot="label"
-                    style="opacity:0"
-                  >#</span>
-                  <el-button
-                    type="default"
-                    size="mini"
-                    class="blue"
-                    @click="editVersionControl=!editVersionControl;getConfig()"
-                  >取消</el-button>
-                  <el-button
-                    type="primary"
-                    class="golden"
-                    size="mini"
-                    @click="saveConfig();"
-                  >应用更改</el-button>
+                  <span slot="label" style="opacity:0">#</span>
+                  <el-button type="default" size="mini" class="blue"
+                    @click="editVersionControl = !editVersionControl; getConfig()">取消</el-button>
+                  <el-button type="primary" class="golden" size="mini" @click="saveConfig();">应用更改</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -96,7 +54,7 @@ export default {
   name: 'BucketList',
   components: {},
   filters: {},
-  data() {
+  data () {
     return {
       disableDefault: true,
       bucketId: '',
@@ -113,19 +71,19 @@ export default {
     }
   },
   computed: {
-    bucketName() {
+    bucketName () {
       return this.$route.params.id
     },
-    filterLoadGroupList() {
+    filterLoadGroupList () {
       return this.loadGroupList.filter(x => x.options.length)
     }
   },
-  mounted() {
+  mounted () {
     this.getConfig()
   },
-  destroyed() { },
+  destroyed () { },
   methods: {
-    getConfig() {
+    getConfig () {
       this.loading = true
       listUserBuckets().then((res) => {
         this.buckets = res.data.list || []
@@ -195,7 +153,7 @@ export default {
           })
       })
     },
-    saveConfig() {
+    saveConfig () {
       this.loading = true
       const loadGroupConfig = {}
       if (this.editForm.editLoadGroup.groupTag === 'DATA') {
@@ -209,7 +167,7 @@ export default {
         bucketIds: [this.bucketId.toString()],
         ...loadGroupConfig
       }).then(res => {
-        this.$ts({
+        this.$msg({
           type: 'success',
           text: this.$ts('response.success')
         })
@@ -227,19 +185,23 @@ export default {
 .versionControlBtnWrap {
   margin: 20px 0;
 }
+
 :deep(.el-form) {
   label.el-form-item__label {
     margin-left: 0 !important;
     width: 85px !important;
   }
+
   .el-radio-group {
     position: relative;
     display: flex;
     flex-direction: column;
+
     .el-radio {
       margin-bottom: 10px;
     }
   }
+
   .el-tag {
     color: #e39606;
     background-color: #2a3841;

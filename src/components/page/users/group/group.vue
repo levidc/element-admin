@@ -2,210 +2,75 @@
   <div>
     <div class="page_content_wrap">
       <el-row class="mb_15">
-        <el-button
-          v-access="'admin:AddGroup'"
-          size="small"
-          type="primary"
-          class="golden"
-          @click="visibleFlag = true"
-        >创建</el-button>
-        <el-tooltip
-          content="刷新"
-          placement="top"
-          effect="dark"
-        >
-          <i
-            class="el-icon-refresh right"
-            @click="searchVal = ''; listGroup()"
-          />
+        <el-button v-access="'admin:AddGroup'" size="small" type="primary" class="golden"
+          @click="visibleFlag = true">创建</el-button>
+        <el-tooltip content="刷新" placement="top" effect="dark">
+          <i class="el-icon-refresh right" @click="searchVal = ''; listGroup()" />
         </el-tooltip>
-        <el-input
-          v-model="searchVal"
-          class="search_style right"
-          placeholder="用户组名过滤"
-          width="14"
-          clearable
-        />
+        <el-input v-model="searchVal" class="search_style right" placeholder="用户组名过滤" width="14" clearable />
       </el-row>
-      <el-table
-        v-loading="loading"
-        :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
-        border
-        width="100%"
-        @sort-change="sortFunction"
-      >
-        <el-table-column
-          prop="groupName"
-          label="组名"
-          sortable="custom"
-        >
+      <el-table v-loading="loading" :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)" border
+        width="100%" @sort-change="sortFunction">
+        <el-table-column prop="groupName" label="组名" sortable="custom">
           <template slot-scope="scope">
             <el-tooltip placement="top" :content="$ts('view.group.detail')">
-              <a
-                v-access:disable="'admin:GetGroup'"
-                class="blue"
-                @click="$router.push({ name: 'GroupDetail', params: { name: scope.row.groupName } })"
-              >
+              <a v-access:disable="'admin:GetGroup'" class="blue"
+                @click="$router.push({ name: 'GroupDetail', params: { name: scope.row.groupName } })">
                 {{ scope.row.groupName }}
               </a>
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column
-          label="创建时间"
-          sortable="custom"
-          prop="createDate"
-          :formatter="formatterDate"
-        />
-        <el-table-column
-          label="创建人"
-          prop="createUser"
-          sortable="custom"
-        />
-        <el-table-column
-          label="状态"
-          prop="status"
-          sortable="custom"
-        >
+        <el-table-column label="创建时间" sortable="custom" prop="createDate" :formatter="formatterDate" />
+        <el-table-column label="创建人" prop="createUser" sortable="custom" />
+        <el-table-column label="状态" prop="status" sortable="custom">
           <template slot-scope="scope">
-            <span
-              v-if="scope.row.status == 1"
-              class="status_green"
-            >启用</span>
-            <span
-              v-else-if="scope.row.status == 0"
-              class="status_red"
-            > 未启用 </span>
+            <span v-if="scope.row.status == 1" class="status_green">启用</span>
+            <span v-else-if="scope.row.status == 0" class="status_red"> 未启用 </span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="操作"
-          align="center"
-        >
+        <el-table-column label="操作" align="center">
           <template slot-scope="scope">
-            <svg v-access="'admin:DeleteGroup'"  @click="selectGroup = scope.row; deleteFlag = true"  class="icon icon-trash" aria-hidden="true">
+            <svg v-access="'admin:DeleteGroup'" @click="selectGroup = scope.row; deleteFlag = true"
+              class="icon icon-trash" aria-hidden="true">
               <use xlink:href="#icon-trash" />
             </svg>
           </template>
         </el-table-column>
 
       </el-table>
-      <el-pagination
-        :current-page="currentPage"
-        :page-sizes="[5, 10, 50, 100]"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      <el-pagination :current-page="currentPage" :page-sizes="[5, 10, 50, 100]" :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
     </div>
-    <el-dialog
-      class="addGroup"
-      title="创建用户组"
-      :visible.sync="visibleFlag"
-      width="650px"
-      @close="resetForm"
-      @open="dialogOpen('groupIpt')"
-    >
-      <el-form
-        ref="form"
-        :model="form"
-        label-width="120px"
-        :rules="rules"
-      >
-        <el-form-item
-          label="用户组名"
-          prop="groupName"
-          class="elinput"
-        >
-          <el-input
-            ref="groupIpt"
-            v-model="form.groupName"
-            placeholder="填写组名"
-            clearable
-          />
+    <el-dialog class="addGroup" title="创建用户组" :visible.sync="visibleFlag" width="650px" @close="resetForm"
+      @open="dialogOpen('groupIpt')">
+      <el-form ref="form" :model="form" label-width="120px" :rules="rules">
+        <el-form-item label="用户组名" prop="groupName" class="elinput">
+          <el-input ref="groupIpt" v-model="form.groupName" placeholder="填写组名" clearable />
         </el-form-item>
-        <el-tabs
-          v-model="activeName"
-          style="margin-top:30px"
-          @tab-click="handleScroll"
-        >
-          <el-tab-pane
-            label="用户"
-            name="users"
-          >
-            <el-form-item
-              label="选择用户"
-              prop="assignUsers"
-              class="policyLabel"
-            >
-              <el-input
-                v-model="form.assignUsers"
-                placeholder="用户名过滤"
-                clearable
-              />
+        <el-tabs v-model="activeName" style="margin-top:30px" @tab-click="handleScroll">
+          <el-tab-pane label="用户" name="users">
+            <el-form-item label="选择用户" prop="assignUsers" class="policyLabel">
+              <el-input v-model="form.assignUsers" placeholder="用户名过滤" clearable />
             </el-form-item>
-            <el-table
-              ref="userTable"
-              border
-              :data="usersData"
-              class="policyData"
-              :default-sort="{prop:'userName',order:'ascending'}"
-              :row-key="(row) => row.userName"
-              max-height="400"
-              @selection-change="handleSelectionChange"
-            >
-              <el-table-column
-                width="100px"
-                type="selection"
-                align="center"
-                reserve-selection
-              />
-              <el-table-column
-                label="用户名"
-                prop="userName"
-                sortable
-              />
+            <el-table ref="userTable" border :data="usersData" class="policyData"
+              :default-sort="{ prop: 'userName', order: 'ascending' }" :row-key="(row) => row.userName" max-height="400"
+              @selection-change="handleSelectionChange">
+              <el-table-column width="100px" type="selection" align="center" reserve-selection />
+              <el-table-column label="用户名" prop="userName" sortable />
             </el-table>
           </el-tab-pane>
-          <el-tab-pane
-            label="策略"
-            name="policies"
-          >
-            <el-form-item
-              label="选择策略"
-              prop="assignPolicy"
-              class="policyLabel"
-            >
-              <el-input
-                v-model="form.assignPolicy"
-                placeholder="策略名过滤"
-                clearable
-              />
+          <el-tab-pane label="策略" name="policies">
+            <el-form-item label="选择策略" prop="assignPolicy" class="policyLabel">
+              <el-input v-model="form.assignPolicy" placeholder="策略名过滤" clearable />
             </el-form-item>
 
-            <el-table
-              ref="policyTable"
-              border
-              :data="policyData"
-              class="policyData"
-              :default-sort="{prop:'name',order:'ascending'}"
-              :row-key="(row) => row.name"
-              max-height="400"
-              @selection-change="handleSelectionChanges"
-            >
-              <el-table-column
-                width="100px"
-                type="selection"
-                align="center"
-                reserve-selection
-              />
-              <el-table-column
-                label="策略名"
-                prop="name"
-                sortable
-              />
+            <el-table ref="policyTable" border :data="policyData" class="policyData"
+              :default-sort="{ prop: 'name', order: 'ascending' }" :row-key="(row) => row.name" max-height="400"
+              @selection-change="handleSelectionChanges">
+              <el-table-column width="100px" type="selection" align="center" reserve-selection />
+              <el-table-column label="策略名" prop="name" sortable />
             </el-table>
           </el-tab-pane>
         </el-tabs>
@@ -215,11 +80,7 @@
         <el-button type="primary" class="golden" @click="createGroup">{{ $ts('button.confirm') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog
-      title="删除用户组"
-      :visible.sync="deleteFlag"
-      width="650px"
-    >
+    <el-dialog title="删除用户组" :visible.sync="deleteFlag" width="650px">
       <p>删除当前用户组:
         <span style="color: #ff8746;">
           {{ selectGroup.groupName }}
@@ -239,7 +100,7 @@ import { listGroups, addGroup, deleteGroup } from '@/api/group'
 export default {
   name: 'Group',
   components: {},
-  data() {
+  data () {
     const checkNameReg = (rule, data, callback) => {
       const reg = /^[0-9a-zA-Z]{8,40}$/
       if (!reg.test(data)) {
@@ -284,12 +145,12 @@ export default {
   },
   computed: {},
   watch: {
-    visibleFlag(val) {
+    visibleFlag (val) {
       if (val) {
         this.listUsers()
       }
     },
-    activeName(val, old) {
+    activeName (val, old) {
       if (val == '0') return
       if (old !== '0' && val === 'users') {
         this.listUsers()
@@ -297,7 +158,7 @@ export default {
         this.listPolicies()
       }
     },
-    searchVal(val) {
+    searchVal (val) {
       this.tableData = [...this.cloneData]
       this.total = this.tableData.length
       this.currentPage = 1
@@ -307,14 +168,14 @@ export default {
       })
       this.total = this.tableData.length
     },
-    'form.assignUsers'(val) {
+    'form.assignUsers' (val) {
       this.usersData = [...this.cloneUserData]
       if (!val) return
       this.usersData = this.usersData.filter(item => {
         return item.userName.toLowerCase().indexOf(val.toLowerCase()) !== -1
       })
     },
-    'form.assignPolicy'(val) {
+    'form.assignPolicy' (val) {
       this.policyData = [...this.clonePolicyData]
       if (!val) return
       this.policyData = this.policyData.filter(item => {
@@ -322,11 +183,11 @@ export default {
       })
     }
   },
-  mounted() {
+  mounted () {
     this.listGroup()
   },
   methods: {
-    formatterDate(row, column) {
+    formatterDate (row, column) {
       const timestamp = row[column.property]
       const time = new Date(timestamp)
       let month = time.getMonth() + 1
@@ -363,14 +224,14 @@ export default {
         second
       )
     },
-    handleScroll() {
+    handleScroll () {
       if (this.activeName === 'policies') {
         this.$refs['userTable'].$el.children[2].scrollTop = 0
       } else {
         this.$refs['policyTable'].$el.children[2].scrollTop = 0
       }
     },
-    dialogOpen(e) {
+    dialogOpen (e) {
       this.$nextTick(() => {
         this.$refs[e].$el.querySelector('input').focus()
         this.$refs['userTable'].$el.children[2].scrollTop = 0
@@ -378,13 +239,13 @@ export default {
         this.activeName = 'users'
       })
     },
-    resetForm() {
+    resetForm () {
       this.$refs['form'].resetFields()
     },
-    clearSelection() {
+    clearSelection () {
       this.$refs['userTable'].clearSelection()
     },
-    createGroup() {
+    createGroup () {
       this.$refs['form'].validate(valid => {
         if (valid) {
           const userList = this.selectedUser.map(item => item.userName)
@@ -395,7 +256,7 @@ export default {
             policies
           })
             .then(res => {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
@@ -408,7 +269,7 @@ export default {
         }
       })
     },
-    deleteGroup() {
+    deleteGroup () {
       if (this.selectGroup.userList && this.selectGroup.userList.length) {
         this.deleteFlag = false
         this.$confirm(
@@ -428,7 +289,7 @@ export default {
       } else {
         deleteGroup(this.selectGroup.groupName)
           .then(res => {
-            this.$ts({
+            this.$msg({
               type: 'success',
               text: this.$ts('response.success')
             })
@@ -443,7 +304,7 @@ export default {
           })
       }
     },
-    listGroup() {
+    listGroup () {
       this.loading = true
       listGroups()
         .then(res => {
@@ -459,7 +320,7 @@ export default {
           this.loading = false
         })
     },
-    listUsers() {
+    listUsers () {
       listUsers()
         .then(res => {
           this.usersData = res.data
@@ -485,7 +346,7 @@ export default {
       // ]
       // this.cloneUserData = [...this.usersData]
     },
-    listPolicies() {
+    listPolicies () {
       getPolicy()
         .then(res => {
           this.policyData = res.data
@@ -506,25 +367,25 @@ export default {
           console.error(err)
         })
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       this.currentPage = val
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       console.log(val)
       this.pageSize = val
     },
-    handleSelectionChange(val) {
+    handleSelectionChange (val) {
       this.selectedUser = val
     },
-    handleSelectionChanges(val) {
+    handleSelectionChanges (val) {
       this.selectedPolicy = val
     },
     // 删除用户组
-    handleDelete(index, row) {
+    handleDelete (index, row) {
       this.tableData.splice(index, 1)
       console.log(index, row)
     },
-    sortFunction(val) {
+    sortFunction (val) {
       this.prop = val.prop
       this.order = val.order
       this.tableData.sort(this.sortMethod(val.prop, val.order))

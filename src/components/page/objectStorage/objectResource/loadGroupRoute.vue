@@ -52,10 +52,7 @@
         </el-form-item>
       </el-form>
       <div class="tipMenu">
-        <i
-          class="fa fa-exclamation-circle"
-          style="color:#ff8746"
-        />
+        <i class="el-icon-warning-outline" style="color:#ff8746"></i>
         <span style="color:#ff8746">
           没有指定负载路由的存储桶将按默认负载路由配置
         </span>
@@ -221,10 +218,7 @@
         :rules="rules"
       >
         <div class="tipMenu">
-          <i
-            class="fa fa-exclamation-circle"
-            style="color:#ff8746"
-          />
+          <i class="el-icon-warning-outline" style="color:#ff8746"></i>
           <span style="color:#ff8746">
             没有指定负载路由的存储桶将按默认负载路由配置
           </span>
@@ -424,10 +418,7 @@
         :rules="rules"
       >
         <div style="margin:0 0 20px 0">
-          <i
-            class="fa fa-exclamation-circle"
-            style="color:#ff8746"
-          />
+          <i class="el-icon-warning-outline" style="color:#ff8746"></i>
           <span style="color:#ff8746">
             没有指定负载路由的存储桶将按默认负载路由配置
           </span>

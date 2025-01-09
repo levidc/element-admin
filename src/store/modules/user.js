@@ -4,7 +4,7 @@ import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 import { getPermission } from '@/api/policy'
 import config from '../../../proxy.config'
-import { Gateway } from '@/api/gateway-request'
+import { systemPermission } from '@/utils/permission-language'
 const state = {
   token: getToken(),
   name: '',
@@ -16,7 +16,8 @@ const state = {
   _gatewayS3: '',
   port: '',
   user: '',
-  activeRoute: false
+  activeRoute: false,
+  systemPermission
 }
 
 const mutations = {
@@ -100,14 +101,7 @@ const actions = {
         req.request.httpRequest.headers['Authentication'] = localStorage.getItem('token')
         req.request.httpRequest.headers['request-target'] = 'gateway'
       })
-      // var gatewayS3 = Gateway.S3({
-      //   accessKeyId: 'test',
-      //   secretAccessKey: 'test',
-      //   endpoint: port,
-      //   region: 'EastChain-1'
-      // })
       commit('getS3', S3)
-      // commit('gatewayS3', gatewayS3)
       resolve(port)
     })
   },
@@ -147,7 +141,7 @@ const actions = {
         commit('SET_USER', username)
         commit('SET_TOKEN', data.accessToken)
         commit('SET_EXPIRE_TOKEN', data.refreshToken)
-        setToken(data.token)
+        setToken('ok')
         dispatch('getAccessPermission').then(() => {
           resolve()
         })

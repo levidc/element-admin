@@ -295,7 +295,9 @@
                           trigger="hover"
                           :content="String(scope.row.resourceStatus).trim()"
                         >
-                          <i slot="reference" class="fa fa-question-circle" />
+                          <svg slot="reference" class="icon icon-question" aria-hidden="true">
+                            <use xlink:href="#icon-question" />
+                          </svg>
                         </el-popover>
                       </span>
                     </template>
@@ -532,14 +534,16 @@
               <el-input v-model="form.mountDir" placeholder="请输入共享目录" :disabled="!isAdd" />
             </el-form-item>
             <el-form-item v-else prop="bucketName" label="存储桶名">
-              <el-popover placement="top" width="350" trigger="hover" style="position:absolute;">
+              <el-popover placement="top" width="360px" trigger="hover" style="position:absolute;">
                 <p style="line-height:1.6;">名称只能由小写字母、数字、点 (.) 和连字符 (-) 组成。</p>
                 <p style="line-height:1.6;">名称需以数字字母开头结尾</p>
                 <p style="line-height:1.6;">名称不能包含两个相邻的句点(.)</p>
                 <p style="line-height:1.6;">不能以'xn--'开头和以-s3alias结尾</p>
                 <p style="line-height:1.6;">存储桶名称不能与 IP 地址相似</p>
                 <p style="line-height:1.6;">名称长度为3-63位字符</p>
-                <i slot="reference" class="fa fa-question-circle" style="margin-left: -32px !important;" />
+                <svg slot="reference" class="icon icon-question" aria-hidden="true" style="margin-left: -32px !important;">
+                  <use xlink:href="#icon-question" />
+                </svg>
               </el-popover>
               <el-input v-model.trim="form.bucketName" placeholder="请输入合法的存储桶名" :disabled="!isAdd" clearable />
             </el-form-item>
@@ -626,9 +630,11 @@
           </el-col>
           <el-col v-if="isAdd && form.storageUseType !== 'CACHE'" :span="12">
             <el-form-item prop="next" label="下一个资源">
-              <el-popover placement="top" width="250" trigger="hover" style="position:absolute;">
+              <el-popover placement="top" width="265px" trigger="hover" style="position:absolute;">
                 <p>设备下只能配置一个资源为下一个资源</p>
-                <i slot="reference" class="fa fa-question-circle" style="margin-left: -32px !important;" />
+                <svg slot="reference" class="icon icon-question" aria-hidden="true" style="margin-left: -32px !important;">
+                  <use xlink:href="#icon-question" />
+                </svg>
               </el-popover>
               <el-switch
                 v-model="form.next"
@@ -643,9 +649,11 @@
         <el-row v-if="!isAdd && form.storageUseType !== 'CACHE'">
           <el-col :span="12">
             <el-form-item prop="next" label="下一个资源">
-              <el-popover placement="top" width="250" trigger="hover" style="position:absolute;">
+              <el-popover placement="top" width="260px" trigger="hover" style="position:absolute;">
                 <p>默认资源和下一个资源不能同时设置在同一个资源中</p>
-                <i slot="reference" class="fa fa-question-circle" style="margin-left: -32px !important;" />
+                <svg slot="reference" class="icon icon-question" aria-hidden="true" style="margin-left: -32px !important;">
+                  <use xlink:href="#icon-question" />
+                </svg>
               </el-popover>
               <el-switch
                 v-model="form.next"

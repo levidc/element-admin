@@ -1,8 +1,8 @@
 <template>
   <div class="group">
-    <el-container class="container">
+    <el-container v-loading="loading" class="container">
       <el-header>
-        <div class="topMenu">
+        <div v-show="!loading" class="topMenu">
           <div class="iconName">
             <svg class="svgicon icon" aria-hidden="true">
               <use xlink:href="#icon-group" />
@@ -17,29 +17,30 @@
                 <span v-if="enableGroup" class="green">启用</span>
                 <span v-else class="red">未启用</span>
               </span>
-              <el-switch
-                v-model="enableGroup"
-                v-access="'admin:EnableGroup;admin:DisableGroup'"
-                @change="switchGroupStatus"
-              />
+              <el-switch v-model="enableGroup" v-access="'admin:EnableGroup;admin:DisableGroup'"
+                style="position: relative;top:2px;" @change="switchGroupStatus" />
             </div>
-            <el-tooltip content="删除用户" placement="top" effect="dark">
-              <svg v-access="'admin:DeleteGroup'" @click="deleteFlag = true" class="icon icon-trash" aria-hidden="true">
-                <use xlink:href="#icon-trash" />
-              </svg>
-            </el-tooltip>
-            <el-tooltip content="返回用户组列表" placement="top" effect="dark">
-              <svg class="icon backicon" aria-hidden="true" @click="$router.push({ name: 'Group' })">
-                <use xlink:href="#icon-fanhui" />
-              </svg>
-            </el-tooltip>
-            <el-tooltip content="刷新" placement="top" effect="dark">
-              <i class="fa fa-refresh" @click="groupDetail" />
-            </el-tooltip>
+            <div>
+              <el-tooltip content="删除用户组" placement="top" effect="dark">
+                <svg v-access="'admin:DeleteGroup'" class="icon backicon" aria-hidden="true" @click="deleteFlag = true">
+                  <use xlink:href="#icon-trash" />
+                </svg>
+              </el-tooltip>
+              <el-tooltip content="返回用户组列表" placement="top" effect="dark">
+                <svg class="icon backicon" aria-hidden="true" @click="$router.push({ name: 'Group' })">
+                  <use xlink:href="#icon-fanhui" />
+                </svg>
+              </el-tooltip>
+              <el-tooltip content="刷新" placement="top" effect="dark">
+                <svg class="icon backicon" aria-hidden="true" @click="groupDetail">
+                  <use xlink:href="#icon-refresh" />
+                </svg>
+              </el-tooltip>
+            </div>
           </div>
         </div>
       </el-header>
-      <el-container>
+      <el-container v-show="!loading">
         <el-aside width="200px" style="background: #36464e;">
           <el-tabs v-model="tabName" tab-position="left" class="tabs">
             <el-tab-pane label="用户" name="members" />
@@ -50,12 +51,8 @@
           <div v-show="tabName === 'members'">
             <div class="clearfix">
               <h3 class="left">用户</h3>
-              <el-button
-                v-access="'admin:AddUserToGroup;admin:RemoveUserFromGroup'"
-                class="right golden"
-                type="primary"
-                @click="searchUser = ''; memberDialog = true"
-              >配置组成员</el-button>
+              <el-button v-access="'admin:AddUserToGroup;admin:RemoveUserFromGroup'" class="right golden" type="primary"
+                @click="searchUser = ''; memberDialog = true">配置组成员</el-button>
               <el-input v-model="searchUser" class="right search " placeholder="用户名搜索" clearable />
             </div>
             <el-table :data="memberData" border max-height="600">
@@ -70,7 +67,8 @@
               </el-table-column>
               <el-table-column label="移除用户">
                 <template slot-scope="scope">
-                  <svg v-access="'admin:AddUserToGroup;admin:RemoveUserFromGroup'" @click="deleteUser(scope.row)"  class="icon icon-trash" aria-hidden="true">
+                  <svg v-access="'admin:AddUserToGroup;admin:RemoveUserFromGroup'" class="icon icon-trash"
+                    aria-hidden="true" @click="deleteUser(scope.row)">
                     <use xlink:href="#icon-trash" />
                   </svg>
                 </template>
@@ -80,22 +78,16 @@
           <div v-show="tabName === 'Policy'">
             <div class="clearfix">
               <h3 class="left">策略</h3>
-              <el-button
-                v-access="'admin:SetUserOrGroupPolicy'"
-                class="right golden"
-                @click="searchPolicy = ''; policyDialog = true"
-              >配置策略</el-button>
+              <el-button v-access="'admin:SetUserOrGroupPolicy'" class="right golden"
+                @click="searchPolicy = ''; policyDialog = true">配置策略</el-button>
               <el-input v-model="searchPolicy" class="right search" placeholder="策略名搜索" clearable />
             </div>
             <el-table :data="userPolicy" border max-height="600">
               <el-table-column prop="name" label="策略名">
                 <template slot-scope="scope">
                   <el-tooltip content="策略详情" placement="top">
-                    <a
-                      v-access:disable="'admin:GetPolicy'"
-                      class="blue"
-                      @click="$router.push({ name: 'PolicyDetail', params: { name: scope.row.name } })"
-                    >
+                    <a v-access:disable="'admin:GetPolicy'" class="blue"
+                      @click="$router.push({ name: 'PolicyDetail', params: { name: scope.row.name } })">
                       {{ scope.row.name }}
                     </a>
                   </el-tooltip>
@@ -103,7 +95,8 @@
               </el-table-column>
               <el-table-column label="移除策略">
                 <template slot-scope="scope">
-                  <svg v-if="scope.row.name !== 'BasePolicy'" v-access="'admin:SetUserOrGroupPolicy'" @click="deletePolicy(scope.row)"  class="icon icon-trash" aria-hidden="true">
+                  <svg v-if="scope.row.name !== 'BasePolicy'" v-access="'admin:SetUserOrGroupPolicy'"
+                    class="icon icon-trash" aria-hidden="true" @click="deletePolicy(scope.row)">
                     <use xlink:href="#icon-trash" />
                   </svg>
                 </template>
@@ -113,13 +106,8 @@
         </el-main>
       </el-container>
     </el-container>
-    <el-dialog
-      :visible.sync="memberDialog"
-      title="设置组成员"
-      width="750px"
-      style="padding:0 5%"
-      @close="handleScroll('memberTable')"
-    >
+    <el-dialog :visible.sync="memberDialog" title="设置组成员" width="750px" style="padding:0 5%"
+      @close="handleScroll('memberTable')">
       <div class="clearfix ipt">
         <span class="left">所选用户组</span>
         <el-input class="right" :value="currentName" readonly />
@@ -129,15 +117,8 @@
         <el-input v-model="userName" class="right" placeholder="用户名过滤" clearable />
       </div>
 
-      <el-table
-        ref="memberTable"
-        class="editMemeberData policyData"
-        :data="editMemeberData"
-        border
-        max-height="400"
-        :row-key="(row) => row.userName"
-        @selection-change="handleMemberChange"
-      >
+      <el-table ref="memberTable" class="editMemeberData policyData" :data="editMemeberData" border max-height="400"
+        :row-key="(row) => row.userName" @selection-change="handleMemberChange">
         <el-table-column type="selection" width="55" reserve-selection align="center" />
         <el-table-column prop="userName" label="用户名" />
       </el-table>
@@ -153,13 +134,8 @@
       </div>
       <div class="flexMenu">
         <span>当前策略</span>
-        <el-tooltip
-          v-if="currentPolicyName"
-          placement="top"
-          effect="dark"
-          :content="currentPolicyName"
-          popper-class="selectGroupPolicyTip"
-        >
+        <el-tooltip v-if="currentPolicyName" placement="top" effect="dark" :content="currentPolicyName"
+          popper-class="selectGroupPolicyTip">
           <el-input :value="currentPolicyName" readonly />
         </el-tooltip>
         <el-input v-else readonly />
@@ -168,15 +144,8 @@
         <span>分配策略</span>
         <el-input v-model="policyName" placeholder="策略名过滤" />
       </div>
-      <el-table
-        ref="policyTable"
-        border
-        class="policyData"
-        :data="policyData"
-        max-height="400"
-        :row-key="(row) => row.name"
-        @selection-change="handlePolicyChange"
-      >
+      <el-table ref="policyTable" border class="policyData" :data="policyData" max-height="400"
+        :row-key="(row) => row.name" @selection-change="handlePolicyChange">
         <el-table-column type="selection" width="55" reserve-selection align="center" :selectable="checkBasePolicy" />
         <el-table-column prop="name" label="策略名" />
       </el-table>
@@ -211,8 +180,9 @@ import {
 } from '@/api/group'
 export default {
   name: 'GroupDetail',
-  data() {
+  data () {
     return {
+      loading: true,
       tabName: 'members',
       searchPolicy: '',
       searchUser: '',
@@ -242,19 +212,19 @@ export default {
     }
   },
   computed: {
-    currentPolicyName() {
+    currentPolicyName () {
       return this.userPolicy
         .reduce((cur, pre) => {
           return cur + pre.name + ', '
         }, '')
         .replace(/, $/, '')
     },
-    currentName() {
+    currentName () {
       return this.$route.params.name
     }
   },
   watch: {
-    policyDialog(val) {
+    policyDialog (val) {
       if (val) {
         this.listPolicies()
       } else {
@@ -263,7 +233,7 @@ export default {
         this.groupDetail()
       }
     },
-    memberDialog(val) {
+    memberDialog (val) {
       if (val) {
         this.listUsers()
         // api 获取新的用户所选group及其他信息
@@ -272,28 +242,28 @@ export default {
         this.$refs['memberTable'].clearSelection()
       }
     },
-    userName(val) {
+    userName (val) {
       this.editMemeberData = [...this.cloneMemberData]
       if (!val) return
       this.editMemeberData = this.editMemeberData.filter(item => {
         return item.userName.toLowerCase().indexOf(val.toLowerCase()) !== -1
       })
     },
-    searchPolicy(val) {
+    searchPolicy (val) {
       this.userPolicy = [...this.clonePolicy]
       if (!val) return
       this.userPolicy = this.userPolicy.filter(item => {
         return item.name.toLowerCase().indexOf(val.toLowerCase()) !== -1
       })
     },
-    searchUser(val) {
+    searchUser (val) {
       this.memberData = [...this.cloneMData]
       if (!val) return
       this.memberData = this.memberData.filter(item => {
         return item.userName.toLowerCase().indexOf(val.toLowerCase()) !== -1
       })
     },
-    policyName(val) {
+    policyName (val) {
       this.policyData = [...this.clonePolicyData]
       if (!val) return
       this.policyData = this.policyData.filter(item => {
@@ -306,34 +276,34 @@ export default {
     //   }
     // }
   },
-  mounted() {
+  mounted () {
     this.groupDetail()
   },
   methods: {
-    checkBasePolicy(val) {
+    checkBasePolicy (val) {
       return val.name !== 'BasePolicy'
     },
-    handleScroll(ref) {
+    handleScroll (ref) {
       this.$refs[ref].$el.children[2].scrollTop = 0
     },
-    queryUserDetail(row) {
-      this.$router.push({ name: 'UserDetail', params: { name: row.userName }})
+    queryUserDetail (row) {
+      this.$router.push({ name: 'UserDetail', params: { name: row.userName } })
     },
-    copyCode(val) {
+    copyCode (val) {
       navigator.clipboard.writeText(val)
-      this.$ts({
+      this.$msg({
         type: 'success',
         text: '复制成功'
       })
     },
-    handlePolicyChange(val) {
+    handlePolicyChange (val) {
       this.selectedPolicy = val
     },
-    handleMemberChange(val) {
+    handleMemberChange (val) {
       this.selectedMember = val
     },
     // 群组设置
-    confirmGroup() {
+    confirmGroup () {
       const removeUser = this.memberData
         .filter(item => {
           return this.selectedMember.every(item2 => {
@@ -362,12 +332,12 @@ export default {
           .then(res => {
             const isTrue = res.filter(item => item.code !== '200')
             if (!isTrue.length) {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
             } else {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts(isTrue[0].msg)
               })
@@ -386,7 +356,7 @@ export default {
           userList: addUser
         })
           .then(res => {
-            this.$ts({
+            this.$msg({
               type: 'success',
               text: this.$ts('response.success')
             })
@@ -402,7 +372,7 @@ export default {
           userList: removeUser
         })
           .then(res => {
-            this.$ts({
+            this.$msg({
               type: 'success',
               text: this.$ts('response.success')
             })
@@ -418,13 +388,13 @@ export default {
       console.log(removeUser, 'remove', addUser, 'add')
       // console.log(this.selectedMember, 'selected')
     },
-    deleteUser(row) {
+    deleteUser (row) {
       removeUserFromGroup({
         groupName: this.currentName,
         userList: [row.userName]
       })
         .then(res => {
-          this.$ts({
+          this.$msg({
             type: 'success',
             text: this.$ts('response.success')
           })
@@ -435,13 +405,13 @@ export default {
         })
     },
     // 策略设置
-    deletePolicy(row) {
+    deletePolicy (row) {
       const policyNames = this.userPolicy
         .filter(item => item.name !== row.name)
         .map(item => item.name)
       this.confirmPolicy(policyNames)
     },
-    confirmPolicy(flag) {
+    confirmPolicy (flag) {
       let policyNames
       if (flag) {
         policyNames = flag
@@ -453,7 +423,7 @@ export default {
         policyNames,
         type: 'group'
       }).then(res => {
-        this.$ts({
+        this.$msg({
           type: 'success',
           text: this.$ts('response.success')
         })
@@ -464,7 +434,7 @@ export default {
       })
       // console.log(this.selectedPolicy, "seletced");
     },
-    resetPolicy() {
+    resetPolicy () {
       this.$refs['policyTable'].clearSelection()
       this.$nextTick(() => {
         this.userPolicy.forEach(item => {
@@ -475,7 +445,7 @@ export default {
         this.policyData.pop()
       })
     },
-    resetUser() {
+    resetUser () {
       this.$refs['memberTable'].clearSelection()
       this.memberData.forEach(item => {
         this.$refs['memberTable'].toggleRowSelection(item)
@@ -492,7 +462,7 @@ export default {
     //     { name: 's5', id: 5 }
     //   ]
     // },
-    listUsers() {
+    listUsers () {
       this.$nextTick(() => {
         listUsers()
           .then(res => {
@@ -509,30 +479,31 @@ export default {
           })
       })
     },
-    switchGroupStatus(val) {
+    switchGroupStatus (val) {
       if (val) {
         enableGroup(this.currentName).then(res => {
-          this.$ts({
+          this.$msg({
             type: 'success',
             text: this.$ts('response.success')
           })
         })
       } else if (!val) {
         disableGroup(this.currentName).then(res => {
-          this.$ts({
+          this.$msg({
             type: 'success',
             text: this.$ts('response.success')
           })
         })
       }
     },
-    groupDetail() {
+    groupDetail () {
+      this.loading = true
       getGroup({
         groupName: this.currentName
       }).then(res => {
         if (!res.data) {
           this.$router.push({ name: 'Group' })
-          return this.$ts({
+          return this.$msg({
             type: 'error',
             text: '当前用户组不存在'
           })
@@ -552,9 +523,11 @@ export default {
         })
         this.clonePolicy = [...this.userPolicy]
         this.enableGroup = res.data.status === 1
+      }).finally(() => {
+        this.loading = false
       })
     },
-    listPolicies() {
+    listPolicies () {
       // console.log('listpolicies')
       this.$nextTick(() => {
         getPolicy().then(res => {
@@ -566,7 +539,7 @@ export default {
         })
       })
     },
-    deleteGroup() {
+    deleteGroup () {
       if (this.memberData && this.memberData.length) {
         const name = this.memberData.map(item => item.userName)
         this.deleteFlag = false
@@ -581,7 +554,7 @@ export default {
         )
       } else {
         deleteGroup(this.currentName).then(res => {
-          this.$ts({
+          this.$msg({
             type: 'success',
             message: this.$ts('response.success')
           })
@@ -596,10 +569,6 @@ export default {
 .group {
   margin: 15px 20px;
   padding: 10px 0;
-
-  .breadEval {
-    margin: -20px 0 0 -20px;
-  }
 
   .ipt {
     .left {

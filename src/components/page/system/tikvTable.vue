@@ -8,21 +8,15 @@
       </el-table-column>
       <el-table-column :label="$ts('status')" prop="status" sortable>
         <template slot-scope="scope">
-          <span v-if="scope.row.status=='OK'" class="status_green">{{ $ts("status.ok") }}</span>
+          <span v-if="scope.row.status == 'OK'" class="status_green">{{ $ts("status.ok") }}</span>
           <span v-else class="status_red">{{ $ts("disconnected") }}</span>
         </template>
       </el-table-column>
     </el-table>
     <div class="page_block">
-      <el-pagination
-        :current-page="currentPage"
-        :page-sizes="[5, 10, 50, 100]"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      <el-pagination :current-page="currentPage" :page-sizes="[5, 10, 50, 100]" :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
     </div>
   </div>
 </template>
@@ -30,7 +24,7 @@
 import { checkTikvStatus } from '@/api/system'
 export default {
   name: 'Tikv',
-  data() {
+  data () {
     return {
       tableData: [],
       total: 0,
@@ -40,18 +34,18 @@ export default {
       loading: true
     }
   },
-  mounted() {
+  mounted () {
     this.list()
   },
-  destroyed() {
+  destroyed () {
     clearTimeout(this.timer)
   },
   methods: {
-    list() {
+    list () {
       clearTimeout(this.timer)
       checkTikvStatus().then(res => {
         if (res.error.code !== 0) {
-          this.$ts({
+          this.$msg({
             type: 'error',
             text: this.$ts(res.error.name)
           })
@@ -65,10 +59,10 @@ export default {
           this.loading = false
         })
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       this.pageSize = val
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       this.currentPage = val
     }
   }

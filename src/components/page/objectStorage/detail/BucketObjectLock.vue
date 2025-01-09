@@ -6,30 +6,25 @@
           <div class="param-box">
             <div class="param-hd">
               <h3>对象锁定</h3>
-              <span style="margin-left:15px;vertical-align:bottom">使用一次写入多次读取(WORM)模型存储对象，防止对象在固定的时间段内或无限期地被删除或覆盖。</span>
+              <span
+                style="margin-left:15px;vertical-align:bottom">使用一次写入多次读取(WORM)模型存储对象，防止对象在固定的时间段内或无限期地被删除或覆盖。</span>
             </div>
             <div v-loading="loading">
-              <el-button
-                v-show="!switchOn"
-                v-access="'s3:PutBucketObjectLockConfiguration'"
-                class="modBtn"
-                type="text"
-                :disabled="!objectLockEnable"
-                @click="showOption"
-              >
+              <el-button v-show="!switchOn" v-access="'s3:PutBucketObjectLockConfiguration'" class="modBtn" type="text"
+                :disabled="!objectLockEnable" @click="showOption">
                 <span style="color:#ff8746;">
                   编辑
                 </span>
               </el-button>
               <p class="title">对象锁定</p>
-              <p>{{ objectLockEnable?'已启用':'已禁用' }}</p>
+              <p>{{ objectLockEnable ? '已启用' : '已禁用' }}</p>
               <div v-if="!switchOn">
                 <!-- 对象锁定未启用、隐藏默认保留期 -->
                 <div v-if="objectLockEnable">
                   <p class="title">默认保留期</p>
                   <p>{{ Retention }}</p>
                 </div>
-                <div v-if="Retention!=='未启用'">
+                <div v-if="Retention !== '未启用'">
                   <p class="title">默认保留模式</p>
                   <p>{{ mode }}</p>
                   <p class="title">默认保留期</p>
@@ -37,44 +32,28 @@
                 </div>
               </div>
               <div v-if="switchOn">
-                <el-form
-                  ref="form"
-                  :model="form"
-                  :rules="rules"
-                >
+                <el-form ref="form" :model="form" :rules="rules">
                   <el-row>
                     <p class="title">
                       默认保留期
                     </p>
                     <span class="tip">自动保护置入此存储桶的新对象，保证其不被删除或覆盖。</span>
-                    <el-radio-group
-                      v-model="form.defaultTime"
-                      class="reverseColumn"
-                    >
+                    <el-radio-group v-model="form.defaultTime" class="reverseColumn">
                       <el-radio label="disable">禁用</el-radio>
                       <el-radio label="enable">启用</el-radio>
                     </el-radio-group>
                   </el-row>
-                  <el-row v-if="form.defaultTime!=='disable'">
+                  <el-row v-if="form.defaultTime !== 'disable'">
                     <p class="title">
                       默认保留模式
                     </p>
-                    <el-radio-group
-                      v-model="form.mode"
-                      class="reverseColumn"
-                    >
-                      <el-radio
-                        class="modePosition"
-                        label="GOVERNANCE"
-                      >监管
+                    <el-radio-group v-model="form.mode" class="reverseColumn">
+                      <el-radio class="modePosition" label="GOVERNANCE">监管
                         <span class="modeTip">
                           在保留期内，具有特定权限的用户可以覆盖或删除受保护的对象版本。
                         </span>
                       </el-radio>
-                      <el-radio
-                        class="modePosition"
-                        label="COMPLIANCE"
-                      >合规
+                      <el-radio class="modePosition" label="COMPLIANCE">合规
                         <span class="modeTip">在保留期内，任何用户都不能覆盖或删除受保护的对象版本。</span>
                       </el-radio>
                     </el-radio-group>
@@ -82,34 +61,17 @@
                       默认保留期
                     </p>
                     <el-form-item prop="timeNum">
-                      <el-input
-                        v-model="form.timeNum"
-                        style="width:500px;margin-right:20px"
-                        size="mini"
-                        placeholder="输入数字"
-                        clearable
-                      />
-                      <el-select
-                        v-model="expireTime"
-                        size="mini"
-                        @change="chanageExpireTime"
-                      >
-                        <el-option
-                          v-for="(item,index) in timeRange"
-                          :key="index"
-                          :label="item.name"
-                          :value="item.value"
-                        />
+                      <el-input v-model="form.timeNum" style="width:500px;margin-right:20px" size="mini"
+                        placeholder="输入数字" clearable />
+                      <el-select v-model="expireTime" size="mini" @change="chanageExpireTime">
+                        <el-option v-for="(item, index) in timeRange" :key="index" :label="item.name"
+                          :value="item.value" />
                       </el-select>
                     </el-form-item>
                   </el-row>
                   <el-row style="width:730px;display:flex;justify-content:flex-end;margin-top:30px">
-                    <el-button @click="switchOn=false;getObjectLock()">取消</el-button>
-                    <el-button
-                      type="primary"
-                      class="golden"
-                      @click="saveObjectLockConfig"
-                    >保存更改</el-button>
+                    <el-button @click="switchOn = false; getObjectLock()">取消</el-button>
+                    <el-button type="primary" class="golden" @click="saveObjectLockConfig">保存更改</el-button>
                   </el-row>
                 </el-form>
               </div>
@@ -122,7 +84,7 @@
 </template>
 <script>
 export default {
-  data() {
+  data () {
     const validatorTimeNum = (rule, data, callback) => {
       const reg = new RegExp('^[0-9]+(\.[0-9]+)?$')
       if (!reg.test(data)) {
@@ -169,18 +131,18 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.getObjectLock()
   },
   methods: {
-    chanageExpireTime(val) {
+    chanageExpireTime (val) {
       if (val == 'day') {
         this.form.timeNum = ''
       } else {
         this.form.timeNum = ''
       }
     },
-    saveObjectLockConfig() {
+    saveObjectLockConfig () {
       this.$refs['form'].validate(valid => {
         if (valid) {
           var Days = ''
@@ -225,7 +187,7 @@ export default {
                 this.showS3Msg(err)
                 console.dir(err)
               } else {
-                this.$ts({
+                this.$msg({
                   type: 'success',
                   text: this.$ts('response.success')
                 })
@@ -238,7 +200,7 @@ export default {
         }
       })
     },
-    getObjectLock() {
+    getObjectLock () {
       this.loading = true
       this.$store.state.user._S3.getObjectLockConfiguration(
         {
@@ -298,7 +260,7 @@ export default {
         }
       )
     },
-    showOption() {
+    showOption () {
       this.switchOn = true
     }
   }

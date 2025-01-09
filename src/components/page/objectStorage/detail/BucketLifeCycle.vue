@@ -3,10 +3,7 @@
     <div class="bucket-detail">
       <div class="bucket-detail-inner">
         <div class="bucket-panel">
-          <div
-            id="lifeCycle-info-field"
-            class="param-box"
-          >
+          <div id="lifeCycle-info-field" class="param-box">
             <div class="param-hd">
               <h3 id="lifeCycle">生命周期规则</h3>
             </div>
@@ -16,67 +13,27 @@
                 由于低频和归档存储类型的对象规格限制，沉降后的对象有最小规格限制，您的存储用量可能增加。
               </span>
             </div> -->
-            <div
-              v-loading="loading"
-              class="param-bd"
-            >
+            <div v-loading="loading" class="param-bd">
               <el-row class="mv_10 clearfix">
                 <div class="left">
-                  <el-button
-                    type="primary"
-                    class="blue"
-                    :disabled="operateDisable"
-                    @click="visibleFlagInfo = true"
-                  >详情</el-button>
-                  <el-button
-                    v-access="'s3:PutLifecycleConfiguration'"
-                    class="blue"
-                    type="primary"
-                    :disabled="operateDisable"
-                    @click="addModBtn('modify')"
-                  >编辑</el-button>
-                  <el-button
-                    v-access="'s3:PutLifecycleConfiguration'"
-                    type="danger"
-                    class="red"
-                    :disabled="deleteDisable"
-                    @click="delLifecycle"
-                  >删除</el-button>
-                  <el-button
-                    v-access="'s3:PutLifecycleConfiguration'"
-                    class="golden"
-                    @click="addModBtn('add')"
-                  >创建</el-button>
+                  <el-button type="primary" class="blue" :disabled="operateDisable"
+                    @click="visibleFlagInfo = true">详情</el-button>
+                  <el-button v-access="'s3:PutLifecycleConfiguration'" class="blue" type="primary"
+                    :disabled="operateDisable" @click="addModBtn('modify')">编辑</el-button>
+                  <el-button v-access="'s3:PutLifecycleConfiguration'" type="danger" class="red"
+                    :disabled="deleteDisable" @click="delLifecycle">删除</el-button>
+                  <el-button v-access="'s3:PutLifecycleConfiguration'" class="golden"
+                    @click="addModBtn('add')">创建</el-button>
                 </div>
                 <div class="right">
-                  <el-tooltip
-                    content="刷新"
-                    placement="top"
-                    effect="dark"
-                  >
-                    <i
-                      class="el-icon-refresh"
-                      @click="getBucketLifecycle"
-                    />
+                  <el-tooltip content="刷新" placement="top" effect="dark">
+                    <i class="el-icon-refresh" @click="getBucketLifecycle" />
                   </el-tooltip>
                 </div>
               </el-row>
-              <el-input
-                v-model="searchName"
-                class="searchIpt"
-                clearable
-                placeholder="按名称搜索生命周期规则"
-              />
-              <el-table
-                ref="multipleTable"
-                :data="tableSlicePage"
-                border
-                tooltip-effect="dark"
-                style="width: 100%"
-                :row-key="(row) => row.ID"
-                highlight-current-row
-                @selection-change="handleSelection"
-              >
+              <el-input v-model="searchName" class="searchIpt" clearable placeholder="按名称搜索生命周期规则" />
+              <el-table ref="multipleTable" :data="tableSlicePage" border tooltip-effect="dark" style="width: 100%"
+                :row-key="(row) => row.ID" highlight-current-row @selection-change="handleSelection">
                 <!-- @current-change="handleRowChange" -->
                 <!-- <el-table-column label="" width="50" center>
                   <template slot-scope="scope">
@@ -88,36 +45,21 @@
                     >&nbsp;
                     </el-radio>
                   </template>
-                </el-table-column> -->
+</el-table-column> -->
                 <!-- <el-table-column type="selection" width="55" reserve-selection /> -->
                 <el-table-column type="selection" />
-                <el-table-column
-                  prop="ID"
-                  label="生命周期规则名称"
-                  sortable
-                >
+                <el-table-column prop="ID" label="生命周期规则名称" sortable>
                   <template slot-scope="scope">
-                    <el-button
-                      type="text"
-                      @click="handleClickName(scope.row)"
-                    >{{ scope.row.ID }}</el-button>
+                    <el-button type="text" @click="handleClickName(scope.row)">{{ scope.row.ID }}</el-button>
                   </template>
                 </el-table-column>
-                <el-table-column
-                  prop="area"
-                  label="范围"
-                  sortable
-                >
+                <el-table-column prop="area" label="范围" sortable>
                   <template slot-scope="scope">
                     {{ applyRange(scope) }}
                   </template>
                 </el-table-column>
                 <!-- <el-table-column prop="content" label="规则内容" sortable /> -->
-                <el-table-column
-                  prop="Status"
-                  label="状态"
-                  sortable
-                >
+                <el-table-column prop="Status" label="状态" sortable>
                   <template slot-scope="scope">
                     <span :class="scope.row.Status === 'Enabled' ? 'green' : 'red'">
                       {{
@@ -125,88 +67,41 @@
                       }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column
-                  prop=""
-                  label="启用/禁用"
-                >
+                <el-table-column prop="" label="启用/禁用">
                   <template slot-scope="scope">
                     <el-dropdown @command="handleStatus">
-                      <el-button
-                        v-access="'s3:PutLifecycleConfiguration'"
-                        type="primary"
-                        class="blue"
-                      >
+                      <el-button v-access="'s3:PutLifecycleConfiguration'" type="primary" class="blue">
                         操作<i class="el-icon-arrow-down el-icon--right" />
                       </el-button>
                       <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item
-                          :command="changeStatus('enable',scope.row)"
-                          :class="
-                            scope.row.Status === 'Enabled' ? 'forbidBtn' : ''
-                          "
-                        >启用规则</el-dropdown-item>
-                        <el-dropdown-item
-                          :command="changeStatus('disabled',scope.row)"
-                          :class="
-                            scope.row.Status === 'Enabled' ? '' : 'forbidBtn'
-                          "
-                        >停用规则</el-dropdown-item>
+                        <el-dropdown-item :command="changeStatus('enable', scope.row)" :class="scope.row.Status === 'Enabled' ? 'forbidBtn' : ''
+                          ">启用规则</el-dropdown-item>
+                        <el-dropdown-item :command="changeStatus('disabled', scope.row)" :class="scope.row.Status === 'Enabled' ? '' : 'forbidBtn'
+                          ">停用规则</el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
                   </template>
                 </el-table-column>
               </el-table>
             </div>
-            <el-pagination
-              :current-page="currentPage"
-              :page-sizes="[5, 10, 50, 100]"
-              :page-size="pageSize"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="total"
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-            />
+            <el-pagination :current-page="currentPage" :page-sizes="[5, 10, 50, 100]" :page-size="pageSize"
+              layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+              @current-change="handleCurrentChange" />
           </div>
         </div>
       </div>
-      <el-dialog
-        ref="formData"
-        :title="addOperate?'创建生命周期规则':'编辑生命周期规则'"
-        width="850px"
-        :visible.sync="visibleFlag"
-        class="dialog"
-        @close="handleScroll('formData')"
-      >
+      <el-dialog ref="formData" :title="addOperate ? '创建生命周期规则' : '编辑生命周期规则'" width="850px" :visible.sync="visibleFlag"
+        class="dialog" @close="handleScroll('formData')">
         <!-- 生命周期配置规则 -->
         <h1 class="titleh1">生命周期配置规则</h1>
-        <el-form
-          ref="createForm"
-          :model="createForm"
-          :rules="rules"
-        >
-          <el-form-item
-            label="生命周期规则名称"
-            prop="ID"
-          >
-            <el-input
-              v-model="createForm.ID"
-              placeholder="输入规则名称"
-              clearable
-            />
+        <el-form ref="createForm" :model="createForm" :rules="rules">
+          <el-form-item label="生命周期规则名称" prop="ID">
+            <el-input v-model="createForm.ID" placeholder="输入规则名称" clearable />
           </el-form-item>
-          <el-form-item
-            label="选择规则范围"
-            class="ruleRange"
-          >
-            <el-radio
-              v-model="createForm.range"
-              label="1"
-            >使用一个或多个筛选条件限制此规则的范围
+          <el-form-item label="选择规则范围" class="ruleRange">
+            <el-radio v-model="createForm.range" label="1">使用一个或多个筛选条件限制此规则的范围
             </el-radio>
-            <el-radio
-              v-model="createForm.range"
-              label="2"
-            >应用到存储桶中的所有对象
+            <el-radio v-model="createForm.range" label="2">应用到存储桶中的所有对象
             </el-radio>
           </el-form-item>
           <el-row v-if="createForm.range === '1'">
@@ -219,11 +114,7 @@
               添加筛选条件，以便将此规则的范围限制为单个前缀。
             </p>
             <el-form-item prop="prefixIpt">
-              <el-input
-                v-model="createForm.prefixIpt"
-                placeholder="输入前缀"
-                clearable
-              />
+              <el-input v-model="createForm.prefixIpt" placeholder="输入前缀" clearable />
             </el-form-item>
 
             <!-- 对象标签 -->
@@ -341,20 +232,13 @@
             <!-- 生命周期配置规则 -->
           </el-row>
           <h1 class="titleh1">生命周期规则操作</h1>
-          <el-checkbox-group
-            v-model="ruleOperate"
-            class="obstacleTop"
-            @change="changeCheckBox"
-          >
+          <el-checkbox-group v-model="ruleOperate" class="obstacleTop" @change="changeCheckBox">
             <!-- <el-checkbox label="r1">在存储类之间移动对象的当前版本</el-checkbox>
             <el-checkbox label="r2">在存储类之间移动对象的非当前版本</el-checkbox> -->
 
             <el-checkbox label="r3">将对象的当前版本设为过期</el-checkbox>
             <el-checkbox label="r4">永久删除对象的非当前版本</el-checkbox>
-            <el-checkbox
-              label="r5"
-              :disabled="disableDelExpiredRule"
-            >删除过期的对象删除标记或未完成的分段上传
+            <el-checkbox label="r5" :disabled="disableDelExpiredRule">删除过期的对象删除标记或未完成的分段上传
             </el-checkbox>
           </el-checkbox-group>
           <div style="font-size: 12px; margin: -18px 0 20px 25px;">
@@ -362,205 +246,97 @@
           </div>
 
           <!-- 在存储类之间移动对象的当前版本 -->
-          <div
-            v-if="ruleOperate.includes('r1')"
-            class="obstacleTop"
-          >
+          <div v-if="ruleOperate.includes('r1')" class="obstacleTop">
             <h1 class="titleh1">在存储类之间移动对象的当前版本</h1>
-            <div v-if="createForm.Transition&&createForm.Transition.length > 0">
-              <p
-                class="objectLabelTitle"
-                style="width:590px"
-              >
+            <div v-if="createForm.Transition && createForm.Transition.length > 0">
+              <p class="objectLabelTitle" style="width:590px">
                 <span>选择存储类转换</span>
                 <span style="margin-left:200px">创建对象以来的天数</span>
               </p>
-              <div
-                v-for="(item, i) in createForm.Transition"
-                :key="item.key"
-                class="objectLabelTitle"
-                style="width: 100%;"
-              >
-                <el-form-item
-                  style="margin-right:50px"
-                  :prop="`Transition.${i}.key`"
-                  :rules="rules.validateMinObjSizeLimit"
-                >
-                  <el-select
-                    v-model="item.key"
-                    :popper-append-to-body="false"
-                    clearable
-                    class="ruleSelect"
-                    style="width:350px;"
-                    @change="showTransitionRule('currentVer')"
-                    @click.native="judgeDisabled(i,'currentVer')"
-                  >
-                    <el-option
-                      v-for="type in storageTransition"
-                      :key="type.value"
-                      :label="type.label"
-                      :value="type.value"
-                      :disabled="type.disabled"
-                    >
+              <div v-for="(item, i) in createForm.Transition" :key="item.key" class="objectLabelTitle"
+                style="width: 100%;">
+                <el-form-item style="margin-right:50px" :prop="`Transition.${i}.key`"
+                  :rules="rules.validateMinObjSizeLimit">
+                  <el-select v-model="item.key" :popper-append-to-body="false" clearable class="ruleSelect"
+                    style="width:350px;" @change="showTransitionRule('currentVer')"
+                    @click.native="judgeDisabled(i, 'currentVer')">
+                    <el-option v-for="type in storageTransition" :key="type.value" :label="type.label"
+                      :value="type.value" :disabled="type.disabled">
                       <span>{{ type.label }}</span>
                       <span>{{ type.tip }}</span>
                       <span>{{ type.day }}</span>
                     </el-option>
                   </el-select>
                 </el-form-item>
-                <el-form-item
-                  :prop="`Transition.${i}.value`"
-                  :rules="rules.objTransferDay"
-                >
-                  <el-input
-                    v-model="item.value"
-                    placeholder="天数"
-                    class="obstacleRight"
-                  />
+                <el-form-item :prop="`Transition.${i}.value`" :rules="rules.objTransferDay">
+                  <el-input v-model="item.value" placeholder="天数" class="obstacleRight" />
                 </el-form-item>
                 <el-form-item>
-                  <el-button
-                    type="danger"
-                    @click="delTransition(i,'currentVer')"
-                  >删除</el-button>
+                  <el-button type="danger" @click="delTransition(i, 'currentVer')">删除</el-button>
                 </el-form-item>
               </div>
-              <el-button
-                :disabled="disableAddTransform"
-                @click="addTransitionType('currentVer')"
-              >添加转换</el-button>
+              <el-button :disabled="disableAddTransform" @click="addTransitionType('currentVer')">添加转换</el-button>
             </div>
           </div>
 
           <!-- 在存储类之间移动对象的非当前版本 -->
-          <div
-            v-if="ruleOperate.includes('r2')"
-            class="obstacleTop"
-          >
+          <div v-if="ruleOperate.includes('r2')" class="obstacleTop">
             <h1 class="titleh1">在存储类之间移动对象的非当前版本</h1>
-            <div v-if="createForm.NoncurrentVersionTransitions&&createForm.NoncurrentVersionTransitions.length > 0">
-              <p
-                class="objectLabelTitle"
-                style="width:700px"
-              >
+            <div v-if="createForm.NoncurrentVersionTransitions && createForm.NoncurrentVersionTransitions.length > 0">
+              <p class="objectLabelTitle" style="width:700px">
                 <span>选择存储类转换</span>
                 <span style="margin-left:80px">对象变为非当前对象以来的天数</span>
                 <span>要保留的较新版本的数量 – 可选</span>
               </p>
-              <div
-                v-for="(item, i) in createForm.NoncurrentVersionTransitions"
-                :key="item.key"
-                class="objectLabelTitle"
-                style="width: 800px"
-              >
-                <el-form-item
-                  :prop="`NoncurrentVersionTransitions.${i}.key`"
-                  :rules="rules.validateMinObjSizeNCLimit"
-                >
-                  <el-select
-                    v-model="item.key"
-                    :popper-append-to-body="false"
-                    clearable
-                    class="ruleSelect"
-                    @change="showTransitionRule('notCurrentVer')"
-                    @click.native="judgeDisabled(i,'notCurrentVer')"
-                  >
-                    <el-option
-                      v-for="type in storageTransition"
-                      :key="type.value"
-                      :label="type.label"
-                      :value="type.value"
-                      :disabled="type.disabled"
-                    >
+              <div v-for="(item, i) in createForm.NoncurrentVersionTransitions" :key="item.key" class="objectLabelTitle"
+                style="width: 800px">
+                <el-form-item :prop="`NoncurrentVersionTransitions.${i}.key`" :rules="rules.validateMinObjSizeNCLimit">
+                  <el-select v-model="item.key" :popper-append-to-body="false" clearable class="ruleSelect"
+                    @change="showTransitionRule('notCurrentVer')" @click.native="judgeDisabled(i, 'notCurrentVer')">
+                    <el-option v-for="type in storageTransition" :key="type.value" :label="type.label"
+                      :value="type.value" :disabled="type.disabled">
                       <span>{{ type.label }}</span>
                       <span>{{ type.tip }}</span>
                       <span>{{ type.day }}</span>
                     </el-option>
                   </el-select>
                 </el-form-item>
-                <el-form-item
-                  :prop="`NoncurrentVersionTransitions.${i}.value`"
-                  :rules="rules.objTransferDayNC"
-                >
-                  <el-input
-                    v-model="item.value"
-                    placeholder="天数"
-                    class="obstacleRight"
-                  />
+                <el-form-item :prop="`NoncurrentVersionTransitions.${i}.value`" :rules="rules.objTransferDayNC">
+                  <el-input v-model="item.value" placeholder="天数" class="obstacleRight" />
                 </el-form-item>
-                <el-form-item
-                  :prop="`NoncurrentVersionTransitions.${i}.ver`"
-                  :rules="rules.objTransferVerNC"
-                >
-                  <el-input
-                    v-model="item.ver"
-                    placeholder="版本数"
-                    class="obstacleRight"
-                  />
-                  <p style="width:250px;line-height:16px;color:rgb(104, 112, 120);font-size:12px">最高可以是 10000 版本。 所有其他非当前版本都将被移动。</p>
+                <el-form-item :prop="`NoncurrentVersionTransitions.${i}.ver`" :rules="rules.objTransferVerNC">
+                  <el-input v-model="item.ver" placeholder="版本数" class="obstacleRight" />
+                  <p style="width:250px;line-height:16px;color:rgb(104, 112, 120);font-size:12px">最高可以是 10000 版本。
+                    所有其他非当前版本都将被移动。</p>
                 </el-form-item>
                 <el-form-item>
-                  <el-button
-                    type="danger"
-                    @click="delTransition(i,'notCurrentVer')"
-                  >删除</el-button>
+                  <el-button type="danger" @click="delTransition(i, 'notCurrentVer')">删除</el-button>
                 </el-form-item>
               </div>
-              <el-button
-                :disabled="disableAddTransformNC"
-                @click="addTransitionType('notCurrentVer')"
-              >添加转换</el-button>
+              <el-button :disabled="disableAddTransformNC" @click="addTransitionType('notCurrentVer')">添加转换</el-button>
             </div>
           </div>
 
           <!-- r2 end -->
 
-          <div
-            v-if="ruleOperate.includes('r3')"
-            class="obstacleTop"
-          >
+          <div v-if="ruleOperate.includes('r3')" class="obstacleTop">
             <h1 class="titleh1">将对象的当前版本设为过期</h1>
-            <el-form-item
-              label="创建对象以来的天数"
-              prop="Expiration"
-            >
-              <el-input
-                v-model="createForm.Expiration"
-                style="width: 520px"
-                placeholder="输入天数"
-                clearable
-              />
+            <el-form-item label="创建对象以来的天数" prop="Expiration">
+              <el-input v-model="createForm.Expiration" style="width: 520px" placeholder="输入天数" clearable />
             </el-form-item>
           </div>
           <!-- 永久删除对象 -->
-          <div
-            v-if="ruleOperate.includes('r4')"
-            class="obstacleTop"
-          >
+          <div v-if="ruleOperate.includes('r4')" class="obstacleTop">
             <h1 class="titleh1">永久删除对象的非当前版本</h1>
             <el-row :gutter="60">
               <el-col :span="12">
-                <el-form-item
-                  label="对象变为非当前对象以来的天数"
-                  prop="noncurrentDays"
-                >
-                  <el-input
-                    v-model="createForm.noncurrentDays"
-                    placeholder="输入天数"
-                    clearable
-                  />
+                <el-form-item label="对象变为非当前对象以来的天数" prop="noncurrentDays">
+                  <el-input v-model="createForm.noncurrentDays" placeholder="输入天数" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item
-                  label="要保留的较新版本的数量 – 可选"
-                  prop="NewerNoncurrentVersions"
-                >
-                  <el-input
-                    v-model="createForm.NewerNoncurrentVersions"
-                    placeholder="版本数"
-                    clearable
-                  />
+                <el-form-item label="要保留的较新版本的数量 – 可选" prop="NewerNoncurrentVersions">
+                  <el-input v-model="createForm.NewerNoncurrentVersions" placeholder="版本数" clearable />
                   <p class="tipText">
                     最高可以是 100000 版本。 所有其他非当前版本都将被移动。
                   </p>
@@ -569,46 +345,28 @@
             </el-row>
           </div>
           <!-- 删除过期的对象 -->
-          <div
-            v-if="ruleOperate.includes('r5')"
-            class="obstacleTop"
-          >
+          <div v-if="ruleOperate.includes('r5')" class="obstacleTop">
             <h1 class="titleh1">删除过期的对象删除标记或未完成的分段上传</h1>
             <p class="normalText">过期的对象删除标记</p>
             <p class="tipText">
               此操作将删除过期的对象删除标记，并可能提高性能。如果在删除某个启用了版本控制的对象后，该对象所有的非当前版本过期，则将删除过期的对象删除标记。选中“将对象的当前版本设为过期”时，此操作不可用。
             </p>
-            <el-checkbox
-              v-model="createForm.AbortIncompleteMultipartUpload.deleteExpired"
-              class="obstacleTop"
-              :disabled="ruleOperate.includes('r3')"
-            >删除过期的对象删除标记</el-checkbox>
-            <p
-              v-if="ruleOperate.includes('r3')"
-              style="margin: -15px 0 20px 0"
-            >
+            <el-checkbox v-model="createForm.AbortIncompleteMultipartUpload.deleteExpired" class="obstacleTop"
+              :disabled="ruleOperate.includes('r3')">删除过期的对象删除标记</el-checkbox>
+            <p v-if="ruleOperate.includes('r3')" style="margin: -15px 0 20px 0">
               <i class="el-icon-warning-outline">如果启用将当前的对象版本设为过期，则无法启用删除过期的对象删除标记。</i>
             </p>
             <p class="normalText">未完成的分段上传</p>
             <p class="tipText">
-              此操作将停止所有未完成的分段上传并删除与分段上传相关的分段。了解更多
+              此操作将停止所有未完成的分段上传并删除与分段上传相关的分段。
             </p>
-            <el-checkbox
-              v-model="createForm.AbortIncompleteMultipartUpload.deleteUncompleted"
-              class="obstacleTop"
-            >删除未完成的分段上传</el-checkbox>
+            <el-checkbox v-model="createForm.AbortIncompleteMultipartUpload.deleteUncompleted"
+              class="obstacleTop">删除未完成的分段上传</el-checkbox>
             <div v-if="createForm.AbortIncompleteMultipartUpload.deleteUncompleted">
-              <el-form-item
-                label="天数"
-                prop="AbortIncompleteMultipartUpload.deleteUncompletedDay"
-                :rules="rules.deleteUncompleted"
-              >
-                <el-input
-                  v-model="createForm.AbortIncompleteMultipartUpload.deleteUncompletedDay"
-                  style="width: 520px"
-                  clearable
-                  placeholder="输入天数"
-                />
+              <el-form-item label="天数" prop="AbortIncompleteMultipartUpload.deleteUncompletedDay"
+                :rules="rules.deleteUncompleted">
+                <el-input v-model="createForm.AbortIncompleteMultipartUpload.deleteUncompletedDay" style="width: 520px"
+                  clearable placeholder="输入天数" />
               </el-form-item>
             </div>
           </div>
@@ -619,23 +377,20 @@
               <h3 class="title">当前版本操作</h3>
               第 0 天
               <p>
-                <span v-if="ruleOperate.includes('r1')||ruleOperate.includes('r3')">已上传对象</span>
+                <span v-if="ruleOperate.includes('r1') || ruleOperate.includes('r3')">已上传对象</span>
                 <span v-else>没有定义任何操作。</span>
               </p>
               <!-- 将对象的当前版本设为过期 -->
 
               <div v-if="ruleOperate.includes('r1')">
-                <div
-                  v-for="(item) in createForm.Transition"
-                  :key="item.key"
-                >
-                  <p class="fa fa-arrow-down" />
+                <div v-for="(item) in createForm.Transition" :key="item.key">
+                  <i class="el-icon-bottom" />
                   <p>第{{ item.value || "--" }}天</p>
                   <p><span>对象移动到&nbsp;&nbsp;{{ RuleMap[item.key] }}</span></p>
                 </div>
               </div>
               <div v-if="ruleOperate.includes('r3')">
-                <p class="fa fa-arrow-down" />
+                <i class="el-icon-bottom" />
                 <p>第{{ createForm.Expiration || "--" }}天</p>
                 <p><span>对象过期时间</span></p>
               </div>
@@ -644,17 +399,14 @@
               <h3 class="title">非当前版本操作</h3>
               第 0 天
               <p>
-                <span v-if="ruleOperate.includes('r2')||ruleOperate.includes('r4')">对象变为非当前对象</span>
+                <span v-if="ruleOperate.includes('r2') || ruleOperate.includes('r4')">对象变为非当前对象</span>
                 <span v-else>没有定义任何操作。</span>
               </p>
               <!-- 永久删除对象的非当前版本 option4-->
 
               <div v-if="ruleOperate.includes('r2')">
-                <div
-                  v-for="(item,i) in createForm.NoncurrentVersionTransitions"
-                  :key="item.key"
-                >
-                  <p class="fa fa-arrow-down" />
+                <div v-for="(item) in createForm.NoncurrentVersionTransitions" :key="item.key">
+                  <i class="el-icon-bottom" />
                   <p>第{{ item.value || "--" }}天</p>
                   <p><span>保留 {{ item.ver || 0 }} 个最新的非当前版本</span></p>
                   <p><span>所有其他非当前版本都将移动到&nbsp;&nbsp;{{ RuleMap[item.key] }}</span></p>
@@ -662,22 +414,19 @@
               </div>
 
               <div v-if="ruleOperate.includes('r4')">
-                <p class="fa fa-arrow-down" />
+                <i class="el-icon-bottom" />
                 <p>第{{ createForm.noncurrentDays || "--" }}天</p>
                 <p>
                   <span>保留{{
                     createForm.NewerNoncurrentVersions || 0
-                  }}个最新的非当前版本</span>
+                    }}个最新的非当前版本</span>
                 </p>
                 <p><span>所有其他非当前版本都将被永久删除</span></p>
               </div>
             </div>
             <span class="border" />
           </div>
-          <p
-            v-if="validRuleOption"
-            style="color: #f56c6c"
-          >
+          <p v-if="validRuleOption" style="color: #f56c6c">
             <i class="el-icon-circle-close" />
             需要为规则定义至少一个转换或过期操作。
           </p>
@@ -685,62 +434,29 @@
         <div slot="footer" class="dialog-footer">
           <el-button class="blue" @click="visibleFlag = false">{{
             $ts("button.cancel")
-          }}</el-button>
-          <el-button
-            class="golden"
-            type="primary"
-            @click="submitCreate"
-          >{{ addOperate?'创建':'保存' }}</el-button>
+            }}</el-button>
+          <el-button class="golden" type="primary" @click="submitCreate">{{ addOperate ? '创建' : '保存' }}</el-button>
         </div>
       </el-dialog>
       <!-- 详情 -->
-      <el-dialog
-        ref="infoData"
-        title="生命周期配置规则"
-        :visible.sync="visibleFlagInfo"
-        class="infoDialog"
-        width="1200px"
-        @close="handleScroll('infoData')"
-      >
+      <el-dialog ref="infoData" title="生命周期配置规则" :visible.sync="visibleFlagInfo" class="infoDialog" width="1200px"
+        @close="handleScroll('infoData')">
         <div class="infoMenu titleh1">
           <h3 class="">{{ selectConfig.ID }}</h3>
           <div>
-            <el-button
-              v-access="'s3:PutLifecycleConfiguration'"
-              type="primary"
-              class="golden"
-              @click="addModBtn('modify');visibleFlagInfo=false;visibleFlag=true"
-            >编辑</el-button>
-            <el-button
-              v-access="'s3:PutLifecycleConfiguration;s3:DeleteBucketLifecycle'"
-              type="danger"
-              class="red"
-              @click="delLifecycle"
-            >删除</el-button>
-            <el-dropdown
-              style="margin-left:10px"
-              @command="handleStatus"
-            >
-              <el-button
-                v-access="'s3:PutLifecycleConfiguration'"
-                type="primary"
-                class="blue"
-              >
+            <el-button v-access="'s3:PutLifecycleConfiguration'" type="primary" class="golden"
+              @click="addModBtn('modify'); visibleFlagInfo = false; visibleFlag = true">编辑</el-button>
+            <el-button v-access="'s3:PutLifecycleConfiguration;s3:DeleteBucketLifecycle'" type="danger" class="red"
+              @click="delLifecycle">删除</el-button>
+            <el-dropdown style="margin-left:10px" @command="handleStatus">
+              <el-button v-access="'s3:PutLifecycleConfiguration'" type="primary" class="blue">
                 操作<i class="el-icon-arrow-down el-icon--right" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item
-                  :command="changeStatus('enable',createForm)"
-                  :class="
-                    selectConfig.Status === 'Enabled' ? 'forbidBtn' : ''
-                  "
-                >启用规则</el-dropdown-item>
-                <el-dropdown-item
-                  :command="changeStatus('disabled',createForm)"
-                  :class="
-                    selectConfig.Status === 'Enabled' ? '' : 'forbidBtn'
-                  "
-                >停用规则</el-dropdown-item>
+                <el-dropdown-item :command="changeStatus('enable', createForm)" :class="selectConfig.Status === 'Enabled' ? 'forbidBtn' : ''
+                  ">启用规则</el-dropdown-item>
+                <el-dropdown-item :command="changeStatus('disabled', createForm)" :class="selectConfig.Status === 'Enabled' ? '' : 'forbidBtn'
+                  ">停用规则</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
@@ -763,11 +479,9 @@
 
           <p>
             状态
-            <span
-              :style="{
-                color: selectConfig.Status === 'Enabled' ? 'green' : 'red',
-              }"
-            >{{ selectConfig.Status === "Enabled" ? "已启用" : "未启用" }}</span>
+            <span :style="{
+              color: selectConfig.Status === 'Enabled' ? 'green' : 'red',
+              }">{{ selectConfig.Status === "Enabled" ? "已启用" : "未启用" }}</span>
           </p>
 
           <!-- <p>
@@ -788,31 +502,26 @@
           </p>
         </div>
         <h3 class="titleh1">审查转换和过期操作</h3>
-        <div
-          class="configList"
-          style="margin-right: 250px"
-        >
+        <div class="configList" style="margin-right: 250px">
           <div class="currentVersion">
             <h3 class="title">当前版本操作</h3>
             第 0 天
             <p>
-              <span v-if="selectConfig.Expiration&&selectConfig.Expiration.Days || selectConfig.Transitions&&selectConfig.Transitions.length">已上传对象</span>
+              <span
+                v-if="selectConfig.Expiration && selectConfig.Expiration.Days || selectConfig.Transitions && selectConfig.Transitions.length">已上传对象</span>
               <span v-else>没有定义任何操作。</span>
             </p>
-            <div v-if="selectConfig.Transitions&&selectConfig.Transitions.length">
-              <div
-                v-for="item in selectConfig.Transitions"
-                :key="item.day"
-              >
-                <p class="fa fa-arrow-down" />
+            <div v-if="selectConfig.Transitions && selectConfig.Transitions.length">
+              <div v-for="item in selectConfig.Transitions" :key="item.day">
+                <i class="el-icon-bottom" />
                 <p>
                   第{{ item.Days }}天
                 </p>
                 <p><span>对象移动到&nbsp;{{ RuleMapTxt[item.StorageClass] }}</span></p>
               </div>
             </div>
-            <div v-if="selectConfig.Expiration&&selectConfig.Expiration.Days">
-              <p class="fa fa-arrow-down" />
+            <div v-if="selectConfig.Expiration && selectConfig.Expiration.Days">
+              <i class="el-icon-bottom" />
               <p>第{{ selectConfig.Expiration.Days }}天</p>
               <p><span>对象过期时间</span></p>
             </div>
@@ -822,15 +531,13 @@
             第 0 天
             <p>
 
-              <span v-if="selectConfig.NoncurrentVersionTransitions&&selectConfig.NoncurrentVersionTransitions.length||selectConfig.NoncurrentVersionExpiration&&selectConfig.NoncurrentVersionExpiration.NoncurrentDays">对象变为非当前对象</span>
+              <span
+                v-if="selectConfig.NoncurrentVersionTransitions && selectConfig.NoncurrentVersionTransitions.length || selectConfig.NoncurrentVersionExpiration && selectConfig.NoncurrentVersionExpiration.NoncurrentDays">对象变为非当前对象</span>
               <span v-else>没有定义任何操作。</span>
             </p>
-            <div v-if="selectConfig.NoncurrentVersionTransitions&&selectConfig.NoncurrentVersionTransitions.length">
-              <div
-                v-for="item in selectConfig.NoncurrentVersionTransitions"
-                :key="item.day"
-              >
-                <p class="fa fa-arrow-down" />
+            <div v-if="selectConfig.NoncurrentVersionTransitions && selectConfig.NoncurrentVersionTransitions.length">
+              <div v-for="item in selectConfig.NoncurrentVersionTransitions" :key="item.day">
+                <i class="el-icon-bottom" />
                 <p>
                   第{{ item.NoncurrentDays }}天
                 </p>
@@ -840,7 +547,7 @@
             </div>
             <div v-if="selectConfig.NoncurrentVersionExpiration">
 
-              <p class="fa fa-arrow-down" />
+              <i class="el-icon-bottom" />
               <p>
                 第{{
                   selectConfig.NoncurrentVersionExpiration.NoncurrentDays || "--"
@@ -857,19 +564,19 @@
           </div>
         </div>
         <h3 class="titleh1">删除过期的对象删除标记或未完成的分段上传</h3>
-        <div
-          class="configList"
-          style="margin-right:250px"
-        >
+        <div class="configList" style="margin-right:250px">
           <div class="currentVersion">
             过期的对象删除标记
-            <p><span> {{ selectConfig.Expiration&&selectConfig.Expiration.ExpiredObjectDeleteMarker?'删除过期的对象删除标记':'-' }}</span></p>
+            <p><span> {{ selectConfig.Expiration && selectConfig.Expiration.ExpiredObjectDeleteMarker ? '删除过期的对象删除标记' : '-'
+                }}</span></p>
           </div>
           <div class="notCurrentVersion">
             未完成的分段上传
             <p>
               <span>
-                {{ selectConfig.AbortIncompleteMultipartUpload&&selectConfig.AbortIncompleteMultipartUpload.DaysAfterInitiation?'在'+selectConfig.AbortIncompleteMultipartUpload.DaysAfterInitiation +'天后删除':'-' }}
+                {{
+                  selectConfig.AbortIncompleteMultipartUpload && selectConfig.AbortIncompleteMultipartUpload.DaysAfterInitiation ? '在' + selectConfig.AbortIncompleteMultipartUpload.DaysAfterInitiation
+                    + '天后删除' : '-' }}
               </span>
             </p>
           </div>
@@ -883,7 +590,7 @@
 <script>
 export default {
   name: 'BucketLifeCycle',
-  data() {
+  data () {
     // 数字 输出关系表对应的value
     //   var t = res.map(item => {
     //   return {
@@ -903,7 +610,7 @@ export default {
 
       //  需要判断前一项的key 判断其类型 再动态比较其大小
       // console.log(data, preKey, preData)
-      if (currentkey == 1) {
+      if (currentkey === 1) {
         // 遵循一个规则大于30
         if (data < 30) {
           return callback('至少需要 30 天才能转换到 标准 – IA。')
@@ -911,8 +618,8 @@ export default {
       }
 
       // 智能分层
-      if (currentkey == 2) {
-        if (preKey == 1 && data - preData < 30) {
+      if (currentkey === 2) {
+        if (preKey === 1 && data - preData < 30) {
           return callback('智能分层 的整数值必须至少比 标准 – IA 的值大 30。')
         } else if (!preKey) {
           if (data < 0) {
@@ -923,10 +630,10 @@ export default {
         }
       }
       // 单区  case 1
-      if (currentkey == 3) {
-        if (preKey == 2 && data - preData < 30) {
+      if (currentkey === 3) {
+        if (preKey === 2 && data - preData < 30) {
           return callback('单区 – IA 的整数值必须至少比 智能分层 的值大 30。')
-        } else if (preKey == 1 && data - preData < 30) {
+        } else if (preKey === 1 && data - preData < 30) {
           // case 2
           return callback('单区 – IA 的整数值必须至少比 标准 – IA 的值大 30。')
         } else if (!preKey) {
@@ -941,12 +648,12 @@ export default {
 
       // GIR
 
-      if (currentkey == 4) {
-        if (preKey == 2 && data < preData) {
+      if (currentkey === 4) {
+        if (preKey === 2 && data < preData) {
           return callback(
             'Glacier Instant Retrieval 的整数值必须至少比 智能分层 的值大 0。'
           )
-        } else if (preKey == 1 && data - preData < 30) {
+        } else if (preKey === 1 && data - preData < 30) {
           return callback(
             'Glacier Instant Retrieval 的整数值必须至少比 标准 – IA 的值大 30'
           )
@@ -960,20 +667,20 @@ export default {
       }
 
       // GFR
-      if (currentkey == 5) {
-        if (preKey == 4 && data - preData < 90) {
+      if (currentkey === 5) {
+        if (preKey === 4 && data - preData < 90) {
           return callback(
             'Glacier Flexible Retrieval (以前称为 Glacier) 的整数值必须至少比 Glacier Instant Retrieval 的值大 90。'
           )
-        } else if (preKey == 3 && data - preData < 30) {
+        } else if (preKey === 3 && data - preData < 30) {
           return callback(
             'Glacier Flexible Retrieval (以前称为 Glacier) 的整数值必须至少比 单区 – IA 的值大 30。'
           )
-        } else if (preKey == 2 && data < preData) {
+        } else if (preKey === 2 && data < preData) {
           return callback(
             'Glacier Flexible Retrieval (以前称为 Glacier) 的整数值必须至少比 智能分层 的值大 0。'
           )
-        } else if (preKey == 1 && data - preData < 30) {
+        } else if (preKey === 1 && data - preData < 30) {
           return callback(
             'Glacier Flexible Retrieval (以前称为 Glacier) 的整数值必须至少比 标准 – IA 的值大 30。'
           )
@@ -987,24 +694,24 @@ export default {
       }
 
       // GDA
-      if (currentkey == 6) {
-        if (preKey == 5 && data - preData < 90) {
+      if (currentkey === 6) {
+        if (preKey === 5 && data - preData < 90) {
           return callback(
             'Glacier Deep Archive 的整数值必须至少比 Glacier Flexible Retrieval (以前称为 Glacier) 的值大 90。'
           )
-        } else if (preKey == 4 && data - preData < 90) {
+        } else if (preKey === 4 && data - preData < 90) {
           return callback(
             'Glacier Deep Archive 的整数值必须至少比 Glacier Instant Retrieval 的值大 90。'
           )
-        } else if (preKey == 3 && data - preData < 30) {
+        } else if (preKey === 3 && data - preData < 30) {
           return callback(
             'Glacier Deep Archive 的整数值必须至少比 单区 – IA 的值大 30。'
           )
-        } else if (preKey == 2 && data < preData) {
+        } else if (preKey === 2 && data < preData) {
           return callback(
             'Glacier Deep Archive 的整数值必须至少比 智能分层 的值大 0。'
           )
-        } else if (preKey == 1 && data - preData < 30) {
+        } else if (preKey === 1 && data - preData < 30) {
           return callback(
             'Glacier Deep Archive 的整数值必须至少比 标准 – IA 的值大 30。'
           )
@@ -1031,7 +738,7 @@ export default {
 
       //  需要判断前一项的key 判断其类型 再动态比较其大小
       // console.log(data, preKey, preData)
-      if (currentkey == 1) {
+      if (currentkey === 1) {
         // 遵循一个规则大于30
         if (data < 30) {
           return callback('至少需要 30 天才能转换到 标准 – IA。')
@@ -1039,8 +746,8 @@ export default {
       }
 
       // 智能分层
-      if (currentkey == 2) {
-        if (preKey == 1 && data - preData < 30) {
+      if (currentkey === 2) {
+        if (preKey === 1 && data - preData < 30) {
           return callback('智能分层 的整数值必须至少比 标准 – IA 的值大 30。')
         } else if (!preKey) {
           if (data < 0) {
@@ -1051,10 +758,10 @@ export default {
         }
       }
       // 单区  case 1
-      if (currentkey == 3) {
-        if (preKey == 2 && data - preData < 30) {
+      if (currentkey === 3) {
+        if (preKey === 2 && data - preData < 30) {
           return callback('单区 – IA 的整数值必须至少比 智能分层 的值大 30。')
-        } else if (preKey == 1 && data - preData < 30) {
+        } else if (preKey === 1 && data - preData < 30) {
           // case 2
           return callback('单区 – IA 的整数值必须至少比 标准 – IA 的值大 30。')
         } else if (!preKey) {
@@ -1069,12 +776,12 @@ export default {
 
       // GIR
 
-      if (currentkey == 4) {
-        if (preKey == 2 && data < preData) {
+      if (currentkey === 4) {
+        if (preKey === 2 && data < preData) {
           return callback(
             'Glacier Instant Retrieval 的整数值必须至少比 智能分层 的值大 0。'
           )
-        } else if (preKey == 1 && data - preData < 30) {
+        } else if (preKey === 1 && data - preData < 30) {
           return callback(
             'Glacier Instant Retrieval 的整数值必须至少比 标准 – IA 的值大 30'
           )
@@ -1088,20 +795,20 @@ export default {
       }
 
       // GFR
-      if (currentkey == 5) {
-        if (preKey == 4 && data - preData < 90) {
+      if (currentkey === 5) {
+        if (preKey === 4 && data - preData < 90) {
           return callback(
             'Glacier Flexible Retrieval (以前称为 Glacier) 的整数值必须至少比 Glacier Instant Retrieval 的值大 90。'
           )
-        } else if (preKey == 3 && data - preData < 30) {
+        } else if (preKey === 3 && data - preData < 30) {
           return callback(
             'Glacier Flexible Retrieval (以前称为 Glacier) 的整数值必须至少比 单区 – IA 的值大 30。'
           )
-        } else if (preKey == 2 && data < preData) {
+        } else if (preKey === 2 && data < preData) {
           return callback(
             'Glacier Flexible Retrieval (以前称为 Glacier) 的整数值必须至少比 智能分层 的值大 0。'
           )
-        } else if (preKey == 1 && data - preData < 30) {
+        } else if (preKey === 1 && data - preData < 30) {
           return callback(
             'Glacier Flexible Retrieval (以前称为 Glacier) 的整数值必须至少比 标准 – IA 的值大 30。'
           )
@@ -1115,24 +822,24 @@ export default {
       }
 
       // GDA
-      if (currentkey == 6) {
-        if (preKey == 5 && data - preData < 90) {
+      if (currentkey === 6) {
+        if (preKey === 5 && data - preData < 90) {
           return callback(
             'Glacier Deep Archive 的整数值必须至少比 Glacier Flexible Retrieval (以前称为 Glacier) 的值大 90。'
           )
-        } else if (preKey == 4 && data - preData < 90) {
+        } else if (preKey === 4 && data - preData < 90) {
           return callback(
             'Glacier Deep Archive 的整数值必须至少比 Glacier Instant Retrieval 的值大 90。'
           )
-        } else if (preKey == 3 && data - preData < 30) {
+        } else if (preKey === 3 && data - preData < 30) {
           return callback(
             'Glacier Deep Archive 的整数值必须至少比 单区 – IA 的值大 30。'
           )
-        } else if (preKey == 2 && data < preData) {
+        } else if (preKey === 2 && data < preData) {
           return callback(
             'Glacier Deep Archive 的整数值必须至少比 智能分层 的值大 0。'
           )
-        } else if (preKey == 1 && data - preData < 30) {
+        } else if (preKey === 1 && data - preData < 30) {
           return callback(
             'Glacier Deep Archive 的整数值必须至少比 标准 – IA 的值大 30。'
           )
@@ -1153,7 +860,7 @@ export default {
       const index = rule.field.match(/\d/)[0]
       const arr = this.createForm.NoncurrentVersionTransitions
       // 每项都可选、基于上一项的合法的值进行比较、递归去找前一项的ver
-      function preValidVer(i) {
+      function preValidVer (i) {
         const preIndex = i > 0 ? i - 1 : 0
         const pre = arr[preIndex].ver
         if (pre === '' && i !== 0) {
@@ -1163,14 +870,14 @@ export default {
         }
       }
       let preVer
-      if (index == 0) {
+      if (index === 0) {
         preVer = 0
       } else {
         preVer = preValidVer(index)
       }
       const transData = isNaN(Number(data)) ? -1 : Number(data)
       // 当前data为空，则无需校验
-      if (transData == -1) {
+      if (transData === -1) {
         return callback('输入正整数')
       }
       if (transData > 100) {
@@ -1331,14 +1038,14 @@ export default {
       }
       return callback()
     }
-    const validatedeleteUncompleted = (rule, data, callback) => {
-      console.log(data, 'egg')
-      if (data > 36135) {
-        return callback('该整数值必须小于或等于36135')
-      } else {
-        return callback()
-      }
-    }
+    // const validatedeleteUncompleted = (rule, data, callback) => {
+    //   console.log(data, 'egg')
+    //   if (data > 36135) {
+    //     return callback('该整数值必须小于或等于36135')
+    //   } else {
+    //     return callback()
+    //   }
+    // }
     return {
       RuleKeyMap: {
         1: 'STANDARD_IA',
@@ -1460,7 +1167,7 @@ export default {
         }
       ],
       selectConfig: {
-        Filter: { And: { Tags: [] }},
+        Filter: { And: { Tags: [] } },
         ID: '',
         Status: '',
         NoncurrentVersionExpiration: {},
@@ -1574,26 +1281,26 @@ export default {
     }
   },
   computed: {
-    bucketName() {
+    bucketName () {
       return this.$route.params.id
     },
-    tableSlicePage() {
+    tableSlicePage () {
       return this.tableData.slice(
         (this.currentPage - 1) * this.pageSize,
         this.currentPage * this.pageSize
       )
     },
-    addOperate() {
+    addOperate () {
       return this.operateType === 'add'
     },
-    deleteDisable() {
+    deleteDisable () {
       return this.selectRule && !this.selectRule.length
     },
-    operateDisable() {
+    operateDisable () {
       return this.selectRule && this.selectRule.length !== 1
       // return typeof this.radio !== 'number'
     },
-    concatKVarray() {
+    concatKVarray () {
       var str = ''
       if (
         this.selectConfig.Filter.And.Tags &&
@@ -1608,26 +1315,26 @@ export default {
       }
       return str || '-'
     },
-    selectRange() {
+    selectRange () {
       return Object.keys(this.selectConfig.Filter || {}).length
         ? '已筛选'
         : '整个存储桶'
     },
-    maxSizeIptBytes() {
+    maxSizeIptBytes () {
       return (
         (this.precisionNum(
           this.covertByte(this.createForm.maxSizeIpt, this.maxSizeSelect)
         ) || '') + 'bytes'
       )
     },
-    minSizeIptBytes() {
+    minSizeIptBytes () {
       return (
         (this.precisionNum(
           this.covertByte(this.createForm.minSizeIpt, this.minSizeSelect)
         ) || '') + 'bytes'
       )
     },
-    minSizeTransLimit() {
+    minSizeTransLimit () {
       // 转换限制小于128kb
       if (
         (this.createForm.minSizeIpt !== '' &&
@@ -1644,29 +1351,29 @@ export default {
       }
     },
     // 添加转换 禁用
-    disableAddTransform() {
+    disableAddTransform () {
       const len =
         this.createForm.Transition && this.createForm.Transition.length
       return (
-        len == 5 ||
-        this.createForm.Transition[len - 1].key == 6 ||
+        len === 5 ||
+        this.createForm.Transition[len - 1].key === 6 ||
         (this.minSizeTransLimit && this.createForm.Transition[len - 1].key <= 4)
       )
     },
     // disableAddTransformNC
-    disableAddTransformNC() {
+    disableAddTransformNC () {
       const len =
         this.createForm.NoncurrentVersionTransitions &&
         this.createForm.NoncurrentVersionTransitions.length
       return (
-        len == 5 ||
-        this.createForm.NoncurrentVersionTransitions[len - 1].key == 6 ||
+        len === 5 ||
+        this.createForm.NoncurrentVersionTransitions[len - 1].key === 6 ||
         (this.minSizeTransLimit &&
           this.createForm.NoncurrentVersionTransitions[len - 1].key <= 4)
       )
     },
     // 对象标签或对象大小进行筛选时 禁用删除过期rule rule5
-    disableDelExpiredRule() {
+    disableDelExpiredRule () {
       const objectLabel = this.createForm.tag && this.createForm.tag.length
       const objectSize =
         (this.objectSize.includes('min') && this.createForm.minSizeIpt) ||
@@ -1681,14 +1388,14 @@ export default {
       }
     },
     // 规则定义至少一个转换或过期操作
-    validRuleOption() {
+    validRuleOption () {
       // 勾选r5 必须选择其中一个
       const r5check1 = this.createForm.AbortIncompleteMultipartUpload
         .deleteExpired
       const r5check2 = this.createForm.AbortIncompleteMultipartUpload
         .deleteUncompleted
       if (
-        this.ruleOperate.length == 1 &&
+        this.ruleOperate.length === 1 &&
         this.ruleOperate[0] === 'r5' &&
         !r5check1 &&
         !r5check2
@@ -1700,7 +1407,7 @@ export default {
     }
   },
   watch: {
-    searchName(val) {
+    searchName (val) {
       this.tableData = [...this.copyData]
       this.total = this.tableData.length
       this.currentPage = 1
@@ -1711,12 +1418,12 @@ export default {
       this.total = this.tableData.length
     },
     // 筛选条件提示
-    clickSubmit(val) {
+    clickSubmit (val) {
       if (
         val &&
         !this.createForm.prefixIpt &&
         !this.createForm.tag.length &&
-        this.createForm.range == '1'
+        this.createForm.range === '1'
       ) {
         this.showPrefixRule = true
       } else {
@@ -1724,14 +1431,14 @@ export default {
       }
     },
     // 根据输入前缀 显示标签校验
-    'createForm.prefixIpt'(val) {
+    'createForm.prefixIpt' (val) {
       if (val) {
         this.showPrefixRule = false
       } else if (!this.createForm.tag && this.createForm.tag.length) {
         this.showPrefixRule = true
       }
     },
-    'createForm.tag'(val) {
+    'createForm.tag' (val) {
       // 对象标签触发时、取消前缀的校验
       if (val && val.length) {
         this.$refs['createForm'] &&
@@ -1750,7 +1457,7 @@ export default {
       }
     },
     // 切换选择对象大小 清除输入内容 清除对应校验
-    objectSize(val, old) {
+    objectSize (val, old) {
       if (val && val.length === 1) {
         if (val[0] === 'min') {
           this.$refs['createForm'] &&
@@ -1788,7 +1495,7 @@ export default {
         //   if (!this.createForm.prefixIpt || !this.createForm.tag.length) {
 
         //   }
-        // this.rules.minSizeIpt.length == 2
+        // this.rules.minSizeIpt.length===2
         //   ? null
         //   : this.rules.minSizeIpt.push({
         //     required: true,
@@ -1796,7 +1503,7 @@ export default {
         //         '限制规则范围时，您必须指定最小对象大小或另一个筛选条件。',
         //     trigger: 'change'
         //   })
-        // this.rules.maxSizeIpt.length == 2
+        // this.rules.maxSizeIpt.length===2
         //   ? null
         //   : this.rules.maxSizeIpt.push({
         //     required: true,
@@ -1825,13 +1532,13 @@ export default {
     },
     // 切换添加r1、r2初始化 第一项规则
     // 切换r1、r2需要将对应的arr清空，不影响r3、r4的校验
-    ruleOperate(val, old) {
+    ruleOperate (val, old) {
       // 初始无选项[],
       if (
         !old.includes('r1') &&
         val.includes('r1') &&
-        val.length - old.length == 1 &&
-        this.createForm.Transition.length == 0
+        val.length - old.length === 1 &&
+        this.createForm.Transition.length === 0
       ) {
         if (!this.minSizeTransLimit) {
           this.createForm.Transition = [
@@ -1854,8 +1561,8 @@ export default {
       } else if (
         !old.includes('r2') &&
         val.includes('r2') &&
-        val.length - old.length == 1 &&
-        this.createForm.NoncurrentVersionTransitions.length == 0
+        val.length - old.length === 1 &&
+        this.createForm.NoncurrentVersionTransitions.length === 0
       ) {
         if (!this.minSizeTransLimit) {
           this.createForm.NoncurrentVersionTransitions = [
@@ -1884,18 +1591,18 @@ export default {
         }
       }
     },
-    'createForm.Transition'(val, old) {
-      if (val.length == 0) {
-        const index = this.ruleOperate.findIndex(item => item == 'r1')
+    'createForm.Transition' (val, old) {
+      if (val.length === 0) {
+        const index = this.ruleOperate.findIndex(item => item === 'r1')
         if (index !== -1) {
           this.ruleOperate.splice(index, 1)
           this.createForm.Transition = []
         }
       }
     },
-    'createForm.NoncurrentVersionTransitions'(val, old) {
-      if (val.length == 0) {
-        const index = this.ruleOperate.findIndex(item => item == 'r2')
+    'createForm.NoncurrentVersionTransitions' (val, old) {
+      if (val.length === 0) {
+        const index = this.ruleOperate.findIndex(item => item === 'r2')
         if (index !== -1) {
           this.ruleOperate.splice(index, 1)
           this.createForm.NoncurrentVersionTransitions = []
@@ -1903,7 +1610,7 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     // this.$store.state.user._S3.deleteBucketLifecycle(
     //   {
     //     Bucket: this.bucketName
@@ -1920,12 +1627,12 @@ export default {
     this.getBucketLifecycle()
   },
   methods: {
-    changeCheckBox(val) {
+    changeCheckBox (val) {
       if (val.includes('r5') && val.includes('r3')) {
         this.createForm.AbortIncompleteMultipartUpload.deleteExpired = false
       }
     },
-    handleClickName(row) {
+    handleClickName (row) {
       const temp = [row]
       this.handleSelection(temp)
       this.$refs['multipleTable'].clearSelection()
@@ -1934,17 +1641,17 @@ export default {
       })
       this.visibleFlagInfo = true
     },
-    handleSelection(val) {
+    handleSelection (val) {
       // 添加多选删除功能
       this.selectRule = val
       if (val && val.length > 1) {
         return
-      } else if (val.length == 1) {
-        this.radio = this.tableData.findIndex(item => item.ID == val[0].ID)
+      } else if (val.length === 1) {
+        this.radio = this.tableData.findIndex(item => item.ID === val[0].ID)
         this.handleRowChange(val[0])
       }
     },
-    jumpToError() {
+    jumpToError () {
       this.$nextTick(() => {
         const isError = document.getElementsByClassName('is-error')
         // console.log(isError[0].getBoundingClientRect().top)
@@ -1958,20 +1665,20 @@ export default {
       }, 500)
     },
 
-    handleScroll(ref) {
+    handleScroll (ref) {
       this.$refs[ref].$el.scrollTop = 0
     },
-    applyRange(scope) {
+    applyRange (scope) {
       if (Object.keys(scope.row.Filter || {}).length) {
         return '已筛选'
       } else {
         return '整个存储桶'
       }
     },
-    clearSelectRadio() {
+    clearSelectRadio () {
       this.getBucketLifecycle()
     },
-    delLifecycle() {
+    delLifecycle () {
       if (this.selectRule && this.selectRule.length) {
         const name = this.selectRule.map(item => item.ID).join(';')
         const Rules = this.filterDiff(this.tableData, this.selectRule, 'ID')
@@ -1998,7 +1705,7 @@ export default {
                   this.showS3Msg(err)
                   console.error(err)
                 } else {
-                  this.$ts({
+                  this.$msg({
                     type: 'success',
                     text: this.$ts('response.success')
                   })
@@ -2018,7 +1725,7 @@ export default {
                   this.showS3Msg(err)
                   console.error(err)
                 } else {
-                  this.$ts({
+                  this.$msg({
                     type: 'success',
                     text: this.$ts('response.success')
                   })
@@ -2032,7 +1739,7 @@ export default {
         })
       }
     },
-    addModBtn(type) {
+    addModBtn (type) {
       this.operateType = type
       if (type === 'add') {
         this.clearForm()
@@ -2042,7 +1749,7 @@ export default {
     },
 
     // 删除一项版本|非版本规则操作
-    delTransition(i, type) {
+    delTransition (i, type) {
       switch (type) {
         case 'currentVer':
           this.createForm.Transition.splice(i, 1)
@@ -2062,7 +1769,7 @@ export default {
     },
 
     // 对象转换option的禁用
-    judgeDisabled(index, type) {
+    judgeDisabled (index, type) {
       // 打开时获取到上次的结果输入框已经禁用，但视图没效果
       this.$forceUpdate()
       let isCurrent
@@ -2093,7 +1800,7 @@ export default {
             console.log(nextk, preK, i)
             if (nextk > 4) {
               this.storageTransition[i].disabled = true
-            } else if (preK == 4) {
+            } else if (preK === 4) {
               this.storageTransition[i].disabled = true
             } else {
               this.storageTransition[i].disabled = false
@@ -2104,7 +1811,7 @@ export default {
         // 不考虑对象大小，根据已选范围禁用
         this.storageTransition.forEach((item, i) => {
           // 无后项直接根据前一项判断
-          if (nextk == -1) {
+          if (nextk === -1) {
             if (i <= preK) {
               this.storageTransition[i].disabled = true
             } else {
@@ -2131,15 +1838,15 @@ export default {
         })
         // 单区 和 GIR 规则同时只生效一个，且只能由选中一个规则的select切换选中另外一个
         for (let i = 0; i < this.createForm[isCurrent].length; i++) {
-          if (this.createForm[isCurrent][i].key == 3 && i !== index) {
+          if (this.createForm[isCurrent][i].key === 3 && i !== index) {
             this.storageTransition[3].disabled = true
-          } else if (this.createForm[isCurrent][i].key == 4 && i !== index) {
+          } else if (this.createForm[isCurrent][i].key === 4 && i !== index) {
             this.storageTransition[2].disabled = true
           }
         }
       }
     },
-    showTransitionRule(type) {
+    showTransitionRule (type) {
       if (type === 'currentVer') {
         type = 'Transition'
       } else if (type === 'notCurrentVer') {
@@ -2151,7 +1858,7 @@ export default {
         const len = this.createForm[type].length
         for (let j = 0; j < len; j++) {
           // 已选option 禁用
-          if (this.createForm[type][j].key == this.storageTransition[i].value) {
+          if (this.createForm[type][j].key === this.storageTransition[i].value) {
             this.storageTransition[i].disabled = true
             // console.log(i, '禁用当前的i', j, '当前的j')
           }
@@ -2160,7 +1867,7 @@ export default {
       this.validateIpt('createForm')
     },
     // 添加转换规则，需要获取之前已有 剩余排除
-    addTransitionType(type) {
+    addTransitionType (type) {
       let arr
       let addItem
       if (type === 'currentVer') {
@@ -2187,34 +1894,34 @@ export default {
       // GLACIER  5
       // DEEP_ARCHIVE  6
       for (let i = 0; i < len; i++) {
-        if (arr[i] == 1 && len == 1) {
+        if (arr[i] === 1 && len === 1) {
           addItem.key = 2
-        } else if (arr[i] == 2 && len == 2) {
+        } else if (arr[i] === 2 && len === 2) {
           addItem.key = 3
           // 有标准
-        } else if (arr[i] == 2 && len == 1) {
+        } else if (arr[i] === 2 && len === 1) {
           // 无标准
           addItem.key = 3
-        } else if (arr[i] == 3 && len == 3) {
+        } else if (arr[i] === 3 && len === 3) {
           // 正常3个 第四个跳过GIR
           addItem.key = 5
-        } else if (arr[i] == 3 && len == 2) {
+        } else if (arr[i] === 3 && len === 2) {
           addItem.key = 5
-        } else if (arr[i] == 3 && len == 1) {
+        } else if (arr[i] === 3 && len === 1) {
           addItem.key = 5
-        } else if (arr[i] == 4 && len == 3) {
+        } else if (arr[i] === 4 && len === 3) {
           addItem.key = 5
-        } else if (arr[i] == 4 && len == 2) {
+        } else if (arr[i] === 4 && len === 2) {
           addItem.key = 5
-        } else if (arr[i] == 4 && len == 1) {
+        } else if (arr[i] === 4 && len === 1) {
           addItem.key = 5
-        } else if (arr[i] == 5 && len == 4) {
+        } else if (arr[i] === 5 && len === 4) {
           addItem.key = 6
-        } else if (arr[i] == 5 && len == 3) {
+        } else if (arr[i] === 5 && len === 3) {
           addItem.key = 6
-        } else if (arr[i] == 5 && len == 2) {
+        } else if (arr[i] === 5 && len === 2) {
           addItem.key = 6
-        } else if (arr[i] == 5 && len == 1) {
+        } else if (arr[i] === 5 && len === 1) {
           addItem.key = 6
         }
       }
@@ -2229,11 +1936,11 @@ export default {
     },
 
     // 删除规则 重置
-    clearDelItem() {
+    clearDelItem () {
       const index = this.ruleOperate.findIndex(item => {
         return item === 'r5'
       })
-      if (index != -1) {
+      if (index !== -1) {
         this.createForm.AbortIncompleteMultipartUpload.deleteExpired = false
         this.createForm.AbortIncompleteMultipartUpload.deleteUncompleted = false
         this.createForm.AbortIncompleteMultipartUpload.deleteUncompletedDay =
@@ -2241,10 +1948,10 @@ export default {
         this.ruleOperate.splice(index, 1)
       }
     },
-    validateIpt(form) {
+    validateIpt (form) {
       this.$refs[form].validate()
     },
-    covertByte(num, range) {
+    covertByte (num, range) {
       switch (range) {
         case 'byte':
           return num
@@ -2256,7 +1963,7 @@ export default {
           return num * 1024 ** 3
       }
     },
-    getBucketLifecycle() {
+    getBucketLifecycle () {
       this.loading = true
       this.tableData = []
       this.total = 0
@@ -2280,7 +1987,7 @@ export default {
         }
       )
     },
-    clearForm() {
+    clearForm () {
       this.createForm.ID = ''
       this.createForm.range = '1'
       this.createForm.prefixIpt = ''
@@ -2306,7 +2013,7 @@ export default {
         this.$refs['createForm'] && this.$refs['createForm'].clearValidate()
       })
     },
-    submitCreate() {
+    submitCreate () {
       this.clickSubmit = true
       const hasSelectOneRule = this.validRuleOption
       this.$refs['createForm'].validate(valid => {
@@ -2411,7 +2118,7 @@ export default {
               for (const item of res) {
                 Filter.And[item.key] = item.value
               }
-            } else if (res.length == 1) {
+            } else if (res.length === 1) {
               const obj = res[0]
               if (res[0].key !== 'Tags') {
                 Filter[obj.key] = obj.value
@@ -2422,7 +2129,7 @@ export default {
               }
             }
             // 无筛选条件 整个存储桶参数为空
-            if (this.createForm.range == '2') {
+            if (this.createForm.range === '2') {
               params.LifecycleConfiguration.Rules[0].Filter = {}
             } else {
               params.LifecycleConfiguration.Rules[0].Filter = Filter
@@ -2448,7 +2155,7 @@ export default {
                   this.showS3Msg(err)
                   console.dir(err)
                 } else {
-                  this.$ts({
+                  this.$msg({
                     type: 'success',
                     text: this.$ts('response.success')
                   })
@@ -2484,7 +2191,7 @@ export default {
       // }
     },
     // 绑定随机key值防止对应index错乱 影响校验问题
-    addLabel() {
+    addLabel () {
       this.createForm.tag.push({
         Key: '',
         Value: '',
@@ -2493,7 +2200,7 @@ export default {
           .substring(2)
       })
     },
-    handleRowChange(val) {
+    handleRowChange (val) {
       if (!val) return
       // mod上次数据清除
       this.clearForm()
@@ -2626,29 +2333,29 @@ export default {
 
       console.log(this.ruleOperate, 'ruleoperate', this.createForm, 'form')
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       this.pageSize = val
       this.radio = ''
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       this.currentPage = val
       this.radio = ''
     },
-    changeStatus(type, row) {
+    changeStatus (type, row) {
       return {
         row,
         command: type
       }
     },
-    handleStatus(str) {
+    handleStatus (str) {
       const selectName = str.row.ID
       const index = this.tableData.findIndex(item => {
-        return item.ID == selectName
+        return item.ID === selectName
       })
       // 处理数据格式问题Filter、下的过滤条件、保持统一,
       const copyData = JSON.parse(JSON.stringify(this.tableData))
       // var len = Object.keys(copyData[index].Filter.And)
-      // if (len && len.length == 1) {
+      // if (len && len.length===1) {
       //   copyData[index]['Filter'] = {
       //     ...copyData[index]['Filter'].And
       //   }
@@ -2682,7 +2389,7 @@ export default {
                   this.selectConfig.Status = 'Disabled'
                 }
                 this.clearSelectRadio()
-                this.$ts({
+                this.$msg({
                   type: 'success',
                   text: this.$ts('response.success')
                 })
@@ -2718,7 +2425,7 @@ export default {
                   this.selectConfig.Status = 'Enabled'
                 }
                 this.clearSelectRadio()
-                this.$ts({
+                this.$msg({
                   type: 'success',
                   text: this.$ts('response.success')
                 })
@@ -2809,7 +2516,7 @@ export default {
       left: 55%;
     }
 
-    .fa-arrow-down {
+    .el-icon-bottom {
       margin: 30px 0;
     }
 
@@ -2880,7 +2587,7 @@ export default {
     flex-wrap: wrap;
     margin-bottom: 20px;
 
-    .fa-arrow-down {
+    .el-icon-bottom {
       margin: 30px 0;
     }
 

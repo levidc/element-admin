@@ -1,138 +1,59 @@
 <template>
-  <div
-    v-loading="!judgeType"
-    class="policies"
-  >
+  <div v-loading="!judgeType" class="policies">
     <div class="policyContainer">
       <div class="left">
-        <svg
-          class="svgicon icon"
-          aria-hidden="true"
-        >
+        <svg class="svgicon icon" aria-hidden="true">
           <use xlink:href="#icon-policy" />
         </svg>
         <span class="mr_20">
           IAM 策略:
-          <el-popover
-            placement="right"
-            width="700"
-            trigger="hover"
-          >
+          <el-popover placement="right" width="700" trigger="hover">
             <p style="line-height:1.6;">名称不能与模板策略名称重复、模板名称如下</p>
             <div class="templateN">
-              <p
-                v-for="item in templatePolicy"
-                :key="item"
-              >
+              <p v-for="item in templatePolicy" :key="item">
                 <span>{{ item }}</span>
               </p>
             </div>
-            <i
-              slot="reference"
-              class="fa fa-question-circle"
-              style="!important;"
-            />
+            <i slot="reference" class="el-icon-question" />
           </el-popover>
         </span>
         <span v-if="showMenuItem">{{ currentName }}</span>
-        <el-input
-          v-else
-          v-model="policyName"
-          placeholder="名称输入英文及数字，长度限制为8-40位"
-          size="small"
-          class="mt_10"
-          clearable
-          style="width: 400px;margin-left: 20px;"
-          :disabled="!editable"
-        />
+        <el-input v-else v-model="policyName" placeholder="名称输入英文及数字，长度限制为8-40位" size="small" class="mt_10" clearable
+          style="width: 400px;margin-left: 20px;" :disabled="!editable" />
       </div>
       <div class="right">
         <!--  @click="$router.push({ name: 'Policy' })" -->
         <!-- <el-button type="primary" class="golden medium">取消</el-button> -->
-        <el-tooltip
-          content="返回管控操作权限"
-          placement="top"
-          effect="dark"
-        >
-          <svg
-            class="icon backicon"
-            aria-hidden="true"
-            @click="onBack"
-          >
+        <el-tooltip content="返回管控操作权限" placement="top" effect="dark">
+          <svg class="icon backicon" aria-hidden="true" @click="onBack">
             <use xlink:href="#icon-fanhui" />
           </svg>
         </el-tooltip>
         <!-- showUpNoMenu -->
-        <el-button
-          v-if="showUpNoMenu || showCteatePolicyUp && upShowPolicy"
-          type="warning"
-          class="blue medium"
-          size="mini"
-          @click="editable = true;upPolicy()"
-        >修改</el-button>
-        <el-button
-          v-if="restShow"
-          class="right ml_10 medium"
-          size="mini"
-          @click="cancelMod"
-        >重置</el-button>
-        <el-button
-          v-show="editable || showCteatePolicyUp && saveShow"
-          v-access="'admin:CreatePolicy'"
-          type="primary"
-          class="golden medium"
-          size="mini"
-          @click="onSave"
-        >保存策略</el-button>
-        <el-button
-          v-if="showMenu"
-          v-access="'admin:DeletePolicy'"
-          type="danger"
-          class="red medium"
-          @click="deleteFlag = true"
-        >删除</el-button>
+        <el-button v-if="showUpNoMenu || showCteatePolicyUp && upShowPolicy" type="warning" class="blue medium"
+          size="mini" @click="editable = true; upPolicy()">修改</el-button>
+        <el-button v-if="restShow" class="right ml_10 medium" size="mini" @click="cancelMod">重置</el-button>
+        <el-button v-show="editable || showCteatePolicyUp && saveShow" v-access="'admin:CreatePolicy'" type="primary"
+          class="golden medium" size="mini" @click="onSave">保存策略</el-button>
+        <el-button v-if="showMenu" v-access="'admin:DeletePolicy'" type="danger" class="red medium"
+          @click="deleteFlag = true">删除</el-button>
       </div>
     </div>
-    <Strategy
-      v-if="judgeType"
-      ref="strategy"
-      v-model="strategy"
-      :editable="editable"
-      :action-config="actionConfig"
-      height="100%"
-      statement-action-merge-group
-      statement-hide-principal
-      :statement-action-label-width="'100px'"
-      :statement-action-item-width="'300px'"
-      :statement-condition-symbols="conditionSymbols"
-      :statement-condition-keys="conditionKeys"
-      show-all-permissiion-to-star
-    />
-    <el-dialog
-      :title="(currentName == 'create' ? '创建策略:' : '修改策略:') + policyName"
-      :visible.sync="flag"
-      width="40%"
-    >
+    <Strategy v-if="judgeType" ref="strategy" v-model="strategy" :editable="editable" :action-config="actionConfig"
+      height="100%" statement-action-merge-group statement-hide-principal :statement-action-label-width="'150px'"
+      :statement-action-item-width="'300px'" :statement-condition-symbols="conditionSymbols"
+      :statement-condition-keys="conditionKeys" show-all-permissiion-to-star />
+    <el-dialog :title="(currentName == 'create' ? '创建策略:' : '修改策略:') + policyName" :visible.sync="flag" width="40%">
       <div style="width: 100%">
-        <json-viewer
-          :value="jsonTxt"
-          preview-mode
-          boxed
-          :show-array-index="false"
-          :copyable="{ 'copyText': '复制', 'copiedText': '已复制' }"
-          theme="my-awesome-json-theme"
-        />
+        <json-viewer :value="jsonTxt" preview-mode boxed :show-array-index="false"
+          :copyable="{ 'copyText': '复制', 'copiedText': '已复制' }" theme="my-awesome-json-theme" />
       </div>
       <div slot="footer">
         <el-button class="blue" @click="flag = false">{{ $ts("cancel") }}</el-button>
         <el-button class="golden" @click="submitCreate">{{ $ts("true") }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog
-      title="删除策略"
-      :visible.sync="deleteFlag"
-      width="650px"
-    >
+    <el-dialog title="删除策略" :visible.sync="deleteFlag" width="650px">
       <p>删除当前策略:
         <span style="color:#ff8746">
           {{ policyName }}
@@ -157,7 +78,7 @@ export default {
   components: {
     Strategy
   },
-  data() {
+  data () {
     return {
       saveShow: false,
       restShow: false,
@@ -173,19 +94,19 @@ export default {
       },
       actionConfig: [],
       templatePolicy: [
+        'FullPolicy', // 不能修改 不能删除
+        'BasePolicy', // 不能修改 不能删除
         'AdminFull', // 不能修改 不能删除
         'AdminUserAndPolicy',
-        'BasePolicy', // 不能修改 不能删除
-        'FullPolicy', // 不能修改 不能删除
-        'PaaSAdminPolicy',
-        'RestorePolicy',
-        'S3Deny', // 不能修改 不能删除
-        'S3Full', // 不能修改 不能删除
-        'S3ReadOnlyWithListObject',
         'S3ReadOnlyWithOutListObject',
+        'S3ReadOnlyWithListObject',
         'S3ReadWrite',
-        'S3ReadWriteDelete'
-      ],
+        'S3ReadWriteDelete',
+        'S3Full', // 不能修改 不能删除
+        'S3Deny', // 不能修改 不能删除
+        'PaaSAdminPolicy',
+        'RestorePolicy'
+      ], // 默认权限、禁用删除、修改
       templateUpPolicy: [
         'AdminUserAndPolicy',
         'S3ReadOnlyWithOutListObject',
@@ -307,19 +228,19 @@ export default {
     }
   },
   computed: {
-    showMenu() {
+    showMenu () {
       // 系统权限禁用修改、删除
       return (
         this.$route.params.name !== 'create' &&
         !this.templatePolicy.includes(this.$route.params.name)
       )
     },
-    showCteatePolicyUp() {
+    showCteatePolicyUp () {
       return (
         !this.templatePolicy.includes(this.$route.params.name)
       )
     },
-    showUpNoMenu() {
+    showUpNoMenu () {
       return this.templateUpPolicy.includes(this.$route.params.name) && this.upShowPolicy
     },
     // 'FullPolicy', // 不能修改 删除
@@ -333,19 +254,22 @@ export default {
     //   'S3Full', // 不能修改 删除
     //   'S3Deny', // 不能修改 删除
     //   'PaaSAdminPolicy'
-    showMenuItem() {
+    showMenuItem () {
       return this.templatePolicy.includes(this.$route.params.name)
     },
-    currentName() {
+    currentName () {
       return this.$route.params.name
     },
-    jsonTxt() {
+    jsonTxt () {
       return JSON.parse(JSON.stringify(this.paramsPolicy))
     }
   },
   watch: {
+    // strategy(val) {
+    //   console.log(val, 'val')
+    // }
   },
-  mounted() {
+  mounted () {
     this.getRoute()
     // policy 策略相关字段
     // 版本号 Version
@@ -358,18 +282,21 @@ export default {
     this.getAction()
   },
   methods: {
-    getRoute() {
+    getRoute () {
       // 完全匹配create 展示edit
-      if (this.$route.path.split('/').includes('create')) this.upShowPolicy = false
+      const lastArr = this.$route.path.split('/')
+      if (lastArr[lastArr.length - 1] === 'create') {
+        this.upShowPolicy = false
+      }
     },
-    upPolicy() {
+    upPolicy () {
       this.restShow = true
       this.upShowPolicy = false
     },
-    onBack() {
+    onBack () {
       this.$router.push({ name: 'GeneralStrategy' })
     },
-    getAction() {
+    getAction () {
       ActionList()
         .then(res => {
           const arr = [
@@ -377,42 +304,52 @@ export default {
               key: 'admin',
               label: '系统权限',
               children: []
-            },
-            {
-              key: 's3',
-              label: 's3权限',
-              children: []
             }
+            // {
+            //   key: 's3',
+            //   label: 's3权限',
+            //   children: []
+            // }
           ]
-          const permission = this.$store.state.permission
-          const len = res.data.length
-          for (let i = 0; i < len; i++) {
+          const systemPermission = this.$store.state.user.systemPermission
+          const s3Permission = [{
+            key: 's3',
+            label: 's3权限',
+            children: []
+          }]
+          for (let i = 0; i < res.data.length; i++) {
+            // 针对页面配置 可访问关联权限、
+            // 菜单
+            // dashboard、存储桶、文件系统、资源管理、迁移管理、用户管理、lifecycle、冷热数据、
+            // 数据回收站、操作管理、全局配置
             if (res.data[i].indexOf('admin:') > -1) {
               // admin权限且有cn、添加到选项中、以此过滤多绑定权限及list
-              if (permission[res.data[i]]) {
-                arr[0].children.push({
-                  key: res.data[i],
-                  label: permission[res.data[i]]['cn'],
-                  sort: permission[res.data[i]]['sort'] || 999
-                })
-              }
+              // if (permission[res.data[i]]) {
+              //   arr[0].children.push({
+              //     key: res.data[i],
+              //     label: permission[res.data[i]]['cn'],
+              //     sort: permission[res.data[i]]['sort'] || 99999
+              //   })
+              // }
+              continue
             } else {
-              arr[1].children.push(res.data[i])
+              s3Permission[0].children.push(res.data[i])
             }
           }
-          arr[0].children = arr[0].children.sort((a, b) => {
-            return a.sort - b.sort
-          })
-          arr[1].children = [...new Set(arr[1].children)]
-            .sort((a, b) => {
-              return a.localeCompare(b)
-            })
+          // arr[0].children = arr[0].children.sort((a, b) => {
+          //   return a.sort - b.sort
+          // })
+          arr.splice(0, 1, ...systemPermission)
+          // console.log(arr, '123')
+          s3Permission[0].children = s3Permission[0]
+            .children
             .map(item => {
               return {
                 key: item,
                 label: item
               }
             })
+          arr.push(...s3Permission)
           this.actionConfig = arr
           this.getNewPolicy()
         })
@@ -423,10 +360,10 @@ export default {
           this.loading = false
         })
     },
-    refreshPage() {
+    refreshPage () {
       this.getNewPolicy()
     },
-    getNewPolicy() {
+    getNewPolicy () {
       getPolicy()
         .then(res => {
           if (this.$route.params.name !== 'create') {
@@ -435,7 +372,7 @@ export default {
             )[0]
             if (!policyDetail) {
               this.$router.push({ name: 'GeneralStrategy' })
-              return this.$ts({
+              return this.$msg({
                 type: 'error',
                 text: '当前策略不存在'
               })
@@ -470,7 +407,7 @@ export default {
           this.judgeType = true
         })
     },
-    getPolicy() {
+    getPolicy () {
       const policyDetail = JSON.parse(
         sessionStorage.getItem('policyDetail') || null
       )
@@ -494,7 +431,7 @@ export default {
         })
       }
     },
-    cancelMod() {
+    cancelMod () {
       this.$refs['strategy'].openAll()
       this.restShow = false
       this.upShowPolicy = true
@@ -502,12 +439,12 @@ export default {
       this.strategy = this.copystrategy
       this.policyName = this.copystrategy.name
     },
-    deletePolicy() {
+    deletePolicy () {
       deletePolicy({
         policyName: this.currentName
       })
         .then(res => {
-          this.$ts({
+          this.$msg({
             type: 'success',
             text: this.$ts('response.success')
           })
@@ -518,7 +455,7 @@ export default {
           console.error(err)
         })
     },
-    submitCreate() {
+    submitCreate () {
       // this.connectedPermission.length
       // this.paramsPolicy.Statement.forEach(item => {
       //   // 传递还是list
@@ -535,17 +472,19 @@ export default {
           }
         }
       }
-      // action去重
+
+      // 关联权限整合
       for (let i = 0; i < this.paramsPolicy.Statement.length; i++) {
         const acts = [...this.paramsPolicy.Statement[i].Action]
         for (let j = 0; j < acts.length; j++) {
           const api = acts[j]
+          // 非user.api
           if (
-            this.$store.state.permission[api] &&
-            this.$store.state.permission[api]['menu']
+            this.$store.state.user.api[api] &&
+            this.$store.state.user.api[api]['menu']
           ) {
             const action = this.menuMap[
-              this.$store.state.permission[api].menu
+              this.$store.state.user.api[api].menu
             ]?.split(';')
             if (action) {
               this.paramsPolicy.Statement[i].Action.push(...action)
@@ -553,6 +492,7 @@ export default {
           }
         }
       }
+
       for (let i = 0; i < this.paramsPolicy.Statement.length; i++) {
         this.paramsPolicy.Statement[i].Action = [
           ...new Set(this.paramsPolicy.Statement[i].Action)
@@ -567,7 +507,7 @@ export default {
         params: { policyName: this.policyName, oldPolicyName: name || '' }
       })
         .then(res => {
-          this.$ts({
+          this.$msg({
             type: 'success',
             text: this.$ts('response.success')
           })
@@ -579,7 +519,7 @@ export default {
           console.error(err)
         })
     },
-    onSave() {
+    onSave () {
       const nameReg = /^[0-9a-zA-Z]{8,40}$/.test(this.policyName)
       if (!nameReg) {
         return this.$message.error(
@@ -614,7 +554,6 @@ export default {
         Version: '2012-10-17',
         Statement: this.strategy.Statement
       }
-      // console.log(this.paramsPolicy, ' policy')
       this.flag = true
     }
   }
@@ -624,14 +563,17 @@ export default {
 .templateN {
   display: flex;
   flex-wrap: wrap;
+
   p {
     width: 33%;
     padding: 5px 0;
   }
+
   span {
     color: #e39606;
   }
 }
+
 ::v-deep .jv-container {
   box-sizing: border-box;
   position: relative;
@@ -672,6 +614,7 @@ export default {
     }
   }
 }
+
 .backicon {
   margin-right: 15px !important;
 }

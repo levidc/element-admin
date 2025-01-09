@@ -26,7 +26,9 @@
                     <span> {{ mapSelectLoadGroup(item.loadGroupId) }}</span>
                   </el-form-item>
                 </el-col>
-                <el-col v-if="item.designMasterStorage&&item.designMasterStorage.length&&JSON.stringify(item.designMasterStorage)!=='[]'" :span="12">
+                <el-col
+                  v-if="item.designMasterStorage && item.designMasterStorage.length && JSON.stringify(item.designMasterStorage) !== '[]'"
+                  :span="12">
                   <el-form-item label="副本一/副本二:">
                     <span> {{ mapResource(JSON.parse(item.designMasterStorage)[0]) }}
                       <span>
@@ -42,39 +44,32 @@
                 </el-col>
                 <el-col :span="12">
                   <el-form-item label="重构优先级：">
-                    <span> {{ mapSelectLabel(item.rebuildLevel,RebuildLevelEnum) }}</span>
+                    <span> {{ mapSelectLabel(item.rebuildLevel, RebuildLevelEnum) }}</span>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
                   <el-form-item label="重构起止时间：">
-                    <span> {{ item.rebuildStartTime ? item.rebuildStartTime.split(',').join('~') :'-' }}</span>
+                    <span> {{ item.rebuildStartTime ? item.rebuildStartTime.split(',').join('~') : '-' }}</span>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
                   <el-form-item label="同步方式：">
-                    <span> {{ mapSelectLabel(item.aSync,AsyncType) }}</span>
+                    <span> {{ mapSelectLabel(item.aSync, AsyncType) }}</span>
                   </el-form-item>
                 </el-col>
-                <el-col v-if="item.aSync!=='SYNC'" :span="12">
+                <el-col v-if="item.aSync !== 'SYNC'" :span="12">
                   <el-form-item label="异步写进度：">
-                    <span> {{ item.rebuildRate === 'FINISH_EQUALIZER'?'完成追平':'未追平' }}</span>
+                    <span> {{ item.rebuildRate === 'FINISH_EQUALIZER' ? '完成追平' : '未追平' }}</span>
                   </el-form-item>
                 </el-col>
               </el-row>
 
               <div class="btn">
-                <el-button
-                  v-access="'admin:UpdateStorageResourceController'"
-                  class="blue"
-                  @click="updateForm(item, true)"
-                >{{
-                  $ts('modify') }}</el-button>
-                <el-button
-                  v-access="'admin:DeleteStorageDeviceController'"
-                  type="danger"
-                  class="red"
-                  @click="handleDel(item)"
-                >{{ $ts('delete') }}</el-button>
+                <el-button v-access="'admin:UpdateStorageResourceController'" class="blue"
+                  @click="updateForm(item, true)">{{
+                    $ts('modify') }}</el-button>
+                <el-button v-access="'admin:DeleteStorageDeviceController'" type="danger" class="red"
+                  @click="handleDel(item)">{{ $ts('delete') }}</el-button>
               </div>
             </el-form>
           </div>
@@ -83,11 +78,7 @@
           <el-empty image="" description="请先创建高可用策略" />
         </div>
       </div>
-      <el-dialog
-        :visible.sync="fromModal"
-        width="900px"
-        :title="isAdd ? '创建高可用策略' : '修改高可用策略'"
-      >
+      <el-dialog :visible.sync="fromModal" width="900px" :title="isAdd ? '创建高可用策略' : '修改高可用策略'">
         <el-form ref="form" :model="form" :rules="rules" label-width="150px">
           <el-row>
             <!-- <el-col :span="12">
@@ -99,25 +90,12 @@
             </el-col> -->
             <el-col :span="12">
               <el-form-item prop="loadGroupId" label="选择负载组">
-                <el-select
-                  v-model="form.loadGroupId"
-                  value-key="value"
-                  @change="clearResource"
-                >
-                  <el-option-group
-                    v-for="group in filterLoadGroupSelect"
-                    :key="group.label"
-                    :label="group.label"
-                  >
-                    <el-option
-                      v-for="{label,value} in group.options"
-                      :key="label"
-                      :label="label"
-                      :value="value"
-                    />
+                <el-select v-model="form.loadGroupId" value-key="value" @change="clearResource">
+                  <el-option-group v-for="group in filterLoadGroupSelect" :key="group.label" :label="group.label">
+                    <el-option v-for="{ label, value } in group.options" :key="label" :label="label" :value="value" />
                   </el-option-group>
                 </el-select>
-              <!-- <el-select v-model="form.designType" style="width:100%" @change="handleLoadSel">
+                <!-- <el-select v-model="form.designType" style="width:100%" @change="handleLoadSel">
                   <el-option v-for="item in designTypeEnum" :key="item.label" :label="item.label" :value="item.value" />
                 </el-select> -->
               </el-form-item>
@@ -130,18 +108,22 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-if="form.loadGroupId&&form.designType==='DesignResource'">
+          <el-row v-if="form.loadGroupId && form.designType === 'DesignResource'">
             <el-col :span="12">
               <el-form-item prop="designListFst" label="选择副本一">
-                <el-select v-model="form.designListFst" v-loading="loadingSel" placeholder="选择副本一" style="width:100%" clearable>
-                  <el-option v-for="item in filterDesignLists(form.designListSec)" :key="item.label" :label="item.label" :value="item.value" />
+                <el-select v-model="form.designListFst" v-loading="loadingSel" placeholder="选择副本一" style="width:100%"
+                  clearable>
+                  <el-option v-for="item in filterDesignLists(form.designListSec)" :key="item.label" :label="item.label"
+                    :value="item.value" />
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item prop="designListSec" label="选择副本二">
-                <el-select v-model="form.designListSec" v-loading="loadingSel" placeholder="选择副本二" style="width:100%" clearable>
-                  <el-option v-for="item in filterDesignLists(form.designListFst)" :key="item.label" :label="item.label" :value="item.value" />
+                <el-select v-model="form.designListSec" v-loading="loadingSel" placeholder="选择副本二" style="width:100%"
+                  clearable>
+                  <el-option v-for="item in filterDesignLists(form.designListFst)" :key="item.label" :label="item.label"
+                    :value="item.value" />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -149,33 +131,21 @@
           <el-row>
             <el-col :span="12">
               <el-form-item prop="replicaNumber" label="副本数量">
-                <el-input
-                  v-model.trim="form.replicaNumber"
-                  placeholder="请输入2-64字符"
-                  clearable
-                  @input="val => inputPositiveNum(val, 'replicaNumber')"
-                />
+                <el-input v-model.trim="form.replicaNumber" placeholder="请输入2-64字符" clearable
+                  @input="val => inputPositiveNum(val, 'replicaNumber')" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="重构时间" required>
                 <div style="width:100%;display:flex;justify-content:space-between;">
                   <el-form-item label="" prop="rebuildStartTime">
-                    <el-time-picker
-                      v-model="form.rebuildStartTime"
-                      format="HH:mm"
-                      value-format="HH:mm"
-                      placeholder="开始时间"
-                    />
+                    <el-time-picker v-model="form.rebuildStartTime" format="HH:mm" value-format="HH:mm"
+                      placeholder="开始时间" />
                   </el-form-item>
                   <span style="margin:0 10px">-</span>
                   <el-form-item label="" prop="rebuildEndTime">
-                    <el-time-picker
-                      v-model="form.rebuildEndTime"
-                      format="HH:mm"
-                      value-format="HH:mm"
-                      placeholder="结束时间"
-                    />
+                    <el-time-picker v-model="form.rebuildEndTime" format="HH:mm" value-format="HH:mm"
+                      placeholder="结束时间" />
                   </el-form-item>
                 </div>
               </el-form-item>
@@ -183,7 +153,8 @@
             <el-col :span="12">
               <el-form-item prop="rebuildLevel" label="重构优先级">
                 <el-select v-model="form.rebuildLevel" style="width:100%">
-                  <el-option v-for="item in RebuildLevelEnum" :key="item.label" :label="item.label" :value="item.value" />
+                  <el-option v-for="item in RebuildLevelEnum" :key="item.label" :label="item.label"
+                    :value="item.value" />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -226,7 +197,7 @@ export default {
   name: 'HightAvailability',
   filters: {
   },
-  data() {
+  data () {
     return {
       hasConfig: false,
       loadingSel: false,
@@ -347,7 +318,7 @@ export default {
     }
   },
   computed: {
-    filterLoadGroupSelect() {
+    filterLoadGroupSelect () {
       // 过滤已配置负载组类型
       if (this.isAdd) {
         const LoadGroupIds = this.fillSourceForm.map(x => String(x.loadGroupId))
@@ -362,45 +333,45 @@ export default {
         })
       }
     },
-    showLabel() {
+    showLabel () {
       return this.form.designType.indexOf('DesignStorage') > -1 ? '选择设备' : '选择资源'
     },
-    showDesignSel() {
+    showDesignSel () {
       return this.form.designType === 'DesignStorage' || this.form.designType === 'DesignResource'
     },
-    isAdd() {
+    isAdd () {
       return this.opType === 'add'
     }
   },
   watch: {
-    filterText(val) {
+    filterText (val) {
       this.$refs.tree.filter(val)
     }
   },
-  mounted() {
+  mounted () {
     this.init()
   },
   methods: {
-    clearResource() {
+    clearResource () {
       this.form.designListFst = ''
       this.form.designListSec = ''
     },
-    filterDesignLists(value) {
+    filterDesignLists (value) {
       return this.designLists.find(x => x.value === this.form.loadGroupId)?.list.filter(x => {
         return x.value !== value
       })
     },
-    mapSelectLoadGroup(val) {
+    mapSelectLoadGroup (val) {
       // 映射负载组名称、
       const res = this.loadGroupSelect.reduce((pre, cur) => ([...pre, ...cur.options]), [])
       console.log(res, 'nameLoadGroup')
       return this.mapSelectLabel(val, res)
     },
-    mapSelectLabel(val, arr) {
+    mapSelectLabel (val, arr) {
       const item = arr.find(x => String(x.value) === String(val))
       return item && item.label
     },
-    initForm() {
+    initForm () {
       Object.assign(
         this.form,
         {
@@ -420,7 +391,7 @@ export default {
         }
       )
     },
-    initBucketList() {
+    initBucketList () {
       return new Promise((resolve, rej) => {
         listUserBuckets().then(res => {
           this.bucketList = res.data.list || []
@@ -428,7 +399,7 @@ export default {
         })
       })
     },
-    inputPositiveNum(ipt, value) {
+    inputPositiveNum (ipt, value) {
       const val = value.split('.')
       if (val && val.length == 1) {
         this.$set(this.form, value, ipt.replace(/(^0+)|\D/g, ''))
@@ -436,7 +407,7 @@ export default {
         this.$set(this.form[val[0]], val[1], ipt.replace(/(^0+)|\D/g, ''))
       }
     },
-    handleLoadSel(val) {
+    handleLoadSel (val) {
       this.$refs['form'] && this.$refs['form'].clearValidate(['designList'])
       this.form.designList = []
       if (val === 'DesignStorage') {
@@ -466,7 +437,7 @@ export default {
         })
       }
     },
-    changelogicUnit(val) {
+    changelogicUnit (val) {
       if (val == 'TB') {
         this.form.objectSize = ''
         this.placeholderValue = this.placeholder[1].value
@@ -475,25 +446,25 @@ export default {
         this.placeholderValue = this.placeholder[0].value
       }
     },
-    dialogOpen(e) {
+    dialogOpen (e) {
       const ipt = e
-      this.$nextTick(function() {
+      this.$nextTick(function () {
         this.$refs[ipt].$el.querySelector('input').focus()
       })
     },
-    filterNode(value, data) {
+    filterNode (value, data) {
       // console.log(data, '12333')
       if (!value) return true
       return (data.bucketId || data.id).toLocaleLowerCase().indexOf(value.toLocaleLowerCase()) !== -1
     },
-    mapLabel(label, val) {
+    mapLabel (label, val) {
       if (label === 'bucketName') {
         const res = this.bucketList.find(x => (x.id).toString() === val)
         // console.log(val, this.bucketList, label)
         return res && res.name || '-'
       }
     },
-    async getConfig() {
+    async getConfig () {
       const loadGroupMap = await this.initGroupList()
       if (JSON.stringify(loadGroupMap) === '{}') {
         this.innerFormLoading = false
@@ -530,17 +501,17 @@ export default {
           })
       })
     },
-    getResource() {
+    getResource () {
       return new Promise((resolve) => {
         listStorageDevice().then(res => {
           resolve(res.data || [])
         })
       })
     },
-    mapResource(key) {
+    mapResource (key) {
       return this.allResourceList[key]
     },
-    async initGroupList() {
+    async initGroupList () {
       const resourceList = await this.getResource()
       const allRsourceMap = resourceList.reduce((pre, cur) => {
         return [...pre, ...cur.storageResourceModelList.map(x => {
@@ -576,7 +547,7 @@ export default {
       })
       // map 负载组名称
     },
-    async init() {
+    async init () {
       this.innerFormLoading = true
       await this.initBucketList()
       const currentBucketId = this.bucketList.find(x => x.name === this.$route.params.id)
@@ -620,7 +591,7 @@ export default {
         this.innerFormLoading = false
       })
     },
-    async showCreate() {
+    async showCreate () {
       this.fromModal = true
       this.$nextTick(() => {
         this.$refs['form'].clearValidate()
@@ -628,7 +599,7 @@ export default {
       this.opType = 'add'
       this.initForm()
     },
-    confirmSubmit() {
+    confirmSubmit () {
       this.$refs['form'].validate((valid) => {
         const {
           replicaRedundancyType,
@@ -680,7 +651,7 @@ export default {
               rebuildStartTime: putRebuildStartTime
             }
             createHighBucketConfig(obj).then(res => {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
@@ -705,7 +676,7 @@ export default {
               rebuildStartTime: putRebuildStartTime
             }
             updateHighBucketConfig(obj).then(res => {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
@@ -718,10 +689,11 @@ export default {
         }
       })
     },
-    updateForm(row) {
+    updateForm (row) {
       const time = row.rebuildStartTime ? row.rebuildStartTime.split(',') : ['', '']
       Object.assign(this.form,
-        { ...row,
+        {
+          ...row,
           rebuildStartTime: time[0],
           rebuildEndTime: time[1]
         }
@@ -738,7 +710,7 @@ export default {
       this.fromModal = true
       this.opType = 'update'
     },
-    handleDel(row) {
+    handleDel (row) {
       this.$confirm('确认删除当前所选配置吗', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
@@ -747,7 +719,7 @@ export default {
         deleteHighBucketConfig({
           id: row.id
         }).then((res) => {
-          this.$ts({
+          this.$msg({
             type: 'success',
             text: this.$ts('response.success')
           })
@@ -760,23 +732,27 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-:deep(.el-form){
-  .el-select{
+:deep(.el-form) {
+  .el-select {
     width: 100%;
   }
-  .el-tag{
-    background-color: #384348!important;
-    color: #e39606!important;
-    border-color:transparent!important;
+
+  .el-tag {
+    background-color: #384348 !important;
+    color: #e39606 !important;
+    border-color: transparent !important;
     border-radius: 10px;
   }
 }
+
 ::v-deep .expandDeviceForm {
-  &:first-of-type{
+  &:first-of-type {
     margin-bottom: 30px;
   }
+
   padding: 20px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.2);
+
   .el-form-item {
     margin-right: 0;
     margin-bottom: 0;
@@ -786,7 +762,7 @@ export default {
   }
 
   label.el-form-item__label {
-    width: 130px!important;
+    width: 130px !important;
     font-weight: bold;
   }
 
@@ -810,11 +786,12 @@ export default {
 }
 
 ::v-deep .treeContent {
-  .el-empty{
-    .el-empty__image{
+  .el-empty {
+    .el-empty__image {
       display: none;
     }
-}
+  }
+
   display: flex;
   justify-content: space-between;
   width: 90%;
@@ -822,6 +799,7 @@ export default {
   .content {
     flex: 1;
     min-height: 300px;
+
     .btn {
       margin: 30px 0 0 0px;
     }
@@ -845,7 +823,8 @@ export default {
   }
 }
 
-.el-date-editor.el-input, .el-date-editor.el-input__inner{
+.el-date-editor.el-input,
+.el-date-editor.el-input__inner {
   width: 100%;
 }
 </style>

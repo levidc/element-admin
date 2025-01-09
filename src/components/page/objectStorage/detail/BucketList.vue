@@ -80,7 +80,7 @@
               /> -->
             </el-input>
             <span
-              v-if="versionControl != 'Suspended'"
+              v-show="versionControl != 'Suspended'"
               v-access="'s3:GetBucketVersioning'"
             >
               <span style="margin:0 10px">列出历史版本</span>

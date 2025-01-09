@@ -3,41 +3,22 @@
     <div v-if="!hideLabel" class="flex label bold topMenu">
       <span>授权语句</span>
       <div style="flex-grow: 1;" />
-      <el-button
-        v-show="editable"
-        type="primary"
-        class="golden mini"
-        icon="el-icon-plus"
-        @click="onAddNewStatement"
-      >添加配置</el-button>
-      <el-button
-        v-show="statementOpen.length < strategy.Statement.length"
-        type="info"
-        class="blue mini"
-        icon="el-icon-arrow-down"
-        @click="openAll"
-      >全部展开</el-button>
-      <el-button
-        v-show="statementOpen.length >= strategy.Statement.length"
-        type="info"
-        class="blue mini"
-        icon="el-icon-arrow-up"
-        @click="closeAll"
-      >全部折叠</el-button>
+      <el-button v-show="editable" type="primary" class="golden mini" icon="el-icon-plus" @click="onAddNewStatement">添加配置</el-button>
+      <el-button v-show="statementOpen.length<strategy.Statement.length" type="info" class="blue mini" icon="el-icon-arrow-down" @click="openAll">全部展开</el-button>
+      <el-button v-show="statementOpen.length>=strategy.Statement.length" type="info" class="blue mini" icon="el-icon-arrow-up" @click="closeAll">全部折叠</el-button>
     </div>
     <div style="flex-grow: 1;" :style="{ overflowY: height ? 'auto' : undefined }">
-      <el-empty v-if="strategy.Statement && strategy.Statement.length <= 0" />
+      <el-empty v-if="strategy.Statement&&strategy.Statement.length<=0" />
       <el-collapse v-else v-model="statementOpen">
         <el-collapse-item v-for="(st, index) in strategy.Statement" :key="index" :name="index">
           <template slot="title">
-            <span class="mr">{{ '配置' + (index + 1) }}</span>
+            <span class="mr">{{ '配置'+(index+1) }}</span>
             <span class="secordany">{{ currentName }}</span>
             <span style="flex-grow: 1;" />
           </template>
           <div style="padding: 20px 30px 0;">
             <div v-if="editable" class="statement-del-btn">
-              <i class="fa fa-close" @click="() => onDelStatement(index)" />
-
+              <i class=" el-icon-close" @click="() => onDelStatement(index)" />
             </div>
             <AwzStatement
               :value="st"
@@ -124,9 +105,10 @@ export default {
       type: String,
       default: '240px'
     },
+    // 策略内容区 高度
     statementActionHeight: {
       type: String,
-      default: '300px'
+      default: '500px'
     },
     statementConditionSymbols: {
       type: Array,
@@ -164,7 +146,7 @@ export default {
   },
   computed: {
     currentName() {
-      if (this.$route.params.name == undefined || this.$route.params.name == 'create') return
+      if (this.$route.params.name === undefined || this.$route.params.name === 'create') return
       return this.$route.params.name
     }
   },
@@ -214,7 +196,7 @@ export default {
           this.emitChange()
         })
         .catch(() => { })
-      // customClass 怎么修改确认和取消的按钮颜色
+        // customClass 怎么修改确认和取消的按钮颜色
     },
     openAll() {
       this.statementOpen = this.strategy.Statement.map((st, idx) => idx) || []
@@ -259,7 +241,6 @@ export default {
   display: flex;
   flex-direction: column;
   border: 1px solid #36464e;
-
   .strategy-header {
     display: flex;
     align-items: center;
@@ -294,7 +275,7 @@ export default {
     height: 0;
     position: relative;
 
-    .fa-close {
+    .el-icon-close {
       cursor: pointer;
       position: absolute;
       right: -26px;
@@ -312,8 +293,7 @@ export default {
 .secordany {
   color: #b2b4b9;
 }
-
-.topMenu {
+.topMenu{
   box-shadow: 0 2px 10px 0 inset rgba(0, 0, 0, 0.2);
   box-sizing: border-box;
   /* max-width: 1360px; */

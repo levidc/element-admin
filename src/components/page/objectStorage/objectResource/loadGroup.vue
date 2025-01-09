@@ -153,11 +153,9 @@
                       <p style="line-height:1.6;"> 绿色：有两个及以上健康资源</p>
                       <p style="line-height:1.6;"> 黄色：只有一个健康资源</p>
                       <p style="line-height:1.6;"> 红色：没有健康资源</p>
-                      <i
-                        slot="reference"
-                        class="fa fa-question-circle"
-                        style="margin-left:10px"
-                      />
+                      <svg slot="reference" class="icon icon-question" aria-hidden="true" style="margin-left:10px">
+                        <use xlink:href="#icon-question" />
+                      </svg>
                     </el-popover>
                   </span>
                   <svg
@@ -190,11 +188,9 @@
                       style="position:absolute;"
                     >
                       <p style="line-height:1.6;">AUTO:按资源的剩余空间大小自动调整写入的分配比例</p>
-                      <i
-                        slot="reference"
-                        class="fa fa-question-circle"
-                        style="margin-left:10px"
-                      />
+                      <svg slot="reference" class="icon icon-question" aria-hidden="true" style="margin-left:10px">
+                        <use xlink:href="#icon-question" />
+                      </svg>
                     </el-popover>
                   </span>
                   <span>AUTO</span>
@@ -342,10 +338,9 @@
                                 trigger="hover"
                                 :content="String(scope.row.resourceStatus).trim()"
                               >
-                                <i
-                                  slot="reference"
-                                  class="fa fa-question-circle"
-                                />
+                                <svg slot="reference" class="icon icon-question" aria-hidden="true">
+                                  <use xlink:href="#icon-question" />
+                                </svg>
                               </el-popover>
                             </span>
                           </template>
@@ -579,10 +574,9 @@
                           trigger="hover"
                           :content="String(scope.row.resourceStatus).trim()"
                         >
-                          <i
-                            slot="reference"
-                            class="fa fa-question-circle"
-                          />
+                          <svg slot="reference" class="icon icon-question" aria-hidden="true">
+                            <use xlink:href="#icon-question" />
+                          </svg>
                         </el-popover>
                       </span>
                     </template>
@@ -673,11 +667,9 @@
                   style="position:absolute;"
                 >
                   <p style="line-height:1.6;">AUTO:按资源的剩余空间大小自动调整写入的分配比例</p>
-                  <i
-                    slot="reference"
-                    class="fa fa-question-circle"
-                    style="margin-left:10px"
-                  />
+                  <svg style="margin-left:10px" slot="reference" class="icon icon-question" aria-hidden="true">
+                    <use xlink:href="#icon-question" />
+                  </svg>
                 </el-popover>
               </span>
               <el-radio-group v-model="form.loadStrategy">
@@ -760,11 +752,9 @@
                 <p style="line-height:1.6;">负载组中不能添加不同类型的资源</p>
                 <p style="line-height:1.6;">直接存储的负载组不支持缓存类型的资源</p>
                 <p style="line-height:1.6;">缓存的负载组不支持直接存储类型的资源</p>
-                <i
-                  slot="reference"
-                  class="fa fa-question-circle"
-                  style="margin-left:10px"
-                />
+                <svg style="margin-left:10px" slot="reference" class="icon icon-question" aria-hidden="true">
+                  <use xlink:href="#icon-question" />
+                </svg>
               </el-popover>
             </span>
             <el-button
@@ -805,12 +795,7 @@
                           :key="t"
                           style="line-height:1.6;"
                         >{{ t }}</p>
-                        <i
-                          v-if="data.loadGroupName"
-                          slot="reference"
-                          class="fa fa-exclamation-circle"
-                          :style="[{opacity:data.loadGroupName.length?1:0},'position:relative,right:5px']"
-                        />
+                        <i v-if="data.loadGroupName" :style="[{opacity:data.loadGroupName.length?1:0},'position:relative,right:5px']" slot="reference" class="el-icon-warning-outline"></i>
                       </el-popover>
                       <span
                         v-if="node.isLeaf"
@@ -852,17 +837,14 @@
 
                   <el-popover
                     placement="top"
-                    width="200"
+                    width="220px"
                     trigger="hover"
                     style="position:absolute;"
                   >
                     <p style="line-height:1.6;">容量到达资源的阈值后不能写入</p>
-                    <i
-                      v-if="index==0"
-                      slot="reference"
-                      class="fa fa-question-circle"
-                      style="margin-left:10px"
-                    />
+                    <svg v-if="index==0" style="margin-left:10px" slot="reference" class="icon icon-question" aria-hidden="true">
+                      <use xlink:href="#icon-question" />
+                    </svg>
                   </el-popover>
                 </el-form-item>
                 <i

@@ -2,62 +2,31 @@
   <div>
     <div class="page_content_wrap">
       <div class="mb_15 clearfix">
-        <el-button
-          v-access="'admin:AddStorageResourceController'"
-          class="golden"
-          type="primary"
-          @click="showCreate('object')"
-        >创建</el-button>
+        <el-button v-access="'admin:AddStorageResourceController'" class="golden" type="primary"
+          @click="showCreate('object')">创建</el-button>
         <div class="right">
-          <el-tooltip
-            content="刷新"
-            placement="top"
-            effect="dark"
-          >
-            <i
-              class="el-icon-refresh"
-              @click="init"
-            />
+          <el-tooltip content="刷新" placement="top" effect="dark">
+            <i class="el-icon-refresh" @click="init" />
           </el-tooltip>
         </div>
         <div class="right clearfix">
-          <el-input
-            v-model="filterText"
-            class="search_style search_btn right with_search mr_10"
-            placeholder="资源名称过滤"
-            clearable
-          />
+          <el-input v-model="filterText" class="search_style search_btn right with_search mr_10" placeholder="资源名称过滤"
+            clearable />
         </div>
       </div>
-      <TableData
-        ref="tab"
-        :loading="loading"
-        :row-key="rendeKey"
-        :table-data="tableData"
-        :columns="tableColumns"
-        :page-obj="{ ...pageObj }"
-        :sort-function="sortFunction"
-        :expand-change="expandChange"
-      >
-        <el-table-column
-          slot="url"
-          label="地址"
-          prop="url"
-          sortable="custom"
-          min-width="200px"
-        >
+      <TableData ref="tab" :loading="loading" :row-key="rendeKey" :table-data="tableData" :columns="tableColumns"
+        :page-obj="{ ...pageObj }" :sort-function="sortFunction" :expand-change="expandChange">
+        <el-table-column slot="url" label="地址" prop="url" sortable="custom" min-width="200px">
           <template slot-scope="scope">
-            <el-tooltip
-              :content="scope.row.url"
-              placement="top"
-            >
+            <el-tooltip :content="scope.row.url" placement="top">
               <span>{{ scope.row.url }}</span>
             </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column slot="storageStatus" label="存储状态" prop="storageStatus" type="expand" width="300">
           <template slot-scope="scope">
-            <el-table v-loading="scope.row.loading" :data="scope.row.statusList" style="position: relative;left: 50%; width: 50%;">
+            <el-table v-loading="scope.row.loading" :data="scope.row.statusList"
+              style="position: relative;left: 50%; width: 50%;">
               <el-table-column prop="gatewayAddress" />
               <el-table-column prop="gatewayStatus" label="服务状态" align="center">
                 <template slot-scope="row">
@@ -78,14 +47,11 @@
                     <span class="red" type="text">
                       资源异常
                     </span>
-                    <el-popover
-                      popper-class="text-wrap"
-                      placement="top-start"
-                      title="异常详情"
-                      trigger="hover"
-                      :content="String(row.row.resourceStatus).trim()"
-                    >
-                      <i slot="reference" class="fa fa-question-circle" />
+                    <el-popover popper-class="text-wrap" placement="top-start" title="异常详情" trigger="hover"
+                      :content="String(row.row.resourceStatus).trim()">
+                      <svg slot="reference" class="icon icon-question" aria-hidden="true">
+                        <use xlink:href="#icon-question" />
+                      </svg>
                     </el-popover>
                   </span>
                 </template>
@@ -93,142 +59,74 @@
             </el-table>
           </template>
         </el-table-column>
-        <el-table-column
-          slot="action"
-          :label="$ts('action')"
-          fixed="right"
-          width="200px"
-        >
+        <el-table-column slot="action" :label="$ts('action')" fixed="right" width="200px">
           <template slot-scope="scope">
             <el-dropdown size="small">
-              <el-button
-                v-access="'admin:UpdateStorageResourceController' || 'admin:DeleteResourceController'"
-                type="primary"
-                class="blue"
-              >
+              <el-button v-access="'admin:UpdateStorageResourceController' || 'admin:DeleteResourceController'"
+                type="primary" class="blue">
                 {{ $ts('action') }}<i class="el-icon-arrow-down el-icon--right" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item
-                  v-access="'admin:UpdateStorageResourceController'"
-                  @click.native="updateForm(scope.row, true)"
-                >修改资源</el-dropdown-item>
-                <el-dropdown-item
-                  v-access="'admin:DeleteResourceController'"
-                  @click.native="handleDel('object', scope)"
-                >删除资源</el-dropdown-item>
+                <el-dropdown-item v-access="'admin:UpdateStorageResourceController'"
+                  @click.native="updateForm(scope.row, true)">修改资源</el-dropdown-item>
+                <el-dropdown-item v-access="'admin:DeleteResourceController'"
+                  @click.native="handleDel('object', scope)">删除资源</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
       </TableData>
     </div>
-    <el-dialog
-      :visible.sync="modelFormFlag"
-      width="40%"
-      :title="isAdd ? '创建资源' : '修改资源'"
-      @open="dialogOpen('tableFocus')"
-    >
-      <el-form
-        ref="form"
-        :model="form"
-        :rules="rules"
-        label-width="160px"
-      >
+    <el-dialog :visible.sync="modelFormFlag" width="40%" :title="isAdd ? '创建资源' : '修改资源'"
+      @open="dialogOpen('tableFocus')">
+      <el-form ref="form" :model="form" :rules="rules" label-width="160px">
         <el-row>
           <el-col :span="24">
-            <el-form-item
-              prop="storageName"
-              label="资源名称"
-            >
-              <el-input
-                ref="tableFocus"
-                v-model.trim="form.storageName"
-                placeholder="请输入2-64位中英文、数字、'_'或'-'"
-                clearable
-              />
+            <el-form-item prop="storageName" label="资源名称">
+              <el-input ref="tableFocus" v-model.trim="form.storageName" placeholder="请输入2-64位中英文、数字、'_'或'-'"
+                clearable />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item
-              prop="url"
-              label="地址"
-            >
-              <el-input
-                v-model.trim="form.url"
-                placeholder="请输入2-64位字符"
-                clearable
-              />
+            <el-form-item prop="url" label="地址">
+              <el-input v-model.trim="form.url" placeholder="请输入2-64位字符" clearable />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item
-              prop="userName"
-              label="用户名"
-            >
-              <el-input
-                v-model.trim="form.userName"
-                placeholder="请输入2-64位字符"
-                clearable
-              />
+            <el-form-item prop="userName" label="用户名">
+              <el-input v-model.trim="form.userName" placeholder="请输入2-64位字符" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item
-              prop="password"
-              label="密码"
-            >
-              <el-input
-                v-model.trim="form.password"
-                type="password"
-                placeholder="请输入2-64位字符"
-                clearable
-              />
+            <el-form-item prop="password" label="密码">
+              <el-input v-model.trim="form.password" type="password" placeholder="请输入2-64位字符" clearable />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item
-              prop="bucketName"
-              label="存储桶名"
-            >
-              <el-popover
-                placement="top"
-                width="350"
-                trigger="hover"
-                style="position:absolute;"
-              >
+            <el-form-item prop="bucketName" label="存储桶名">
+              <el-popover placement="top" width="350" trigger="hover" style="position:absolute;">
                 <p style="line-height:1.6;">名称只能由小写字母、数字、点 (.) 和连字符 (-) 组成。</p>
                 <p style="line-height:1.6;">名称需以数字字母开头结尾</p>
                 <p style="line-height:1.6;">名称不能包含两个相邻的句点(.)</p>
                 <p style="line-height:1.6;">不能以'xn--'开头和以-s3alias结尾</p>
                 <p style="line-height:1.6;">存储桶名称不能与 IP 地址相似</p>
                 <p style="line-height:1.6;">名称长度为3-63位字符</p>
-                <i
-                  slot="reference"
-                  class="fa fa-question-circle"
-                  style="margin-left: -20px !important;"
-                />
+                <svg slot="reference" class="icon icon-question" aria-hidden="true" style="margin-left: -20px !important;">
+                  <use xlink:href="#icon-question" />
+                </svg>
               </el-popover>
-              <el-input
-                v-model.trim="form.bucketName"
-                placeholder="请输入合法的存储桶名"
-                :disabled="!isAdd"
-                clearable
-              />
+              <el-input v-model.trim="form.bucketName" placeholder="请输入合法的存储桶名" :disabled="!isAdd" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label=" ">
-              <span
-                class="advanceConfig"
-                @click="enableAdvancedConfig = !enableAdvancedConfig"
-              >
+              <span class="advanceConfig" @click="enableAdvancedConfig = !enableAdvancedConfig">
                 高级设置
               </span>
             </el-form-item>
@@ -236,68 +134,31 @@
         </el-row>
         <el-row v-if="enableAdvancedConfig">
           <el-col :span="12">
-            <el-form-item
-              prop="s3SdkVersion"
-              label="s3 SDK版本"
-            >
-              <el-select
-                v-model="form.extendInfo.s3SdkVersion"
-                :disabled="!isAdd"
-              >
-                <el-option
-                  v-for="item in s3SdkVersion"
-                  :key="item"
-                  :value="item"
-                  :label="item"
-                />
+            <el-form-item prop="s3SdkVersion" label="s3 SDK版本">
+              <el-select v-model="form.extendInfo.s3SdkVersion" :disabled="!isAdd">
+                <el-option v-for="item in s3SdkVersion" :key="item" :value="item" :label="item" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item
-              props="s3SignatureVersion"
-              label="s3 签名版本"
-            >
-              <el-select
-                v-model="form.extendInfo.s3SignatureVersion"
-                :disabled="!isAdd"
-              >
-                <el-option
-                  v-for="item in s3SignatureVersion"
-                  :key="item"
-                  :value="item"
-                  :label="item"
-                />
+            <el-form-item props="s3SignatureVersion" label="s3 签名版本">
+              <el-select v-model="form.extendInfo.s3SignatureVersion" :disabled="!isAdd">
+                <el-option v-for="item in s3SignatureVersion" :key="item" :value="item" :label="item" />
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button
-          class="golden"
-          type="primary"
-          @click="confirmCreate"
-        >{{ $ts('button.confirm') }}</el-button>
+      <div slot="footer" class="dialog-footer">
+        <el-button class="golden" type="primary" @click="confirmCreate">{{ $ts('button.confirm') }}</el-button>
         <el-button @click="modelFormFlag = false">{{ $ts('button.cancel') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog
-      :title="renderDel ? '删除存储资源' : '删除存储设备'"
-      :visible.sync="deleteFlag"
-      width="650px"
-    >
+    <el-dialog :title="renderDel ? '删除存储资源' : '删除存储设备'" :visible.sync="deleteFlag" width="650px">
       <p>{{ renderDel ? `删除如下存储资源:${selectRow.storageName}` : `删除如下存储设备: ${selectRow.deviceName}` }}
       </p>
       <div slot="footer">
-        <el-button
-          type="primary"
-          class="golden"
-          @click="deleteForm"
-        >{{ $ts('delete') }}</el-button>
+        <el-button type="primary" class="golden" @click="deleteForm">{{ $ts('delete') }}</el-button>
         <el-button @click="deleteFlag = false">{{ $ts('cancel') }}</el-button>
       </div>
     </el-dialog>
@@ -316,7 +177,7 @@ import {
 } from '@/api/storage'
 import { validBucketName, validateMaxInt } from '@/utils/validate'
 export default {
-  data() {
+  data () {
     return {
       timer: null,
       refreshId: [],
@@ -482,35 +343,35 @@ export default {
     }
   },
   computed: {
-    isAdd() {
+    isAdd () {
       return this.opType === 'add'
     },
-    renderDel() {
+    renderDel () {
       return this.opType === 'del'
     },
     ...mapState(['api'])
   },
   watch: {
-    modelFormFlag(val) {
+    modelFormFlag (val) {
       if (val) {
         clearTimeout(this.timer)
       } else {
         this.init(true)
       }
     },
-    'form.storageType': function(val) {
+    'form.storageType': function (val) {
       if (val === 'GLACIER') {
         this.form.nasAdvancedConfig = false
         this.$refs['form'].clearValidate()
       }
     },
-    deleteFlag(val) {
+    deleteFlag (val) {
       if (!val) {
         this.opType = 'add'
         this.optDType = 'add'
       }
     },
-    filterText(val) {
+    filterText (val) {
       this.tableData = JSON.parse(JSON.stringify(this.copyData))
       if (!val) {
         this.init(true)
@@ -521,14 +382,14 @@ export default {
       this.tableData = this.tableData.filter(item => item.storageName.toLowerCase().indexOf(val.toLowerCase()) > -1)
     }
   },
-  mounted() {
+  mounted () {
     this.init(true)
   },
-  destroyed() {
+  destroyed () {
     clearTimeout(this.timer)
   },
   methods: {
-    storageTypeEnu(key) {
+    storageTypeEnu (key) {
       switch (key) {
         case 'OK':
           return '连接正常'
@@ -549,7 +410,7 @@ export default {
       //   // 'REMOUNT': '重新挂载中'
       // },
     },
-    expandChange(val, param) {
+    expandChange (val, param) {
       // params为空则恢复定时器
       if (param.length) {
         clearTimeout(this.timer)
@@ -571,15 +432,15 @@ export default {
         }, 4000)
       }
     },
-    transByteToGB(data) {
+    transByteToGB (data) {
       // ByteToGB、
       const res = (Number(data) / 1024 ** 3).toFixed(2)
       return res == 0 ? 0 : res
     },
-    rendeKey(row) {
+    rendeKey (row) {
       return row.resourceId
     },
-    handleDel(type, { row }) {
+    handleDel (type, { row }) {
       if (type === 'object') {
         this.opType = 'del'
       }
@@ -587,12 +448,12 @@ export default {
       this.selectRow = row
       this.deleteFlag = true
     },
-    sortFunction(val) {
+    sortFunction (val) {
       this.prop = val.prop
       this.order = val.order
       this.tableData.sort(this.sortMethod(val.prop, val.order))
     },
-    init(flag = false) {
+    init (flag = false) {
       if (flag) {
         this.loading = true
       }
@@ -618,7 +479,7 @@ export default {
         this.loading = false
       })
     },
-    updateForm(row, flag = false) {
+    updateForm (row, flag = false) {
       this.opType = 'update'
       Object.assign(this.form, { ...row, defaultV: row.default, mountDir: row.bucketName })
       this.copyForm = JSON.parse(JSON.stringify(this.form))
@@ -626,13 +487,13 @@ export default {
         this.modelFormFlag = true
       }
     },
-    dialogOpen(e) {
+    dialogOpen (e) {
       const ipt = e
-      this.$nextTick(function() {
+      this.$nextTick(function () {
         this.$refs[ipt].$el.querySelector('input').focus()
       })
     },
-    showCreate(cName, id = '') {
+    showCreate (cName, id = '') {
       if (cName === 'object') {
         this.opType = 'add'
         this.modelFormFlag = true
@@ -663,7 +524,7 @@ export default {
         })
       }
     },
-    deleteForm() {
+    deleteForm () {
       if (this.renderDel) {
         const { resourceId, deviceId } = this.selectRow
         removeObjectStorageResource({
@@ -672,7 +533,7 @@ export default {
         })
           .then(res => {
             if (res.msg === 'success') {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
@@ -690,7 +551,7 @@ export default {
           deviceId: this.selectRow.deviceId
         }).then((res) => {
           if (res.msg === 'success') {
-            this.$ts({
+            this.$msg({
               type: 'success',
               text: this.$ts('response.success')
             })
@@ -701,7 +562,7 @@ export default {
         })
       }
     },
-    confirmCreate() {
+    confirmCreate () {
       this.$refs['form'].validate((valid) => {
         const {
           userName,
@@ -741,7 +602,7 @@ export default {
             }
             addObjectStorageResource(data)
               .then((res) => {
-                this.$ts({
+                this.$msg({
                   type: 'success',
                   text: this.$ts('response.success')
                 })
@@ -773,7 +634,7 @@ export default {
             reqParams.resourceId = this.form.resourceId
             reqParams.deviceId = '66666666666666666'
             if (Object.keys(reqParams).length == 2) {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
@@ -783,7 +644,7 @@ export default {
             }
             updateObjectStorageResource(reqParams)
               .then((res) => {
-                this.$ts({
+                this.$msg({
                   type: 'success',
                   text: this.$ts('response.success')
                 })
@@ -830,7 +691,7 @@ export default {
         width: 175px !important;
         margin-left: -6px !important;
 
-        & + .el-form-item__content {
+        &+.el-form-item__content {
           margin-left: 15px !important;
         }
       }

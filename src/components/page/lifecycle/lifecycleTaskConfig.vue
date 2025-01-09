@@ -1,48 +1,19 @@
 <template>
   <div>
-    <div
-      v-loading="loading"
-      class="container page_content_wrap"
-    >
+    <div v-loading="loading" class="container page_content_wrap">
       <div v-show="!loading">
         <div class="globalstyle">
           <h2 style="font-size: 17px;">配置</h2>
-          <span
-            v-show="isshow"
-            class="editestyle"
-            @click="edit()"
-          ><a>编辑</a></span>
-          <el-tooltip
-            content="刷新"
-            placement="top"
-            effect="dark"
-          >
-            <i
-              class="el-icon-refresh"
-              @click="getConfig()"
-            />
+          <span v-show="isshow" class="editestyle" @click="edit()"><a>编辑</a></span>
+          <el-tooltip content="刷新" placement="top" effect="dark">
+            <i class="el-icon-refresh" @click="getConfig()" />
           </el-tooltip>
         </div>
-        <el-form
-          ref="form"
-          :model="form"
-          :rules="rules"
-          class="form"
-          hide-required-asterisk
-          label-width="150px"
-        >
-          <el-form-item
-            prop="expireDays"
-            class="expire-days"
-          >
+        <el-form ref="form" :model="form" :rules="rules" class="form" hide-required-asterisk label-width="150px">
+          <el-form-item prop="expireDays" class="expire-days">
             <span slot="label">
               <span>回收站</span>
-              <el-popover
-                width="300"
-                trigger="hover"
-                placement="top-start"
-                :open-delay="200"
-              >
+              <el-popover width="300" trigger="hover" placement="top-start" :open-delay="200">
                 <span>删除的对象会进入回收站（逻辑删除），可在删除留痕里查看和恢复，超出设置的过期时间后会进行物理删除，物理删除后不可恢复。</span>
                 <p> 关闭回收站时，会在设置的时间段（闭市后）进行物理删除。</p>
                 <svg class="icon icon-question" aria-hidden="true">
@@ -50,24 +21,12 @@
                 </svg>
               </el-popover>
             </span>
-            <QuickDefault
-              v-model="form.expireDays"
-              :default-value="0"
-              label-of-default="关闭"
-              label-of-value="开启"
-              class="defaultstyle"
-              :disabled="disableds"
-            >
+            <QuickDefault v-model="form.expireDays" :default-value="0" label-of-default="关闭" label-of-value="开启"
+              class="defaultstyle" :disabled="disableds">
               <template #default="{ data, onChange: onExpireDaysChange }">
                 删除留痕过期时间
-                <el-input
-                  v-model="data.value"
-                  placeholder="请输入"
-                  style="width: 100px;"
-                  :min="1"
-                  :disabled="disableds"
-                  @input="value => {data.value = Number(value) > 36135 ? 36135 : value.replace(/(^0+)|\D/g, '');onExpireDaysChange() }"
-                >
+                <el-input v-model="data.value" placeholder="请输入" style="width: 100px;" :min="1" :disabled="disableds"
+                  @input="value => { data.value = Number(value) > 36135 ? 36135 : value.replace(/(^0+)|\D/g, ''); onExpireDaysChange() }">
                   <span slot="suffix">天</span>
                 </el-input>
               </template>
@@ -77,108 +36,50 @@
             <div slot="label">
               <span>定时任务</span>
             </div>
-            <el-radio-group
-              v-model="form.enableTask"
-              :disabled="disableds"
-            >
+            <el-radio-group v-model="form.enableTask" :disabled="disableds">
               <el-radio :label="false">关闭</el-radio>
               <el-radio :label="true">开启</el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item
-            v-show="form.enableTask"
-            label="物理删除任务执行时间"
-            class="paddingForm"
-          >
+          <el-form-item v-show="form.enableTask" label="物理删除任务执行时间" class="paddingForm">
             <div class="timeSelect">
               <el-form-item prop="startTime">
-                <el-select
-                  v-model="form.startTime"
-                  placeholder="起始时间"
-                  :disabled="disableds"
-                  clearable
-                >
-                  <el-option
-                    v-for="item in timeList"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                    :disabled="item.disabled"
-                  />
+                <el-select v-model="form.startTime" placeholder="起始时间" :disabled="disableds" clearable>
+                  <el-option v-for="item in timeList" :key="item.value" :label="item.label" :value="item.value"
+                    :disabled="item.disabled" />
                 </el-select>
               </el-form-item>
               <span class="separator"> ~ </span>
               <el-form-item prop="endTime">
-                <el-select
-                  v-model="form.endTime"
-                  placeholder="结束时间"
-                  :disabled="disableds"
-                  clearable
-                  @change="validateStartTime('physics')"
-                >
-                  <el-option
-                    v-for="item in timeList"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                    :disabled="item.disabled"
-                  />
+                <el-select v-model="form.endTime" placeholder="结束时间" :disabled="disableds" clearable
+                  @change="validateStartTime('physics')">
+                  <el-option v-for="item in timeList" :key="item.value" :label="item.label" :value="item.value"
+                    :disabled="item.disabled" />
                 </el-select>
               </el-form-item>
             </div>
           </el-form-item>
-          <el-form-item
-            v-show="form.enableTask"
-            label="生命周期任务执行时间"
-            class="paddingForm"
-          >
+          <el-form-item v-show="form.enableTask" label="生命周期任务执行时间" class="paddingForm">
             <div class="timeSelect">
               <el-form-item prop="startLifycle">
-                <el-select
-                  v-model="form.startLifycle"
-                  placeholder="起始时间"
-                  :disabled="disableds"
-                  clearable
-                >
-                  <el-option
-                    v-for="item in timeList"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                    :disabled="item.disabled"
-                  />
+                <el-select v-model="form.startLifycle" placeholder="起始时间" :disabled="disableds" clearable>
+                  <el-option v-for="item in timeList" :key="item.value" :label="item.label" :value="item.value"
+                    :disabled="item.disabled" />
                 </el-select>
               </el-form-item>
               <span class="separator"> ~ </span>
               <el-form-item prop="endLifecycle">
-                <el-select
-                  v-model="form.endLifecycle"
-                  placeholder="结束时间"
-                  :disabled="disableds"
-                  clearable
-                  @change="validateStartTime('lifecycle')"
-                >
-                  <el-option
-                    v-for="item in timeList"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                    :disabled="item.disabled"
-                  />
+                <el-select v-model="form.endLifecycle" placeholder="结束时间" :disabled="disableds" clearable
+                  @change="validateStartTime('lifecycle')">
+                  <el-option v-for="item in timeList" :key="item.value" :label="item.label" :value="item.value"
+                    :disabled="item.disabled" />
                 </el-select>
               </el-form-item>
             </div>
           </el-form-item>
-          <el-form-item
-            v-show="golden"
-            label=" "
-          >
+          <el-form-item v-show="golden" label=" ">
             <el-row>
-              <el-button
-                type="default"
-                class="blue"
-                @click="editVersionControls('form')"
-              >取消
+              <el-button type="default" class="blue" @click="editVersionControls('form')">取消
               </el-button>
               <el-button class="golden" :loading="loading" @click="onCheckSave">{{ $ts('save') }}
               </el-button>
@@ -198,7 +99,7 @@ export default {
   components: {
     QuickDefault
   },
-  data() {
+  data () {
     return {
       editFlag: false,
       isshow: true,
@@ -402,26 +303,26 @@ export default {
   },
   watch: {
   },
-  mounted() {
+  mounted () {
     this.getConfig()
   },
   methods: {
-    validateStartTime(type) {
+    validateStartTime (type) {
       if (type === 'physics') {
         this.$refs['form'].validateField('startTime')
       } else {
         this.$refs['form'].validateField('startLifycle')
       }
     },
-    inputPositiveNum(val, ipt) {
+    inputPositiveNum (val, ipt) {
       this.$set(this.form, ipt, val.replace(/(^0+)|\D/g, ''))
     },
-    getConfig() {
+    getConfig () {
       this.loading = true
       getGlobalConfig().then((res) => {
         this.form.expireDays = res.data.expireDays
       }).catch((err) => {
-        err.msg && this.$ts(
+        err.msg && this.$msg(
           {
             type: 'error',
             text: this.$ts(err.msg)
@@ -453,7 +354,7 @@ export default {
         })
       })
     },
-    handleResEndTime() {
+    handleResEndTime () {
       const {
         startTime,
         endTime,
@@ -471,23 +372,23 @@ export default {
         this.form.endLifecycle = String(endLife + 24).padStart(2, '0') + ':00'
       }
     },
-    handleHourTime(time) {
+    handleHourTime (time) {
       // 处理默认值
       const timeRange = [
         '17', '18', '19', '20', '21', '22', '23', '24', '00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16'
       ]
       return timeRange.includes(time) ? time + ':00' : '00:00'
     },
-    onCheckSave() {
+    onCheckSave () {
       this.$refs['form'].validate(valid => {
         valid && this.onSaveConfig()
       })
     },
-    onSaveConfig() {
+    onSaveConfig () {
       this.loading = true
       setGlobalConfig({ expireDays: Number(this.form.expireDays) }).then((res) => {
         // if (res.msg === 'success') {
-        //   this.$ts({
+        //   this.$msg({
         //     type: 'success',
         //     text: this.$ts('response.success')
         //   })
@@ -495,7 +396,7 @@ export default {
         // console.log(res)
       }).catch((err) => {
         if (err.msg) {
-          this.$ts(
+          this.$msg(
             {
               type: 'error',
               text: this.$ts(err.msg)
@@ -522,7 +423,7 @@ export default {
             this.golden = false
             this.isshow = true
             this.disableds = true
-            this.$ts({
+            this.$msg({
               type: 'success',
               text: this.$ts('response.success')
             })
@@ -532,11 +433,11 @@ export default {
       })
       //
     },
-    handleReqTimeStr(time) {
+    handleReqTimeStr (time) {
       const num = Number(time.substring(0, 2))
       return String(num >= 24 ? num - 24 : num).padStart(2, '0') + ':00:00'
     },
-    batchUpdateRule() {
+    batchUpdateRule () {
       const updateHardDelete = updateRule({
         startTime: this.handleReqTimeStr(this.form.startTime),
         endTime: this.handleReqTimeStr(this.form.endTime),
@@ -551,19 +452,19 @@ export default {
         this.golden = false
         this.isshow = true
         this.disableds = true
-        this.$ts({
+        this.$msg({
           type: 'success',
           text: this.$ts('response.success')
         })
         this.getConfig()
       })
     },
-    edit() {
+    edit () {
       this.golden = true
       this.isshow = false
       this.disableds = false
     },
-    editVersionControls() {
+    editVersionControls () {
       this.golden = false
       this.isshow = true
       this.disableds = true
@@ -576,18 +477,23 @@ export default {
 ::v-deep .form {
   padding: 25px;
   margin-left: 30px;
+
   label.el-form-item__label {
     width: auto !important;
     margin-left: 0 !important;
   }
+
   .timeSelect {
     display: flex;
+
     .separator {
       margin: 0 5px;
     }
+
     .el-form-item__content {
       margin-left: 0 !important;
     }
+
     .el-form-item__error {
       width: 200%;
     }
@@ -601,38 +507,48 @@ export default {
 .el-select {
   width: 150px;
 }
+
 .defaultstyle {
   margin-top: 13px;
   height: 15px;
 }
+
 ::v-deep .value-input {
   margin-left: 22px !important;
   margin-top: -3px !important;
 }
+
 ::v-deep .el-form-item {
   margin-bottom: 5px;
 }
+
 ::v-deep .el-input__inner {
   height: 28px;
 }
+
 ::v-deep .value-input .el-input__inner {
   margin-right: 0px;
   margin-left: 3px;
 }
+
 ::v-deep .value-input .el-input__suffix {
   right: 14px !important;
 }
+
 ::v-deep .el-form-item__content {
   margin-left: 170px !important;
 }
+
 .globalstyle {
   display: flex;
   position: relative;
   justify-content: space-between;
 }
+
 .form {
   padding-top: 15px;
 }
+
 .editestyle {
   position: absolute;
   left: 40px;
@@ -644,6 +560,7 @@ export default {
 :deep(.el-form-item__error) {
   top: 82% !important;
 }
+
 .expire-days :deep(.el-form-item__error) {
   left: 276px !important;
 }
@@ -651,6 +568,7 @@ export default {
 .paddingForm {
   margin-left: 55px;
 }
+
 .container {
   min-height: 100px;
   margin: 20px 50px 0;

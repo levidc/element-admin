@@ -6,12 +6,7 @@
           <div class="param-box">
             <div class="param-hd">
               <h3>生命周期定时任务配置</h3>
-              <el-button
-                v-show="editControl&&!loading"
-                type="text"
-                class="link-edit"
-                @click="editControl=!editControl"
-              >
+              <el-button v-show="editControl && !loading" type="text" class="link-edit" @click="editControl = !editControl">
                 <span style="color:#ff8746;position: relative;top:3px;">
                   编辑
                 </span>
@@ -19,9 +14,9 @@
               <div v-loading="loading">
                 <div v-show="editControl">
                   <p class="mv_10">当前配置:
-                    <span>{{ form.cronType==='Default'?'默认配置':'自定义配置' }}</span>
+                    <span>{{ form.cronType === 'Default' ? '默认配置' : '自定义配置' }}</span>
                   </p>
-                  <div v-if="form.cronType==='UserCustomize'">
+                  <div v-if="form.cronType === 'UserCustomize'">
                     <p class="mv_10">首次执行时间:
                       <span>{{ formatDate(form.firstStartTime) }}</span>
                     </p>
@@ -31,57 +26,29 @@
                   </div>
                 </div>
                 <div v-show="!editControl">
-                  <el-form
-                    ref="form"
-                    :model="form"
-                    label-width="120px"
-                    :rules="rules"
-                  >
+                  <el-form ref="form" :model="form" label-width="120px" :rules="rules">
                     <el-form-item label="默认配置">
 
-                      <el-radio
-                        v-model="form.cronType"
-                        label="Default"
-                        @change="onChangeRadio"
-                      >默认配置&nbsp;&nbsp;&nbsp;<span v-if="isshow">(每天0点执行)</span></el-radio>
-                      <el-radio
-                        v-model="form.cronType"
-                        label="UserCustomize"
-                        @change="onChangeRadio"
-                      >启用自定义</el-radio>
+                      <el-radio v-model="form.cronType" label="Default"
+                        @change="onChangeRadio">默认配置&nbsp;&nbsp;&nbsp;<span v-if="isshow">(每天0点执行)</span></el-radio>
+                      <el-radio v-model="form.cronType" label="UserCustomize" @change="onChangeRadio">启用自定义</el-radio>
 
                     </el-form-item>
-                    <div v-if="form.cronType==='UserCustomize'">
-                      <el-form-item
-                        prop="firstStartTime"
-                        label="首次执行时间"
-                      >
-                        <el-date-picker
-                          v-model="form.firstStartTime"
-                          type="datetime"
-                          format="yyyy-MM-dd HH:mm"
-                          placeholder="选择日期时间"
-                          :picker-options="disableCurrentDate"
-                        />
+                    <div v-if="form.cronType === 'UserCustomize'">
+                      <el-form-item prop="firstStartTime" label="首次执行时间">
+                        <el-date-picker v-model="form.firstStartTime" type="datetime" format="yyyy-MM-dd HH:mm"
+                          placeholder="选择日期时间" :picker-options="disableCurrentDate" />
                       </el-form-item>
-                      <el-form-item
-                        label="时间间隔"
-                        prop="intervalHour"
-                      >
-                        <el-time-select
-                          v-model="form.intervalHour"
-                          class="hourContent"
-                          :picker-options="{
-                            start: '01:00',
-                            step: '1:00',
-                            end: '24:00'
-                          }"
-                          placeholder="选择时间"
-                        />
+                      <el-form-item label="时间间隔" prop="intervalHour">
+                        <el-time-select v-model="form.intervalHour" class="hourContent" :picker-options="{
+                          start: '01:00',
+                          step: '1:00',
+                          end: '24:00'
+                        }" placeholder="选择时间" />
                       </el-form-item>
                     </div>
                     <el-row>
-                      <el-button class="blue" @click="editControl=!editControl">{{ $ts('button.cancel') }}</el-button>
+                      <el-button class="blue" @click="editControl = !editControl">{{ $ts('button.cancel') }}</el-button>
                       <el-button class="golden" @click="putLifecycleTaskCron">{{ $ts('button.confirm') }}</el-button>
                     </el-row>
                   </el-form>
@@ -97,7 +64,7 @@
 <script>
 import { getLifecycleTaskCron, putLifecycleTaskCron } from '@/api/storage'
 export default {
-  data() {
+  data () {
     const validateCurrentTime = (rule, data, callback) => {
       const currentTime = new Date().getTime()
       const selectTime = new Date(data).getTime()
@@ -118,7 +85,7 @@ export default {
         intervalHour: '' // 时间间隔
       },
       disableCurrentDate: {
-        disabledDate(time) {
+        disabledDate (time) {
           // console.log(time, time.getTime())
           return time.getTime() < Date.now() - 86400000
         }
@@ -144,7 +111,7 @@ export default {
     }
   },
   watch: {
-    editControl(val) {
+    editControl (val) {
       if (val) {
         this.getLifecycleTaskCron()
       } else {
@@ -156,18 +123,18 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.getLifecycleTaskCron()
   },
   methods: {
-    onChangeRadio(val) {
+    onChangeRadio (val) {
       if (val == 'Default') {
         this.isshow = true
       } else {
         this.isshow = false
       }
     },
-    getLifecycleTaskCron() {
+    getLifecycleTaskCron () {
       this.loading = true
       getLifecycleTaskCron({
         Bucket: this.$route.params.id
@@ -187,7 +154,7 @@ export default {
         })
     },
     // firstStartTime 单位毫秒 ，intervalHour单位小时，dayStartHour单位小时
-    putLifecycleTaskCron() {
+    putLifecycleTaskCron () {
       this.$refs['form'].validate(valid => {
         if (valid) {
           let data = {}
@@ -209,7 +176,7 @@ export default {
           })
             .then(res => {
               if (res.code === '200') {
-                this.$ts({
+                this.$msg({
                   type: 'success',
                   text: this.$ts('response.success')
                 })

@@ -2,70 +2,30 @@
   <div>
     <div class="page_content_wrap">
       <el-row class="mv_10">
-        <el-button v-access="'admin:CreatePolicy'" size="small" type="primary" class="golden" @click="createPolicy">{{ $ts("CREATE") }}</el-button>
+        <el-button v-access="'admin:CreatePolicy'" size="small" type="primary" class="golden" @click="createPolicy">{{
+          $ts("CREATE") }}</el-button>
         <!-- <el-button v-access="'admin:CreatePolicy'" size="small" class="golden" @click="$router.push({name:'PoliciesCreate'})">JSON生成器</el-button> -->
         <!-- <el-button size="small" class="golden" :disabled="disableUpdate" @click="updatePolicy">{{ $ts("UPDATE") }}</el-button> -->
         <el-tooltip content="刷新" placement="top" effect="dark">
-          <i class="el-icon-refresh right" @click="searchVal='';refresh()" />
+          <i class="el-icon-refresh right" @click="searchVal = ''; refresh()" />
         </el-tooltip>
-        <el-input
-          v-model="searchVal"
-          class="search_style right"
-          :placeholder="$ts('policies.search.name')"
-          width="14"
-          clearable
-        />
+        <el-input v-model="searchVal" class="search_style right" :placeholder="$ts('policies.search.name')" width="14"
+          clearable />
       </el-row>
-      <PoliciesTable
-        ref="policyTable"
-        :search-val="searchVal"
-        @handleSelect="handleSelect"
-      />
+      <PoliciesTable ref="policyTable" :search-val="searchVal" @handleSelect="handleSelect" />
     </div>
-    <el-dialog
-      title="创建策略"
-      width="750px"
-      :visible.sync="createDialog"
-      class="createForm"
-    >
-      <el-form
-        ref="form"
-        :model="form"
-        label-width="120px"
-      >
-        <el-form-item
-          label="策略名称"
-          prop="policyName"
-          :rules="rulePolicyName"
-        >
-          <el-input
-            v-model="form.policyName"
-            placeholder="输入策略名称"
-          />
+    <el-dialog title="创建策略" width="750px" :visible.sync="createDialog" class="createForm">
+      <el-form ref="form" :model="form" label-width="120px">
+        <el-form-item label="策略名称" prop="policyName" :rules="rulePolicyName">
+          <el-input v-model="form.policyName" placeholder="输入策略名称" />
         </el-form-item>
         <el-form-item label="编辑策略" />
         <div style="width: 100%;margin-top: 30px;">
-          <vue-json-editor
-            ref="jsonEditor"
-            v-model="jsonString"
-            :show-btns="false"
-            :mode="'code'"
-            :expanded-on-start="true"
-            @json-change="onJsonChange"
-            @json-save="onJsonSave"
-            @has-error="onError"
-          />
+          <vue-json-editor ref="jsonEditor" v-model="jsonString" :show-btns="false" :mode="'code'"
+            :expanded-on-start="true" @json-change="onJsonChange" @json-save="onJsonSave" @has-error="onError" />
           <div class="bottomMenu">
-            <i
-              class="el-icon-s-operation"
-              title="格式化json"
-              @click="eslintJson"
-            />
-            <i
-              class="el-icon-document-copy"
-              title="复制到剪贴板"
-              @click="copyCode"
-            />
+            <i class="el-icon-s-operation" title="格式化json" @click="eslintJson" />
+            <i class="el-icon-document-copy" title="复制到剪贴板" @click="copyCode" />
           </div>
         </div>
       </el-form>
@@ -84,7 +44,7 @@ export default {
   components: {
     PoliciesTable
   },
-  data() {
+  data () {
     const checkNameReg = (rule, data, callback) => {
       const reg = /^[0-9a-zA-Z]{8,40}$/
       if (!reg.test(data)) {
@@ -119,19 +79,19 @@ export default {
     }
   },
   computed: {
-    disableUpdate() {
+    disableUpdate () {
       return this.selection.length !== 1
     }
   },
   watch: {
-    createDialog(val) {
+    createDialog (val) {
       if (!val) {
         this.$refs['form'].resetFields()
         this.clearJSon()
       }
     }
   },
-  mounted() { },
+  mounted () { },
   methods: {
     // pushCreate () {
     //   const push = this.$router.resolve({
@@ -139,23 +99,23 @@ export default {
     //   })
     //   window.open(push.href, '_blank')
     // },
-    updatePolicy() {
+    updatePolicy () {
       this.$router.push({ name: 'PoliciesUpdate' })
     },
-    handleSelect(val) {
+    handleSelect (val) {
       this.selection = val
     },
-    refresh() {
+    refresh () {
       this.$refs['policyTable'].listPolicies()
     },
-    submitCreate() {
+    submitCreate () {
       if (this.hasJsonFlag == false) {
-        return this.$ts({
+        return this.$msg({
           type: 'error',
           text: 'json格式不正确'
         })
       } else if (!Object.keys(this.jsonString).length) {
-        return this.$ts({
+        return this.$msg({
           type: 'error',
           text: 'json未配置'
         })
@@ -168,7 +128,7 @@ export default {
               params: { policyName: this.form.policyName }
             }).then(res => {
               this.createDialog = false
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
@@ -181,35 +141,35 @@ export default {
         })
       }
     },
-    createPolicy() {
+    createPolicy () {
       this.$router.push({
         name: 'PolicyDetail',
         params: { name: 'create' }
       })
     },
-    eslintJson() {
+    eslintJson () {
       document.getElementsByClassName('jsoneditor-format').click()
       // $('.jsoneditor-format').click()
     },
-    copyCode() {
+    copyCode () {
       var str = this.$refs['jsonEditor'].editor.getText()
       navigator.clipboard.writeText(str)
-      this.$ts({
+      this.$msg({
         type: 'success',
         text: '复制成功'
       })
     },
-    onJsonChange(value) {
+    onJsonChange (value) {
       this.onJsonSave(value)
     },
-    onJsonSave(value) {
+    onJsonSave (value) {
       this.jsonString = value
       this.hasJsonFlag = true
     },
-    onError(value) {
+    onError (value) {
       this.hasJsonFlag = false
     },
-    clearJSon() {
+    clearJSon () {
       this.jsonString = {
         Version: '2012-10-17',
         Statement: [
@@ -239,8 +199,7 @@ export default {
     display: flex;
     justify-content: flex-end;
     margin-top: -30px;
-    cursor: pointer;
-    margin-right: 5px;
+    cursor: pointer;   margin-right: 5px;
 
     i {
       border: 1px solid #ccc;

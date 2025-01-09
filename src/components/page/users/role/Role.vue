@@ -4,25 +4,16 @@
       <el-row class="mb_15">
         <el-button size="small" type="primary" @click="addRole">{{ $ts("CREATE") }}</el-button>
         <el-button size="small" type="danger" :disabled="delBtn" @click="listNames()">{{ $ts("DELETE") }}</el-button>
-        <el-button class="right tab_search_btn" type="primary" @click="searchVal='';refresh()">{{ $ts("REFRESH") }}</el-button>
-        <el-input
-          v-model="searchVal"
-          class="search_style right"
-          :placeholder="$ts('role.name')"
-          width="14"
-          clearable
-        />
+        <el-button class="right tab_search_btn" type="primary" @click="searchVal = ''; refresh()">{{ $ts("REFRESH")
+          }}</el-button>
+        <el-input v-model="searchVal" class="search_style right" :placeholder="$ts('role.name')" width="14" clearable />
       </el-row>
     </div>
-    <RoleTable
-      ref="roletable"
-      :search-val="searchVal"
-      @doModifyRole="modifyRole"
-      @boxClick="boxClick"
-    />
+    <RoleTable ref="roletable" :search-val="searchVal" @doModifyRole="modifyRole" @boxClick="boxClick" />
 
     <!-- 创建角色|更新角色 -->
-    <el-dialog :title="isAdd ?$ts('role.model.create'):$ts('role.model.update')" :visible.sync="editDialog" width="900px" @open="dialogOpen('tableFocus')">
+    <el-dialog :title="isAdd ? $ts('role.model.create') : $ts('role.model.update')" :visible.sync="editDialog"
+      width="900px" @open="dialogOpen('tableFocus')">
       <div>
         <div style="background-color:#f5f7fa;margin-top: 20px;position:relative;">
           <el-steps class="left steps_wrap" :active="active" finish-status="success" simple>
@@ -32,16 +23,19 @@
           </el-steps>
           <div class="step_btn">
             <!-- 下一步 -->
-            <el-button v-if="active==0||active==1" class="pull_right" size="mini" @click="next('createForm')">{{ $ts('role.next.step') }}</el-button>
+            <el-button v-if="active == 0 || active == 1" class="pull_right" size="mini" @click="next('createForm')">{{
+              $ts('role.next.step') }}</el-button>
             <!-- 创建 -->
-            <el-button v-if="active==2" class="pull_right" size="mini" @click="editRole()">{{ isAdd?$ts('CREATE'):$ts("MODIFY") }}</el-button>
+            <el-button v-if="active == 2" class="pull_right" size="mini" @click="editRole()">{{
+              isAdd ? $ts('CREATE') : $ts("MODIFY") }}</el-button>
             <!-- 上一步 -->
-            <el-button :disabled="active==0" class="pull_right" size="mini" style="margin-right:5px;" @click="prev()">{{ $ts('role.pre.step') }}</el-button>
+            <el-button :disabled="active == 0" class="pull_right" size="mini" style="margin-right:5px;" @click="prev()">{{
+              $ts('role.pre.step') }}</el-button>
           </div>
           <div class="clear" />
         </div>
         <!-- 第一步 -->
-        <div v-if="active===0" class="step_content">
+        <div v-if="active === 0" class="step_content">
           <el-form ref="createForm" :model="createForm" label-width="100px" style="padding:0 5%" :rules="createRule">
             <el-form-item :label="$ts('role.name')" prop="name">
               <el-input ref="tableFocus" v-model="createForm.name" auto-complete="off" clearable />
@@ -53,29 +47,21 @@
         </div>
 
         <!-- 权限添加 -->
-        <div
-          v-show="active===1"
-          class="step_content step1"
-        >
+        <div v-show="active === 1" class="step_content step1">
           <div>
-            <div v-for="(api,k) in apis" :key="k">
+            <div v-for="(api, k) in apis" :key="k">
               <p>{{ $ts(api.key) }}</p>
-              <el-checkbox v-model="createApi[api.key].checkAll" class="pull_right" @change="(val)=>handleCheckAllChange(val,api.key,k)">
+              <el-checkbox v-model="createApi[api.key].checkAll" class="pull_right"
+                @change="(val) => handleCheckAllChange(val, api.key, k)">
                 {{ $ts('role.checkAll') }}
               </el-checkbox>
               <!-- 全选 -->
               <!-- api[key、val]=> 权限的名称、集合 -->
               <el-row class="check_inner">
-                <el-checkbox-group
-                  v-model="createApi[api.key].checkGroup"
-                  @change="(value) => handleCheckedChange(value, api.key)"
-                >
-                  <el-checkbox
-                    v-for="val in api.val"
-                    :key="val.apiName"
-                    :label="val.apiName"
-                    style="margin:0 20px 5px 0"
-                  >
+                <el-checkbox-group v-model="createApi[api.key].checkGroup"
+                  @change="(value) => handleCheckedChange(value, api.key)">
+                  <el-checkbox v-for="val in api.val" :key="val.apiName" :label="val.apiName"
+                    style="margin:0 20px 5px 0">
                     {{ i18n === 'en-US' ? val.englishText : val.chineseText }}
                   </el-checkbox>
                 </el-checkbox-group>
@@ -84,7 +70,7 @@
             </div>
           </div>
         </div>
-        <div v-if="active===2" class="step_content">
+        <div v-if="active === 2" class="step_content">
           <p style="font-size: 16px">{{ $ts('role.basic.info') }}</p>
           <div style="margin:10px 30px">
             <el-row style="font-size:15px">{{ $ts('role.name') }} : {{ createForm.name }}</el-row>
@@ -93,15 +79,11 @@
 
           <p style="font-size: 16px;">{{ $ts('role.right.assign') }}</p>
           <div style="margin:10px 30px">
-            <div v-for="(check,i) in checkApis" :key="check.key">
+            <div v-for="(check, i) in checkApis" :key="check.key">
               <p style="margin:20px 0 10px 0">{{ $ts(check.key) }}</p>
               <el-row style="margin-left:15px;">
-                <el-col
-                  v-for="val in check.list"
-                  :key="val"
-                  :span="8"
-                  style="margin:0 0 5px 0;word-break:break-word;"
-                >{{ valueTrans(val) }}</el-col>
+                <el-col v-for="val in check.list" :key="val" :span="8"
+                  style="margin:0 0 5px 0;word-break:break-word;">{{ valueTrans(val) }}</el-col>
               </el-row>
             </div>
 
@@ -110,7 +92,7 @@
 
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="editDialog = false;resetForm('createForm')">{{ $ts('button.cancel') }}</el-button>
+        <el-button @click="editDialog = false; resetForm('createForm')">{{ $ts('button.cancel') }}</el-button>
       </div>
     </el-dialog>
 
@@ -119,7 +101,7 @@
       <p>{{ $ts('role.delete.info') }}</p>
       <div>{{ names }}</div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="isDelete = false;doDelete()">{{ $ts('button.confirm') }}</el-button>
+        <el-button type="primary" @click="isDelete = false; doDelete()">{{ $ts('button.confirm') }}</el-button>
         <el-button @click="isDelete = false">{{ $ts('button.cancel') }}</el-button>
       </span>
     </el-dialog>
@@ -134,7 +116,7 @@ export default {
   components: {
     RoleTable
   },
-  data() {
+  data () {
     return {
       editDialog: false,
       operateType: 'create',
@@ -165,11 +147,11 @@ export default {
     }
   },
   computed: {
-    isAdd() {
+    isAdd () {
       return this.operateType === 'create'
     },
     // 权限集合的value转换
-    valueTransArr() {
+    valueTransArr () {
       const temp = []
       const obj = {}
       const len = this.apis.length
@@ -182,24 +164,24 @@ export default {
       return obj
     }
   },
-  mounted() {
+  mounted () {
     this.listapis()
   },
   methods: {
-    addRole() {
+    addRole () {
       this.editDialog = true
       this.operateType = 'create'
       this.resetForm('createForm')
     },
-    valueTrans(val) {
+    valueTrans (val) {
       return this.valueTransArr[val]
     },
-    dialogOpen(e) {
-      this.$nextTick(function() {
+    dialogOpen (e) {
+      this.$nextTick(function () {
         this.$refs[e].$el.querySelector('input').focus()
       })
     },
-    modifyRole(row) {
+    modifyRole (row) {
       // 异步axios 执行
       this.resetForm('createForm').then(res => {
         this.operateType = 'modify'
@@ -229,7 +211,7 @@ export default {
         // console.log('listRoleEnd')
       })
     },
-    handleCheckAllChange(flag, key, k) {
+    handleCheckAllChange (flag, key, k) {
       // flag 全选、key 全选name、k: index
       if (!flag) {
         this.createApi[key].checkGroup = []
@@ -242,20 +224,20 @@ export default {
       }
     },
     // 勾选单独check的处理函数
-    handleCheckedChange(value, key) {
+    handleCheckedChange (value, key) {
       // 不区分新建、修改
       this.createApi[key].checkAll = value.length === this.createApi[key].len
     },
 
     // 删除禁用
-    boxClick(len) {
+    boxClick (len) {
       if (len > 0) {
         this.delBtn = false
       } else {
         this.delBtn = true
       }
     },
-    resetForm(formName) {
+    resetForm (formName) {
       // 展示页 checkApis
       this.checkApis = []
       this.active = 0
@@ -267,19 +249,19 @@ export default {
       if (this.$refs[formName]) this.$refs[formName].resetFields()
       return this.listapis()
     },
-    refresh() {
+    refresh () {
       this.$refs.roletable.listRole(true)
       this.delBtn = true
     },
     // 上一步
-    prev() {
+    prev () {
       --this.active
       if (this.active < 0) {
         this.active = 0
       }
     },
     // 下一步
-    next(formName) {
+    next (formName) {
       if (this.active == 0) {
         this.$refs[formName].validate(valid => {
           if (valid) this.nextFun()
@@ -288,7 +270,7 @@ export default {
         this.nextFun()
       }
     },
-    nextFun() {
+    nextFun () {
       if (this.active++ > 3) {
         this.active = 0
       }
@@ -308,7 +290,7 @@ export default {
         // console.log(this.checkApis, 'createApi')
       }
     },
-    listapis() {
+    listapis () {
       var temp = this
       temp.i18n = localStorage.getItem('lang')
       return this.$http({
@@ -335,7 +317,7 @@ export default {
           console.error(error)
         })
     },
-    listNames() {
+    listNames () {
       const arr = []
       for (const i of this.$refs.roletable.multipleSelection) {
         arr.push(i.name)
@@ -343,7 +325,7 @@ export default {
       this.names = arr.join(',')
       this.isDelete = true
     },
-    doDelete() {
+    doDelete () {
       const loading = this.$loading(this.loadingOption)
       const deleteIds = []
       for (const i of this.$refs.roletable.multipleSelection) {
@@ -359,7 +341,7 @@ export default {
           version: this.$store.state.dosVersion
         }
       })
-        .then(function(response) {
+        .then(function (response) {
           if (response.data.error.code != 0) {
             temp.$ts({
               type: 'error',
@@ -375,12 +357,12 @@ export default {
           loading.close()
           temp.$refs.roletable.listRole()
         })
-        .catch(function(error) {
+        .catch(function (error) {
           loading.close()
           console.log(error)
         })
     },
-    editRole() {
+    editRole () {
       const loading = this.$loading(this.loadingOption)
       const arr = []
       this.checkApis.forEach(item => {
@@ -400,12 +382,12 @@ export default {
         })
           .then(response => {
             if (response.data.error.code != 0) {
-              this.$ts({
+              this.$msg({
                 type: 'error',
                 text: this.$ts(response.data.error.name)
               })
             } else {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
@@ -413,7 +395,7 @@ export default {
             loading.close()
             this.resetForm('createForm')
           })
-          .catch(function(error) {
+          .catch(function (error) {
             loading.close()
             console.log(error)
           })
@@ -432,12 +414,12 @@ export default {
         })
           .then(response => {
             if (response.data.error.code != 0) {
-              this.$ts({
+              this.$msg({
                 type: 'error',
                 text: this.$ts(response.data.error.name)
               })
             } else {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
@@ -445,7 +427,7 @@ export default {
             this.$refs.roletable.listRole()
             this.resetForm('modifyForm')
           })
-          .catch(function(error) {
+          .catch(function (error) {
             console.log(error)
           })
           .finally(() => {

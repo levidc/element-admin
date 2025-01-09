@@ -3,23 +3,10 @@
     <div class="page_content_wrap">
       <el-row class="mv_10">
         <!-- <el-button class="golden" @click="handleCreate">创建</el-button> -->
-        <el-tooltip
-          content="刷新"
-          placement="top"
-          effect="dark"
-        >
-          <i
-            class="el-icon-refresh right"
-            @click="searchVal='';init()"
-          />
+        <el-tooltip content="刷新" placement="top" effect="dark">
+          <i class="el-icon-refresh right" @click="searchVal = ''; init()" />
         </el-tooltip>
-        <el-input
-          v-model="searchVal"
-          class="search_style right"
-          placeholder="权限组名过滤"
-          width="14"
-          clearable
-        />
+        <el-input v-model="searchVal" class="search_style right" placeholder="权限组名过滤" width="14" clearable />
       </el-row>
       <!-- <TableData
           :loading="loading"
@@ -40,136 +27,69 @@
                 </div>
               </div>
             </template>
-          </el-table-column>
-          <el-table-column slot="action" label="操作" width="80px">
-            <template slot-scope="scope">
+</el-table-column>
+<el-table-column slot="action" label="操作" width="80px">
+  <template slot-scope="scope">
               <el-button class="blue" @click="handleFillForm(scope.row)">修改</el-button>
             </template>
-          </el-table-column>
-        </TableData> -->
-      <el-table
-        v-loading="loading"
-        :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-        tooltip-effect="dark"
-        @sort-change="sortFunction"
-      >
-        <el-table-column
-          label="权限组名"
-          sortable="custom"
-          prop="name"
-          min-width="120px"
-        >
+</el-table-column>
+</TableData> -->
+      <el-table v-loading="loading" :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
+        tooltip-effect="dark" @sort-change="sortFunction">
+        <el-table-column label="权限组名" sortable="custom" prop="name" min-width="120px">
           <template slot-scope="scope">
             <span>{{ scope.row.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="权限集合"
-          prop="permissions"
-          :min-width="300"
-        >
+        <el-table-column label="权限集合" prop="permissions" :min-width="300">
           <template slot-scope="scope">
             <div class="permission">
-              <div
-                v-for="item in scope.row.permissions.split(',')"
-                :key="item"
-              >
-                <el-tag
-                  size="mini"
-                  effect="plain"
-                >
+              <div v-for="item in scope.row.permissions.split(',')" :key="item">
+                <el-tag size="mini" effect="plain">
                   {{ item }}
                 </el-tag>
               </div>
             </div>
           </template>
         </el-table-column>
-        <el-table-column
-          label="操作"
-          min-width="100px"
-        >
+        <el-table-column label="操作" min-width="100px">
           <template slot-scope="scope">
-            <el-button
-              class="blue"
-              @click="handleFillForm(scope.row)"
-            >修改</el-button>
+            <el-button class="blue" @click="handleFillForm(scope.row)">修改</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div class="page_block">
-        <el-pagination
-          :current-page="currentPage"
-          :page-sizes="[5, 10, 50, 100]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
+        <el-pagination :current-page="currentPage" :page-sizes="[5, 10, 50, 100]" :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+          @current-change="handleCurrentChange" />
       </div>
     </div>
-    <el-dialog
-      :visible.sync="modal"
-      :title="isAdd?'创建权限组合':'修改权限组合'"
-      width="1000px"
-      destroy-on-close
-    >
-      <el-form
-        :model="form"
-        label-width="120px"
-      >
+    <el-dialog :visible.sync="modal" :title="isAdd ? '创建权限组合' : '修改权限组合'" width="1000px" destroy-on-close>
+      <el-form :model="form" label-width="120px">
         <el-row>
           <el-col :span="14">
-            <el-form-item
-              label="权限组合名:"
-              prop="name"
-            >
+            <el-form-item label="权限组合名:" prop="name">
               <span v-if="!isAdd">
                 {{ form.name }}
               </span>
-              <el-input
-                v-else
-                v-model="form.name"
-                clearable
-                placeholder="占位符"
-              />
-              <span
-                v-if="!form.allow"
-                style="color: #ff8746;"
-              >（拒绝访问选中的权限）</span>
+              <el-input v-else v-model="form.name" clearable placeholder="占位符" />
+              <span v-if="!form.allow" style="color: #ff8746;">（拒绝访问选中的权限）</span>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item
-              label="权限名过滤:"
-              prop="name"
-            >
-              <el-input
-                v-model="form.searchVal"
-                clearable
-                placeholder="权限名"
-              />
+            <el-form-item label="权限名过滤:" prop="name">
+              <el-input v-model="form.searchVal" clearable placeholder="权限名" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row class="formModal">
-          <el-checkbox
-            v-model="form.checkAll"
-            :indeterminate="form.isIndeterminate"
-            @change="handleCheckAllChange"
-          >全选</el-checkbox>
+          <el-checkbox v-model="form.checkAll" :indeterminate="form.isIndeterminate"
+            @change="handleCheckAllChange">全选</el-checkbox>
           <div style="margin: 15px 0;" />
-          <el-checkbox-group
-            v-model="form.permissions"
-            @change="handleCheckedPermission"
-          >
-            <el-checkbox
-              v-for="item in permissions"
-              :key="item"
-              :label="item"
-            >{{ item }}</el-checkbox>
+          <el-checkbox-group v-model="form.permissions" @change="handleCheckedPermission">
+            <el-checkbox v-for="item in permissions" :key="item" :label="item">{{ item }}</el-checkbox>
           </el-checkbox-group>
         </el-row>
       </el-form>
@@ -188,12 +108,7 @@
         <el-button class="golden" type="primary" @click="handleConfirmBtn">{{ $ts('button.confirm') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog
-      :visible.sync="confirmModl"
-      title="确认修改"
-      width="800px"
-      destroy-on-close
-    >
+    <el-dialog :visible.sync="confirmModl" title="确认修改" width="800px" destroy-on-close>
       <div class="confirmTip">
         <i class="fa el-icon-warning-outline red" />
         <span>当前修改的权限组合会应用到历史创建的策略上，<b>"确定"</b>保存修改，<b>"取消"</b>返回修改</span>
@@ -203,10 +118,7 @@
           <p>
             原权限
           </p>
-          <p
-            v-for="item in form.copyPermission"
-            :key="item"
-          >
+          <p v-for="item in form.copyPermission" :key="item">
             <el-tag>
               {{ item }}
             </el-tag>
@@ -218,10 +130,7 @@
           </p>
           <el-tag v-if="form.checkAll && form.permissions.length === searchPermissions.length">{{ 's3:*' }}</el-tag>
           <template v-else>
-            <p
-              v-for="item in form.permissions"
-              :key="item"
-            >
+            <p v-for="item in form.permissions" :key="item">
               <el-tag>
                 {{ item }}
               </el-tag>
@@ -241,7 +150,7 @@
 import { listAllPermissionGroup, updatePermissionGroup, ActionList } from '@/api/policy'
 export default {
   name: 'S3permission',
-  data() {
+  data () {
     return {
       confirmModl: false,
       searchVal: '',
@@ -275,19 +184,19 @@ export default {
     }
   },
   computed: {
-    isAdd() {
+    isAdd () {
       return this.type === 'add'
     }
   },
   watch: {
-    searchVal(val) {
+    searchVal (val) {
       this.tableData = JSON.parse(JSON.stringify(this.copyData))
       if (!val) return
       this.tableData = this.tableData.filter(item => {
         return item.name.toLowerCase().indexOf(val.toLowerCase()) > -1
       })
     },
-    'form.searchVal'(val) {
+    'form.searchVal' (val) {
       this.permissions = JSON.parse(JSON.stringify(this.searchPermissions))
       if (!val) {
         // 取消搜索后并且处于选中状态、处理搜索后的checkbox状态
@@ -302,7 +211,7 @@ export default {
       this.form.checkAll = this.includeArray(this.form.permissions, this.permissions)
       this.form.isIndeterminate = this.filterSame(this.form.permissions, this.permissions).length > 0 && !this.includeArray(this.form.permissions, this.permissions)
     },
-    modal(val) {
+    modal (val) {
       if (!val) {
         this.form.name = ''
         this.form.permissions = []
@@ -311,17 +220,17 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.init()
   },
   methods: {
-    handleCreate() {
+    handleCreate () {
       this.type = 'add'
       this.showPermission().then(() => {
         this.modal = true
       })
     },
-    init() {
+    init () {
       this.loading = true
       listAllPermissionGroup().then(res => {
         this.tableData = res.data || []
@@ -332,7 +241,7 @@ export default {
       })
     },
     // 禁删除、修改名称、支持修改组合内的权限、添加
-    handleFillForm(row) {
+    handleFillForm (row) {
       this.type = 'mod'
       const { id, name, allow, permissions = '' } = row
       Object.assign(this.form, { id, name, allow, permissions: permissions.split(',') })
@@ -348,14 +257,14 @@ export default {
         this.modal = true
       })
     },
-    handleConfirmBtn() {
+    handleConfirmBtn () {
       if (this.isAdd) {
         // create
       } else {
         this.confirmModl = true
       }
     },
-    submitCreate() {
+    submitCreate () {
       const { id, name, allow, permissions } = this.form
       const data = {
         id,
@@ -367,7 +276,7 @@ export default {
         data.permissions = 's3:*'
       }
       updatePermissionGroup(data).then(res => {
-        this.$ts({
+        this.$msg({
           type: 'success',
           text: this.$ts('response.success')
         })
@@ -377,12 +286,12 @@ export default {
         this.init()
       })
     },
-    sortFunction(val) {
+    sortFunction (val) {
       this.prop = val.prop
       this.order = val.order
       this.tableData.sort(this.sortMethod(val.prop, val.order))
     },
-    handleCheckAllChange(val) {
+    handleCheckAllChange (val) {
       // 搜索启用后、全选 添加搜索后记录、反选、清除当前已有
       if (!this.form.searchVal) {
         this.form.permissions = val ? this.permissions : []
@@ -392,7 +301,7 @@ export default {
       }
       this.form.isIndeterminate = false
     },
-    handleCheckedPermission(value) {
+    handleCheckedPermission (value) {
       const checkedCount = value.length
       this.form.checkAll = checkedCount === this.permissions.length
       if (this.form.searchVal) {
@@ -412,7 +321,7 @@ export default {
         this.form.isIndeterminate = checkedCount > 0 && checkedCount < this.permissions.length
       }
     },
-    showPermission() {
+    showPermission () {
       return ActionList().then((res) => {
         this.permissions = res.data
           .filter(item => item.toLowerCase().indexOf('s3') > -1)
@@ -423,7 +332,7 @@ export default {
         return Promise.resolve()
       })
     },
-    filterPermission(all, target) {
+    filterPermission (all, target) {
       if (!Array.isArray(all) || !Array.isArray(target)) return
       return all.filter(item => {
         return target.every(i => {
@@ -431,7 +340,7 @@ export default {
         })
       })
     },
-    filterSame(all, target) {
+    filterSame (all, target) {
       if (!Array.isArray(all) || !Array.isArray(target)) return
       return all.filter(item => {
         return target.some(i => {
@@ -439,21 +348,21 @@ export default {
         })
       })
     },
-    filterMerge(arr) {
+    filterMerge (arr) {
       return [...new Set(arr)]
     },
-    includeArray(all, target) {
+    includeArray (all, target) {
       if (!Array.isArray(all) || !Array.isArray(target)) return
       if (target && !target.length) return false
       return target.every(item => {
         return all.includes(item)
       })
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       this.pageSize = val
       this.currentPage = 1
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       this.currentPage = val
     }
   }
@@ -464,30 +373,36 @@ export default {
 ::v-deep .formModal {
   max-height: 600px;
   overflow-y: scroll;
+
   .el-checkbox-group {
     display: flex;
     justify-content: flex-start;
     flex-wrap: wrap;
+
     .el-checkbox {
       width: 30%;
       padding: 6px 0;
     }
   }
 }
+
 .overflowText {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
 .permission {
   display: flex;
   flex-wrap: wrap;
+
   div {
     width: 200px;
     padding: 2px 2px 2px 0;
     margin-right: 4px;
   }
 }
+
 .el-tag {
   color: #e39606;
   background-color: transparent;
@@ -499,32 +414,40 @@ export default {
   word-break: break-all;
   padding: 0;
 }
+
 .confirmTip {
   margin: -10px 0 10px 0;
   font-size: 16px;
+
   b {
     color: #ff8746;
   }
 }
+
 .permissionPreview {
   padding-right: 250px;
   max-height: 500px;
   overflow-y: scroll;
+
   .pre,
   .cur {
     margin-top: 10px;
-    & > p {
+
+    &>p {
       margin-bottom: 10px;
       color: #ff8746;
     }
   }
+
   width: 100%;
   display: flex;
   justify-content: space-between;
+
   .el-tag {
     margin: 5px 0;
   }
 }
+
 .el-tag--plain {
   color: #ff8746;
 }

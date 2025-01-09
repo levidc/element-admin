@@ -118,7 +118,7 @@ export default {
         this.form.openQos = openQos || false
         this.form.gatewayCount = gatewayCount || 1
       }).catch((err) => {
-        err.msg && this.$ts(
+        err.msg && this.$msg(
           {
             type: 'error',
             text: this.$ts(err.msg)
@@ -140,7 +140,7 @@ export default {
           })
             .then((res) => {
               if (res.msg === 'success') {
-                this.$ts({
+                this.$msg({
                   type: 'success',
                   text: this.$ts('response.success')
                 })
@@ -149,7 +149,7 @@ export default {
               // console.log(res)
             }).catch((err) => {
               if (err.msg) {
-                this.$ts(
+                this.$msg(
                   {
                     type: 'error',
                     text: this.$ts(err.msg)

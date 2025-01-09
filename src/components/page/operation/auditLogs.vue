@@ -124,11 +124,9 @@
                   :show-array-index="false"
                   theme="my-awesome-json-theme"
                 />
-                <i
-                  slot="reference"
-                  class="fa fa-question-circle"
-                  style="margin-left:5px;font-size:16px;"
-                />
+                <svg slot="reference" class="icon icon-question" aria-hidden="true" style="margin-left:5px">
+                  <use xlink:href="#icon-question" />
+                </svg>
               </el-popover>
             </template>
           </el-table-column>

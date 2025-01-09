@@ -648,7 +648,7 @@ export default {
       updateObjectStorageResource({
         deviceId, resourceId, cacheMaxSizeRatio
       }).then(() => {
-        this.$ts({
+        this.$msg({
           type: 'success',
           text: this.$ts('response.success')
         })
@@ -667,7 +667,7 @@ export default {
             maxObjectSize: this.handleSizeReq(this.modifyForm.maxObjectSize, 'req'),
             openCache: this.modifyForm.openCache
           }).then(res => {
-            this.$ts({
+            this.$msg({
               type: 'success',
               text: this.$ts('response.success')
             })

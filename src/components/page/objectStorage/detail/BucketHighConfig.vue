@@ -3,48 +3,27 @@
     <div class="bucket-detail">
       <div class="bucket-detail-inner">
         <div class="bucket-panel">
-          <div
-            id="versionControl-info-field"
-            class="param-box"
-          >
+          <div id="versionControl-info-field" class="param-box">
             <div class="param-hd">
               <h3 id="versionControl">版本控制 </h3>
-              <el-button
-                v-show="!editVersionControl&&!loading"
-                v-access="'s3:PutBucketVersioning'"
-                class="modBtn"
-                type="text"
-                :disabled="objectLock"
-                @click="editVersionControl=!editVersionControl"
-              >
+              <el-button v-show="!editVersionControl && !loading" v-access="'s3:PutBucketVersioning'" class="modBtn"
+                type="text" :disabled="objectLock" @click="editVersionControl = !editVersionControl">
                 <span style="color: #ff8746;position: relative;top:3px">编辑</span>
               </el-button>
             </div>
-            <p
-              v-if="objectLock"
-              class="mv_10"
-            >
+            <p v-if="objectLock" class="mv_10">
               <svg slot="reference" class="icon icon-question" aria-hidden="true">
                 <use xlink:href="#icon-question" />
               </svg>
               无法暂停存储桶版本控制，因为此存储桶已启用对象锁定。
             </p>
-            <div
-              v-loading="loading"
-              class="param-bd"
-            >
+            <div v-loading="loading" class="param-bd">
               <ul class="item-descr-list">
                 <li>
                   <span class="item-descr-tit">当前状态</span>
-                  <span
-                    v-show="!editVersionControl&&!loading"
-                    style="color:#ff8746"
-                    class="item-descr-txt"
-                  >{{ versionControl?"开启":"关闭" }}</span>
-                  <el-switch
-                    v-show="editVersionControl"
-                    v-model="versionControl"
-                  />
+                  <span v-show="!editVersionControl && !loading" style="color:#ff8746" class="item-descr-txt">{{
+                    versionControl?"开启":"关闭" }}</span>
+                  <el-switch v-show="editVersionControl" v-model="versionControl" />
                 </li>
                 <li v-show="editVersionControl">
                   <span class="item-descr-tit" />
@@ -53,18 +32,9 @@
                 <li v-show="editVersionControl">
                   <span class="item-descr-tit" />
                   <div class="versionControlBtnWrap">
-                    <el-button
-                      type="default"
-                      size="mini"
-                      class="blue"
-                      @click="editVersionControl=!editVersionControl;getVersionControl()"
-                    >取消</el-button>
-                    <el-button
-                      type="primary"
-                      class="golden"
-                      size="mini"
-                      @click="doSaveVersion();"
-                    >应用更改</el-button>
+                    <el-button type="default" size="mini" class="blue"
+                      @click="editVersionControl = !editVersionControl; getVersionControl()">取消</el-button>
+                    <el-button type="primary" class="golden" size="mini" @click="doSaveVersion();">应用更改</el-button>
 
                   </div>
                 </li>
@@ -72,15 +42,11 @@
             </div>
           </div>
         </div>
-        <el-dialog
-
-          title="确定开启版本控制？"
-          :visible.sync="isShowSaveTip"
-          width="30%"
-        >
+        <el-dialog title="确定开启版本控制？" :visible.sync="isShowSaveTip" width="30%">
           <p class="dialogDrag_word">开启对象的版本控制后，将无法关闭该功能，如不需要仅可暂停。</p>
           <div slot="footer" class="dialog-footer">
-            <el-button class="golden" type="primary" @click="isShowSaveTip = false;saveVersionControl()">{{ $ts('button.confirm') }}</el-button>
+            <el-button class="golden" type="primary" @click="isShowSaveTip = false; saveVersionControl()">{{
+              $ts('button.confirm') }}</el-button>
             <el-button @click="isShowSaveTip = false;">{{ $ts('button.cancel') }}</el-button>
           </div>
         </el-dialog>
@@ -94,7 +60,7 @@ export default {
   name: 'BucketList',
   components: {},
   filters: {},
-  data() {
+  data () {
     return {
       loading: false,
       versionControl: false,
@@ -106,12 +72,12 @@ export default {
     }
   },
   computed: {},
-  mounted: function() {
+  mounted: function () {
     this.getVersionControl()
   },
-  destroyed() { },
+  destroyed () { },
   methods: {
-    getVersionControl() {
+    getVersionControl () {
       this.loading = true
       var params = {
         Bucket: this.$route.params.id
@@ -143,14 +109,14 @@ export default {
         }
       })
     },
-    doSaveVersion() {
+    doSaveVersion () {
       if (this.noVersionControl) {
         this.isShowSaveTip = true
       } else {
         this.saveVersionControl()
       }
     },
-    saveVersionControl() {
+    saveVersionControl () {
       var params = {
         Bucket: this.$route.params.id,
         VersioningConfiguration: {
@@ -162,7 +128,7 @@ export default {
           this.showS3Msg(err)
           console.error(err)
         } else {
-          this.$ts({
+          this.$msg({
             type: 'success',
             text: this.$ts('response.success')
           })

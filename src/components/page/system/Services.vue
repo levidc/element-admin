@@ -3,47 +3,28 @@
     <div class="page_content_wrap">
       <div v-show="changeTab">
         <div id="services_search" class="mb_15">
-          <el-button v-access="'admin:StartInstanceController'" type="primary" class="blue" :disabled="startInstance" @click="startEvent">{{ $ts("service.start") }}</el-button>
-          <el-button v-access="'admin:StopInstanceController'" type="primary" class="blue" :disabled="stopInstance" @click="stopEvent">{{ $ts("service.stop") }}</el-button>
-          <el-button v-access="'admin:KillInstanceController'" type="danger" class="red" :disabled="deleteInstance" @click="deleteEvent">{{ $ts("service.remove") }}</el-button>
-          <el-button v-if="false" @click="changeTab=!changeTab">群组配置</el-button>
+          <el-button v-access="'admin:StartInstanceController'" type="primary" class="blue" :disabled="startInstance"
+            @click="startEvent">{{ $ts("service.start") }}</el-button>
+          <el-button v-access="'admin:StopInstanceController'" type="primary" class="blue" :disabled="stopInstance"
+            @click="stopEvent">{{ $ts("service.stop") }}</el-button>
+          <el-button v-access="'admin:KillInstanceController'" type="danger" class="red" :disabled="deleteInstance"
+            @click="deleteEvent">{{ $ts("service.remove") }}</el-button>
+          <el-button v-if="false" @click="changeTab = !changeTab">群组配置</el-button>
           <el-tooltip content="刷新" placement="top" effect="dark">
             <i style="position:relative;top:1px" class="right el-icon-refresh" @click="listInstance" />
           </el-tooltip>
-          <el-button
-            class="right tab_search_btn"
-            type="primary"
-            plain
-            icon="fa fa-search"
-            @click="changeStatus"
-          />
-          <el-input
-            v-model="searchVal"
-            class="search_style right"
-            :placeholder="$ts('enter.service.name')"
-            width="14"
-            clearable
-          />
-          <el-select v-model="serviceStatus" filterable class="search_style right" clearable width="14" :placeholder="$ts('status.choose')">
-            <el-option
-              v-for="item in statusList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >{{ item.label }}
+          <el-button class="right tab_search_btn" type="primary" plain @click="changeStatus" icon="el-icon-search"/>
+          <el-input v-model="searchVal" class="search_style right" :placeholder="$ts('enter.service.name')" width="14"
+            clearable />
+          <el-select v-model="serviceStatus" filterable class="search_style right" clearable width="14"
+            :placeholder="$ts('status.choose')">
+            <el-option v-for="item in statusList" :key="item.value" :label="item.label" :value="item.value">{{
+              item.label }}
             </el-option>
           </el-select>
         </div>
-        <el-table
-          ref="tableData"
-          v-loading="loadingFlag"
-          :data="tableSlice"
-          border
-          stripe
-          style="width: 100%;margin-top:10px"
-          @selection-change="selectFun"
-          @sort-change="sortFunction"
-        >
+        <el-table ref="tableData" v-loading="loadingFlag" :data="tableSlice" border stripe
+          style="width: 100%;margin-top:10px" @selection-change="selectFun" @sort-change="sortFunction">
           <el-table-column v-if="checkBox" align="center" type="selection" width="55" />
           <el-table-column :label="$ts('service.name')" sortable="custom" prop="instanceName">
             <template slot-scope="scope">
@@ -52,12 +33,12 @@
           </el-table-column>
           <el-table-column :label="$ts('status')" sortable="custom" prop="status">
             <template slot-scope="scope">
-              <span v-if="scope.row.status=='OK'" class="status_green">{{ $ts("status.ok") }}</span>
-              <span v-if="scope.row.status=='SUSPEND'" class="status_blue">{{ $ts("status.suspend") }}</span>
-              <span v-if="scope.row.status=='INC'" class="status_red">{{ $ts("status.stop") }}</span>
-              <span v-if="scope.row.status=='FAILED'" class="status_red">{{ $ts("status.failed") }}</span>
-              <span v-if="scope.row.status=='FORGOTTEN'" class="status_orange">{{ $ts("status.forgotten") }}</span>
-              <span v-if="scope.row.status=='UNKNOWN'" class="status_orange">{{ $ts("status.unknown") }}</span>
+              <span v-if="scope.row.status == 'OK'" class="status_green">{{ $ts("status.ok") }}</span>
+              <span v-if="scope.row.status == 'SUSPEND'" class="status_blue">{{ $ts("status.suspend") }}</span>
+              <span v-if="scope.row.status == 'INC'" class="status_red">{{ $ts("status.stop") }}</span>
+              <span v-if="scope.row.status == 'FAILED'" class="status_red">{{ $ts("status.failed") }}</span>
+              <span v-if="scope.row.status == 'FORGOTTEN'" class="status_orange">{{ $ts("status.forgotten") }}</span>
+              <span v-if="scope.row.status == 'UNKNOWN'" class="status_orange">{{ $ts("status.unknown") }}</span>
             </template>
           </el-table-column>
           <!-- <el-table-column :label="$ts('group.id')" sortable="custom" prop="groupId">
@@ -77,53 +58,21 @@
             </template>
           </el-table-column> -->
         </el-table>
-        <div
-          v-show="totalDetail"
-          class="page_block"
-        >
-          <el-pagination
-            :current-page="currentPageDetail"
-            :page-size="pagesizeDetail"
-            :page-sizes="pagesizesDetail"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="totalDetail"
-            @size-change="handleSizeChangeDetail"
-            @current-change="handleCurrentChangeDetail"
-          />
+        <div v-show="totalDetail" class="page_block">
+          <el-pagination :current-page="currentPageDetail" :page-size="pagesizeDetail" :page-sizes="pagesizesDetail"
+            layout="total, sizes, prev, pager, next, jumper" :total="totalDetail" @size-change="handleSizeChangeDetail"
+            @current-change="handleCurrentChangeDetail" />
         </div>
       </div>
       <div v-show="!changeTab">
-        <div
-          id="services_search"
-          class="mb_15"
-        >
-          <el-button
-            type="primary"
-            class="blue"
-            @click="addGroup = true"
-          >创建群组</el-button>
+        <div id="services_search" class="mb_15">
+          <el-button type="primary" class="blue" @click="addGroup = true">创建群组</el-button>
           <!-- <el-button type="primary" class="blue" @click="visibleD = true">分配instance</el-button> -->
-          <el-tooltip
-            content="刷新"
-            placement="top"
-            effect="dark"
-          >
-            <i
-              style="position:relative;top:1px"
-              class="right el-icon-refresh"
-              @click="listInstanceGroup"
-            />
+          <el-tooltip content="刷新" placement="top" effect="dark">
+            <i style="position:relative;top:1px" class="right el-icon-refresh" @click="listInstanceGroup" />
           </el-tooltip>
-          <el-tooltip
-            content="返回"
-            placement="top"
-            effect="dark"
-          >
-            <svg
-              class="right icon backicon"
-              aria-hidden="true"
-              @click="changeTab=true"
-            >
+          <el-tooltip content="返回" placement="top" effect="dark">
+            <svg class="right icon backicon" aria-hidden="true" @click="changeTab = true">
               <use xlink:href="#icon-fanhui" />
             </svg>
           </el-tooltip>
@@ -134,19 +83,9 @@
           <el-table-column label="组名" sortable="custom" prop="groupName" />
           <el-table-column label="描述" prop="description" />
         </el-table> -->
-        <TableData
-          :loading="loading"
-          :table-data="tableGroup"
-          :page-obj="pageObj"
-          :columns="tableColumns"
-          :sort-function="sortFunction"
-        >
-          <el-table-column
-            slot="groupName"
-            sortable="custom"
-            prop="groupName"
-            label="组名"
-          >
+        <TableData :loading="loading" :table-data="tableGroup" :page-obj="pageObj" :columns="tableColumns"
+          :sort-function="sortFunction">
+          <el-table-column slot="groupName" sortable="custom" prop="groupName" label="组名">
             <template slot-scope="scope">
               <span class="blue">{{ scope.row.groupName }}</span>
             </template>
@@ -158,7 +97,8 @@
                   {{ $ts('action') }}<i class="el-icon-arrow-down el-icon--right" />
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="visibleD = true; selectGroup = scope.row">{{ '分配服务' }}</el-dropdown-item>
+                  <el-dropdown-item @click.native="visibleD = true; selectGroup = scope.row">{{ '分配服务'
+                    }}</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </template>
@@ -167,33 +107,14 @@
       </div>
     </div>
 
-    <el-dialog
-      title="创建group"
-      width="40%"
-      :visible.sync="addGroup"
-      @open="dialogOpen('form')"
-    >
-      <el-form
-        ref="form"
-        :model="form"
-        label-width="120px"
-        :rules="rules"
-      >
+    <el-dialog title="创建group" width="40%" :visible.sync="addGroup" @open="dialogOpen('form')">
+      <el-form ref="form" :model="form" label-width="120px" :rules="rules">
         <el-row>
-          <el-form-item
-            label="组名"
-            prop="groupName"
-          >
+          <el-form-item label="组名" prop="groupName">
             <el-input v-model="form.groupName" />
           </el-form-item>
-          <el-form-item
-            label="描述"
-            prop="description"
-          >
-            <el-input
-              v-model="form.description"
-              type="textarea"
-            />
+          <el-form-item label="描述" prop="description">
+            <el-input v-model="form.description" type="textarea" />
           </el-form-item>
         </el-row>
       </el-form>
@@ -202,74 +123,35 @@
         <el-button @click="addGroup = false">{{ $ts('button.cancel') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog
-      title="分配服务"
-      width="65%"
-      :visible.sync="visibleD"
-    >
-      <div
-        v-loading="loading"
-        class="itxst"
-      >
+    <el-dialog title="分配服务" width="65%" :visible.sync="visibleD">
+      <div v-loading="loading" class="itxst">
         <div class="col">
           <div class="title">服务名称</div>
-          <draggable
-            v-model="draggableInstance"
-            :group="groupA"
-            animation="300"
-            drag-class="dragClass"
-            ghost-class="ghostClass"
-            chosen-class="chosenClass"
-            :force-fallback="true"
-          >
+          <draggable v-model="draggableInstance" :group="groupA" animation="300" drag-class="dragClass"
+            ghost-class="ghostClass" chosen-class="chosenClass" :force-fallback="true">
             <transition-group :style="style">
-              <div
-                v-for="(item,index) in draggableInstance"
-                :key="item.instanceId"
-                class="item"
-              >
-                <el-tooltip
-                  placement="top"
-                  style="width:100%"
-                  :content="'主机ip:' + item.host + '' + '端口' + item.port"
-                >
+              <div v-for="(item, index) in draggableInstance" :key="item.instanceId" class="item">
+                <el-tooltip placement="top" style="width:100%" :content="'主机ip:' + item.host + '' + '端口' + item.port">
                   <div>
                     <span>
                       {{ item.instanceName }}
                     </span>
-                    <i
-                      class="fa el-icon-plus"
-                      @click="addTo(index)"
-                    />
+                    <i class="fa el-icon-plus" @click="addTo(index)" />
                   </div>
                 </el-tooltip>
               </div>
             </transition-group>
           </draggable>
         </div>
-        <svg
-          class="icon backicon left draggableArrow"
-          aria-hidden="true"
-        >
+        <svg class="icon backicon left draggableArrow" aria-hidden="true">
           <use xlink:href="#icon-youjiantou" />
         </svg>
         <div class="col">
           <div class="title">当前群组:{{ selectGroup.groupName }}</div>
-          <draggable
-            v-model="draggableGroup"
-            group="instance"
-            animation="100"
-            drag-class="dragClass"
-            ghost-class="ghostClass"
-            chosen-class="chosenClass"
-            :force-fallback="true"
-          >
+          <draggable v-model="draggableGroup" group="instance" animation="100" drag-class="dragClass"
+            ghost-class="ghostClass" chosen-class="chosenClass" :force-fallback="true">
             <transition-group :style="style">
-              <div
-                v-for="(item,index) in draggableGroup"
-                :key="item.instanceId"
-                class="item"
-              >
+              <div v-for="(item, index) in draggableGroup" :key="item.instanceId" class="item">
                 <div>
                   <p>
                     {{ item.instanceName }}
@@ -319,7 +201,7 @@ export default {
   name: 'Services',
   components: { TableData },
   filters: {
-    getInstanceStatus(e) {
+    getInstanceStatus (e) {
       let status_level = ''
       switch (e.status) {
         case 'OK':
@@ -344,7 +226,7 @@ export default {
       return status_level
     }
   },
-  data() {
+  data () {
     return {
       rules: {
         groupName: {
@@ -420,7 +302,7 @@ export default {
     }
   },
   computed: {
-    tableSlice() {
+    tableSlice () {
       return this.tableDataDetail.slice(
         (this.currentPageDetail - 1) * this.pagesizeDetail,
         this.currentPageDetail * this.pagesizeDetail
@@ -428,7 +310,7 @@ export default {
     }
   },
   watch: {
-    changeTab(val) {
+    changeTab (val) {
       if (val) {
         this.listInstance()
       } else {
@@ -436,7 +318,7 @@ export default {
         this.listInstanceGroup()
       }
     },
-    visibleD(val) {
+    visibleD (val) {
       if (val) {
         // 设置instancegroup、调用instanceList
         this.loading = true
@@ -445,7 +327,7 @@ export default {
         })
           .then(res => {
             if (res.error.code !== 0) {
-              this.$ts({
+              this.$msg({
                 type: 'error',
                 text: this.$ts(res.error.name)
               })
@@ -464,20 +346,20 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.serviceStatus = this.$route.params.level || ''
     this.serviceStatus = this.serviceStatus.toLowerCase()
     this.tempStatus = this.serviceStatus
     this.listInstance()
   },
-  destroyed() {
+  destroyed () {
     clearTimeout(instanceTimer)
   },
   methods: {
-    dialogOpen(ref) {
+    dialogOpen (ref) {
       this.$refs[ref] && this.$refs[ref].resetFields()
     },
-    listInstanceGroup() {
+    listInstanceGroup () {
       this.loading = true
       listInstanceGroup().then(res => {
         this.tableGroup = res.data
@@ -492,7 +374,7 @@ export default {
           this.loading = false
         })
     },
-    createGroup() {
+    createGroup () {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           const { groupName, description } = this.form
@@ -502,7 +384,7 @@ export default {
           }).then(res => {
             if (res.code === '200') {
               this.listInstanceGroup()
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
@@ -513,7 +395,7 @@ export default {
         }
       })
     },
-    deleteD(i) {
+    deleteD (i) {
       var temp = this.draggableGroup.splice(i, 1)
       this.draggableInstance.push(...temp)
     },
@@ -528,15 +410,15 @@ export default {
     // })
     // this.draggableB = arr
     // },
-    addTo(index) {
+    addTo (index) {
       this.draggableGroup.push(this.draggableInstance[index])
       this.draggableInstance.splice([index], 1)
     },
-    resetD() {
+    resetD () {
       this.draggableGroup.splice(0)
       this.draggableInstance = JSON.parse(JSON.stringify(this.copyDraggableInstance))
     },
-    setInstanceGroup() {
+    setInstanceGroup () {
       const instanceIds = this.draggableGroup.map(item => item.instanceId)
       setInstanceGroup({
         groupId: this.selectGroup.groupId,
@@ -556,12 +438,12 @@ export default {
             const errorInfo = duplicatedInstance.reduce((pre, cur) => {
               return pre + `${cur.instanceName}(ip:${cur.host},port:${cur.port})`
             }, '')
-            this.$ts({
+            this.$msg({
               type: 'error',
               text: '如下instance由于重复添加导致失败:' + errorInfo
             })
           } else {
-            this.$ts({
+            this.$msg({
               type: 'success',
               text: this.$ts('response.success')
             })
@@ -573,21 +455,21 @@ export default {
           this.listInstanceGroup()
         })
     },
-    changeStatus() {
+    changeStatus () {
       this.currentPageDetail = 1
       this.tempSearchVal = this.searchVal
       this.tempStatus = this.serviceStatus
       this.listInstance()
     },
-    handleSizeChangeDetail(size) {
+    handleSizeChangeDetail (size) {
       this.pagesizeDetail = size
       this.listInstance()
     },
-    handleCurrentChangeDetail(currentPage) {
+    handleCurrentChangeDetail (currentPage) {
       this.currentPageDetail = currentPage
       this.listInstance()
     },
-    sortFunction(val) {
+    sortFunction (val) {
       this.prop = val.prop
       this.order = val.order
       if (this.changeTab) {
@@ -596,7 +478,7 @@ export default {
         this.tableGroup.sort(this.sortMethod(val.prop, val.order))
       }
     },
-    selectFun(val) {
+    selectFun (val) {
       this.tempChoosed = val
       // ？？？
       var count = 0
@@ -604,7 +486,7 @@ export default {
       var sec = false
       var thir = false
       var fou = false
-      $.each(val, function(i, v) {
+      $.each(val, function (i, v) {
         instanceIds[count] = v.instanceId
         instanceNames[count] = v.instanceName
         instanceHostIps[count] = v.host
@@ -680,7 +562,7 @@ export default {
         }
       }
     },
-    startEvent() {
+    startEvent () {
       for (const i in this.tempChoosed) {
         startInstance({
           version: this.$store.state.dosVersion,
@@ -690,12 +572,12 @@ export default {
         })
           .then(res => {
             if (res.error.code !== 0) {
-              this.$ts({
+              this.$msg({
                 type: 'error',
                 text: this.$ts(res.error.name)
               })
             } else {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
@@ -709,7 +591,7 @@ export default {
           })
       }
     },
-    stopEvent() {
+    stopEvent () {
       for (const i in this.tempChoosed) {
         stopInstance({
           version: this.$store.state.dosVersion,
@@ -720,12 +602,12 @@ export default {
         })
           .then(res => {
             if (res.error.code !== 0) {
-              this.$ts({
+              this.$msg({
                 type: 'error',
                 text: this.$ts(res.error.name)
               })
             } else {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
@@ -739,7 +621,7 @@ export default {
           })
       }
     },
-    deleteEvent() {
+    deleteEvent () {
       for (const i in this.tempChoosed) {
         killInstance({
           version: this.$store.state.dosVersion,
@@ -754,13 +636,13 @@ export default {
               if (res.error.name === 'InstanceHasFailedAleadyException') {
                 return
               } else {
-                this.$ts({
+                this.$msg({
                   type: 'error',
                   text: this.$ts(res.error.name)
                 })
               }
             } else {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
@@ -774,14 +656,14 @@ export default {
           })
       }
     },
-    listInstance() {
+    listInstance () {
       clearTimeout(instanceTimer)
       getAllInstance({
         version: this.$store.state.dosVersion
       })
         .then(res => {
           if (res.error.code !== 0) {
-            this.$ts({
+            this.$msg({
               type: 'error',
               text: this.$ts(res.error.name)
             })
@@ -890,7 +772,7 @@ export default {
       position: absolute;
       top: -16px;
 
-      & + div {
+      &+div {
         height: 500px;
         overflow-y: scroll;
       }
@@ -908,7 +790,7 @@ export default {
   // transform: translateY(-50%);
 }
 
-.col + .col {
+.col+.col {
   margin-left: 10px;
 }
 

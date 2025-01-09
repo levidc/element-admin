@@ -2,43 +2,20 @@
   <div class="bucket-panel param-box">
     <div class="param-hd">
       <h3>存储桶策略 </h3>
-      <span
-        v-if="editConfig"
-        class="right"
-      >
-        <el-button
-          class="medium blue"
-          @click="editConfig = false; getBucketPolicy()"
-        >
+      <span v-if="editConfig" class="right">
+        <el-button class="medium blue" @click="editConfig = false; getBucketPolicy()">
           取消
         </el-button>
-        <el-button
-          type="primary"
-          class="golden medium"
-          @click="onSave"
-        >
+        <el-button type="primary" class="golden medium" @click="onSave">
           保存策略
         </el-button>
       </span>
-      <span
-        v-if="!editConfig && !loading"
-        class="editMenu"
-      >
-        <el-button
-          v-access="'s3:PutBucketPolicy'"
-          type="text"
-          class="link-edit"
-          @click="editPolicy"
-        >
+      <span v-if="!editConfig && !loading" class="editMenu">
+        <el-button v-access="'s3:PutBucketPolicy'" type="text" class="link-edit" @click="editPolicy">
           <span style="color:#ff8746">编辑</span>
         </el-button>
-        <el-button
-          v-access="'s3:DeleteBucketPolicy'"
-          type="text"
-          class="delBtn link-edit"
-          :disabled="disableDel"
-          @click="deletePolicy"
-        >
+        <el-button v-access="'s3:DeleteBucketPolicy'" type="text" class="delBtn link-edit" :disabled="disableDel"
+          @click="deletePolicy">
           <span style="color:#ff3d6b">删除</span>
         </el-button>
       </span>
@@ -46,65 +23,26 @@
     <!-- jsonView && Strategy -->
     <div v-loading="loading">
       <div v-show="!loading">
-        <div
-          v-show="!editConfig && !nullPolicy"
-          class="mt_10"
-        >
-          <json-viewer
-            v-show="!editConfig && !nullPolicy"
-            :value="dataList"
-            preview-mode
-            :show-array-index="false"
-            boxed
-            theme="my-awesome-json-theme"
-            :copyable="{
+        <div v-show="!editConfig && !nullPolicy" class="mt_10">
+          <json-viewer v-show="!editConfig && !nullPolicy" :value="dataList" preview-mode :show-array-index="false"
+            boxed theme="my-awesome-json-theme" :copyable="{
               copyText: '复制', copiedText: '已复制'
-            }"
-          />
+            }" />
         </div>
-        <p
-          v-show="nullPolicy && !editConfig"
-          style="font-size: 16px;"
-          class="mt_20"
-        >没有相关的存储桶策略</p>
-        <Strategy
-          v-if="editConfig && actionHandle"
-          ref="strategy"
-          v-model="strategy"
-          :editable="editable"
-          :action-config="actionConfig"
-          style="margin-top:20px;"
-          statement-action-merge-group
-          :statement-action-label-width="'100px'"
-          :statement-action-item-width="'300px'"
-        />
+        <p v-show="nullPolicy && !editConfig" style="font-size: 16px;" class="mt_20">没有相关的存储桶策略</p>
+        <Strategy v-if="editConfig && actionHandle" ref="strategy" v-model="strategy" :editable="editable"
+          :action-config="actionConfig" style="margin-top:20px;" statement-action-merge-group
+          :statement-action-label-width="'100px'" :statement-action-item-width="'300px'" />
       </div>
     </div>
-    <el-dialog
-      :title="nullPolicy ? '创建桶策略' : '修改桶策略'"
-      :visible.sync="flag"
-      width="40%"
-    >
+    <el-dialog :title="nullPolicy ? '创建桶策略' : '修改桶策略'" :visible.sync="flag" width="40%">
       <div style="width: 100%">
-        <json-viewer
-          :value="jsonString"
-          preview-mode
-          boxed
-          :show-array-index="false"
-          :copyable="{ 'copyText': '复制', 'copiedText': '已复制' }"
-          theme="my-awesome-json-theme"
-        />
+        <json-viewer :value="jsonString" preview-mode boxed :show-array-index="false"
+          :copyable="{ 'copyText': '复制', 'copiedText': '已复制' }" theme="my-awesome-json-theme" />
       </div>
       <div slot="footer">
-        <el-button
-          class="blue"
-          @click="flag = false"
-        >{{ $ts("cancel") }}</el-button>
-        <el-button
-          type="primary"
-          class="golden"
-          @click="submitCreate"
-        >{{ $ts("true") }}</el-button>
+        <el-button class="blue" @click="flag = false">{{ $ts("cancel") }}</el-button>
+        <el-button type="primary" class="golden" @click="submitCreate">{{ $ts("true") }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -119,7 +57,7 @@ export default {
     JsonViewer,
     Strategy
   },
-  data() {
+  data () {
     return {
       editConfig: false,
       jsonString: '',
@@ -136,17 +74,17 @@ export default {
     }
   },
   watch: {
-    editConfig(val) {
+    editConfig (val) {
       if (val) {
         this.getAction()
       }
     }
   },
-  mounted() {
+  mounted () {
     this.getBucketPolicy()
   },
   methods: {
-    getAction() {
+    getAction () {
       this.loading = true
       ActionList()
         .then(res => {
@@ -185,7 +123,7 @@ export default {
           this.loading = false
         })
     },
-    getBucketPolicy() {
+    getBucketPolicy () {
       this.loading = true
       this.$store.state.user._S3.getBucketPolicy(
         {
@@ -264,7 +202,7 @@ export default {
         }
       )
     },
-    deletePolicy() {
+    deletePolicy () {
       this.$confirm('删除当前存储桶的策略', {
         confirmButtonText: '删除',
         cancelButtonText: '取消',
@@ -279,7 +217,7 @@ export default {
               this.showS3Msg(err)
               console.dir(err)
             } else {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
@@ -292,18 +230,18 @@ export default {
         )
       })
     },
-    submitCreate() {
+    submitCreate () {
       // str 空值为'',空{}为json字符串,保证最基本有效的校验
       // const str = this.$refs['jsonEditor'].editor.getText()
       // const isValid = Object.keys(JSON.parse(str || '{}')).length
       // if (!isValid) {
-      //   return this.$ts({
+      //   return this.$msg({
       //     type: 'error',
       //     text: '策略内容不合法'
       //   })
       // }
       // if (this.hasJsonFlag == false) {
-      //   return this.$ts({
+      //   return this.$msg({
       //     type: 'error',
       //     text: 'json格式不正确'
       //   })
@@ -320,7 +258,7 @@ export default {
             this.showS3Msg(err)
             console.dir(err)
           } else {
-            this.$ts({
+            this.$msg({
               type: 'success',
               text: this.$ts('response.success')
             })
@@ -332,12 +270,12 @@ export default {
         }
       )
     },
-    editPolicy() {
+    editPolicy () {
       // 切换编辑
       this.editConfig = !this.editConfig
       this.editable = true
     },
-    async onSave() {
+    async onSave () {
       for (let i = 0; i < this.strategy.Statement.length; i++) {
         try {
           if (!this.strategy.Statement[i].Principal.length) {
@@ -452,10 +390,12 @@ export default {
     max-height: 500px !important;
   }
 }
+
 .bucket-panel {
   padding: 20px;
   margin: 20px;
 }
+
 :deep(.strategy) {
   .topMenu + div {
     height: auto !important;

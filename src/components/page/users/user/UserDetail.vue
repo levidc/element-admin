@@ -1,19 +1,10 @@
 <template>
   <div class="users">
-    <el-container
-      v-loading="loading"
-      class="container"
-    >
+    <el-container v-loading="loading" class="container">
       <el-header>
-        <div
-          v-show="!loading"
-          class="topMenu"
-        >
+        <div v-show="!loading" class="topMenu">
           <div class="iconName">
-            <svg
-              class="svgicon icon"
-              aria-hidden="true"
-            >
+            <svg class="svgicon icon" aria-hidden="true">
               <use xlink:href="#icon-user" />
             </svg>
             <div>
@@ -23,131 +14,66 @@
           <div class="rightMenu">
             <div>
               <span>用户状态:
-                <span
-                  v-if="enableUser"
-                  class="green"
-                >启用</span>
-                <span
-                  v-else
-                  class="red"
-                >未启用</span>
+                <span v-if="enableUser" class="green">启用</span>
+                <span v-else class="red">未启用</span>
               </span>
-              <el-switch
-                v-if="currentName !== 'superAdmin'"
-                v-model="enableUser"
-                v-access="'admin:EnableUser;admin:DisableUser'"
-                @change="switchUserStatus"
-              />
+              <el-switch v-if="currentName !== 'superAdmin'" v-model="enableUser"
+                v-access="'admin:EnableUser;admin:DisableUser'" @change="switchUserStatus" />
             </div>
-            <el-tooltip
-              content="删除用户"
-              placement="top"
-              effect="dark"
-            >
-             <svg v-if="currentName !== 'superAdmin'&&$store.state.user.role==='superAdmin'" v-access="'admin:DeleteUser'" @click="deleteFlag = true" class="icon icon-trash" aria-hidden="true">
-                <use xlink:href="#icon-trash" />
-              </svg>
-            </el-tooltip>
-            <el-tooltip
-              v-if="userType!==2"
-              content="更改密码"
-              placement="top"
-              effect="dark"
-            >
-              <i
-                v-access="'admin:UpdateUser'"
-                class="fa fa-key"
-                @click="resetPassword"
-              />
-            </el-tooltip>
-            <div
-              class="backBox"
-              @click="$router.push({ name: 'Users' })"
-            >
-              <el-tooltip
-                content="返回用户列表"
-                placement="top"
-                effect="dark"
-              >
+            <div>
+              <el-tooltip content="删除用户" placement="top" effect="dark">
                 <svg
-                  class="icon backicon"
-                  aria-hidden="true"
-                >
+                  v-if="String($store.state.isEip) !== 'true' && currentName !== 'superAdmin' && $store.state.role === 'superAdmin'"
+                  v-access="'admin:DeleteUser'" class="icon backicon" aria-hidden="true" @click="deleteFlag = true">
+                  <use xlink:href="#icon-trash" />
+                </svg>
+              </el-tooltip>
+              <el-tooltip v-if="userType !== 2" content="更改密码" placement="top" effect="dark">
+                <svg style="font-size: 20px;" v-access="'admin:UpdateUser'" class="icon backicon" aria-hidden="true"
+                  @click="resetPassword">
+                  <use xlink:href="#icon-password" />
+                </svg>
+              </el-tooltip>
+
+              <el-tooltip content="返回用户列表" placement="top" effect="dark">
+                <svg class="icon backicon" aria-hidden="true" @click="$router.push({ name: 'Users' })">
                   <use xlink:href="#icon-fanhui" />
                 </svg>
               </el-tooltip>
+              <el-tooltip content="刷新" placement="top" effect="dark">
+                <svg class="icon backicon" aria-hidden="true" @click="getUser">
+                  <use xlink:href="#icon-refresh" />
+                </svg>
+              </el-tooltip>
             </div>
-            <el-tooltip
-              content="刷新"
-              placement="top"
-              effect="dark"
-            >
-              <i
-                class="fa fa-refresh"
-                @click="getUser"
-              />
-            </el-tooltip>
           </div>
         </div>
       </el-header>
       <el-container v-show="!loading">
-        <el-aside width="200px" style="background: #36464e;">
-          <el-tabs
-            v-model="tabName"
-            tab-position="left"
-            class="tabs"
-          >
-            <el-tab-pane
-              label="存储桶"
-              name="Bucket"
-            />
-            <el-tab-pane
-              label="用户组"
-              name="groups"
-            />
+        <el-aside width="200px">
+          <el-tabs v-model="tabName" tab-position="left" class="tabs">
+            <el-tab-pane label="存储桶" name="Bucket" />
+            <el-tab-pane label="用户组" name="groups" />
             <!-- <el-tab-pane label="访问凭证" name="serviceAccounts" /> -->
-            <el-tab-pane
-              label="策略"
-              name="Policy"
-            />
+            <el-tab-pane label="策略" name="Policy" />
           </el-tabs>
         </el-aside>
         <el-main>
           <div v-show="tabName === 'groups'">
             <div class="clearfix">
               <h3 class="left">用户组</h3>
-              <el-button
-                v-access="'admin:AddGroupToUser;admin:RemoveGroupFromUser'"
-                class="right golden"
-                @click="searchUserGroup = ''; groupDialog = true"
-              >
+              <el-button v-access="'admin:AddGroupToUser;admin:RemoveGroupFromUser'" class="right golden"
+                @click="searchUserGroup = ''; groupDialog = true">
                 配置用户组
               </el-button>
-              <el-input
-                v-model="searchUserGroup"
-                class="right searchIpt"
-                placeholder="用户组名搜索"
-                clearable
-              />
+              <el-input v-model="searchUserGroup" class="right searchIpt" placeholder="用户组名搜索" clearable />
             </div>
-            <el-table
-              :data="userGroup"
-              border
-            >
-              <el-table-column
-                prop="groupName"
-                label="名称"
-              >
+            <el-table :data="userGroup" border>
+              <el-table-column prop="groupName" label="名称">
                 <template slot-scope="scope">
-                  <el-tooltip
-                    content="用户组详情"
-                    placement="top"
-                  >
-                    <a
-                      v-access:disable="'admin:GetGroup'"
-                      class="blue"
-                      @click="$router.push({ name: 'GroupDetail', params: { name: scope.row.groupName } })"
-                    >
+                  <el-tooltip content="用户组详情" placement="top">
+                    <a v-access:disable="'admin:GetGroup'" class="blue"
+                      @click="$router.push({ name: 'GroupDetail', params: { name: scope.row.groupName } })">
                       {{ scope.row.groupName }}
                     </a>
                   </el-tooltip>
@@ -155,7 +81,8 @@
               </el-table-column>
               <el-table-column label="移除用户组">
                 <template slot-scope="scope">
-                  <svg v-access="'admin:AddGroupToUser;admin:RemoveGroupFromUser'"  @click="deleteGroup(scope.row)" class="icon icon-trash" aria-hidden="true">
+                  <svg v-access="'admin:AddGroupToUser;admin:RemoveGroupFromUser'" class="icon icon-trash"
+                    aria-hidden="true" @click="deleteGroup(scope.row)">
                     <use xlink:href="#icon-trash" />
                   </svg>
                 </template>
@@ -166,68 +93,29 @@
             <div class="clearfix">
               <h3 class="left">访问凭证</h3>
               <div class="right">
-                <el-button
-                  v-access="'admin:RemoveAccessCredential'"
-                  type="danger"
-                  class="red"
-                  :disabled="!selectedServiceAccounts.length"
-                  @click="deleteAccess = true"
-                >删除</el-button>
+                <el-button v-access="'admin:RemoveAccessCredential'" type="danger" class="red"
+                  :disabled="!selectedServiceAccounts.length" @click="deleteAccess = true">删除</el-button>
                 <!-- <el-button type="primary" @click="serviceDialog=true">创建</el-button> -->
               </div>
             </div>
-            <el-table
-              :data="serviceData"
-              border
-              max-height="600"
-              @selection-change="handleServiceAccountsChange"
-            >
-              <el-table-column
-                type="selection"
-                reverse-selection
-                align="center"
-              />
-              <el-table-column
-                prop="name"
-                label="访问凭证"
-              />
+            <el-table :data="serviceData" border max-height="600" @selection-change="handleServiceAccountsChange">
+              <el-table-column type="selection" reverse-selection align="center" />
+              <el-table-column prop="name" label="访问凭证" />
             </el-table>
           </div>
 
           <div v-show="tabName === 'Policy'">
             <div class="clearfix">
               <h3 class="left">策略</h3>
-              <el-button
-                v-access="'admin:SetUserOrGroupPolicy'"
-                class="right golden"
-                type="primary"
-                @click="searchPolicy = ''; policyDialog = true"
-              >配置策略</el-button>
-              <el-input
-                v-model="searchPolicy"
-                class="right searchIpt"
-                placeholder="策略名搜索"
-                clearable
-              />
+              <el-button v-access="'admin:SetUserOrGroupPolicy'" class="right golden" type="primary"
+                @click="searchPolicy = ''; policyDialog = true">配置策略</el-button>
+              <el-input v-model="searchPolicy" class="right searchIpt" placeholder="策略名搜索" clearable />
             </div>
-            <el-table
-              :data="userPolicy"
-              border
-              max-height="600"
-            >
-              <el-table-column
-                prop="name"
-                label="策略名"
-              >
+            <el-table :data="userPolicy" border max-height="600">
+              <el-table-column prop="name" label="策略名">
                 <template slot-scope="scope">
-                  <el-tooltip
-                    content="策略详情"
-                    placement="top"
-                  >
-                    <a
-                      class="blue"
-                      @click="getIntoPolicy(scope.row.name)"
-                    >
+                  <el-tooltip content="策略详情" placement="top">
+                    <a class="blue" @click="getIntoPolicy(scope.row.name)">
                       {{ scope.row.name }}
                     </a>
 
@@ -236,7 +124,8 @@
               </el-table-column>
               <el-table-column label="移除策略">
                 <template slot-scope="scope">
-                  <svg v-if="scope.row.name !== 'BasePolicy'" v-access="'admin:SetUserOrGroupPolicy'"  @click="deletePolicy(scope.row)" class="icon icon-trash" aria-hidden="true">
+                  <svg v-if="scope.row.name !== 'BasePolicy'" v-access="'admin:SetUserOrGroupPolicy'"
+                    class="icon icon-trash" aria-hidden="true" @click="deletePolicy(scope.row)">
                     <use xlink:href="#icon-trash" />
                   </svg>
                 </template>
@@ -247,14 +136,8 @@
             <div class="clearfix">
               <h3 class="left">存储桶</h3>
             </div>
-            <el-descriptions
-              style="width: 50%;"
-              :content-style="rowCenter"
-              :label-style="rowCenter"
-              direction="vertical"
-              :column="2"
-              border
-            >
+            <el-descriptions style="width: 50%;" :content-style="rowCenter" :label-style="rowCenter"
+              direction="vertical" :column="2" border>
               <el-descriptions-item label="对象总数(个)">
                 <el-tag size="small">{{ quotaData.objectCount | precisionNum }}</el-tag>
               </el-descriptions-item>
@@ -265,112 +148,60 @@
             <div class="clearfix">
               <h3 class="left bucket_column">桶名称</h3>
             </div>
-            <el-table
-              class="outerTable"
-              :data="bucketData"
-              style="width:100%;margin:30px 0 0 0"
-              :default-expand-all="true"
-              :row-class-name="getRowClass"
-            >
+            <el-table class="outerTable" :data="bucketData" style="width:100%;margin:30px 0 0 0"
+              :default-expand-all="true" :row-class-name="getRowClass">
               <el-table-column type="expand">
                 <template slot-scope="scope">
-                  <el-form
-                    inline
-                    label-position="left"
-                  >
-                    <el-table
-                      :data="scope.row.policyInfo.Statement"
-                      style="width:95%;margin-left:50px"
-                    >
-                      <el-table-column
-                        prop="Effect"
-                        label="Effect"
-                        width="100"
-                      />
-                      <el-table-column
-                        prop="Principal"
-                        label="Principal"
-                        min-width="120"
-                      >
+                  <el-form inline label-position="left">
+                    <el-table :data="scope.row.policyInfo.Statement" style="width:95%;margin-left:50px">
+                      <el-table-column prop="Effect" label="Effect" width="100" />
+                      <el-table-column prop="Principal" label="Principal" min-width="120">
                         <template slot-scope="inner">
-                          <p
-                            v-for="(item, i) in renderPrincipal(inner.row.Principal)"
-                            :key="item + i"
-                          >{{ item }} </p>
+                          <p v-for="(item, i) in renderPrincipal(inner.row.Principal)" :key="item + i">{{ item }} </p>
                         </template>
                       </el-table-column>
-                      <el-table-column
-                        prop="Resource"
-                        label="Resource"
-                        min-width="200"
-                      >
+                      <el-table-column prop="Resource" label="Resource" min-width="200">
                         <template slot-scope="inner">
-                          <p
-                            v-for="(item, i) in handleStrOrArr(inner, 'Resource')"
-                            :key="item + i"
-                          >{{ item }} </p>
+                          <p v-for="(item, i) in handleStrOrArr(inner, 'Resource')" :key="item + i">{{ item }} </p>
                         </template>
                       </el-table-column>
 
-                      <el-table-column
-                        prop="Action"
-                        label="Action"
-                        min-width="120"
-                      >
+                      <el-table-column prop="Action" label="Action" min-width="120">
                         <template slot-scope="inner">
                           <div>
                             <span>{{ (inner.row.group && inner.row.group.name) || '高级设置' }}</span>
-                            <el-popover
-                              class="ml_10"
-                              placement="right"
-                              width="350"
-                              trigger="hover"
-                            >
-                              <p
-                                v-for="(item, i) in handleStrOrArr(inner, 'Action')"
-                                :key="item + i"
-                                style="line-height:1.6;"
-                              >
+                            <el-popover class="ml_10" placement="right" width="350" trigger="hover">
+                              <p v-for="(item, i) in handleStrOrArr(inner, 'Action')" :key="item + i"
+                                style="line-height:1.6;">
                                 {{ item }}
                               </p>
-                              <i
-                                slot="reference"
-                                class="fa fa-question-circle"
-                              />
+                              <i slot="reference" class="el-icon-question" />
                             </el-popover>
                           </div>
                         </template>
                       </el-table-column>
-                      <el-table-column
-                        prop="Condition"
-                        min-width="150"
-                      >
+                      <el-table-column prop="Condition" min-width="150">
                         <template slot="header">
                           <span style="margin-left:8px;">Condition (项/符号/值)</span>
                         </template>
                         <template slot-scope="inner">
-                          <el-table
-                            v-if="renderCondition(inner.row.Condition).length"
-                            :data="renderCondition(inner.row.Condition)"
-                            class="innerTable"
-                          >
+                          <el-table v-if="renderCondition(inner.row.Condition).length"
+                            :data="renderCondition(inner.row.Condition)" class="innerTable">
                             <!-- <el-table-column label="项" prop="key">
                               <template slot-scope="data">
                                 {{ conditionArr.find(x=>x.value===data.row.key).label }}
                               </template>
-                            </el-table-column>
-                            <el-table-column label="符号" prop="symbol">
-                              <template slot-scope="data">
+    </el-table-column>
+    <el-table-column label="符号" prop="symbol">
+      <template slot-scope="data">
                                 {{ conditionSymbols.find(x=>x.value===data.row.symbol).label }}
                               </template>
-                            </el-table-column> -->
-                            <el-table-column
-                              label="值"
-                              prop="value"
-                            >
+    </el-table-column> -->
+                            <el-table-column label="值" prop="value">
                               <template slot-scope="data">
                                 {{ conditionArr.find(x => x.value === data.row.key).label + ' / ' +
-                                  conditionSymbols.find(x => x.value === data.row.symbol).label + ' / ' + data.row.value }}
+                                  conditionSymbols.find(x => x.value === data.row.symbol).label + ' / ' + data.row.value
+                                }}
                               </template>
                             </el-table-column>
                           </el-table>
@@ -382,57 +213,25 @@
               </el-table-column>
               <el-table-column prop="name" />
             </el-table>
-            <el-pagination
-              v-if="bucketData && bucketData.length"
-              background
-              layout="total,sizes, prev, pager, next, jumper"
-              :page-sizes="[5, 10, 50, 100]"
-              :page-size="bucketObj.pageSize"
-              :total="bucketObj.totalCount"
-              :current-page="bucketObj.pageNum"
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-            />
+            <el-pagination v-if="bucketData && bucketData.length" background
+              layout="total,sizes, prev, pager, next, jumper" :page-sizes="[5, 10, 50, 100]"
+              :page-size="bucketObj.pageSize" :total="bucketObj.totalCount" :current-page="bucketObj.pageNum"
+              @size-change="handleSizeChange" @current-change="handleCurrentChange" />
           </div>
         </el-main>
       </el-container>
     </el-container>
-    <el-dialog
-      :visible.sync="groupDialog"
-      title="设置用户组"
-      width="750px"
-      style="padding:0 5%"
-      @close="handleScroll('groupTable')"
-    >
+    <el-dialog :visible.sync="groupDialog" title="设置用户组" width="750px" style="padding:0 5%"
+      @close="handleScroll('groupTable')">
       <div class="clearfix ipt">
         <span class="left">分配用户组</span>
-        <el-input
-          v-model="groupName"
-          class="right"
-          placeholder="用户组名过滤"
-          clearable
-        />
+        <el-input v-model="groupName" class="right" placeholder="用户组名过滤" clearable />
       </div>
 
-      <el-table
-        ref="groupTable"
-        class="groupData"
-        :data="groupData"
-        border
-        max-height="400"
-        :row-key="(row) => row.groupName"
-        @selection-change="handleGroupChange"
-      >
-        <el-table-column
-          type="selection"
-          width="55"
-          reserve-selection
-          align="center"
-        />
-        <el-table-column
-          prop="groupName"
-          label="组名"
-        />
+      <el-table ref="groupTable" class="groupData" :data="groupData" border max-height="400"
+        :row-key="(row) => row.groupName" @selection-change="handleGroupChange">
+        <el-table-column type="selection" width="55" reserve-selection align="center" />
+        <el-table-column prop="groupName" label="组名" />
       </el-table>
       <div slot="footer">
         <el-button @click="cancelGroup">重置</el-button>
@@ -440,33 +239,17 @@
       </div>
     </el-dialog>
     <el-dialog title="更改用户密码" :visible.sync="passwordDialog" width="700px" @close="resetModForm">
-      <el-form ref="modifyPassword" class="modifyPassword" :model="modifyPassword" label-width="150px" style="padding:0 5%" :rules="rules">
+      <el-form ref="modifyPassword" class="modifyPassword" :model="modifyPassword" label-width="150px"
+        style="padding:0 5%" :rules="rules">
         <el-form-item label="重设密码的用户(AK)">
           {{ currentName }}
         </el-form-item>
-        <el-form-item
-          label="输入密码"
-          prop="pwd"
-        >
-          <el-input
-            ref="ipt"
-            v-model="modifyPassword.pwd"
-            type="password"
-            placeholder="请输入新密码"
-            clearable
-          />
+        <el-form-item label="输入密码" prop="pwd">
+          <el-input ref="ipt" v-model="modifyPassword.pwd" type="password" placeholder="请输入新密码" clearable />
         </el-form-item>
 
-        <el-form-item
-          label="再次输入密码"
-          prop="confirmPwd"
-        >
-          <el-input
-            v-model="modifyPassword.confirmPwd"
-            type="password"
-            placeholder="请再次输入新密码"
-            clearable
-          />
+        <el-form-item label="再次输入密码" prop="confirmPwd">
+          <el-input v-model="modifyPassword.confirmPwd" type="password" placeholder="请再次输入新密码" clearable />
         </el-form-item>
       </el-form>
       <div slot="footer">
@@ -474,107 +257,42 @@
         <el-button type="primary" class="golden" @click="confirmPassword">{{ $ts('save') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog
-      title="设置策略"
-      :visible.sync="policyDialog"
-      width="700px"
-      @close="handleScroll('policyTable')"
-    >
+    <el-dialog title="设置策略" :visible.sync="policyDialog" width="700px" @close="handleScroll('policyTable')">
       <div class="clearfix ipt">
         <span class="left">分配策略</span>
-        <el-input
-          v-model="policyName"
-          class="right"
-          placeholder="策略名过滤"
-          clearable
-        />
+        <el-input v-model="policyName" class="right" placeholder="策略名过滤" clearable />
       </div>
-      <el-table
-        ref="policyTable"
-        border
-        class="policyData"
-        :data="policyData"
-        max-height="400"
-        :row-key="(row) => row.name"
-        @selection-change="handlePolicyChange"
-      >
-        <el-table-column
-          type="selection"
-          width="55"
-          reserve-selection
-          align="center"
-          :selectable="checkBasePolicy"
-        />
-        <el-table-column
-          prop="name"
-          label="策略名"
-        />
+      <el-table ref="policyTable" border class="policyData" :data="policyData" max-height="400"
+        :row-key="(row) => row.name" @selection-change="handlePolicyChange">
+        <el-table-column type="selection" width="55" reserve-selection align="center" :selectable="checkBasePolicy" />
+        <el-table-column prop="name" label="策略名" />
       </el-table>
       <div slot="footer">
         <el-button @click="resetPolicy">{{ $ts('reset') }}</el-button>
         <el-button type="primary" class="golden" @click="confirmPolicy(false)">{{ $ts('button.confirm') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog
-      :title="serviceCreateDone ? '新的访问凭证已创建' : '创建访问凭证'"
-      :visible.sync="serviceDialog"
-      width="650px"
-      style="padding:0 5%"
-      class="serviceAccount"
-      @opened="clearServiceValidate"
-    >
+    <el-dialog :title="serviceCreateDone ? '新的访问凭证已创建' : '创建访问凭证'" :visible.sync="serviceDialog" width="650px"
+      style="padding:0 5%" class="serviceAccount" @opened="clearServiceValidate">
       <div v-if="!serviceCreateDone">
         <!-- <p>Service Accounts inherit the policy explicitly attached to the parent user and the policy attached to each group in which the parent user has membership. You can specify an optional JSON-formatted policy below to restrict the Service Account access to a subset of actions and resources explicitly allowed for the parent user.
           <br>
           You cannot modify the Service Account optional policy after saving.</p> -->
-        <el-form
-          ref="serviceForm"
-          :model="serviceForm"
-          :rules="rules"
-        >
+        <el-form ref="serviceForm" :model="serviceForm" :rules="rules">
           <!-- Customize Credentials -->
-          <el-form-item
-            label="自定义凭证"
-            class="clearfix"
-          >
-            <el-popover
-              placement="top-start"
-              width="250"
-              trigger="hover"
-              content="若不启用自定义凭证则启用随机账户"
-            >
-              <i
-                slot="reference"
-                style="margin-left:-100px"
-                class="fa fa-question-circle"
-              />
+          <el-form-item label="自定义凭证" class="clearfix">
+            <el-popover placement="top-start" width="250" trigger="hover" content="若不启用自定义凭证则启用随机账户">
+              <i slot="reference" class="el-icon-question" style="margin-left:-100px" />
             </el-popover>
-            <el-switch
-              v-model="serviceForm.credentials"
-              class="right"
-              active-text="ON"
-              inactive-text="OFF"
-              active-color="#13ce66"
-            />
+            <el-switch v-model="serviceForm.credentials" class="right" active-text="ON" inactive-text="OFF"
+              active-color="#13ce66" />
           </el-form-item>
           <el-row v-if="serviceForm.credentials">
-            <el-form-item
-              label="Access Key"
-              prop="accessKey"
-            >
-              <el-input
-                v-model="serviceForm.accessKey"
-                placeholder="enter Access Key"
-              />
+            <el-form-item label="Access Key" prop="accessKey">
+              <el-input v-model="serviceForm.accessKey" placeholder="enter Access Key" />
             </el-form-item>
-            <el-form-item
-              label="Secret Key"
-              prop="secretKey"
-            >
-              <el-input
-                v-model="serviceForm.secretKey"
-                placeholder="enter secret Key"
-              />
+            <el-form-item label="Secret Key" prop="secretKey">
+              <el-input v-model="serviceForm.secretKey" placeholder="enter secret Key" />
             </el-form-item>
           </el-row>
 
@@ -615,27 +333,13 @@
         </h3>
         <div>
           <span>Access Key:</span>
-          <el-input
-            v-model="serviceForm.accessKey"
-            readonly
-          />
-          <i
-            class="el-icon-document-copy"
-            title="复制到剪贴板"
-            @click="copyCode(serviceForm.accessKey)"
-          />
+          <el-input v-model="serviceForm.accessKey" readonly />
+          <i class="el-icon-document-copy" title="复制到剪贴板" @click="copyCode(serviceForm.accessKey)" />
         </div>
         <div>
           <span>Secret Key:</span>
-          <el-input
-            v-model="serviceForm.secretKey"
-            readonly
-          />
-          <i
-            class="el-icon-document-copy"
-            title="复制到剪贴板"
-            @click="copyCode(serviceForm.secretKey)"
-          />
+          <el-input v-model="serviceForm.secretKey" readonly />
+          <i class="el-icon-document-copy" title="复制到剪贴板" @click="copyCode(serviceForm.secretKey)" />
         </div>
         <p class="red">
           <i class="fa el-icon-warning-outline red" />
@@ -647,17 +351,9 @@
         </div>
       </div>
     </el-dialog>
-    <el-dialog
-      title="删除访问凭证"
-      :visible.sync="deleteAccess"
-      width="650px"
-    >
+    <el-dialog title="删除访问凭证" :visible.sync="deleteAccess" width="650px">
       <p>删除所选访问凭证:</p>
-      <p
-        v-for="(item, i) in selectedServiceAccounts"
-        :key="i"
-        style="margin-left:150px"
-      >
+      <p v-for="(item, i) in selectedServiceAccounts" :key="i" style="margin-left:150px">
         {{ item.name }}
       </p>
       <div slot="footer">
@@ -665,11 +361,7 @@
         <el-button type="primary" class="golden" @click="deleteAccessCredential">{{ $ts('delete') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog
-      title="删除用户"
-      :visible.sync="deleteFlag"
-      width="650px"
-    >
+    <el-dialog title="删除用户" :visible.sync="deleteFlag" width="650px">
       <p>删除当前用户:
         {{ currentName }}
       </p>
@@ -700,14 +392,14 @@ import {
 export default {
   name: 'UserDetail',
   filters: {
-    precisionNum(val) {
+    precisionNum (val) {
       if (!val) return '0'
       val = String(val)
       const reg = /\B(?=(\d{3})+(?!\d))/g
       return val.replace(reg, ',')
     }
   },
-  data() {
+  data () {
     // const checkPasswordReg = (rule, data, callback) => {
     //   const reg = /[\u4e00-\u9fa5]/
     //   if (reg.test(data)) {
@@ -842,12 +534,12 @@ export default {
     }
   },
   computed: {
-    currentName() {
+    currentName () {
       return this.$route.params.name
     }
   },
   watch: {
-    policyDialog(val) {
+    policyDialog (val) {
       if (val) {
         this.listPolicies()
       } else {
@@ -855,7 +547,7 @@ export default {
         this.$refs['policyTable'].clearSelection()
       }
     },
-    groupDialog(val) {
+    groupDialog (val) {
       if (val) {
         this.getUser()
         this.listGroups()
@@ -865,44 +557,44 @@ export default {
         this.cancelGroup()
       }
     },
-    tabName(val) {
-      if (val == 'Bucket') {
+    tabName (val) {
+      if (val === 'Bucket') {
         localStorage.removeItem('Policy')
-      } else if (val == 'groups') {
+      } else if (val === 'groups') {
         localStorage.removeItem('Policy')
-      } else if (val == 'serviceAccounts') {
+      } else if (val === 'serviceAccounts') {
         localStorage.removeItem('Policy')
       }
     },
-    searchUserGroup(val) {
+    searchUserGroup (val) {
       this.userGroup = [...this.cloneUserGroup]
       if (!val) return
       this.userGroup = this.userGroup.filter(item => {
         return item.groupName.toLowerCase().indexOf(val.toLowerCase()) !== -1
       })
     },
-    searchPolicy(val) {
+    searchPolicy (val) {
       this.userPolicy = [...this.cloneUserPolicy]
       if (!val) return
       this.userPolicy = this.userPolicy.filter(item => {
         return item.name.toLowerCase().indexOf(val.toLowerCase()) !== -1
       })
     },
-    groupName(val) {
+    groupName (val) {
       this.groupData = [...this.cloneGroupData]
       if (!val) return
       this.groupData = this.groupData.filter(item => {
         return item.groupName.toLowerCase().indexOf(val.toLowerCase()) !== -1
       })
     },
-    policyName(val) {
+    policyName (val) {
       this.policyData = [...this.clonePolicyData]
       if (!val) return
       this.policyData = this.policyData.filter(item => {
         return item.name.toLowerCase().indexOf(val.toLowerCase()) !== -1
       })
     },
-    serviceDialog(val) {
+    serviceDialog (val) {
       if (!val) {
         this.serviceCreateDone = false
         this.serviceForm.credentials = false
@@ -912,7 +604,7 @@ export default {
       }
     }
   },
-  async mounted() {
+  async mounted () {
     const res = await listAllPermissionGroup()
     this.permissionGroup = res.data
     this.getUser()
@@ -921,7 +613,7 @@ export default {
     }
   },
   methods: {
-    handleStrOrArr(inner, type) {
+    handleStrOrArr (inner, type) {
       const arr = inner.row[type]
       const typeArray = Array.isArray(arr)
       if (typeArray) {
@@ -930,13 +622,13 @@ export default {
         return arr.split(';')
       }
     },
-    getIntoPolicy(val) {
-      this.$router.push({ name: 'PolicyDetail', params: { name: val }})
+    getIntoPolicy (val) {
+      this.$router.push({ name: 'PolicyDetail', params: { name: val } })
     },
-    checkBasePolicy(val) {
+    checkBasePolicy (val) {
       return val.name !== 'BasePolicy'
     },
-    deleteAccessCredential() {
+    deleteAccessCredential () {
       const accessKeyList = this.selectedServiceAccounts.map(item => {
         return item.name
       })
@@ -945,7 +637,7 @@ export default {
         username: this.currentName
       }).then(res => {
         if (res.code === '200') {
-          this.$ts({
+          this.$msg({
             type: 'success',
             text: this.$ts('response.success')
           })
@@ -954,19 +646,19 @@ export default {
         }
       })
     },
-    handleScroll(ref) {
+    handleScroll (ref) {
       this.$refs[ref].$el.children[2].scrollTop = 0
     },
-    resetModForm() {
+    resetModForm () {
       this.$nextTick(() => {
         this.$refs['modifyPassword'].resetFields()
       })
     },
-    switchUserStatus(val) {
+    switchUserStatus (val) {
       if (val) {
         enableUser(this.currentName)
           .then(res => {
-            this.$ts({
+            this.$msg({
               type: 'success',
               text: this.$ts('response.success')
             })
@@ -978,7 +670,7 @@ export default {
       } else if (!val) {
         disableUser(this.currentName)
           .then(res => {
-            this.$ts({
+            this.$msg({
               type: 'success',
               text: this.$ts('response.success')
             })
@@ -989,33 +681,33 @@ export default {
           })
       }
     },
-    onJsonChange(value) {
+    onJsonChange (value) {
       this.onJsonSave(value)
     },
-    onJsonSave(value) {
+    onJsonSave (value) {
       this.jsonString = value
       this.hasJsonFlag = true
     },
-    onError(value) {
+    onError (value) {
       this.hasJsonFlag = false
     },
-    clearJSON() {
+    clearJSON () {
       this.jsonString = {}
     },
-    eslintJson() {
+    eslintJson () {
       this.$refs['jsonEditor'].editor.format()
     },
-    copyJSON() {
+    copyJSON () {
       var str = this.$refs['jsonEditor'].editor.getText()
       navigator.clipboard.writeText(str)
-      this.$ts({
+      this.$msg({
         type: 'success',
         text: '复制成功'
       })
     },
-    submitCreate() {
-      if (this.hasJsonFlag == false) {
-        return this.$ts({
+    submitCreate () {
+      if (this.hasJsonFlag === false) {
+        return this.$msg({
           type: 'error',
           text: 'json格式不正确'
         })
@@ -1023,20 +715,20 @@ export default {
         console.log('success', this.jsonString)
       }
     },
-    clearServiceValidate() {
+    clearServiceValidate () {
       this.serviceForm.accessKey = ''
       this.serviceForm.secretKey = ''
       this.$refs['serviceForm'].resetFields()
       // 重置json
     },
-    copyCode(val) {
+    copyCode (val) {
       navigator.clipboard.writeText(val)
-      this.$ts({
+      this.$msg({
         type: 'success',
         text: '复制成功'
       })
     },
-    downloadSecretAccount() {
+    downloadSecretAccount () {
       // {"console":[{"url":"undefined","access_key":"aptx789","secret_key":"policyTable123","api":"s3v4","path":"auto"}]}
       const json = {
         console: [
@@ -1059,17 +751,17 @@ export default {
       Link.click()
       document.body.removeChild(Link)
     },
-    handlePolicyChange(val) {
+    handlePolicyChange (val) {
       this.selectedPolicy = val
     },
-    handleGroupChange(val) {
+    handleGroupChange (val) {
       this.selectedGroup = val
     },
-    handleServiceAccountsChange(val) {
+    handleServiceAccountsChange (val) {
       this.selectedServiceAccounts = val
     },
     // 密码设置
-    confirmPassword() {
+    confirmPassword () {
       this.$refs['modifyPassword'].validate(valid => {
         if (valid) {
           updateUser({
@@ -1078,7 +770,7 @@ export default {
           })
             .then(res => {
               this.passwordDialog = false
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
@@ -1090,7 +782,7 @@ export default {
       })
     },
     // 群组设置
-    confirmGroup() {
+    confirmGroup () {
       const removeGroup = this.userGroup
         .filter(item => {
           return this.selectedGroup.every(item2 => {
@@ -1120,12 +812,12 @@ export default {
           .then(res => {
             const isTrue = res.filter(item => item.code !== '200')
             if (!isTrue.length) {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
             } else {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts(isTrue[0].msg)
               })
@@ -1143,7 +835,7 @@ export default {
           groups: addGroup
         })
           .then(res => {
-            this.$ts({
+            this.$msg({
               type: 'success',
               text: this.$ts('response.success')
             })
@@ -1158,7 +850,7 @@ export default {
           groups: removeGroup
         })
           .then(res => {
-            this.$ts({
+            this.$msg({
               type: 'success',
               text: this.$ts('response.success')
             })
@@ -1172,13 +864,13 @@ export default {
       }
       // console.log(addGroup, removeGroup, this.selectedGroup, 'selected')
     },
-    deleteGroup(row) {
+    deleteGroup (row) {
       RemoveGroupFromUser({
         userName: this.currentName,
         groups: [row.groupName]
       })
         .then(res => {
-          this.$ts({
+          this.$msg({
             type: 'success',
             text: this.$ts('response.success')
           })
@@ -1189,13 +881,13 @@ export default {
         })
     },
     // 策略设置
-    deletePolicy(row) {
+    deletePolicy (row) {
       const policyNames = this.userPolicy
         .filter(item => item.name !== row.name)
         .map(item => item.name)
       this.confirmPolicy(policyNames)
     },
-    confirmPolicy(flag) {
+    confirmPolicy (flag) {
       let policyNames
       if (flag) {
         policyNames = flag
@@ -1207,7 +899,7 @@ export default {
         policyNames,
         type: 'user'
       }).then(res => {
-        this.$ts({
+        this.$msg({
           type: 'success',
           text: this.$ts('response.success')
         })
@@ -1219,10 +911,10 @@ export default {
       })
       // console.log(this.selectedPolicy, "seletced");
     },
-    createServiceAccount() {
+    createServiceAccount () {
       // var json = this.$refs['jsonEditor']?.editor.getText()
       // var type = Object.prototype.toString.call(JSON.parse(json || '{}'))
-      // if (!json || type == '[object Object]') {
+      // if (!json || type==='[object Object]') {
       //   this.hasJsonFlag = true
       // } else {
       //   this.hasJsonFlag = false
@@ -1230,7 +922,7 @@ export default {
       this.$refs['serviceForm'].validate(valid => {
         if (valid) {
           // if (!this.hasJsonFlag) {
-          //   return this.$ts({
+          //   return this.$msg({
           //     type: 'error',
           //     text: 'json格式不正确'
           //   })
@@ -1248,7 +940,7 @@ export default {
           //   key: this.serviceForm.accessKey,
           //   secret: this.serviceForm.secretKey
           // }).then(res => {
-          //   this.$ts({
+          //   this.$msg({
           //     type: 'success',
           //     text: this.$ts('response.success')
           //   })
@@ -1259,7 +951,7 @@ export default {
         }
       })
     },
-    resetPolicy() {
+    resetPolicy () {
       this.$refs['policyTable'].clearSelection()
       this.$nextTick(() => {
         this.userPolicy.forEach(item => {
@@ -1270,10 +962,10 @@ export default {
         this.policyData.pop()
       })
     },
-    cancelGroup() {
+    cancelGroup () {
       this.$refs['groupTable'].clearSelection()
     },
-    listGroups() {
+    listGroups () {
       this.$nextTick(() => {
         listGroups()
           .then(res => {
@@ -1294,14 +986,14 @@ export default {
         // ]
       })
     },
-    getUser() {
+    getUser () {
       this.loading = true
       getUser({
         userName: this.currentName
       }).then(res => {
         if (!res.data) {
           this.$router.push({ name: 'Users' })
-          return this.$ts({
+          return this.$msg({
             type: 'error',
             text: '当前用户不存在'
           })
@@ -1355,7 +1047,7 @@ export default {
       //   objectSize: '', objectCount: '0'
       // }
     },
-    renderCondition(condition) {
+    renderCondition (condition) {
       if (!condition) return []
       const res = []
       Object.keys(condition).map(item => {
@@ -1369,7 +1061,7 @@ export default {
       })
       return res
     },
-    renderPrincipal(data) {
+    renderPrincipal (data) {
       const type = Object.prototype.toString.call(data)
       if (type.indexOf('Array') > -1) {
         return data
@@ -1377,7 +1069,7 @@ export default {
         return data.split(',')
       }
     },
-    getListBucketPolicies() {
+    getListBucketPolicies () {
       this.loading = true
       listBucketPoliciesByUser({
         pageNum: this.bucketObj.pageNum,
@@ -1398,22 +1090,22 @@ export default {
         this.loading = false
       })
     },
-    getRowClass(row, index) {
-      if (row.row.policyInfo.Statement && row.row.policyInfo.Statement.length == 0) {
+    getRowClass (row, index) {
+      if (row.row.policyInfo.Statement && row.row.policyInfo.Statement.length === 0) {
         return 'hide-icon'
       } else if (!Array.isArray(row.row.policyInfo.Statement)) {
         return 'hide-icon'
       }
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       this.bucketObj.pageSize = val
       this.getListBucketPolicies()
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       this.bucketObj.pageNum = val
       this.getListBucketPolicies()
     },
-    listPolicies() {
+    listPolicies () {
       this.$nextTick(() => {
         getPolicy().then(res => {
           this.policyData = res.data
@@ -1426,7 +1118,7 @@ export default {
         })
       })
     },
-    deleteUser() {
+    deleteUser () {
       if (this.userGroup && this.userGroup.length) {
         this.deleteFlag = false
         const group = this.userGroup.map(item => item.groupName)
@@ -1445,10 +1137,10 @@ export default {
         this.confirmDelete()
       }
     },
-    confirmDelete() {
+    confirmDelete () {
       deleteUser(this.currentName)
         .then(res => {
-          this.$ts({
+          this.$msg({
             type: 'success',
             text: this.$ts('response.success')
           })
@@ -1458,7 +1150,7 @@ export default {
           console.error(err)
         })
     },
-    resetPassword() {
+    resetPassword () {
       this.passwordDialog = true
       this.$nextTick(() => {
         this.$refs['ipt'].$el.querySelector('input').focus()
@@ -1501,10 +1193,6 @@ export default {
       line-height: 30px;
     }
   }
-}
-
-.breadEval {
-  margin: -20px 0 0 -20px;
 }
 
 ::v-deep .container {
@@ -1608,7 +1296,7 @@ export default {
 }
 
 .el-aside {
-  // background-color: #d3dce6;
+  background-color: #36464e;
   color: #333;
   text-align: center;
   line-height: 200px;
@@ -1710,9 +1398,9 @@ svg.backicon {
   margin: -3px 0 10px 20px;
 }
 
-:deep(.modifyPassword){
-  label.el-form-item__label{
-    width: 180px!important;
+:deep(.modifyPassword) {
+  label.el-form-item__label {
+    width: 180px !important;
     margin-left: -30px;
   }
 }
@@ -1747,6 +1435,7 @@ svg.backicon {
   }
 
   .innerTable {
+
     th,
     td {
       padding: 0 !important;

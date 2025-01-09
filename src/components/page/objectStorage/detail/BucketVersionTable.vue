@@ -5,6 +5,8 @@
       id="bdtable"
       ref="multipleTable"
       v-loading="loading"
+      stripe
+      border
       :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
       tooltip-effect="dark"
       style="width: 100%"
@@ -48,7 +50,7 @@
               @click="jumpToDetail(scope)"
             >
               <i
-                class="fa fa-file-o"
+                class="el-icon-document"
                 aria-hidden="true"
               />
               {{ scope.row.Key }}
@@ -58,7 +60,7 @@
               slot="data"
             >
               <i
-                class="fa fa-file-o"
+                class="el-icon-document"
                 aria-hidden="true"
               />
               {{ scope.row.Key }}
@@ -76,7 +78,7 @@
               :to="{ name: 'BucketList', query: { file: false, filename: $route.query.filename ? $route.query.filename + scope.row.Prefix : scope.row.Prefix } }"
             >
               <i
-                class="fa fa-folder-open-o"
+                class="el-icon-folder"
                 aria-hidden="true"
               />{{ scope.row.Prefix }}
             </router-link>
@@ -130,7 +132,7 @@
       </el-table-column>
 
       <!-- <el-table-column
-        :label="$ts('action')"
+        :label="$trans('action')"
       >
         <template slot-scope="scope">
           <div v-if="scope.row.type=='f'&&scope.row.Key">
@@ -166,7 +168,6 @@
     <!-- <ObjectDetail v-if="showFileConfig" type="delete" /> -->
 
     <el-dialog
-
       title="添加标签"
       :visible.sync="isAddInfo"
       width="800px"
@@ -193,7 +194,7 @@
                   trigger="hover"
                   content="标签键区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符"
                 >
-                  <span slot="reference">名称&nbsp;<i class="fa  fa-question-circle" /></span>
+                  <!-- <span slot="reference">名称&nbsp;<i class="fa  fa-question-circle" /></span> -->
                 </el-popover>
               </template>
               <template slot-scope="scope">
@@ -221,7 +222,7 @@
                   trigger="hover"
                   content="标签值区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符"
                 >
-                  <span slot="reference">标签值&nbsp;<i class="fa  fa-question-circle" /></span>
+                  <!-- <span slot="reference">标签值&nbsp;<i class="fa  fa-question-circle" /></span> -->
                 </el-popover>
               </template>
               <template slot-scope="scope">
@@ -279,7 +280,6 @@
       </el-row>
     </el-dialog>
     <el-dialog
-
       title="权限设置"
       :visible.sync="isSetAccess"
       width="800px"
@@ -307,7 +307,7 @@
                   trigger="hover"
                   content="标签键区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符"
                 >
-                  <span slot="reference">名称&nbsp;<i class="fa  fa-question-circle" /></span>
+                  <!-- <span slot="reference">名称&nbsp;<i class="fa  fa-question-circle" /></span> -->
                 </el-popover>
               </template>
               <template slot-scope="scope">
@@ -335,7 +335,7 @@
                   trigger="hover"
                   content="标签值区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符"
                 >
-                  <span slot="reference">标签值&nbsp;<i class="fa  fa-question-circle" /></span>
+                  <!-- <span slot="reference">标签值&nbsp;<i class="fa  fa-question-circle" /></span> -->
                 </el-popover>
               </template>
               <template slot-scope="scope">
@@ -411,7 +411,7 @@
                   trigger="hover"
                   content="标签键区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符"
                 >
-                  <span slot="reference">名称&nbsp;<i class="fa  fa-question-circle" /></span>
+                  <!-- <span slot="reference">名称&nbsp;<i class="fa  fa-question-circle" /></span> -->
                 </el-popover>
               </template>
               <template slot-scope="scope">
@@ -439,7 +439,7 @@
                   trigger="hover"
                   content="标签值区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符"
                 >
-                  <span slot="reference">标签值&nbsp;<i class="fa  fa-question-circle" /></span>
+                  <!-- <span slot="reference">标签值&nbsp;<i class="fa  fa-question-circle" /></span> -->
                 </el-popover>
               </template>
               <template slot-scope="scope">
@@ -499,7 +499,6 @@
       </div>
     </el-dialog>
     <el-dialog
-
       title="重命名对象"
       :visible.sync="isRenameFile"
       width="550px"
@@ -507,10 +506,10 @@
       <el-row>
         <el-col :span="4">
           <div class="rename_icon_wrap">
-            <i
+            <!-- <i
               class="fa fa-pencil-square-o "
               aria-hidden="true"
-            />
+            /> -->
           </div>
         </el-col>
         <el-col :span="20">
@@ -525,7 +524,10 @@
           />
         </el-col>
       </el-row>
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button type="primary">{{ $ts('button.confirm') }}</el-button>
         <el-button @click="isRenameFile = false;">{{ $ts('button.cancel') }}</el-button>
       </div>
@@ -540,7 +542,7 @@ export default {
     // ObjectDetail
   },
   filters: {
-    toVersionWord: function(id) {
+    toVersionWord: function (id) {
       if (id == '1') {
         return '版本ID: null'
       } else {
@@ -554,7 +556,7 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       loading: false,
       isAddInfo: false,
@@ -577,7 +579,7 @@ export default {
     }
   },
   computed: {
-    showFileConfig() {
+    showFileConfig () {
       if (
         this.$route.query.filename &&
         String(this.$route.query.file) == 'true'
@@ -591,17 +593,17 @@ export default {
     }
   },
   watch: {
-    $route(to, from) {
+    $route (to, from) {
       this.currentPage = 1
     },
-    loading(val) {
+    loading (val) {
       if (val) {
         this.$emit('disablePathClick', true)
       } else {
         this.$emit('disablePathClick', false)
       }
     },
-    searchVal(cur, pre) {
+    searchVal (cur, pre) {
       if (!cur && pre) {
         this.listObject()
         // this.loading = true
@@ -614,14 +616,14 @@ export default {
       }
     }
   },
-  mounted: function() {
+  mounted: function () {
     this.listObject()
   },
   methods: {
-    copyCode(row) {
+    copyCode (row) {
       const str = row.type == 'f' ? row.Key : row.type == 'd' ? row.Prefix : ''
       if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
-        this.$ts({
+        this.$msg({
           type: 'success',
           text: '复制成功'
         })
@@ -631,7 +633,7 @@ export default {
         textarea.value = str
         document.body.append(textarea)
         textarea.select()
-        this.$ts({
+        this.$msg({
           type: 'success',
           text: '复制成功'
         })
@@ -641,7 +643,7 @@ export default {
         })
       }
     },
-    jumpToDetail(scope) {
+    jumpToDetail (scope) {
       this.$router.push({
         name: 'ObjectDetail',
         query: {
@@ -655,7 +657,7 @@ export default {
         }
       })
     },
-    cellcb(row) {
+    cellcb (row) {
       // 文件夹禁用删除、先隐藏不显示
       // 隐藏版本id的row
       // && row.row.type !== 'd'
@@ -664,28 +666,28 @@ export default {
         return 'myCell'
       }
     },
-    dialogOpen(e) {
+    dialogOpen (e) {
       const ipt = e
-      this.$nextTick(function() {
+      this.$nextTick(function () {
         this.$refs[ipt].$el.querySelector('input').focus()
       })
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       this.pageSize = val
     },
-    handleCurrentChange(val) {
-      console.log(
-        this.VersionIdMarker,
-        this.NextKeyMarker,
-        val,
-        Math.floor(this.total / this.pageSize)
-      )
+    handleCurrentChange (val) {
+      // console.log(
+      //   this.VersionIdMarker,
+      //   this.NextKeyMarker,
+      //   val,
+      //   Math.floor(this.total / this.pageSize)
+      // )
       if (this.NextKeyMarker && val === Math.ceil(this.total / this.pageSize)) {
         this.listObject(true)
       }
       this.currentPage = val
     },
-    toggleSelection(rows) {
+    toggleSelection (rows) {
       // 切换勾选看状态,传递绑定table的item
       if (rows) {
         rows.forEach(row => {
@@ -695,14 +697,14 @@ export default {
         this.$refs.multipleTable.clearSelection()
       }
     },
-    sortFunction(val) {
+    sortFunction (val) {
       this.prop = val.prop
       this.order = val.order
       this.tableData.sort(this.sortMethod(val.prop, val.order))
     },
-    sortMethod(prop, order, props) {
+    sortMethod (prop, order, props) {
       const _this = this
-      return function(obj1, obj2) {
+      return function (obj1, obj2) {
         if (prop == '' || order == '') {
           return 0
         }
@@ -746,34 +748,34 @@ export default {
         }
       }
     },
-    doModifyAccess: function(row) {
+    doModifyAccess: function (row) {
       this.$emit('doModifyAccess', row)
     },
-    doDeleteFolder: function(row) {
+    doDeleteFolder: function (row) {
       this.$emit('doDeleteFolder', row)
     },
     // doDeleteFile: function (row) {
     //   this.$emit('doDeleteFile', row)
     // },
-    doAddInfo: function(row) {
+    doAddInfo: function (row) {
       this.isAddInfo = true
     },
-    doSetAccess: function(row) {
+    doSetAccess: function (row) {
       this.isSetAccess = true
     },
-    doRenameFile: function(row) {
+    doRenameFile: function (row) {
       this.isRenameFile = true
       this.oldFileName = row.name
       this.newFileName = row.name
     },
-    searchPrefix() {
+    searchPrefix () {
       this.currentPage = 1
       this.listObject()
       // this.tableData = this.filterSearch(this.copyData, this.searchVal)
       // this.total = this.tableData.length
       // this.currentPage = 1
     },
-    listObject(flag) {
+    listObject (flag) {
       this.loading = true
       let params = {}
       const searchVal = this.searchVal[this.searchVal.length - 1] === '/' ? this.searchVal.substring(0, this.searchVal.length - 1) : this.searchVal
@@ -784,7 +786,7 @@ export default {
           Bucket: this.$route.params.id,
           Prefix,
           Delimiter: '/',
-          KeyMarker: this.NextKeyMarker,
+          KeyMarker: Prefix + this.NextKeyMarker,
           VersionIdMarker: this.VersionIdMarker || null,
           MaxKeys: this.perCount
         }
@@ -847,10 +849,9 @@ export default {
           // 文件的版本信息
           for (let j = 0; j < response.Versions.length; j++) {
             response.Versions[j].type = 'f'
-            // pathStrArr = response.Versions[j].Key.split('/')
             // 返回Key 带有当前object 目录前缀
             // response.Versions[j].Key = pathStrArr[pathStrArr.length - 1]
-            // if (!response.Versions[j].Key) continue
+            if (!response.Versions[j].Key) continue
             // response.Versions[j].ObjName = this.getShort(
             //   response.Versions[j].Key
             // )
@@ -932,7 +933,7 @@ export default {
     //   // }
     //   // this.tableData = result;
     // },
-    unique(arr) {
+    unique (arr) {
       if (!Array.isArray(arr)) {
         return
       }
@@ -950,7 +951,7 @@ export default {
     //   }
     //   return str.length > 60 ? str.substring(0, 60) + '...' : str
     // },
-    filterSearch: function(tableData, searchVal) {
+    filterSearch: function (tableData, searchVal) {
       const search = searchVal.toLowerCase()
       if (search) {
         return tableData.filter(data => {
@@ -967,25 +968,10 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-.fa:hover::after {
-  display: none;
-}
-
-.fa-pencil {
-  display: none;
-  cursor: pointer;
-  margin-left: 5px;
-  font-size: 14px;
-}
-
-.fa-folder-open-o,
-.fa-file-o {
+.el-icon-folder,
+.el-icon-document {
   margin-right: 5px;
   font-size: 14px;
   color: #b3c0cd;
-}
-
-#bdtable tr:hover .fa-pencil {
-  display: inline-block;
 }
 </style>

@@ -9,17 +9,10 @@
               <!-- <el-button v-show="!editQuotaControl && !loading && !editQuota" class="modBtn" type="text" @click="editQuotaControl = !editQuotaControl">
                 <span :style="spanTxt">编辑</span>
               </el-button> -->
-              <el-switch
-                v-if="gateWaySwitch"
-                v-model="openStatic"
-                style="margin-left: 10px;margin-top: 2px;"
-                @change="changeSwitch"
-              />
+              <el-switch v-if="gateWaySwitch" v-model="openStatic" style="margin-left: 10px;margin-top: 2px;"
+                @change="changeSwitch" />
             </div>
-            <div
-              v-loading="loading"
-              class="param-bd"
-            >
+            <div v-loading="loading" class="param-bd">
               <ul class="item-descr-list">
                 <!-- <li>
                   <span class="item-descr-tit">当前桶的统计功能</span>
@@ -39,109 +32,57 @@
                 </li> -->
               </ul>
               <div v-show="!loading && flage">
-                <h3
-                  style="font-size:16px;display:inline-block;"
-                  class="mv_10"
-                >配额详情</h3>
-                <el-button
-                  v-show="!editQuota"
-                  type="text"
-                  @click="SetBucketQuota"
-                >
+                <h3 style="font-size:16px;display:inline-block;" class="mv_10">配额详情</h3>
+                <el-button v-show="!editQuota" type="text" @click="SetBucketQuota">
                   <span style="color:#ff8746">设置桶配额</span>
                 </el-button>
                 <div style="width: 50%;">
-                  <el-descriptions
-                    :content-style="rowCenter"
-                    :label-style="rowCenter"
-                    title=""
-                    direction="vertical"
-                    :column="2"
-                    border
-                  >
+                  <el-descriptions :content-style="rowCenter" :label-style="rowCenter" title="" direction="vertical"
+                    :column="2" border>
                     <el-descriptions-item label="对象已用总数(个)">
                       <el-tag size="small">{{ bucket.useCount | precisionNum }}</el-tag>
                     </el-descriptions-item>
                     <el-descriptions-item label="对象已用总容量">
                       <el-tag size="small">{{ byteConvert(bucket.useSize) }}</el-tag>
                     </el-descriptions-item>
-                    <el-descriptions-item
-                      v-if="!editQuota"
-                      label="配置对象总数上限"
-                    >
-                      <el-tag size="small">{{ bucket.logicCount < 0 || bucket.logicCount == 0? '无限制' : bucket.logicCount | precisionNum }}</el-tag>
+                    <el-descriptions-item v-if="!editQuota" label="配置对象总数上限">
+                      <el-tag size="small">{{ bucket.logicCount < 0 || bucket.logicCount == 0 ? '无限制' : bucket.logicCount |
+                          precisionNum }}</el-tag>
                     </el-descriptions-item>
-                    <el-descriptions-item
-                      v-if="!editQuota"
-                      label="配置对象总容量上限"
-                    >
-                      <el-tag size="small">{{ bucket.logicSize < 0 || bucket.logicSize == 0 ? '无限制' : objectLogicSize }}</el-tag>
+                    <el-descriptions-item v-if="!editQuota" label="配置对象总容量上限">
+                      <el-tag size="small">{{ bucket.logicSize < 0 || bucket.logicSize == 0 ? '无限制' : objectLogicSize
+                          }}</el-tag>
                     </el-descriptions-item>
                   </el-descriptions>
                 </div>
-                <div
-                  v-if="editQuota"
-                  style="width: 50%;"
-                >
-                  <el-form
-                    ref="form"
-                    :model="form"
-                    :rules="rules"
-                  >
+                <div v-if="editQuota" style="width: 50%;">
+                  <el-form ref="form" :model="form" :rules="rules">
                     <el-table :data="[form]">
                       <el-table-column label="设置对象总数">
                         <template slot-scope="scope">
-                          <el-switch
-                            v-model="bucket.limitCount"
-                            active-text="无限制"
-                            inactive-text="自定义"
-                            @change="data => changeLimtCount(data, 'count')"
-                          />
-                          <el-form-item
-                            v-if="!bucket.limitCount"
-                            prop="bucketLogicCount"
-                          >
-                            <el-input
-                              v-model="scope.row.bucketLogicCount"
-                              style="width:70%;"
-                              placeholder="请输入正整数"
-                              @input="value => scope.row.bucketLogicCount = value.replace(/(^0+)|\D/g, '')"
-                            />
+                          <el-switch v-model="bucket.limitCount" active-text="无限制" inactive-text="自定义"
+                            @change="data => changeLimtCount(data, 'count')" />
+                          <el-form-item v-if="!bucket.limitCount" prop="bucketLogicCount">
+                            <el-input v-model="scope.row.bucketLogicCount" style="width:70%;" placeholder="请输入正整数"
+                              @input="value => scope.row.bucketLogicCount = value.replace(/(^0+)|\D/g, '')" />
                           </el-form-item>
                         </template>
                       </el-table-column>
                       <el-table-column label="设置对象总容量">
                         <template slot-scope="scope">
-                          <el-switch
-                            v-model="bucket.limitSize"
-                            active-text="无限制"
-                            inactive-text="自定义"
-                            @change="data => changeLimtCount(data, 'size')"
-                          />
-                          <el-row
-                            v-if="!bucket.limitSize"
-                            :gutter="20"
-                          >
+                          <el-switch v-model="bucket.limitSize" active-text="无限制" inactive-text="自定义"
+                            @change="data => changeLimtCount(data, 'size')" />
+                          <el-row v-if="!bucket.limitSize" :gutter="20">
                             <el-col :span="10">
                               <el-form-item prop="bucketLogicSize">
-                                <el-input
-                                  v-model="scope.row.bucketLogicSize"
-                                  placeholder="请输入有效的容量数值"
-                                />
+                                <el-input v-model="scope.row.bucketLogicSize" placeholder="请输入有效的容量数值" />
                               </el-form-item>
                             </el-col>
                             <el-col :span="10">
                               <el-form-item prop="logicUnit">
-                                <el-select
-                                  v-model="scope.row.logicUnit"
-                                  @change="changelogicUnit"
-                                >
-                                  <el-option
-                                    v-for="item in sizeSelect"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value"
-                                  />
+                                <el-select v-model="scope.row.logicUnit" @change="changelogicUnit">
+                                  <el-option v-for="item in sizeSelect" :key="item.value" :label="item.label"
+                                    :value="item.value" />
                                 </el-select>
                               </el-form-item>
                             </el-col>
@@ -156,14 +97,8 @@
                   <el-switch v-model="bucket.noLimit"></el-switch>
                 </div> -->
                   <el-row class="mt-10">
-                    <el-button
-                      class="blue"
-                      @click="editQuota = false; getBucketStatic()"
-                    >取消</el-button>
-                    <el-button
-                      class="golden"
-                      @click="setQuota"
-                    >应用</el-button>
+                    <el-button class="blue" @click="editQuota = false; getBucketStatic()">取消</el-button>
+                    <el-button class="golden" @click="setQuota">应用</el-button>
                   </el-row>
                 </div>
               </div>
@@ -180,13 +115,13 @@ import {
 } from '@/api/storage'
 export default {
   filters: {
-    precisionNum(val) {
+    precisionNum (val) {
       if (!val) return '0'
       const reg = /\B(?=(\d{3})+(?!\d))/g
       return String(val).replace(reg, ',')
     }
   },
-  data() {
+  data () {
     const checkLogicSize = (rule, data, callback) => {
       console.log(data, 'wws')
 
@@ -285,17 +220,17 @@ export default {
     }
   },
   computed: {
-    convertSize() {
+    convertSize () {
       return this.byteConvert(this.bucket.useSize)
     }
   },
-  mounted() {
+  mounted () {
     this.gettGateway()
   },
-  destroyed() {
+  destroyed () {
   },
   methods: {
-    changelogicUnit(val) {
+    changelogicUnit (val) {
       if (val == 'bytes') {
         this.form.bucketLogicSize = ''
       } else if (val == 'KB') {
@@ -308,7 +243,7 @@ export default {
         this.form.bucketLogicSize = ''
       }
     },
-    gettGateway() {
+    gettGateway () {
       if (localStorage.getItem('isHtGateway') == 'true') {
         this.gateWaySwitch = false
         this.flage = true
@@ -330,13 +265,13 @@ export default {
         })
       }
     },
-    changeSwitch() {
+    changeSwitch () {
       this.flage = !this.flage
       UpdateBucketQuota({
         bucketName: this.$route.params.id,
         openStatic: this.openStatic
       }).then(() => {
-        this.$ts({
+        this.$msg({
           type: 'success',
           text: this.$ts('response.success')
         })
@@ -344,7 +279,7 @@ export default {
         console.error(err)
       })
     },
-    changeLimtCount(data, type) {
+    changeLimtCount (data, type) {
       if (type == 'count') {
         !data ? this.bucket.logicCount < 0 ? this.form.bucketLogicCount = '' : null : null
       } else if (type == 'size') {
@@ -352,7 +287,7 @@ export default {
       }
     },
 
-    covertByte(num, range) {
+    covertByte (num, range) {
       switch (range) {
         case 'bytes':
           return num * 1
@@ -366,12 +301,12 @@ export default {
           return num * 1024 ** 4
       }
     },
-    doSave() {
+    doSave () {
       UpdateBucketQuota({
         bucketName: this.$route.params.id,
         openStatic: true
       }).then(() => {
-        // this.$ts({
+        // this.$msg({
         //   type: 'success',
         //   text: this.$ts('response.success')
         // })
@@ -382,11 +317,11 @@ export default {
       })
       // this.openStatic
     },
-    cancelSave() {
+    cancelSave () {
       this.getBucketStatic()
       this.editQuota = false
     },
-    SetBucketQuota() {
+    SetBucketQuota () {
       this.editQuota = true
       // const value = this.byteConvertImpl(this.bucket.logicSize)
       this.form.bucketLogicCount = this.bucket.logicCount
@@ -398,7 +333,7 @@ export default {
         this.form.logicUnit = this.byteConvertImpl(this.bucket.logicSize, this.symbols)[1]
       }
     },
-    getBucketStatic() {
+    getBucketStatic () {
       // 初始化 获取开关
       this.editQuotaControl = false
       this.loading = true
@@ -423,7 +358,7 @@ export default {
         //   logicCount < useCount, logicSize < useSize, logicCount == 0, logicSize == 0, logicCount, logicSize
         // )
         if ((!this.bucket.limitCount && logicCount < useCount) || (!this.bucket.limitSize && logicSize < useSize)) {
-          this.$ts({
+          this.$msg({
             text: '当前桶对象数或总容量已超出当前配额限制，请及时更改相关配置或删除对象',
             type: 'warn',
             duration: 8000
@@ -436,7 +371,7 @@ export default {
           this.loading = false
         })
     },
-    setQuota() {
+    setQuota () {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           // console.log(valid)
@@ -453,7 +388,7 @@ export default {
           }).then(() => {
             this.editQuota = false
             this.getBucketStatic()
-            this.$ts({
+            this.$msg({
               text: this.$ts('response.success'),
               type: 'success'
             })
@@ -489,11 +424,13 @@ export default {
     color: #ccc;
   }
 }
+
 .el-tag {
   color: #e39606;
   background-color: #384348;
   border-color: transparent;
 }
+
 ::v-deep .el-form-item__error {
   width: 250px;
 }

@@ -1,87 +1,49 @@
 <template>
   <div>
-    <el-table
-      ref="multipleTable"
-      v-loading="loading"
-      stripe
-      border
-      :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-      tooltip-effect="dark"
-      style="width: 100%"
-      @sort-change="sortFunction"
-    >
-      <el-table-column
-        prop="userName"
-        :label="`${$ts('user.name')}(AK)`"
-        sortable="custom"
-      >
+    <el-table ref="multipleTable" v-loading="loading" stripe border
+      :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)" tooltip-effect="dark" style="width: 100%"
+      @sort-change="sortFunction">
+      <el-table-column prop="userName" :label="`${$ts('user.name')}(AK)`" sortable="custom">
         <template slot-scope="scope">
           <el-tooltip placement="top" :content="$ts('user.table.detail')">
-            <a
-              v-access:disable="'admin:GetUser'"
-              class="blue"
-              @click="viewDetail(scope.row.userName)"
-            >
+            <a v-access:disable="'admin:GetUser'" class="blue" @click="viewDetail(scope.row.userName)">
               {{ scope.row.userName }}
             </a>
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="userType"
-        label="用户类型"
-        sortable="custom"
-      >
+      <el-table-column prop="userType" label="用户类型" sortable="custom">
         <template slot-scope="scope">
-          <span>{{ Number(scope.row.userType)==1?'普通用户':Number(scope.row.userType)==2?'工号用户':Number(scope.row.userType)==0?'管理员':'' }}</span>
+          <span>{{
+            Number(scope.row.userType) == 1 ? '普通用户' : Number(scope.row.userType) == 2 ? '工号用户' : Number(scope.row.userType) == 0 ?'管理员':''
+            }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="创建时间"
-        sortable="custom"
-        prop="createTime"
-      >
+      <el-table-column label="创建时间" sortable="custom" prop="createTime">
         <template slot-scope="scope">
           {{ formatDate(scope.row.createTime) }}
         </template>
       </el-table-column>
-      <el-table-column
-        label="状态"
-        sortable="custom"
-        prop="status"
-      >
+      <el-table-column label="状态" sortable="custom" prop="status">
         <template slot-scope="scope">
-          <span
-            v-if="scope.row.status == 1"
-            class="status_green"
-          >启用</span>
-          <span
-            v-else-if="scope.row.status == 0"
-            class="status_red"
-          > 未启用 </span>
+          <span v-if="scope.row.status == 1" class="status_green">启用</span>
+          <span v-else-if="scope.row.status == 0" class="status_red"> 未启用 </span>
         </template>
       </el-table-column>
-      <el-table-column
-        :label="$ts('action')"
-        align="center"
-      >
+      <el-table-column :label="$ts('action')" align="center">
         <template slot-scope="scope">
-          <svg v-if="scope.row.userName !== 'superAdmin' && $store.state.role==='superAdmin'"  v-access="'admin:DeleteUser'" @click="selectUser = scope.row; deleteFlag = true" class="icon icon-trash" aria-hidden="true">
+          <svg v-if="scope.row.userName !== 'superAdmin' && $store.state.role === 'superAdmin'"
+            v-access="'admin:DeleteUser'" @click="selectUser = scope.row; deleteFlag = true" class="icon icon-trash"
+            aria-hidden="true">
             <use xlink:href="#icon-trash" />
           </svg>
         </template>
       </el-table-column>
     </el-table>
     <div class="page_block">
-      <el-pagination
-        :current-page="currentPage"
-        :page-sizes="[5, 10, 50, 100]"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      <el-pagination :current-page="currentPage" :page-sizes="[5, 10, 50, 100]" :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
     </div>
     <el-dialog title="删除用户" :visible.sync="deleteFlag" width="650px">
       <p>删除如下用户(AK):
@@ -104,7 +66,7 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       selectUser: '',
       deleteFlag: false,
@@ -121,7 +83,7 @@ export default {
   },
 
   watch: {
-    searchVal(val) {
+    searchVal (val) {
       this.tableData = [...this.cloneData]
       this.total = this.tableData.length
       this.currentPage = 1
@@ -132,16 +94,16 @@ export default {
       this.total = this.tableData.length
     }
   },
-  created() {
+  created () {
   },
-  mounted() {
+  mounted () {
     this.listUser()
   },
   methods: {
-    deleteUser() {
+    deleteUser () {
       deleteUser(this.selectUser.userName)
         .then(res => {
-          this.$ts({
+          this.$msg({
             type: 'success',
             text: this.$ts('response.success')
           })
@@ -155,7 +117,7 @@ export default {
           this.selectUser = ''
         })
     },
-    confirmDelete() {
+    confirmDelete () {
       if (this.selectUser.groups && this.selectUser.groups.length) {
         this.deleteFlag = false
         this.$confirm(
@@ -173,10 +135,10 @@ export default {
         this.deleteUser()
       }
     },
-    viewDetail(name) {
-      this.$router.push({ name: 'UserDetail', params: { name }})
+    viewDetail (name) {
+      this.$router.push({ name: 'UserDetail', params: { name } })
     },
-    listUser() {
+    listUser () {
       this.loading = true
       this.currentPage = 1
       listUsers()
@@ -193,15 +155,15 @@ export default {
           this.loading = false
         })
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       this.pageSize = val
       /* this.listUser();*/
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       this.currentPage = val
       /* this.listUser();*/
     },
-    toggleSelection(rows) {
+    toggleSelection (rows) {
       if (rows) {
         rows.forEach(row => {
           this.$refs.multipleTable.toggleRowSelection(row)
@@ -210,7 +172,7 @@ export default {
         this.$refs.multipleTable.clearSelection()
       }
     },
-    sortFunction(val) {
+    sortFunction (val) {
       this.prop = val.prop
       this.order = val.order
       this.tableData.sort(this.sortMethod(val.prop, val.order))

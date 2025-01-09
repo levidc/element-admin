@@ -2,171 +2,82 @@
   <div>
     <div class="page_content_wrap">
       <div class="mb_15 clearfix">
-        <el-button
-          v-access="'admin:AddStorageResourceController'"
-          class="golden"
-          type="primary"
-          @click="showCreate('object')"
-        >创建</el-button>
+        <el-button v-access="'admin:AddStorageResourceController'" class="golden" type="primary"
+          @click="showCreate('object')">创建</el-button>
         <div class="right">
-          <el-tooltip
-            content="刷新"
-            placement="top"
-            effect="dark"
-          >
-            <i
-              class="el-icon-refresh"
-              @click="init"
-            />
+          <el-tooltip content="刷新" placement="top" effect="dark">
+            <i class="el-icon-refresh" @click="init" />
           </el-tooltip>
         </div>
         <div class="right clearfix">
-          <el-input
-            v-model="filterText"
-            class="search_style search_btn right with_search mr_10"
-            placeholder="资源名称过滤"
-            clearable
-          />
+          <el-input v-model="filterText" class="search_style search_btn right with_search mr_10" placeholder="资源名称过滤"
+            clearable />
         </div>
       </div>
-      <TableData
-        ref="tab"
-        :loading="loading"
-        :row-key="rendeKey"
-        :table-data="tableData"
-        :columns="tableColumns"
-        :page-obj="{ ...pageObj }"
-        :sort-function="sortFunction"
-      >
-        <el-table-column
-          slot="url"
-          label="地址"
-          prop="url"
-          sortable="custom"
-          min-width="200px"
-        >
+      <TableData ref="tab" :loading="loading" :row-key="rendeKey" :table-data="tableData" :columns="tableColumns"
+        :page-obj="{ ...pageObj }" :sort-function="sortFunction">
+        <el-table-column slot="url" label="地址" prop="url" sortable="custom" min-width="200px">
           <template slot-scope="scope">
-            <el-tooltip
-              :content="scope.row.url"
-              placement="top"
-            >
+            <el-tooltip :content="scope.row.url" placement="top">
               <span>{{ scope.row.url }}</span>
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column
-          slot="action"
-          fixed="right"
-          :label="$ts('action')"
-          width="200px"
-        >
+        <el-table-column slot="action" fixed="right" :label="$ts('action')" width="200px">
           <template slot-scope="scope">
             <el-dropdown size="small">
-              <el-button
-                v-access="'admin:UpdateStorageResourceController' || 'admin:DeleteResourceController'"
-                type="primary"
-                class="blue"
-              >
+              <el-button v-access="'admin:UpdateStorageResourceController' || 'admin:DeleteResourceController'"
+                type="primary" class="blue">
                 {{ $ts('action') }}<i class="el-icon-arrow-down el-icon--right" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item
-                  v-access="'admin:UpdateStorageResourceController'"
-                  @click.native="updateForm(scope.row, true)"
-                >修改资源</el-dropdown-item>
-                <el-dropdown-item
-                  v-access="'admin:DeleteResourceController'"
-                  @click.native="handleDel('object', scope)"
-                >删除资源</el-dropdown-item>
+                <el-dropdown-item v-access="'admin:UpdateStorageResourceController'"
+                  @click.native="updateForm(scope.row, true)">修改资源</el-dropdown-item>
+                <el-dropdown-item v-access="'admin:DeleteResourceController'"
+                  @click.native="handleDel('object', scope)">删除资源</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
       </TableData>
     </div>
-    <el-dialog
-      :visible.sync="modelFormFlag"
-      width="35%"
-      :title="isAdd ? '创建资源' : '修改资源'"
-      @open="dialogOpen('tableFocus')"
-    >
-      <el-form
-        ref="form"
-        :model="form"
-        :rules="rules"
-        label-width="160px"
-      >
+    <el-dialog :visible.sync="modelFormFlag" width="35%" :title="isAdd ? '创建资源' : '修改资源'"
+      @open="dialogOpen('tableFocus')">
+      <el-form ref="form" :model="form" :rules="rules" label-width="160px">
         <el-row>
           <el-col :span="24">
-            <el-form-item
-              prop="storageName"
-              label="资源名称"
-            >
-              <el-input
-                ref="tableFocus"
-                v-model.trim="form.storageName"
-                placeholder="请输入2-64位中英文、数字、'_'或'-'"
-                clearable
-              />
+            <el-form-item prop="storageName" label="资源名称">
+              <el-input ref="tableFocus" v-model.trim="form.storageName" placeholder="请输入2-64位中英文、数字、'_'或'-'"
+                clearable />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item
-              prop="url"
-              label="地址"
-            >
+            <el-form-item prop="url" label="地址">
               <el-select v-model="form.url">
-                <el-option
-                  v-for="item in clientNas"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.label"
-                />
+                <el-option v-for="item in clientNas" :key="item.value" :label="item.label" :value="item.label" />
               </el-select>
               <!-- <el-input v-model.trim="form.url" placeholder="请输入2-64位字符" clearable /> -->
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item
-              prop="mountDir"
-              label="共享目录"
-            >
-              <el-input
-                v-model="form.mountDir"
-                placeholder="请输入共享目录"
-                :disabled="!isAdd"
-              />
+            <el-form-item prop="mountDir" label="共享目录">
+              <el-input v-model="form.mountDir" placeholder="请输入共享目录" :disabled="!isAdd" />
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button
-          class="golden"
-          type="primary"
-          @click="confirmCreate"
-        >{{ $ts('button.confirm') }}</el-button>
+      <div slot="footer" class="dialog-footer">
+        <el-button class="golden" type="primary" @click="confirmCreate">{{ $ts('button.confirm') }}</el-button>
         <el-button @click="modelFormFlag = false">{{ $ts('button.cancel') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog
-      :title="renderDel ? '删除资源' : '删除存储设备'"
-      :visible.sync="deleteFlag"
-      width="650px"
-    >
+    <el-dialog :title="renderDel ? '删除资源' : '删除存储设备'" :visible.sync="deleteFlag" width="650px">
       <p>{{ renderDel ? `删除如下存储资源:${selectRow.storageName}` : `删除如下存储设备: ${selectRow.deviceName}` }}
       </p>
       <div slot="footer">
-        <el-button
-          type="primary"
-          class="golden"
-          @click="deleteForm"
-        >{{ $ts('delete') }}</el-button>
+        <el-button type="primary" class="golden" @click="deleteForm">{{ $ts('delete') }}</el-button>
         <el-button @click="deleteFlag = false">{{ $ts('cancel') }}</el-button>
       </div>
     </el-dialog>
@@ -186,7 +97,7 @@ import {
 } from '@/api/storage'
 import { validBucketName, validateMaxInt } from '@/utils/validate'
 export default {
-  data() {
+  data () {
     return {
       timer: null,
       enumStorageType: [
@@ -414,16 +325,16 @@ export default {
     }
   },
   computed: {
-    isAdd() {
+    isAdd () {
       return this.opType === 'add'
     },
-    isAddDevice() {
+    isAddDevice () {
       return this.optDType === 'add'
     },
-    renderDel() {
+    renderDel () {
       return this.opType === 'del'
     },
-    getStorageType() {
+    getStorageType () {
       return this.form.storageType
     },
     ...mapState(['api'])
@@ -440,26 +351,26 @@ export default {
     //     this.$refs['tipref'].style.display = 'none'
     //   }
     // }
-    modelFormFlag(val) {
+    modelFormFlag (val) {
       if (val) {
         clearTimeout(this.timer)
       } else {
         this.init(true)
       }
     },
-    'form.storageType': function(val) {
+    'form.storageType': function (val) {
       if (val === 'S3') {
         this.form.nasAdvancedConfig = false
         this.$refs['form'].clearValidate()
       }
     },
-    deleteFlag(val) {
+    deleteFlag (val) {
       if (!val) {
         this.opType = 'add'
         this.optDType = 'add'
       }
     },
-    filterText(val) {
+    filterText (val) {
       this.tableData = JSON.parse(JSON.stringify(this.copyData))
       if (!val) {
         this.init(true)
@@ -469,23 +380,23 @@ export default {
       this.$refs['tab'].currentPage = 1
       this.tableData = this.tableData.filter(item => item.storageName.toLowerCase().indexOf(val.toLowerCase()) > -1)
     },
-    defNextFlag(val) {
+    defNextFlag (val) {
       if (!val) {
         Object.assign(this.defNextForm, { flag: 'next', radio: '', search: '', resourceId: '' })
       }
     }
   },
-  mounted() {
+  mounted () {
     // this.prop = this.defaultSort.prop
     // this.order = this.defaultSort.order
     // console.log('%c nas', 'color:red')
     this.init(true)
   },
-  destroyed() {
+  destroyed () {
     clearTimeout(this.timer)
   },
   methods: {
-    inputPositiveNum(ipt, value) {
+    inputPositiveNum (ipt, value) {
       const val = value.split('.')
       if (val && val.length == 1) {
         this.$set(this.form, value, ipt.replace(/(^0+)|\D/g, ''))
@@ -493,21 +404,21 @@ export default {
         this.$set(this.form[val[0]], val[1], ipt.replace(/(^0+)|\D/g, ''))
       }
     },
-    handleExpand(row, expand) {
+    handleExpand (row, expand) {
       // console.log(row, expand)
     },
-    transByteToGB(data) {
+    transByteToGB (data) {
       // ByteToGB、
       const res = (Number(data) / 1024 ** 3).toFixed(2)
       return res == 0 ? 0 : res
     },
-    handleRowChange(row) {
+    handleRowChange (row) {
       // 请求成功清除数据 row调用为null
       const resourceId = row && row.resourceId
       this.defNextForm.radio = resourceId
       this.defNextForm.resourceId = resourceId
     },
-    defSearch() {
+    defSearch () {
       this.defNextResource = JSON.parse(JSON.stringify(this.copyDefNextResource))
       if (!this.defNextForm.search) {
         return
@@ -519,15 +430,15 @@ export default {
         })
       }
     },
-    sortFunctionDef(val) {
+    sortFunctionDef (val) {
       this.defNextSort.prop = val.prop
       this.defNextSort.order = val.order
       this.defNextResource.sort(this.sortMethod(val.prop, val.order))
     },
-    getCurrentRow(row) {
+    getCurrentRow (row) {
       this.defNextForm.resourceId = row.resourceId
     },
-    transferBool(val) {
+    transferBool (val) {
       return this.stringToBoolean(val)
     },
     // confirmDefNext () {
@@ -562,7 +473,7 @@ export default {
     //       this.copyData = JSON.parse(JSON.stringify(this.tableData))
     //       const row = this.tableData.find(item => item.deviceId === this.defNextForm.deviceId)
     //       this.handleDefNextFlag(row)
-    //       this.$ts({
+    //       this.$msg({
     //         type: 'success',
     //         text: '操作成功'
     //       })
@@ -577,16 +488,16 @@ export default {
     //   this.defNextForm.deviceId = row.deviceId
     //   this.defNextFlag = true
     // },
-    handleDemi(row, _, value) {
+    handleDemi (row, _, value) {
       value = String(value)
       const reg = /\B(?=(\d{3})+(?!\d))/g
       return value.replace(reg, ',')
     },
-    filterNode(value, data) {
+    filterNode (value, data) {
       if (!value) return true
       return (data.deviceName || data.storageName).indexOf(value) !== -1
     },
-    getInfo(node, data) {
+    getInfo (node, data) {
       if (Object.keys(node).includes('storageResourceModelList')) {
         this.updateDevice(node)
         this.showDescDevice = 'device'
@@ -597,10 +508,10 @@ export default {
         // render object
       }
     },
-    rendeKey(row) {
+    rendeKey (row) {
       return row.resourceId
     },
-    handleDel(type, { row }) {
+    handleDel (type, { row }) {
       if (type === 'device') {
         this.optDType = 'del'
       } else if (type === 'object') {
@@ -630,12 +541,12 @@ export default {
     // renderStatus (__, _, v) {
     //   return this.stringToBoolean(v) ? <span class='green'>是</span> : <span class='red'>否</span>
     // },
-    sortFunction(val) {
+    sortFunction (val) {
       this.prop = val.prop
       this.order = val.order
       this.tableData.sort(this.sortMethod(val.prop, val.order))
     },
-    init(flag = false) {
+    init (flag = false) {
       // this.showDescDevice = ''
       if (flag) {
         this.loading = true
@@ -682,7 +593,7 @@ export default {
       //   this.loading = false
       // })
     },
-    async updateForm(row, flag = false) {
+    async updateForm (row, flag = false) {
       this.opType = 'update'
       // console.log(row, 'updateForm')
       // this.form.nasAdvancedConfig = false
@@ -694,7 +605,7 @@ export default {
         this.modelFormFlag = true
       }
     },
-    updateDevice(row, flag = false) {
+    updateDevice (row, flag = false) {
       this.optDType = 'update'
       Object.assign(this.deviceForm, {
         ...row, isDefault: this.stringToBoolean(row.default)
@@ -706,7 +617,7 @@ export default {
         })
       }
     },
-    createDevice() {
+    createDevice () {
       this.$refs['Dform'].validate((valid) => {
         if (valid) {
           const { deviceName, isDefault, deviceId } = this.deviceForm
@@ -714,7 +625,7 @@ export default {
             addStorageDevice({
               deviceName, default: isDefault
             }).then(() => {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
@@ -728,7 +639,7 @@ export default {
             updateStorageDevice({
               default: isDefault, deviceId
             }).then(() => {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
@@ -741,26 +652,26 @@ export default {
         // console.log(valid, 'valid', this.deviceForm)
       })
     },
-    getRowClass({ row }) {
+    getRowClass ({ row }) {
       if (row.storageResourceModelList && !row.storageResourceModelList.length) {
         return ['hide-dropdown']
       } else {
         return ['']
       }
     },
-    expandChange(row, any) {
+    expandChange (row, any) {
       this.$set(row, 'loading', true)
       setTimeout(() => {
         this.$set(row, 'loading', false)
       }, 200)
     },
-    dialogOpen(e) {
+    dialogOpen (e) {
       const ipt = e
-      this.$nextTick(function() {
+      this.$nextTick(function () {
         this.$refs[ipt].$el.querySelector('input').focus()
       })
     },
-    async showCreate(cName, id = '') {
+    async showCreate (cName, id = '') {
       if (cName === 'device') {
         Object.assign(this.deviceForm, {
           deviceName: '',
@@ -813,7 +724,7 @@ export default {
         })
       }
     },
-    async loadAsyncOption() {
+    async loadAsyncOption () {
       const res = await getInstanceByServiceName()
       this.clientNas = (res.data || []).filter(item => item.healthy).map((item, index) => {
         const { hostName } = item.endPoints.CONTROL
@@ -830,7 +741,7 @@ export default {
     //     value: item.deviceId
     //   }
     // })
-    deleteForm() {
+    deleteForm () {
       if (this.renderDel) {
         const { resourceId, deviceId } = this.selectRow
         removeObjectStorageResource({
@@ -839,7 +750,7 @@ export default {
         })
           .then(res => {
             if (res.msg === 'success') {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
@@ -857,7 +768,7 @@ export default {
           deviceId: this.selectRow.deviceId
         }).then((res) => {
           if (res.msg === 'success') {
-            this.$ts({
+            this.$msg({
               type: 'success',
               text: this.$ts('response.success')
             })
@@ -868,7 +779,7 @@ export default {
         })
       }
     },
-    confirmCreate() {
+    confirmCreate () {
       this.$refs['form'].validate((valid) => {
         const {
           userName,
@@ -909,7 +820,7 @@ export default {
             }
             addObjectStorageResource(data)
               .then((res) => {
-                this.$ts({
+                this.$msg({
                   type: 'success',
                   text: this.$ts('response.success')
                 })
@@ -938,7 +849,7 @@ export default {
             reqParams.resourceId = this.form.resourceId
             reqParams.deviceId = '66666666666666666'
             if (Object.keys(reqParams).length == 2) {
-              this.$ts({
+              this.$msg({
                 type: 'success',
                 text: this.$ts('response.success')
               })
@@ -949,7 +860,7 @@ export default {
 
             updateObjectStorageResource(reqParams)
               .then((res) => {
-                this.$ts({
+                this.$msg({
                   type: 'success',
                   text: this.$ts('response.success')
                 })
@@ -993,7 +904,7 @@ export default {
         width: 175px !important;
         margin-left: -6px !important;
 
-        & + .el-form-item__content {
+        &+.el-form-item__content {
           margin-left: 15px !important;
         }
       }
@@ -1098,7 +1009,7 @@ export default {
     flex: 1;
     min-height: 300px;
 
-    > div {
+    >div {
       .el-descriptions {
         width: 80%;
       }

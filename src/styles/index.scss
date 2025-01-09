@@ -1136,10 +1136,10 @@ div.jsoneditor-menu {
 }
 .icon-question{
   font-size: 16px;
+  position: relative;
+  top: 1px;
 }
 .icon-trash,
-.fa-pencil,
-.fa-trash-o,
 .el-icon-plus {
   cursor: pointer;
   font-size: 14px;

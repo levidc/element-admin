@@ -5,6 +5,8 @@
       id="bdtable"
       ref="multipleTable"
       v-loading="loading"
+      stripe
+      border
       :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
       tooltip-effect="dark"
       style="width: 100%"
@@ -44,7 +46,7 @@
               @click="goToFile(scope.row)"
             >
               <i
-                class="fa fa-file-o"
+                class="el-icon-document"
                 aria-hidden="true"
               />
               {{ scope.row.Key }}
@@ -61,7 +63,7 @@
               :to="{name: 'BucketList',query:{file:false,filename:$route.query.filename?$route.query.filename+scope.row.Prefix:scope.row.Prefix}}"
             >
               <i
-                class="fa fa-folder-open-o"
+                class="el-icon-folder"
                 aria-hidden="true"
               />
               {{ scope.row.Prefix }}
@@ -141,7 +143,6 @@
     <!-- 对象详情页 -->
     <!-- <ObjectDetail v-if="showFileConfig" type="content" /> -->
     <el-dialog
-
       title="添加标签"
       :visible.sync="isAddInfo"
       width="800px"
@@ -168,7 +169,7 @@
                   trigger="hover"
                   content="标签键区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符"
                 >
-                  <span slot="reference">名称&nbsp;<i class="fa  fa-question-circle" /></span>
+                  <!-- <span slot="reference">名称&nbsp;<i class="fa  fa-question-circle" /></span> -->
                 </el-popover>
               </template>
               <template slot-scope="scope">
@@ -196,7 +197,7 @@
                   trigger="hover"
                   content="标签值区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符"
                 >
-                  <span slot="reference">标签值&nbsp;<i class="fa  fa-question-circle" /></span>
+                  <!-- <span slot="reference">标签值&nbsp;<i class="fa  fa-question-circle" /></span> -->
                 </el-popover>
               </template>
               <template slot-scope="scope">
@@ -254,7 +255,6 @@
       </el-row>
     </el-dialog>
     <el-dialog
-
       title="权限设置"
       :visible.sync="isSetAccess"
       width="800px"
@@ -282,7 +282,7 @@
                   trigger="hover"
                   content="标签键区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符"
                 >
-                  <span slot="reference">名称&nbsp;<i class="fa  fa-question-circle" /></span>
+                  <!-- <span slot="reference">名称&nbsp;<i class="fa  fa-question-circle" /></span> -->
                 </el-popover>
               </template>
               <template slot-scope="scope">
@@ -310,7 +310,7 @@
                   trigger="hover"
                   content="标签值区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符"
                 >
-                  <span slot="reference">标签值&nbsp;<i class="fa  fa-question-circle" /></span>
+                  <!-- <span slot="reference">标签值&nbsp;<i class="fa  fa-question-circle" /></span> -->
                 </el-popover>
               </template>
               <template slot-scope="scope">
@@ -386,7 +386,7 @@
                   trigger="hover"
                   content="标签键区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符"
                 >
-                  <span slot="reference">名称&nbsp;<i class="fa  fa-question-circle" /></span>
+                  <!-- <span slot="reference">名称&nbsp;<i class="fa  fa-question-circle" /></span> -->
                 </el-popover>
               </template>
               <template slot-scope="scope">
@@ -414,7 +414,7 @@
                   trigger="hover"
                   content="标签值区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符"
                 >
-                  <span slot="reference">标签值&nbsp;<i class="fa  fa-question-circle" /></span>
+                  <!-- <span slot="reference">标签值&nbsp;<i class="fa  fa-question-circle" /></span> -->
                 </el-popover>
               </template>
               <template slot-scope="scope">
@@ -474,7 +474,6 @@
       </div>
     </el-dialog>
     <el-dialog
-
       title="重命名对象"
       :visible.sync="isRenameFile"
       width="550px"
@@ -500,7 +499,10 @@
           />
         </el-col>
       </el-row>
-      <div slot="footer" class="dialog-footer">
+      <div
+        slot="footer"
+        class="dialog-footer"
+      >
         <el-button type="primary">{{ $ts('button.confirm') }}</el-button>
         <el-button @click="isRenameFile = false;">{{ $ts('button.cancel') }}</el-button>
       </div>
@@ -517,7 +519,7 @@ export default {
       default: ''
     }
   },
-  data() {
+  data () {
     return {
       rDetail: false,
       loading: false,
@@ -541,7 +543,7 @@ export default {
     }
   },
   computed: {
-    showFileConfig() {
+    showFileConfig () {
       // 控制显示对象详情页
       if (
         this.$route.query.filename &&
@@ -556,17 +558,17 @@ export default {
     }
   },
   watch: {
-    $route(to, from) {
+    $route (to, from) {
       this.currentPage = 1
     },
-    loading(val) {
+    loading (val) {
       if (val) {
         this.$emit('disablePathClick', true)
       } else {
         this.$emit('disablePathClick', false)
       }
     },
-    searchVal(cur, pre) {
+    searchVal (cur, pre) {
       if (!cur && pre) {
         this.listObject()
         // this.loading = true
@@ -579,14 +581,14 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.listObject()
   },
   methods: {
-    copyCode(row) {
+    copyCode (row) {
       const str = row.type == 'f' ? row.Key : row.type == 'd' ? row.Prefix : ''
       if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
-        this.$ts({
+        this.$msg({
           type: 'success',
           text: '复制成功'
         })
@@ -596,7 +598,7 @@ export default {
         textarea.value = str
         document.body.append(textarea)
         textarea.select()
-        this.$ts({
+        this.$msg({
           type: 'success',
           text: '复制成功'
         })
@@ -606,7 +608,7 @@ export default {
         })
       }
     },
-    goToFile(row) {
+    goToFile (row) {
       this.$router.push({
         name: 'ObjectDetail',
         query: {
@@ -618,29 +620,29 @@ export default {
         }
       })
     },
-    cellcb(row) {
+    cellcb (row) {
       // 删除文件 区分 对象和文件夹？
       // if (row.row.type === 'd' && row.columnIndex === 0) {
       //   return 'myCell'
       // }
     },
-    dialogOpen(e) {
+    dialogOpen (e) {
       const ipt = e
-      this.$nextTick(function() {
+      this.$nextTick(function () {
         this.$refs[ipt].$el.querySelector('input').focus()
       })
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       this.pageSize = val
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       if (this.StartAfter && val == Math.ceil(this.total / this.pageSize)) {
         // console.log('lastPage', this.StartAfter)
         this.listObject(true)
       }
       this.currentPage = val
     },
-    toggleSelection(rows) {
+    toggleSelection (rows) {
       if (rows) {
         rows.forEach(row => {
           this.$refs.multipleTable.toggleRowSelection(row)
@@ -649,14 +651,14 @@ export default {
         this.$refs.multipleTable.clearSelection()
       }
     },
-    sortFunction(val) {
+    sortFunction (val) {
       this.prop = val.prop || ''
       this.order = val.order || ''
       this.tableData.sort(this.sortMethod(this.prop, this.order, 'Key'))
     },
-    sortMethod(prop, order, props) {
+    sortMethod (prop, order, props) {
       const _this = this
-      return function(obj1, obj2) {
+      return function (obj1, obj2) {
         if (prop == '' || order == '') {
           return 0
         }
@@ -700,7 +702,7 @@ export default {
         }
       }
     },
-    doModifyAccess: function(row) {
+    doModifyAccess: function (row) {
       this.$emit('doModifyAccess', row)
     },
     // doDeleteFolder: function (row) {
@@ -712,15 +714,15 @@ export default {
     // doAddInfo: function (row) {
     //   this.isAddInfo = true
     // },
-    doSetAccess: function(row) {
+    doSetAccess: function (row) {
       this.isSetAccess = true
     },
-    doRenameFile: function(row) {
+    doRenameFile: function (row) {
       this.isRenameFile = true
       this.oldFileName = row.name
       this.newFileName = row.name
     },
-    filterSearch: function(tableData, searchVal) {
+    filterSearch: function (tableData, searchVal) {
       const search = searchVal.toLowerCase()
       if (search) {
         return tableData.filter(data => {
@@ -734,14 +736,14 @@ export default {
       return tableData
     },
     // 过滤接口接入不到、超过1000、本地缓存数据、做过滤
-    searchPrefix() {
+    searchPrefix () {
       this.currentPage = 1
       this.listObject()
       // this.tableData = this.filterSearch(JSON.parse(JSON.stringify(this.copyData)), this.searchVal)
       // this.total = this.tableData.length
       // this.currentPage = 1
     },
-    listObject(flag) {
+    listObject (flag) {
       // flag 重置不做缓存
       this.loading = true
       // 跳转需要重置页数、当请求超过最大对象数量时、需要在此时判断其页数
@@ -755,7 +757,7 @@ export default {
           Bucket: this.$route.params.id,
           Prefix,
           Delimiter: '/',
-          StartAfter: this.StartAfter,
+          StartAfter: Prefix + this.StartAfter,
           MaxKeys: this.perCount
           // MaxKeys: 100
         }
@@ -799,14 +801,14 @@ export default {
             data.Contents[i].type = 'f'
             // pathStrArr = data.Contents[i].Key.split('/')
             // 请求prefix作为分隔当前key的存在、匹配第一个
-            try {
-              const flag = JSON.parse(data.Contents[i].ETag) === 'null' || JSON.parse(data.Contents[i].ETag) === 'empty' || !data.Contents[i].Key
-              if (flag) {
-                continue
-              }
-            } catch (error) {
-              continue
-            }
+            // try {
+            //   const flag = JSON.parse(data.Contents[i].ETag) === 'null' || JSON.parse(data.Contents[i].ETag) === 'empty' || !data.Contents[i].Key
+            //   if (flag) {
+            //     continue
+            //   }
+            // } catch (error) {
+            //   continue
+            // }
             // 特殊校验 Prefix 此处为空Content
             if (Prefix && data.Contents[i].Key === Prefix && data.Contents[i].Size == 0 && data.Contents[i].Key[data.Contents[i].Key.length - 1] === '/') continue
             data.Contents[i].Key = this.$route.query.filename ? data.Contents[i].Key.split(this.$route.query.filename)[1] : data.Contents[i].Key
@@ -845,7 +847,7 @@ export default {
         }
       })
     },
-    forMateTableData(data) {
+    forMateTableData (data) {
       //
       const result = []
       const obj = {}
@@ -875,25 +877,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.fa:hover::after {
-  display: none;
-}
-
-.fa-pencil {
-  display: none;
-  cursor: pointer;
-  margin-left: 5px;
-  font-size: 14px;
-}
-
-.fa-folder-open-o,
-.fa-file-o {
+.el-icon-folder,
+.el-icon-document{
   margin-right: 5px;
   font-size: 14px;
   color: #b3c0cd;
-}
-
-#bdtable tr:hover .fa-pencil {
-  display: inline-block;
 }
 </style>

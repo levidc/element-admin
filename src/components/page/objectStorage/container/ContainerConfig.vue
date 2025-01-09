@@ -2,72 +2,32 @@
   <div>
     <div class="page_content_wrap">
       <el-row class="mb_15">
-        <el-button
-          v-access="'admin:CreateOrUpdateContainerConfigController'"
-          style="margin-bottom:10px"
-          type="primary"
-          class="golden"
-          @click="openCreate"
-        >创建</el-button>
+        <el-button v-access="'admin:CreateOrUpdateContainerConfigController'" style="margin-bottom:10px" type="primary"
+          class="golden" @click="openCreate">创建</el-button>
         <div class="right">
-          <el-tooltip
-            content="刷新"
-            placement="top"
-            effect="dark"
-          >
-            <i
-              class="el-icon-refresh"
-              @click="listContainerConfig"
-            />
+          <el-tooltip content="刷新" placement="top" effect="dark">
+            <i class="el-icon-refresh" @click="listContainerConfig" />
           </el-tooltip>
         </div>
       </el-row>
-      <el-table
-        ref="multipleTable"
-        v-loading="loading"
-        class="volumeDetail_column"
-        :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-        border
-        tooltip-effect="dark"
-        row-key="containerId"
-        style="width: 100%"
-        @sort-change="sortFunction"
-      >
+      <el-table ref="multipleTable" v-loading="loading" class="volumeDetail_column"
+        :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)" border tooltip-effect="dark"
+        row-key="containerId" style="width: 100%" @sort-change="sortFunction">
 
-        <el-table-column
-          label="类型"
-          prop="containerFormatType"
-          sortable="custom"
-        >
+        <el-table-column label="类型" prop="containerFormatType" sortable="custom">
           <template slot-scope="scope">
             {{ getType(scope.row) }}
           </template>
         </el-table-column>
-        <el-table-column
-          label="EC类型"
-          prop="durabilityType"
-          :formatter="getDurabilityType"
-          sortable="custom"
-        />
-        <el-table-column
-          label="默认创建个数"
-          prop="defaultCreateNumber"
-          sortable="custom"
-        />
-        <el-table-column
-          label="剩余空间(G)"
-          prop="threshold"
-          sortable="custom"
-        />
+        <el-table-column label="EC类型" prop="durabilityType" :formatter="getDurabilityType" sortable="custom" />
+        <el-table-column label="默认创建个数" prop="defaultCreateNumber" sortable="custom" />
+        <el-table-column label="剩余空间(G)" prop="threshold" sortable="custom" />
         <!-- <el-table-column label="启用自动创建" prop="autoCreate" sortable="custom">
           <template slot-scope="scope">
             <span :class="[scope.row.autoCreate?'status_green':'status_red']">{{ scope.row.autoCreate ? '已启用':'未启用' }}</span>
           </template>
         </el-table-column> -->
-        <el-table-column
-          :label="$ts('action')"
-          width="140"
-        >
+        <el-table-column :label="$ts('action')" width="140">
           <template slot-scope="scope">
             <el-dropdown v-access="'admin:CreateOrUpdateContainerConfigController'" size="small">
               <el-button type="primary" class="blue">
@@ -82,95 +42,35 @@
           </template>
         </el-table-column>
       </el-table>
-      <div
-        v-show="total"
-        class="page_block"
-      >
-        <el-pagination
-          :current-page="currentPage"
-          :page-size="pageSize"
-          :page-sizes="[5, 10, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
+      <div v-show="total" class="page_block">
+        <el-pagination :current-page="currentPage" :page-size="pageSize" :page-sizes="[5, 10, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+          @current-change="handleCurrentChange" />
       </div>
     </div>
-    <el-dialog
-
-      :title="type==='create'?'创建配置':'修改配置'"
-      :visible.sync="isCreate"
-      width="600px"
-    >
-      <el-form
-        ref="createForm"
-        :model="createForm"
-        :rules="createRules"
-        size="mini"
-        label-width="100px"
-        style="padding:0 5%"
-      >
-        <el-form-item
-          label="类型"
-          prop="containerFormatType"
-        >
-          <el-select
-            v-model="createForm.containerFormatType"
-            filterable
-            style="width: 100%;"
-            clearable
-          >
-            <el-option
-              v-for="item in typeList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >{{ item.label }}
+    <el-dialog :title="type === 'create' ? '创建配置' : '修改配置'" :visible.sync="isCreate" width="600px">
+      <el-form ref="createForm" :model="createForm" :rules="createRules" size="mini" label-width="100px"
+        style="padding:0 5%">
+        <el-form-item label="类型" prop="containerFormatType">
+          <el-select v-model="createForm.containerFormatType" filterable style="width: 100%;" clearable>
+            <el-option v-for="item in typeList" :key="item.value" :label="item.label" :value="item.value">{{ item.label
+              }}
             </el-option>
           </el-select>
         </el-form-item>
         <!-- ectype 接口创建 -->
-        <el-form-item
-          label="EC类型"
-          prop="durabilityType"
-        >
-          <el-select
-            v-model="createForm.durabilityType"
-            filterable
-            style="width: 100%;"
-            clearable
-          >
-            <el-option
-              v-for="item in ecTypeList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >{{ item.label }}
+        <el-form-item label="EC类型" prop="durabilityType">
+          <el-select v-model="createForm.durabilityType" filterable style="width: 100%;" clearable>
+            <el-option v-for="item in ecTypeList" :key="item.value" :label="item.label" :value="item.value">{{
+              item.label }}
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item
-          label="默认创建个数"
-          prop="defaultCreateNumber"
-        >
-          <el-input
-            ref="tableFocus"
-            v-model="createForm.defaultCreateNumber"
-            auto-complete="off"
-            clearable
-          />
+        <el-form-item label="默认创建个数" prop="defaultCreateNumber">
+          <el-input ref="tableFocus" v-model="createForm.defaultCreateNumber" auto-complete="off" clearable />
         </el-form-item>
-        <el-form-item
-          label="剩余空间"
-          prop="threshold"
-        >
-          <el-input
-            ref="tableFocus"
-            v-model="createForm.threshold"
-            auto-complete="off"
-            clearable
-          >
+        <el-form-item label="剩余空间" prop="threshold">
+          <el-input ref="tableFocus" v-model="createForm.threshold" auto-complete="off" clearable>
             <template slot="append">G</template>
           </el-input>
         </el-form-item>
@@ -185,8 +85,9 @@
         </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" class="golden" @click="createOrUpdate('createForm')">{{ $ts('button.confirm') }}</el-button>
-        <el-button @click="isCreate = false;resetForm('createForm')">{{ $ts('button.cancel') }}</el-button>
+        <el-button type="primary" class="golden" @click="createOrUpdate('createForm')">{{ $ts('button.confirm')
+          }}</el-button>
+        <el-button @click="isCreate = false; resetForm('createForm')">{{ $ts('button.cancel') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -200,7 +101,7 @@ import {
 export default {
   name: 'ContainerConfig',
   components: {},
-  data() {
+  data () {
     return {
       loading: true,
       type: 'create',
@@ -265,7 +166,7 @@ export default {
         threshold: [
           { required: true, message: '必填', trigger: ['blur', 'change'] },
           {
-            validator(rule, data, callback) {
+            validator (rule, data, callback) {
               if (!/^(0|[1-9]\d*)$/.test(data)) {
                 return callback('请填入大于等于0的整数')
               } else if (data > 1000000) {
@@ -284,26 +185,26 @@ export default {
       total: 0
     }
   },
-  mounted() {
+  mounted () {
     this.listContainerConfig()
   },
   methods: {
-    getDurabilityType(row, column) {
+    getDurabilityType (row, column) {
       let durabilityType = []
-      this.ecTypeList.forEach(function(ele) {
+      this.ecTypeList.forEach(function (ele) {
         if (ele.value == row[column.property]) {
           durabilityType = ele
         }
       })
       return durabilityType.label
     },
-    getType(row) {
+    getType (row) {
       const arr = this.typeList.filter(
         item => row.containerFormatType == item.value
       )
       return arr && arr.length && arr[0].label
     },
-    deleteConfig(row) {
+    deleteConfig (row) {
       const {
         durabilityType,
         threshold,
@@ -320,28 +221,28 @@ export default {
       })
         .then(res => {
           if (res.error.code !== 0) {
-            this.$ts({
+            this.$msg({
               type: 'error',
               text: this.$ts(res.error.name)
             })
           } else {
-            this.$ts({
+            this.$msg({
               type: 'success',
               text: this.$ts('response.success')
             })
           }
           this.listContainerConfig()
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.error(error)
         })
     },
-    openCreate() {
+    openCreate () {
       this.type = 'create'
       this.isCreate = true
       this.resetForm('createForm')
     },
-    preUpdate(row) {
+    preUpdate (row) {
       console.log(row, 'row')
       this.resetForm('createForm')
       this.type = 'update'
@@ -353,24 +254,24 @@ export default {
       this.createForm.isAutoCreate = row.autoCreate
     },
 
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       this.pageSize = val
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       this.currentPage = val
       console.log(JSON.stringify(this.multipleSelection))
     },
-    sortFunction(val) {
+    sortFunction (val) {
       this.prop = val.prop
       this.order = val.order
       this.tableData.sort(this.sortMethod(val.prop, val.order))
     },
-    resetForm(formName) {
+    resetForm (formName) {
       if (this.$refs[formName] != undefined) {
         this.$refs[formName].resetFields()
       }
     },
-    createOrUpdate(formName) {
+    createOrUpdate (formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           createOrUpdateContainerConfig({
@@ -385,12 +286,12 @@ export default {
           })
             .then(res => {
               if (res.error.code !== 0) {
-                this.$ts({
+                this.$msg({
                   type: 'error',
                   text: this.$ts(res.error.name)
                 })
               } else {
-                this.$ts({
+                this.$msg({
                   type: 'success',
                   text: this.$ts('response.success')
                 })
@@ -410,14 +311,14 @@ export default {
         }
       })
     },
-    listContainerConfig() {
+    listContainerConfig () {
       this.loading = true
       listContainerConfig({
         version: this.$store.state.dosVersion
       })
         .then(res => {
           if (res.error.code !== 0) {
-            this.$ts({
+            this.$msg({
               type: 'error',
               text: this.$ts(res.error.name)
             })
