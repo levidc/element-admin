@@ -3,44 +3,36 @@
     <div class="page_content_wrap">
       <div class="mb_15 menu">
         <div>
-          <el-button class="golden mr_10" type="primary" @click="showCreate">创建</el-button>
+          <el-button class="golden mr_10" type="primary" @click="showCreate">{{ $ts('page.create') }}</el-button>
         </div>
         <div>
-          <el-tooltip content="刷新" placement="top" effect="dark">
+          <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
             <i class="el-icon-refresh" @click="refresh()" />
           </el-tooltip>
         </div>
       </div>
-      <DataTable
-        ref="DataTable"
-        :columns="columns"
-        pagination
-        :table-data="tableData"
-        :loading="loading"
-        :page-obj="{ pageSize: pageSize, currentPage: pageNum }"
-        :total="total"
-        @renderPagination="getPageSearch"
-      />
+      <DataTable ref="DataTable" :columns="columns" pagination :table-data="tableData" :loading="loading"
+        :page-obj="{ pageSize: pageSize, currentPage: pageNum }" :total="total" @renderPagination="getPageSearch" />
     </div>
-    <el-dialog :visible.sync="flag" width="750px" title="创建策略字典">
+    <el-dialog :visible.sync="flag" width="750px" :title="$ts('strategyDictionary.create')">
       <el-form ref="form" :model="form" label-width="120px" :rules="rules">
-        <el-form-item prop="strategyName" label="字典名称">
-          <el-input v-model="form.strategyName" placeholder="请输入字典名称" />
+        <el-form-item prop="strategyName" :label="$ts('strategyExpress.dictionaryName')">
+          <el-input v-model="form.strategyName" :placeholder="$ts('strategyDictionary.iptStrategyDictionary')" />
         </el-form-item>
-        <el-form-item prop="type" label="字典类型">
+        <el-form-item prop="type" :label="$ts('tempConfigFile.type')">
           <el-radio-group v-model="form.type">
-            <el-radio label="FILE_SIZE">文件大小</el-radio>
-            <el-radio label="FILE_TYPE">文件类型</el-radio>
-            <el-radio label="PACKAGE_TEMPLATE">打包模板</el-radio>
-            <el-radio label="STORAGE_DURATION">存入天数</el-radio>
-            <el-radio label="PREFIX">文件/对象前缀</el-radio>
+            <el-radio label="FILE_SIZE">{{ $ts('strategyExpress.fileSize') }}</el-radio>
+            <el-radio label="FILE_TYPE">{{ $ts('strategyExpress.fileType') }}</el-radio>
+            <el-radio label="PACKAGE_TEMPLATE">{{ $ts('strategyExpress.packageTemplate') }}</el-radio>
+            <el-radio label="STORAGE_DURATION">{{ $ts('strategyExpress.storageDuration') }}</el-radio>
+            <el-radio label="PREFIX">{{ $ts('strategyExpress.prefix') }}</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button class="blue" @click="flag = false">{{ $ts('button.cancel') }}</el-button>
-        <el-button type="primary" class="golden" @click="confirmCreate">{{ $ts('button.confirm')
-        }}</el-button>
+        <el-button class="blue" @click="flag = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button type="primary" class="golden" @click="confirmCreate">{{ $ts('page.confirm')
+          }}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -54,39 +46,27 @@ import {
 
 export default {
   name: 'LifecycleTaskList',
-  data() {
+  data () {
     return {
       enumType: {
-        'FILE_SIZE': '文件大小',
-        'FILE_TYPE': '文件类型',
-        'PACKAGE_TEMPLATE': '打包模板',
-        'STORAGE_DURATION': '存入天数',
-        'PREFIX': '文件/对象前缀'
+        'FILE_SIZE': this.$ts('strategyExpress.fileSize'),
+        'FILE_TYPE': this.$ts('strategyExpress.fileType'),
+        'PACKAGE_TEMPLATE': this.$ts('strategyExpress.packageTemplate'),
+        'STORAGE_DURATION': this.$ts('strategyExpress.storageDuration'),
+        'PREFIX': this.$ts('strategyExpress.prefix')
       },
       flag: false,
       pageSize: 10,
       pageNum: 1,
-      statusEnum: [
-        { label: '未开始', value: 'STATUS_INIT' },
-        { label: '执行中', value: 'STATUS_RUNNING' },
-        { label: '挂起', value: 'STATUS_SUSPEND' },
-        { label: '成功', value: 'STATUS_SUCCEED' },
-        { label: '失败', value: 'STATUS_FAILED' }
-      ],
-      taskType: [
-        { label: '物理删除', value: 'HardDelete' },
-        { label: '生命周期删除', value: 'Lifecycle' }
-      ],
       buckets: [],
       rules: {
         strategyName: {
           required: true,
-          message: '请输入字典名称',
+          message: this.$ts('strategyDictionary.iptStrategyDictionary'),
           trigger: ['blur', 'change']
         },
         type: {
           required: true,
-          message: '请输入字典名称',
           trigger: ['blur', 'change']
         }
       },
@@ -100,13 +80,13 @@ export default {
       tableData: [],
       columns: [
         {
-          title: '策略名称',
+          title: this.$ts('policies.policyName'),
           prop: 'strategyName',
           minWidth: '150px',
           fixed: true
         },
         {
-          title: '类型',
+          title: this.$ts('tempConfigFile.type'),
           prop: 'type',
           minWidth: '150px',
           formatter: (_, __, val) => {
@@ -114,13 +94,13 @@ export default {
           }
         },
         {
-          title: '创建时间',
+          title: this.$ts('policies.createTime'),
           prop: 'createTime',
           minWidth: '150px'
 
         },
         {
-          title: '更新时间',
+          title: this.$ts('page.updateTime'),
           prop: 'updateTime',
           minWidth: '150px'
         }
@@ -130,11 +110,11 @@ export default {
       ]
     }
   },
-  mounted() {
+  mounted () {
     this.init()
   },
   methods: {
-    confirmCreate() {
+    confirmCreate () {
       const {
         type,
         strategyName
@@ -148,7 +128,7 @@ export default {
           }).then(() => {
             this.$msg({
               type: 'success',
-              text: this.$ts('response.success')
+              text: this.$ts('page.responseSuccess')
             })
           })
             .finally(() => {
@@ -159,25 +139,25 @@ export default {
         }
       })
     },
-    showCreate() {
+    showCreate () {
       this.flag = true
       this.$nextTick(() => {
         this.$refs['form'].resetFields()
       })
     },
-    refresh() {
+    refresh () {
       this.getTaskList({
         pageNum: this.pageNum,
         pageSize: this.pageSize
       })
     },
-    init() {
+    init () {
       this.getTaskList({
         pageNum: 1,
         pageSize: this.pageSize
       })
     },
-    getPageSearch(val) {
+    getPageSearch (val) {
       this.pageNum = val.pageNumber
       this.pageSize = val.pageSize
       this.getTaskList({
@@ -185,7 +165,7 @@ export default {
         pageSize: val.pageSize
       })
     },
-    getTaskList(params) {
+    getTaskList (params) {
       this.loading = true
       listStrategyDictionary(params).then(res => {
         this.tableData = res.data.list

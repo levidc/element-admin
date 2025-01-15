@@ -5,7 +5,7 @@
         <el-button v-access="'admin:AddStorageResourceController'" class="golden" type="primary"
           @click="showCreate('object')">创建</el-button>
         <div class="right">
-          <el-tooltip content="刷新" placement="top" effect="dark">
+          <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
             <i class="el-icon-refresh" @click="init(true)" />
           </el-tooltip>
         </div>
@@ -24,12 +24,12 @@
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column slot="action" :label="$ts('action')" fixed="right" width="200px">
+        <el-table-column slot="action" :label="$ts('page.action')" fixed="right" width="200px">
           <template slot-scope="scope">
             <el-dropdown size="small">
               <el-button v-access="'admin:UpdateStorageResourceController' || 'admin:DeleteResourceController'"
                 type="primary" class="blue">
-                {{ $ts('action') }}<i class="el-icon-arrow-down el-icon--right" />
+                {{ $ts('page.action') }}<i class="el-icon-arrow-down el-icon--right" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item v-access="'admin:UpdateStorageResourceController'"
@@ -113,16 +113,16 @@
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button class="golden" type="primary" @click="confirmCreate">{{ $ts('button.confirm') }}</el-button>
-        <el-button @click="modelFormFlag = false">{{ $ts('button.cancel') }}</el-button>
+        <el-button class="golden" type="primary" @click="confirmCreate">{{ $ts('page.confirm') }}</el-button>
+        <el-button @click="modelFormFlag = false">{{ $ts('page.cancel') }}</el-button>
       </div>
     </el-dialog>
     <el-dialog :title="renderDel ? '删除存储资源' : '删除存储设备'" :visible.sync="deleteFlag" width="650px">
       <p>{{ renderDel ? `删除如下存储资源:${selectRow.storageName}` : `删除如下存储设备: ${selectRow.deviceName}` }}
       </p>
       <div slot="footer">
-        <el-button type="primary" class="golden" @click="deleteForm">{{ $ts('delete') }}</el-button>
-        <el-button @click="deleteFlag = false">{{ $ts('cancel') }}</el-button>
+        <el-button type="primary" class="golden" @click="deleteForm">{{ $ts('page.delete') }}</el-button>
+        <el-button @click="deleteFlag = false">{{ $ts('page.cancel') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -281,7 +281,7 @@ export default {
           }, sortable: 'custom', minWidth: '200px'
         },
         { sortable: 'custom', prop: 'userName', title: '用户名', show: true, minWidth: '200px' },
-        { slot: 'action', title: this.$ts('action'), show: true }
+        { slot: 'action', title: this.$ts('page.action'), show: true }
       ],
       prop: '',
       order: '',
@@ -447,7 +447,7 @@ export default {
             if (res.msg === 'success') {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
             }
           })
@@ -465,7 +465,7 @@ export default {
           if (res.msg === 'success') {
             this.$msg({
               type: 'success',
-              text: this.$ts('response.success')
+              text: this.$ts('page.responseSuccess')
             })
           }
         }).finally(() => {
@@ -511,7 +511,7 @@ export default {
               .then((res) => {
                 this.$msg({
                   type: 'success',
-                  text: this.$ts('response.success')
+                  text: this.$ts('page.responseSuccess')
                 })
                 this.modelFormFlag = false
               })
@@ -543,7 +543,7 @@ export default {
             if (Object.keys(reqParams).length == 2) {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
               this.modelFormFlag = false
               this.init()
@@ -553,7 +553,7 @@ export default {
               .then((res) => {
                 this.$msg({
                   type: 'success',
-                  text: this.$ts('response.success')
+                  text: this.$ts('page.responseSuccess')
                 })
                 this.modelFormFlag = false
               })

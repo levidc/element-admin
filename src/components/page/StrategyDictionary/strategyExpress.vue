@@ -3,44 +3,17 @@
     <div class="page_content_wrap">
       <div class="mb_15 menu">
         <div>
-          <el-button class="golden mr_10" type="primary" @click="showCreate">创建</el-button>
+          <el-button class="golden mr_10" type="primary" @click="showCreate">{{ $ts('page.create') }}</el-button>
         </div>
         <div>
-          <el-tooltip content="刷新" placement="top" effect="dark">
+          <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
             <i class="el-icon-refresh" @click="refresh()" />
           </el-tooltip>
         </div>
       </div>
-      <DataTable
-        ref="DataTable"
-        :columns="columns"
-        pagination
-        :table-data="tableData"
-        :loading="loading"
-        :page-obj="{ pageSize: pageSize, currentPage: pageNum }"
-        :total="total"
-        @renderPagination="getPageSearch"
-      >
-        <el-table-column slot="expressions" min-width="230px" label="策略表达式(字典名称/运算符/值)">
-          <!-- <el-table-column
-            prop="strategyName"
-            label="字典名称"
-            width="120"
-          >
-            {{ 123 }}
-          </el-table-column>
-          <el-table-column
-            prop="expression"
-            label="运算符"
-            width="120"
-          >
-            {{ 123 }}
-          </el-table-column>
-          <el-table-column
-            prop="strategyName"
-            label="值"
-            width="120"
-          /> -->
+      <DataTable ref="DataTable" :columns="columns" pagination :table-data="tableData" :loading="loading"
+        :page-obj="{ pageSize: pageSize, currentPage: pageNum }" :total="total" @renderPagination="getPageSearch">
+        <el-table-column slot="expressions" min-width="230px" :label="$ts('bucketStrategyExpress.expression')">
           <template slot-scope="scope">
             <p v-for="(item, index) in scope.row.expressions" :key="index" class="rowExpress">
               <span>
@@ -56,89 +29,68 @@
             </p>
           </template>
         </el-table-column>
-        <el-table-column slot="action" min-width="100px" label="操作">
+        <el-table-column slot="action" min-width="100px" :label="$ts('page.action')">
           <template slot-scope="scope">
             <el-dropdown size="small" trigger="hover">
               <el-button type="primary" class="blue">
-                {{ $ts('action') }}<i class="el-icon-arrow-down el-icon--right" />
+                {{ $ts('page.action') }}<i class="el-icon-arrow-down el-icon--right" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="modifyForm(scope.row)">修改表达式</el-dropdown-item>
-                <el-dropdown-item @click.native="deleteConfig(scope.row)">删除表达式</el-dropdown-item>
+                <el-dropdown-item @click.native="modifyForm(scope.row)">{{ $ts('page.modify') }}</el-dropdown-item>
+                <el-dropdown-item @click.native="deleteConfig(scope.row)">{{ $ts('page.delete') }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
       </DataTable>
     </div>
-    <el-dialog :visible.sync="flag" width="800px" :title="isAdd ? '创建策略表达式' : '修改策略表达式'">
+    <el-dialog :visible.sync="flag" width="800px"
+      :title="isAdd ? $ts('strategyExpress.createExpress') : $ts('strategyExpress.delExpress')">
       <el-form ref="form" :model="form" label-width="120px" :rules="rules">
-        <el-form-item prop="policyName" label="策略名称">
-          <el-input v-model="form.policyName" placeholder="请输入策略名称" />
+        <el-form-item prop="policyName" :label="$ts('policies.policyName')">
+          <el-input v-model="form.policyName" :placeholder="$ts('strategyExpress.policyNamePlaceholder')" />
         </el-form-item>
-
-        <el-form-item prop="action" label="调度行为">
+        <el-form-item prop="action" :label="$ts('strategyExpress.action')">
           <el-radio-group v-model="form.action">
             <el-radio v-for="{ label, value } in renderAction" :key="value" :label="value">{{ label }}</el-radio>
           </el-radio-group>
         </el-form-item>
-
-        <el-form-item label="表达式">
-          <el-button class="golden mr_10" type="primary" @click="addExpress">添加</el-button>
-          <el-row
-            v-for="(item, index) in form.expressions"
-            :key="index"
-            class="addExpress"
-            :gutter="20"
-            style="margin-top: 15px;"
-          >
+        <el-form-item :label="$ts('strategyExpress.express')">
+          <el-button class="golden mr_10" type="primary" @click="addExpress">{{ $ts('page.add') }}</el-button>
+          <el-row v-for="(item, index) in form.expressions" :key="index" class="addExpress" :gutter="20"
+            style="margin-top: 15px;">
             <el-col :span="8">
               <el-form-item label=" " :prop="`expressions.${index}.strategyName`" :rules="rules.strategyName">
-                <el-popover
-                  v-model="form.expressions[index].visiblePopover"
-                  placement="top"
-                  width="500px"
-                  @show="getList()"
-                  @hide="resetForm"
-                >
-                  <p>请选择策略字典</p>
+                <el-popover v-model="form.expressions[index].visiblePopover" placement="top" width="500px"
+                  @show="getList()" @hide="resetForm">
+                  <p>{{ $ts('bucketStrategyExpress.selectStrategyDictionary') }}</p>
                   <el-table :key="index" v-loading="popLoading" :data="listStrategyDictionary" style="margin:20px 0">
-                    <el-table-column label="字典名称" width="300px" prop="strategyName">
+                    <el-table-column :label="$ts('strategyExpress.dictionaryName')" width="300px" prop="strategyName">
                       <template slot-scope="scope">
                         <showToolTip :text="scope.row.strategyName" />
                       </template>
                     </el-table-column>
-                    <el-table-column label="类型" width="200px" prop="type">
+                    <el-table-column :label="$ts('tempConfigFile.type')" width="200px" prop="type">
                       <template slot-scope="scope">
                         {{ enumType[scope.row.type] }}
                       </template>
                     </el-table-column>
-                    <el-table-column label="操作" width="200px">
+                    <el-table-column :label="$ts('page.action')" width="200px">
                       <!-- 触发禁用条件新增 同存储 -->
                       <template slot-scope="scope">
-                        <el-button @click="confirmSel(scope.row, index)">选择</el-button>
+                        <el-button @click="confirmSel(scope.row, index)">{{ $ts('page.select') }}</el-button>
                       </template>
                     </el-table-column>
                   </el-table>
-                  <el-pagination
-                    :current-page="userPage"
-                    :page-sizes="[5, 10, 50, 100]"
-                    :page-size="userPageSize"
-                    :total="userTotal"
-                    class="right_page"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    @size-change="handleUserSize"
-                    @current-change="handleUserPage"
-                  />
+                  <el-pagination :current-page="userPage" :page-sizes="[5, 10, 50, 100]" :page-size="userPageSize"
+                    :total="userTotal" class="right_page" layout="total, sizes, prev, pager, next, jumper"
+                    @size-change="handleUserSize" @current-change="handleUserPage" />
                   <br>
                   <div style="display:flex;justify-content:flex-end;margin-top:20px">
-                    <el-button
-                      size="mini"
-                      type="text"
-                      @click="form.expressions[index].visiblePopover = false"
-                    >取消</el-button>
+                    <el-button size="mini" type="text" @click="form.expressions[index].visiblePopover = false">{{
+                      $ts('page.cancel') }}</el-button>
                   </div>
-                  <el-button slot="reference">配置策略字典</el-button>
+                  <el-button slot="reference">{{ $ts('strategyExpress.configDictionaryName') }}</el-button>
                 </el-popover>
                 <el-tag v-if="form.expressions[index].strategyName" closable @close="resetConfig(index)">
                   {{ form.expressions[index].strategyName }}
@@ -147,13 +99,9 @@
             </el-col>
 
             <el-col :span="6">
-              <el-form-item
-                v-if="item.type && !['FILE_TYPE', 'PACKAGE_TEMPLATE', 'PREFIX'].includes(item.type)"
-                label=" "
-                :prop="`expressions.${index}.expression`"
-                :rules="rules.expression"
-              >
-                <el-select v-model="item.expression" placeholder="请选择运算符" clearable>
+              <el-form-item v-if="item.type && !['FILE_TYPE', 'PACKAGE_TEMPLATE', 'PREFIX'].includes(item.type)"
+                label=" " :prop="`expressions.${index}.expression`" :rules="rules.expression">
+                <el-select v-model="item.expression" :placeholder="$ts('strategyExpress.selectOperator')" clearable>
                   <el-option v-for="opts in operator" :key="opts" :value="opts">
                     {{ opts }}
                   </el-option>
@@ -161,56 +109,36 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item
-                v-if="['FILE_SIZE', 'STORAGE_DURATION'].includes(item.type)"
-                label=" "
-                :prop="`expressions.${index}.num`"
-                :rules="rules.num"
-              >
-                <el-input
-                  v-model="item.num"
-                  placeholder="请输入正整数"
-                  class="byteInput"
-                  clearable
-                  @input="val => form.expressions[index].num = val.replace(/(^0+)|\D/g, '')"
-                >
+              <el-form-item v-if="['FILE_SIZE', 'STORAGE_DURATION'].includes(item.type)" label=" "
+                :prop="`expressions.${index}.num`" :rules="rules.num">
+                <el-input v-model="item.num" :placeholder="$ts('validate.positiveNumber')" class="byteInput" clearable
+                  @input="val => form.expressions[index].num = val.replace(/(^0+)|\D/g, '')">
                   <template v-if="item.type === 'FILE_SIZE'" slot="suffix">
                     Byte
                   </template>
                   <template v-if="item.type === 'STORAGE_DURATION'" slot="suffix">
-                    天
+                    {{ $ts('page.day') }}
                   </template>
                 </el-input>
               </el-form-item>
             </el-col>
             <el-col v-if="['FILE_TYPE', 'PACKAGE_TEMPLATE', 'PREFIX'].includes(item.type)" :span="14">
-              <el-form-item
-                v-if="['PACKAGE_TEMPLATE'].includes(item.type)"
-                label=" "
-                :prop="`expressions.${index}.num`"
-                :rules="rules.packageType"
-              >
-                <el-select v-model="item.num" placeholder="请选择" style="width: 100%;">
+              <el-form-item v-if="['PACKAGE_TEMPLATE'].includes(item.type)" label=" " :prop="`expressions.${index}.num`"
+                :rules="rules.packageType">
+                <el-select v-model="item.num" :placeholder="$ts('strategyExpress.pleaseSelect')" style="width: 100%;">
                   <el-option v-for="opts in packageTemplate" :key="opts" :value="opts">
                     {{ opts }}
                   </el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item
-                v-if="['FILE_TYPE'].includes(item.type)"
-                label=" "
-                :rules="rules.fileType"
-                :prop="`expressions.${index}.num`"
-              >
-                <el-input v-model="item.num" placeholder="请输入文件类型" clearable />
+              <el-form-item v-if="['FILE_TYPE'].includes(item.type)" label=" " :rules="rules.fileType"
+                :prop="`expressions.${index}.num`">
+                <el-input v-model="item.num" :placeholder="$ts('strategyExpress.iptFileType')" clearable />
               </el-form-item>
-              <el-form-item
-                v-if="['PREFIX'].includes(item.type)"
-                label=" "
-                :rules="rules.prefix"
-                :prop="`expressions.${index}.num`"
-              >
-                <el-input v-model="item.num" type="textarea" placeholder="请输入文件/对象前缀" clearable />
+              <el-form-item v-if="['PREFIX'].includes(item.type)" label=" " :rules="rules.prefix"
+                :prop="`expressions.${index}.num`">
+                <el-input v-model="item.num" type="textarea" :placeholder="$ts('strategyExpress.iptPrefix')"
+                  clearable />
               </el-form-item>
             </el-col>
             <el-col :span="2">
@@ -228,9 +156,9 @@
         </el-form-item> -->
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button class="blue" @click="flag = false">{{ $ts('button.cancel') }}</el-button>
-        <el-button type="primary" class="golden" @click="confirmCreate">{{ $ts('button.confirm')
-        }}</el-button>
+        <el-button class="blue" @click="flag = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button type="primary" class="golden" @click="confirmCreate">{{ $ts('page.confirm')
+          }}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -247,20 +175,20 @@ import {
 
 export default {
   name: 'LifecycleTaskList',
-  data() {
+  data () {
     return {
       enumAction: {
-        'archiving': '转冰',
-        'warming': '转温',
-        'colding': '转冷',
-        'packaging': '打包'
+        'archiving': this.$ts('strategyExpress.archiving'),
+        'warming': this.$ts('strategyExpress.warming'),
+        'colding': this.$ts('strategyExpress.colding'),
+        'packaging': this.$ts('strategyExpress.packaging')
       },
       enumType: {
-        'FILE_SIZE': '文件大小',
-        'FILE_TYPE': '文件类型',
-        'PACKAGE_TEMPLATE': '打包模板',
-        'STORAGE_DURATION': '存入天数',
-        'PREFIX': '文件/对象前缀'
+        'FILE_SIZE': this.$ts('strategyExpress.fileSize'),
+        'FILE_TYPE': this.$ts('strategyExpress.fileType'),
+        'PACKAGE_TEMPLATE': this.$ts('strategyExpress.packageTemplate'),
+        'STORAGE_DURATION': this.$ts('strategyExpress.storageDuration'),
+        'PREFIX': this.$ts('strategyExpress.prefix')
       },
       packageTemplate: [
         'Hospital',
@@ -277,42 +205,31 @@ export default {
       flag: false,
       pageSize: 10,
       pageNum: 1,
-      statusEnum: [
-        { label: '未开始', value: 'STATUS_INIT' },
-        { label: '执行中', value: 'STATUS_RUNNING' },
-        { label: '挂起', value: 'STATUS_SUSPEND' },
-        { label: '成功', value: 'STATUS_SUCCEED' },
-        { label: '失败', value: 'STATUS_FAILED' }
-      ],
-      taskType: [
-        { label: '物理删除', value: 'HardDelete' },
-        { label: '生命周期删除', value: 'Lifecycle' }
-      ],
       buckets: [],
       rules: {
         prefix: [
           {
             required: true,
-            message: '请输入文件/对象前缀',
+            message: this.$ts('strategyExpress.iptPrefix'),
             trigger: ['blur', 'change']
           },
           {
             min: 1,
             trigger: ['blur', 'change'],
             max: 1024,
-            message: '字符长度最大1024位'
+            message: this.$ts('strategyExpress.prefixLimit')
           }
         ],
         policyName: {
           required: true,
-          message: '请输入策略名称'
+          message: this.$ts('strategyExpress.policyNamePlaceholder')
         },
         strategyName: {
           required: true,
           trigger: ['blur', 'change'],
           validator: (_, val, cb) => {
             if (!val) {
-              return cb('请选择策略字典')
+              return cb(this.$ts('bucketStrategyExpress.selectStrategyDictionary'))
             } else {
               return cb()
             }
@@ -322,22 +239,22 @@ export default {
         expression: {
           trigger: ['blur', 'change'],
           required: true,
-          message: '请输入运算符'
+          message: this.$ts('strategyExpress.iptExpress')
         },
         num: [{
           required: true,
-          message: '请输入正整数',
+          message: this.$ts('validate.positiveNumber'),
           trigger: ['blur', 'change']
         }
         ],
         fileType: {
           required: true,
-          message: '请输入文件类型',
+          message: this.$ts('strategyExpress.iptFileType'),
           trigger: ['blur', 'change']
         },
         packageType: {
           required: true,
-          message: '请选择打包模板',
+          message: this.$ts('strategyExpress.selectPackageTemplate'),
           trigger: ['blur', 'change']
         }
       },
@@ -362,7 +279,7 @@ export default {
       userTotal: 0,
       columns: [
         {
-          title: '策略名称',
+          title: this.$ts('policies.policyName'),
           prop: 'policyName',
           minWidth: '150px',
           fixed: true
@@ -371,13 +288,13 @@ export default {
           slot: 'expressions'
         },
         {
-          title: '创建时间',
+          title: this.$ts('policies.createTime'),
           prop: 'createTime',
           minWidth: '150px'
 
         },
         {
-          title: '更新时间',
+          title: this.$ts('page.updateTime'),
           prop: 'updateTime',
           minWidth: '150px'
         },
@@ -389,10 +306,10 @@ export default {
     }
   },
   computed: {
-    isAdd() {
+    isAdd () {
       return this.opt === 'add'
     },
-    renderAction() {
+    renderAction () {
       return Object.keys(this.enumAction).reduce((pre, cur) => {
         pre.push({
           label: this.enumAction[cur],
@@ -402,21 +319,21 @@ export default {
       }, [])
     }
   },
-  mounted() {
+  mounted () {
     this.init()
   },
   methods: {
-    resetConfig(index) {
+    resetConfig (index) {
       this.form.expressions[index].strategyName = ''
       this.form.expressions[index].type = ''
       this.form.expressions[index].num = ''
       this.form.expressions[index].expression = ''
       this.$refs['form'].validateField([`expressions.${index}.strategyName`])
     },
-    deleteIcon(index) {
+    deleteIcon (index) {
       this.form.expressions.splice(index, 1)
     },
-    confirmSel(row, index) {
+    confirmSel (row, index) {
       const {
         type,
         strategyName,
@@ -435,21 +352,21 @@ export default {
         }
       }
     },
-    resetForm() {
+    resetForm () {
       this.userPage = 1
       this.userPageSize = 10
       this.listStrategyDictionary = []
     },
-    handleUserSize(size) {
+    handleUserSize (size) {
       this.userPage = 1
       this.userPageSize = size
       this.getList()
     },
-    handleUserPage(page) {
+    handleUserPage (page) {
       this.userPage = page
       this.getList()
     },
-    getList() {
+    getList () {
       this.popLoading = true
       listStrategyDictionary({
         pageNum: this.userPage,
@@ -461,17 +378,17 @@ export default {
         this.popLoading = false
       })
     },
-    addExpress() {
+    addExpress () {
       this.form.expressions.push({
         policyName: '',
         expression: '',
         visiblePopover: false
       })
     },
-    deleteConfig(row) {
-      this.$confirm(`删除策略表达式:<b style="color:#ff8746">${row.policyName}</b>?`, '请确认', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+    deleteConfig (row) {
+      this.$confirm(this.$ts('strategyExpress.delTip', { error: `<b style="color:#ff8746">${row.policyName}</b>` }), {
+        confirmButtonText: this.$ts('page.confirm'),
+        cancelButtonText: this.$ts('page.cancel'),
         type: 'warning',
         dangerouslyUseHTMLString: true
       }).then(() => {
@@ -480,7 +397,7 @@ export default {
         }).then(() => {
           this.$msg({
             type: 'success',
-            text: this.$ts('response.success')
+            text: this.$ts('page.responseSuccess')
           })
           this.$refs['DataTable'].currentPage = 1
         }).finally(() => {
@@ -488,7 +405,7 @@ export default {
         })
       })
     },
-    confirmCreate() {
+    confirmCreate () {
       const {
         expressions,
         policyName,
@@ -514,7 +431,7 @@ export default {
             createPolicyExpression(data).then(() => {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
             })
               .finally(() => {
@@ -535,7 +452,7 @@ export default {
               .then(() => {
                 this.$msg({
                   type: 'success',
-                  text: this.$ts('response.success')
+                  text: this.$ts('page.responseSuccess')
                 })
               })
               .finally(() => {
@@ -546,14 +463,14 @@ export default {
         }
       })
     },
-    getListStrategyDictionary() {
+    getListStrategyDictionary () {
       return new Promise((resolve) => {
         listStrategyDictionary().then(res => {
         })
       })
     },
 
-    modifyForm(row) {
+    modifyForm (row) {
       this.opt = 'edit'
       listStrategyDictionary({
         pageNum: this.userPage,
@@ -579,7 +496,7 @@ export default {
         this.flag = true
       })
     },
-    showCreate() {
+    showCreate () {
       // await this.getListStrategyDictionary()
       this.opt = 'add'
       this.flag = true
@@ -594,19 +511,19 @@ export default {
         }]
       })
     },
-    refresh() {
+    refresh () {
       this.getTaskList({
         pageNum: this.pageNum,
         pageSize: this.pageSize
       })
     },
-    init() {
+    init () {
       this.getTaskList({
         pageNum: 1,
         pageSize: this.pageSize
       })
     },
-    getPageSearch(val) {
+    getPageSearch (val) {
       this.pageNum = val.pageNumber
       this.pageSize = val.pageSize
       this.getTaskList({
@@ -614,7 +531,7 @@ export default {
         pageSize: val.pageSize
       })
     },
-    getTaskList(params) {
+    getTaskList (params) {
       this.loading = true
       listPolicyExpression(params).then(res => {
         this.tableData = res.data.list

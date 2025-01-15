@@ -3,33 +3,24 @@
     <div class="page_content_wrap">
       <div class="mb_15 menu">
         <div>
-          <el-button class="golden mr_10" type="primary" @click="showCreate">创建</el-button>
+          <el-button class="golden mr_10" type="primary" @click="showCreate">{{ $ts('page.create') }}</el-button>
         </div>
         <div>
-          <el-tooltip content="刷新" placement="top" effect="dark">
+          <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
             <i class="el-icon-refresh" @click="refresh()" />
           </el-tooltip>
         </div>
       </div>
-      <DataTable
-        ref="DataTable"
-        :columns="columns"
-        pagination
-        :table-data="tableData"
-        :loading="loading"
-        :page-obj="{ pageSize: pageSize, currentPage: pageNum }"
-        :total="total"
-        @renderPagination="getPageSearch"
-      >
-
-        <el-table-column slot="policyList" label="策略名称" min-width="120px" align="center">
+      <DataTable ref="DataTable" :columns="columns" pagination :table-data="tableData" :loading="loading"
+        :page-obj="{ pageSize: pageSize, currentPage: pageNum }" :total="total" @renderPagination="getPageSearch">
+        <el-table-column slot="policyList" :label="$ts('policies.policyName')" min-width="120px">
           <template slot-scope="scope">
             <el-table class="innerTable" :data="scope.row.policyList">
               <el-table-column prop="policyName" />
             </el-table>
           </template>
         </el-table-column>
-        <el-table-column slot="expressions" min-width="230px" label="策略表达式(字典名称/运算符/值)" align="center">
+        <el-table-column slot="expressions" min-width="230px" :label="$ts('bucketStrategyExpress.expression')">
           <template slot-scope="scope">
             <el-table class="innerTable" :data="scope.row.policyList">
               <el-table-column prop="expressions">
@@ -62,12 +53,12 @@
             </p> -->
           </template>
         </el-table-column>
-        <el-table-column slot="action" min-width="100px" label="操作">
+        <el-table-column slot="action" min-width="100px" :label="$ts('page.action')">
           <template slot-scope="scope">
-            <el-button @click="modifyForm(scope.row)">修改</el-button>
+            <el-button @click="modifyForm(scope.row)">{{ $ts('page.modify') }}</el-button>
             <!-- <el-dropdown size="small" trigger="hover">
               <el-button type="primary" class="blue">
-                {{ $ts('action') }}<i class="el-icon-arrow-down el-icon--right" />
+                {{ $ts('page.action') }}<i class="el-icon-arrow-down el-icon--right" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="modifyForm(scope.row)">修改表达式</el-dropdown-item>
@@ -78,9 +69,10 @@
         </el-table-column>
       </DataTable>
     </div>
-    <el-dialog :visible.sync="flag" width="650px" :title="isAdd ? '创建桶策略表达式' : '修改桶策略表达式'">
+    <el-dialog :visible.sync="flag" width="650px"
+      :title="isAdd ? $ts('bucketStrategyExpress.createTitle') : $ts('bucketStrategyExpress.modifyTitle')">
       <el-form ref="form" :model="form" label-width="100px" :rules="rules" style="margin: 0 5%;">
-        <el-form-item prop="bucketName" label="桶名称">
+        <el-form-item prop="bucketName" :label="$ts('bucket.name')">
           <el-select v-model="form.bucketName">
             <el-option v-for="item in bucketList" :key="String(item.id)" :value="item.name">
               {{ item.name }}
@@ -89,39 +81,24 @@
         </el-form-item>
         <el-form-item prop="policyExpressionIds">
           <span slot="label">
-            策略表达式
-            <el-popover width="250px" trigger="hover" placement="top-start" content="每个策略表达式是相互独立的">
+            {{ $ts('bucketStrategyExpress.strategyExpress') }}
+            <el-popover width="250px" trigger="hover" placement="top-start"
+              :content="$ts('bucketStrategyExpress.strategyExpressTip')">
               <svg slot="reference" class="icon icon-question" aria-hidden="true">
                 <use xlink:href="#icon-question" />
               </svg>
             </el-popover>
           </span>
-          <el-popover
-            v-model="visiblePopover"
-            popper-class="addExpress"
-            placement="top"
-            width="500px"
-            @show="getList()"
-            @hide="resetForm"
-          >
-            <p>请选择策略字典</p>
-            <el-button
-              :disabled="selection.length === 0"
-              style="margin-top: 20px;"
-              type="primary"
-              class="blue"
-              @click="handleAdd"
-            >添加</el-button>
-            <el-table
-              ref="tableRef"
-              v-loading="popLoading"
-              :data="listPolicyExpressions"
-              style="margin:20px 0"
-              @selection-change="handleSelection"
-            >
+          <el-popover v-model="visiblePopover" popper-class="addExpress" placement="top" width="500px" @show="getList()"
+            @hide="resetForm">
+            <p>{{ $ts('bucketStrategyExpress.selectStrategyDictionary') }}</p>
+            <el-button :disabled="selection.length === 0" style="margin-top: 20px;" type="primary" class="blue"
+              @click="handleAdd">{{ $ts('page.add') }}</el-button>
+            <el-table ref="tableRef" v-loading="popLoading" :data="listPolicyExpressions" style="margin:20px 0"
+              @selection-change="handleSelection">
               <el-table-column type="selection" align="center" :selectable="handleSelect" />
-              <el-table-column label="策略名称" width="300px" prop="policyName" />
-              <el-table-column label="策略表达式(字典名称/运算符/值)" width="300px" prop="expressions">
+              <el-table-column :label="$ts('policies.policyName')" width="300px" prop="policyName" />
+              <el-table-column :label="$ts('bucketStrategyExpress.expression')" width="300px" prop="expressions">
                 <template slot-scope="scope">
                   <p v-for="(item, index) in scope.row.expressions" :key="index" class="rowExpress">
                     <span>
@@ -136,44 +113,32 @@
                   </p>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" width="200px">
+              <el-table-column :label="$ts('page.action')" width="200px">
                 <!-- 触发禁用条件新增 同存储 -->
                 <template slot-scope="scope">
-                  <el-button @click="confirmSel(scope.row)">选择</el-button>
+                  <el-button @click="confirmSel(scope.row)">{{ $ts('page.select') }}</el-button>
                 </template>
               </el-table-column>
             </el-table>
-            <el-pagination
-              :current-page="userPage"
-              :page-sizes="[5, 10, 50, 100]"
-              :page-size="userPageSize"
-              :total="userTotal"
-              class="right_page"
-              layout="total, sizes, prev, pager, next, jumper"
-              @size-change="handleUserSize"
-              @current-change="handleUserPage"
-            />
+            <el-pagination :current-page="userPage" :page-sizes="[5, 10, 50, 100]" :page-size="userPageSize"
+              :total="userTotal" class="right_page" layout="total, sizes, prev, pager, next, jumper"
+              @size-change="handleUserSize" @current-change="handleUserPage" />
             <br>
             <div style="display:flex;justify-content:flex-end;margin-top:20px">
-              <el-button size="mini" type="text" @click="visiblePopover = false">确定</el-button>
+              <el-button size="mini" type="text" @click="visiblePopover = false">{{ $ts('page.confirm') }}</el-button>
             </div>
-            <el-button slot="reference">配置
-            </el-button>
+            <el-button slot="reference">{{ $ts('policies.config') }}</el-button>
           </el-popover>
           <br>
-          <el-tag
-            v-for="(item, index) in form.policyExpressionIds"
-            :key="index"
-            closable
-            @close="form.policyExpressionIds.splice(index, 1)"
-          >
+          <el-tag v-for="(item, index) in form.policyExpressionIds" :key="index" closable
+            @close="form.policyExpressionIds.splice(index, 1)">
             {{ item.policyName }}
           </el-tag>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button class="blue" @click="flag = false">{{ $ts('button.cancel') }}</el-button>
-        <el-button type="primary" class="golden" @click="confirmCreate">{{ $ts('button.confirm') }}</el-button>
+        <el-button class="blue" @click="flag = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button type="primary" class="golden" @click="confirmCreate">{{ $ts('page.confirm') }}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -189,7 +154,7 @@ import {
 
 export default {
   name: 'LifecycleTaskList',
-  data() {
+  data () {
     return {
       visiblePopover: false,
       listPolicyExpressions: [],
@@ -204,26 +169,15 @@ export default {
       flag: false,
       pageSize: 10,
       pageNum: 1,
-      statusEnum: [
-        { label: '未开始', value: 'STATUS_INIT' },
-        { label: '执行中', value: 'STATUS_RUNNING' },
-        { label: '挂起', value: 'STATUS_SUSPEND' },
-        { label: '成功', value: 'STATUS_SUCCEED' },
-        { label: '失败', value: 'STATUS_FAILED' }
-      ],
-      taskType: [
-        { label: '物理删除', value: 'HardDelete' },
-        { label: '生命周期删除', value: 'Lifecycle' }
-      ],
       buckets: [],
       rules: {
         bucketName: {
           required: true,
-          message: '请选择存储桶'
+          message: this.$ts('tempConfigFile.selectBucket')
         },
         policyExpressionIds: {
           required: true,
-          message: '请选择策略表达式'
+          message: this.$ts('bucketStrategyExpress.selectStrategyExpress')
         }
       },
       form: {
@@ -239,7 +193,7 @@ export default {
       userTotal: 0,
       columns: [
         {
-          title: '桶名称',
+          title: this.$ts('bucket.name'),
           prop: 'bucketName',
           minWidth: '150px',
           fixed: true
@@ -251,13 +205,13 @@ export default {
           slot: 'expressions'
         },
         {
-          title: '创建时间',
+          title: this.$ts('policies.createTime'),
           prop: 'createTime',
           minWidth: '150px'
 
         },
         {
-          title: '更新时间',
+          title: this.$ts('page.updateTime'),
           prop: 'updateTime',
           minWidth: '150px'
         },
@@ -270,47 +224,47 @@ export default {
     }
   },
   computed: {
-    isAdd() {
+    isAdd () {
       return this.opt === 'add'
     }
   },
-  mounted() {
+  mounted () {
     this.init()
   },
   methods: {
-    handleSelect(row) {
+    handleSelect (row) {
       return this.form.policyExpressionIds.every(x => x.id !== row.id)
     },
-    handleAdd() {
+    handleAdd () {
       this.visiblePopover = false
       this.form.policyExpressionIds.push(...JSON.parse(JSON.stringify(this.selection)))
       this.$refs['form'].validateField(['policyExpressionIds'])
     },
-    handleSelection(val) {
+    handleSelection (val) {
       this.selection = val
     },
-    deleteIcon(index) {
+    deleteIcon (index) {
       this.form.expressions.splice(index, 1)
     },
-    confirmSel(row) {
+    confirmSel (row) {
       this.form.policyExpressionIds.push(row)
       this.visiblePopover = false
       this.$refs['form'].validateField(['policyExpressionIds'])
     },
-    resetForm() {
+    resetForm () {
       this.userPage = 1
       this.listStrategyDictionary = []
     },
-    handleUserSize(size) {
+    handleUserSize (size) {
       this.userPage = 1
       this.userPageSize = size
       this.getList()
     },
-    handleUserPage(page) {
+    handleUserPage (page) {
       this.userPage = page
       this.getList()
     },
-    getList() {
+    getList () {
       this.popLoading = true
       listPolicyExpression({
         pageNum: this.userPage,
@@ -322,7 +276,7 @@ export default {
         this.popLoading = false
       })
     },
-    confirmCreate() {
+    confirmCreate () {
       const {
         policyExpressionIds,
         bucketName
@@ -336,7 +290,7 @@ export default {
           createOrUpdateBucketExpression(data).then(() => {
             this.$msg({
               type: 'success',
-              text: this.$ts('response.success')
+              text: this.$ts('page.responseSuccess')
             })
           })
             .finally(() => {
@@ -350,7 +304,7 @@ export default {
       })
     },
 
-    modifyForm(row) {
+    modifyForm (row) {
       this.opt = 'edit'
       this.form = {
         bucketName: row.bucketName,
@@ -359,7 +313,7 @@ export default {
       this.flag = true
     },
 
-    getBucketList() {
+    getBucketList () {
       return new Promise((resolve) => {
         listUserBuckets().then(res => {
           this.bucketList = res.data.list
@@ -368,7 +322,7 @@ export default {
         })
       })
     },
-    async showCreate() {
+    async showCreate () {
       await this.getBucketList()
       this.opt = 'add'
       this.flag = true
@@ -380,18 +334,18 @@ export default {
         }
       })
     },
-    refresh() {
+    refresh () {
       this.getTaskList()
     },
-    init() {
+    init () {
       this.getTaskList()
     },
-    getPageSearch(val) {
+    getPageSearch (val) {
       this.pageNum = val.pageNumber
       this.pageSize = val.pageSize
       this.getTaskList()
     },
-    getTaskList() {
+    getTaskList () {
       this.loading = true
       listBucketExpression().then(res => {
         this.tableData = res.data || []
@@ -470,7 +424,7 @@ export default {
         tbody {
           tr td {
             &:first-of-type {
-              padding-left: 20%;
+              // padding-left: 20%;
               box-sizing: border-box;
             }
           }

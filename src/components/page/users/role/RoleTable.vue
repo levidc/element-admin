@@ -29,13 +29,13 @@
         :label="$ts('role.des')"
       />
       <el-table-column
-        :label="$ts('action')"
+        :label="$ts('page.action')"
         width="140"
       >
         <template slot-scope="scope">
           <el-dropdown size="small">
             <el-button type="primary">
-              {{ $ts('action') }}<i class="el-icon-arrow-down el-icon--right" />
+              {{ $ts('page.action') }}<i class="el-icon-arrow-down el-icon--right" />
             </el-button>
 
             <el-dropdown-menu slot="dropdown">

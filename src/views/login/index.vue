@@ -3,48 +3,36 @@
     <div id="login_head_wrap">
       <div id="login_head">
         <img src="../../assets/images/logo.png" width="290px" alt="">
-        <!-- <span class="login_lan" @click="changeLangEvent">{{ $ts('language') }}</span> -->
         <lang-select class="set-language" />
       </div>
     </div>
     <div id="login_content_wrap">
-      <div class="login_pic" />
+      <div class="login_pic">
+        <div>
+          <span class="title">{{ $ts('login.title') }}</span>
+          <span class="subTitle">{{ $ts('login.subTitle') }}</span>
+        </div>
+      </div>
       <div id="login_content">
         <h2 class="login_title title">
-          <h2 style="display:inline-block;height:25px;width:auto">USP</h2>
+          <h2 style="display:inline-block;height:25px;width:auto">{{ $ts('navbar.title') }}</h2>
         </h2>
         <el-form ref="form" :model="loginForm" style="padding:50px 80px" :rules="rules">
-          <!-- :label="$ts('username')" -->
           <el-form-item prop="username">
             <span class="svg-container">
               <svg-icon icon-class="user" />
             </span>
-            <el-input
-              ref="username"
-              v-model="loginForm.username"
-              class="login_border"
-              :placeholder="$ts('validate.username')"
-              clearable
-              tabindex="1"
-            />
+            <el-input ref="username" v-model="loginForm.username" class="login_border"
+              :placeholder="$ts('login.username')" clearable tabindex="1" />
           </el-form-item>
           <el-tooltip v-model="capsTooltip" :content="$ts('login.tipCapLock')" placement="right" manual>
             <el-form-item prop="password">
               <span class="svg-container">
                 <svg-icon icon-class="password" />
               </span>
-              <el-input
-                :key="passwordType"
-                ref="password"
-                v-model="loginForm.password"
-                :type="passwordType"
-                :placeholder="$ts('login.password')"
-                name="password"
-                tabindex="2"
-                autocomplete="on"
-                @keyup.native="checkCapslock"
-                @blur="capsTooltip = false"
-              />
+              <el-input :key="passwordType" ref="password" v-model="loginForm.password" :type="passwordType"
+                :placeholder="$ts('login.password')" name="password" tabindex="2" autocomplete="on"
+                @keyup.native="checkCapslock" @blur="capsTooltip = false" />
               <span class="show-pwd" @click="showPwd">
                 <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
               </span>
@@ -62,9 +50,6 @@
     </p>
   </div>
 </template>
-<!-- <script type="text/javascript">
-
-</script> -->
 <script type="text/javascript">
 import LangSelect from '@/components/LangSelect'
 import eventBus from '@/utils/eventBus'
@@ -72,7 +57,7 @@ import { mapState } from 'vuex'
 export default {
   name: 'Login',
   components: { LangSelect },
-  data() {
+  data () {
     return {
       redirect: undefined,
       otherQuery: {},
@@ -90,10 +75,10 @@ export default {
       title: '',
       rules: {
         username: {
-          required: true, message: this.$ts('user.name.tool.tip'), trigger: ['blur', 'change']
+          required: true, message: this.$ts('login.usernameTip'), trigger: ['blur', 'change']
         },
         password: {
-          required: true, message: this.$ts('password.tool.tip'), trigger: ['blur', 'change']
+          required: true, message: this.$ts('login.pwdTip'), trigger: ['blur', 'change']
         }
       }
     }
@@ -101,14 +86,14 @@ export default {
   computed: {
     ...mapState(['user', 'port', 'api']),
     // copyRight信息
-    getTime() {
+    getTime () {
       const date = new Date()
       return `${date.getFullYear()}` + ' © ' + 'PengYun Network'
     }
   },
   watch: {
     $route: {
-      handler: function(route) {
+      handler: function (route) {
         const query = route.query
         if (query) {
           this.redirect = query.redirect
@@ -118,7 +103,7 @@ export default {
       immediate: true
     }
   },
-  mounted() {
+  mounted () {
     localStorage.setItem('api', null)
     eventBus.$emit('cancelTimer')
     this.$store.commit('user/SET_ACTIVEROUTE', false)
@@ -130,12 +115,12 @@ export default {
       this.$refs.password.focus()
     }
   },
-  destroy() {
+  destroy () {
     eventBus.$off('cancelTimer')
   },
 
   methods: {
-    getOtherQuery(query) {
+    getOtherQuery (query) {
       return Object.keys(query).reduce((acc, cur) => {
         if (cur !== 'redirect') {
           acc[cur] = query[cur]
@@ -143,11 +128,11 @@ export default {
         return acc
       }, {})
     },
-    checkCapslock(e) {
+    checkCapslock (e) {
       const { key } = e
       this.capsTooltip = key && key.length === 1 && (key >= 'A' && key <= 'Z')
     },
-    showPwd() {
+    showPwd () {
       if (this.passwordType === 'password') {
         this.passwordType = ''
       } else {
@@ -157,12 +142,12 @@ export default {
         this.$refs.password.focus()
       })
     },
-    changeLangEvent() {
+    changeLangEvent () {
       this.lang = this.lang === 'zh-CN' ? 'en-US' : 'zh-CN'
       this.$i18n.locale = this.lang
       sessionStorage.setItem('lang', this.lang)
     },
-    loginIn() {
+    loginIn () {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           this.loading = true
@@ -170,7 +155,7 @@ export default {
             .then(() => {
               this.$msg({
                 type: 'success',
-                text: '登录成功',
+                text: this.$ts("page.login"),
                 duration: 1000
               })
               localStorage.setItem('user', this.loginForm.username)
@@ -260,7 +245,31 @@ $cursor: #fff;
 .login_pic {
   width: 600px;
   height: 100%;
+  position: relative;
   background: url('~@/assets/images/left_pic.png') no-repeat;
+
+  div {
+    position: absolute;
+    width: 100%;
+    height: 40%;
+    left: 7%;
+    color: #fff;
+    top: 12%;
+    font-size: 35px;
+
+    .title {
+      color: #fff;
+    }
+
+    .subTitle {
+      font-weight: 100;
+      font-size: 30px;
+      left: 0%;
+      top: 32%;
+      position: absolute;
+      color: #c4c8df;
+    }
+  }
 }
 
 #login_foot_wrap {

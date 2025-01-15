@@ -3,34 +3,46 @@
     <el-main class="bucketContainer">
       <div class="breadTitle">
         <div class="bucketName">
-          <el-tooltip placement="top" content="返回桶列表">
+          <el-tooltip placement="top" :content="$ts('page.return')">
             <i class="el-icon-back backBox" @click="$router.push({ name: 'bucketList' }), goback()" />
           </el-tooltip>
           <span>{{ $route.params.id }}</span>
         </div>
         <el-menu class="bucketMenu" :default-active="activeIndex" mode="horizontal" @select="handleSelect">
-          <el-menu-item v-access="'s3:ListBucket'" index="BucketList">对象列表</el-menu-item>
+          <el-menu-item v-access="'s3:ListBucket'" index="BucketList">{{ $ts('route.BucketList') }}</el-menu-item>
           <el-submenu
             v-if="apis['s3:GetBucketVersioning'] || apis['s3:GetBucketObjectLockConfiguration'] || apis['admin:UpdateBucketQuota']"
             index="2">
-            <template slot="title">高级配置</template>
-            <el-menu-item v-access="'s3:GetBucketVersioning'" index="BucketHighConfig">版本控制</el-menu-item>
-            <el-menu-item v-access="'s3:GetBucketObjectLockConfiguration'" index="BucketObjectLock">对象锁定</el-menu-item>
-            <el-menu-item v-access="'admin:UpdateBucketQuota'" index="BucketQuota">配额管理</el-menu-item>
+            <template slot="title">{{ $ts('policies.advancedConfig') }}</template>
+            <el-menu-item v-access="'s3:GetBucketVersioning'" index="BucketHighConfig">{{ $ts('route.BucketHighConfig')
+              }}</el-menu-item>
+            <el-menu-item v-access="'s3:GetBucketObjectLockConfiguration'" index="BucketObjectLock">{{
+              $ts('route.BucketObjectLock')
+            }}</el-menu-item>
+            <el-menu-item v-access="'admin:UpdateBucketQuota'" index="BucketQuota">{{ $ts('route.BucketQuota')
+              }}</el-menu-item>
           </el-submenu>
-          <el-menu-item v-if="apis['s3:GetLifecycleConfiguration']" index="BucketLifeCycle">生命周期规则</el-menu-item>
+          <el-menu-item v-if="apis['s3:GetLifecycleConfiguration']" index="BucketLifeCycle">{{
+            $ts('route.BucketLifeCycle')
+          }}</el-menu-item>
           <el-submenu v-if="apis['s3:GetBucketPolicy'] || apis['s3:GetBucketAcl']" index="3">
-            <template slot="title">权限管理</template>
-            <el-menu-item v-access="'s3:GetBucketPolicy'" index="BucketPermisson">存储桶策略</el-menu-item>
-            <el-menu-item v-access="'s3:GetBucketAcl'" index="BucketAccess">访问控制列表</el-menu-item>
+            <template slot="title">{{ $ts('route.permissionManagement')
+              }}</template>
+            <el-menu-item v-access="'s3:GetBucketPolicy'" index="BucketPermisson">{{ $ts('route.BucketPermisson')
+              }}</el-menu-item>
+            <el-menu-item v-access="'s3:GetBucketAcl'" index="BucketAccess">{{ $ts('route.BucketAccess')
+              }}</el-menu-item>
           </el-submenu>
-          <el-menu-item v-if="apis['admin:QosController']" index="BucketQoS">QoS配置</el-menu-item>
+          <el-menu-item v-if="apis['admin:QosController']" index="BucketQoS">{{ $ts('route.BucketQoS')
+            }}</el-menu-item>
           <!-- <el-menu-item
             v-if="apis['admin:BucketCache']"
             index="BucketDataClassification"
           >冷热分层开关</el-menu-item> -->
-          <el-menu-item v-if="apis['isAdmin']" index="BucketLoadGroup">负载路由</el-menu-item>
-          <el-menu-item index="highAvailability">高可用管理</el-menu-item>
+          <el-menu-item v-if="apis['isAdmin']" index="BucketLoadGroup">{{ $ts('route.BucketLoadGroup')
+            }}</el-menu-item>
+          <el-menu-item index="highAvailability">{{ $ts('route.highAvailability')
+            }}</el-menu-item>
         </el-menu>
       </div>
       <router-view />

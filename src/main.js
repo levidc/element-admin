@@ -93,19 +93,21 @@ Vue.prototype.showS3Msg = error => {
     setTimeout(async () => {
       Vue.prototype.$msg({
         type: 'error',
-        text: 'token已失效，请重新登录'
+        text: i18n.t('error.tokenTimeout')
       })
       await store.dispatch('user/logout')
       router.push(`/login?redirect=${router.currentRoute.fullPath}`)
     }, 200)
     return
   }
-  const statusArr = store.state.statusCode.filter(item => {
-    return item.code == error.name
+  const statusArr = store.state.user.statusCode.filter(item => {
+    return item.code == error.name || item.code === error.code
   })
+  // 存在重合的code、需匹配message、此处手动处理i18n
+  const lang = store.getters.language
   let text
   if (statusArr && statusArr.length == 1) {
-    text = statusArr[0].description_cn
+    text = statusArr[0][lang]
     Vue.prototype.$msg({
       type: 'error',
       text
@@ -114,12 +116,8 @@ Vue.prototype.showS3Msg = error => {
     const res = statusArr.filter(item => {
       return item.description == error.message
     })
-    text = (res.length && res[0].description_cn) || error.message
+    text = (res.length && res[0][lang]) || error.message
   }
-  return Vue.prototype.$msg({
-    type: 'error',
-    text
-  })
 }
 Vue.prototype.thousandthSeparator = (value) => {
   value = value ? value.toString() : ''
@@ -128,17 +126,6 @@ Vue.prototype.thousandthSeparator = (value) => {
 }
 Vue.prototype.checkType = params => {
   return Object.prototype.toString.call(params)
-}
-
-Vue.prototype.checkPositiveNum = (range) => (ruel, data, callback) => {
-  data = isNaN(Number(data)) ? -1 : Number(data)
-  if (data <= 0) {
-    return callback('请输入正整数')
-  } else if (data > range) {
-    return callback('该整数值必须小于或等于' + range)
-  } else {
-    callback()
-  }
 }
 
 Vue.prototype.descValidate = (max) => (rule, value, callback) => {
@@ -242,19 +229,21 @@ Vue.prototype.clearSelect = function (context, ref) {
   context.$refs[ref].$refs['TableData'].$refs['dataTable'].clearSelection()
 }
 
-Vue.prototype.$ts = function (val) {
+Vue.prototype.$ts = function (val, params) {
+  return i18n.t(val, params)
   val += ''
   const originVal = val
   val = val.toLowerCase()
   // 小写翻译
+  // console.log(i18n.t(val, params), params)
   if (val !== i18n.t(val)) {
-    return i18n.t(val)
+    return i18n.t(val, params)
   } else if (originVal !== i18n.t(originVal)) {
     // 驼峰翻译
-    return i18n.t(originVal)
+    return i18n.t(originVal, params)
   } else {
     // s3翻译
-    const s3Msg = store.state.statusCode?.find(item => (item.description && (item.description).toLowerCase().indexOf(val.toLowerCase().substr(0, 50)) > -1))
+    const s3Msg = store.state.user.statusCode?.find(item => (item.description && (item.description).toLowerCase().indexOf(val.toLowerCase().substr(0, 50)) > -1))
     return (s3Msg && s3Msg.description_cn) || val
   }
 }

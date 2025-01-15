@@ -30,17 +30,17 @@
       <el-table-column
         width="200px"
         prop="status"
-        label="状态"
+        :label="$ts('page.status')"
       >
         <template slot-scope="scope">
           <span
             v-if="scope.row.status==true"
             style="color: #00a25b"
-          >可用</span>
+          >{{$ts('cluster.available')}}</span>
           <span
             v-if="scope.row.status==false"
             style="color: #d75a78"
-          >不可用</span>
+          >{{$ts('cluster.Unavailable')}}</span>
         </template>
       </el-table-column>
     </el-table>

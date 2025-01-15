@@ -11,7 +11,8 @@
       <i class="el-icon-caret-bottom" />
     </div>
     <el-dropdown-menu slot="dropdown">
-      <el-dropdown-item v-for="{ value, label } in langList" :key="value" :command="value" :disabled="language === value">
+      <el-dropdown-item v-for="{ value, label } in langList" :key="value" :command="value"
+        :disabled="language === value">
         {{ label }}
       </el-dropdown-item>
     </el-dropdown-menu>
@@ -31,13 +32,13 @@ export default {
           value: 'en',
           label: 'English'
         },
-        {
-          value: 'es',
-          label: 'Español'
-        }, {
-          value: 'ja',
-          label: '日本語'
-        }
+        // {
+        //   value: 'es',
+        //   label: 'Español'
+        // }, {
+        //   value: 'ja',
+        //   label: '日本語'
+        // }
       ]
     }
   },

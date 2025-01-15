@@ -5,51 +5,45 @@
         <div class="bucket-panel">
           <div id="versionControl-info-field" class="param-box">
             <div class="param-hd">
-              <h3 id="versionControl">版本控制 </h3>
+              <h3 id="versionControl">{{ $ts('route.BucketHighConfig') }} </h3>
               <el-button v-show="!editVersionControl && !loading" v-access="'s3:PutBucketVersioning'" class="modBtn"
                 type="text" :disabled="objectLock" @click="editVersionControl = !editVersionControl">
-                <span style="color: #ff8746;position: relative;top:3px">编辑</span>
+                <span style="color: #ff8746;position: relative;top:3px">{{ $ts('page.edit') }}</span>
               </el-button>
             </div>
             <p v-if="objectLock" class="mv_10">
               <svg slot="reference" class="icon icon-question" aria-hidden="true">
                 <use xlink:href="#icon-question" />
               </svg>
-              无法暂停存储桶版本控制，因为此存储桶已启用对象锁定。
+              {{ $ts('bucket.objectLockEnableTip') }}
             </p>
             <div v-loading="loading" class="param-bd">
               <ul class="item-descr-list">
                 <li>
-                  <span class="item-descr-tit">当前状态</span>
+                  <span class="item-descr-tit">{{ $ts('bucket.currentStatus') }}</span>
                   <span v-show="!editVersionControl && !loading" style="color:#ff8746" class="item-descr-txt">{{
-                    versionControl?"开启":"关闭" }}</span>
+                    versionControl ? $ts('page.open') : $ts('page.close') }}</span>
                   <el-switch v-show="editVersionControl" v-model="versionControl" />
                 </li>
                 <li v-show="editVersionControl">
                   <span class="item-descr-tit" />
-                  <span class="item-descr-txt">开启版本控制后，所有历史版本的同名文件将会被视为独立的对象处理，独占存储空间并产生存储容量费用。</span>
+                  <span class="item-descr-txt">{{ $ts('bucket.enableVersionCtrlTip') }}</span>
                 </li>
                 <li v-show="editVersionControl">
                   <span class="item-descr-tit" />
                   <div class="versionControlBtnWrap">
                     <el-button type="default" size="mini" class="blue"
-                      @click="editVersionControl = !editVersionControl; getVersionControl()">取消</el-button>
-                    <el-button type="primary" class="golden" size="mini" @click="doSaveVersion();">应用更改</el-button>
-
+                      @click="editVersionControl = !editVersionControl; getVersionControl()">{{ $ts('page.cancel')
+                      }}</el-button>
+                    <el-button type="primary" class="golden" size="mini" @click="doSaveVersion();">
+                      {{ $ts('page.applySet') }}
+                    </el-button>
                   </div>
                 </li>
               </ul>
             </div>
           </div>
         </div>
-        <el-dialog title="确定开启版本控制？" :visible.sync="isShowSaveTip" width="30%">
-          <p class="dialogDrag_word">开启对象的版本控制后，将无法关闭该功能，如不需要仅可暂停。</p>
-          <div slot="footer" class="dialog-footer">
-            <el-button class="golden" type="primary" @click="isShowSaveTip = false; saveVersionControl()">{{
-              $ts('button.confirm') }}</el-button>
-            <el-button @click="isShowSaveTip = false;">{{ $ts('button.cancel') }}</el-button>
-          </div>
-        </el-dialog>
       </div>
     </div>
   </div>
@@ -110,11 +104,7 @@ export default {
       })
     },
     doSaveVersion () {
-      if (this.noVersionControl) {
-        this.isShowSaveTip = true
-      } else {
-        this.saveVersionControl()
-      }
+      this.saveVersionControl()
     },
     saveVersionControl () {
       var params = {
@@ -130,7 +120,7 @@ export default {
         } else {
           this.$msg({
             type: 'success',
-            text: this.$ts('response.success')
+            text: this.$ts('page.responseSuccess')
           })
           console.log(response)
           this.noVersionControl = false

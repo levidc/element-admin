@@ -5,7 +5,7 @@
         <div class="bucket-panel">
           <div id="lifeCycle-info-field" class="param-box">
             <div class="param-hd">
-              <h3 id="lifeCycle">生命周期规则</h3>
+              <h3 id="lifeCycle">{{ $ts('route.BucketLifeCycle') }}</h3>
             </div>
             <!-- <div class="bucket-18-input-tips mt-10">
               注：可以配置规则用于定期沉降文件、删除文件和未上传完成的文件碎片。<br>
@@ -16,22 +16,23 @@
             <div v-loading="loading" class="param-bd">
               <el-row class="mv_10 clearfix">
                 <div class="left">
-                  <el-button type="primary" class="blue" :disabled="operateDisable"
-                    @click="visibleFlagInfo = true">详情</el-button>
+                  <el-button type="primary" class="blue" :disabled="operateDisable" @click="visibleFlagInfo = true">{{
+                    $ts('page.detail') }}</el-button>
                   <el-button v-access="'s3:PutLifecycleConfiguration'" class="blue" type="primary"
-                    :disabled="operateDisable" @click="addModBtn('modify')">编辑</el-button>
+                    :disabled="operateDisable" @click="addModBtn('modify')">{{ $ts('page.modify') }}</el-button>
                   <el-button v-access="'s3:PutLifecycleConfiguration'" type="danger" class="red"
-                    :disabled="deleteDisable" @click="delLifecycle">删除</el-button>
-                  <el-button v-access="'s3:PutLifecycleConfiguration'" class="golden"
-                    @click="addModBtn('add')">创建</el-button>
+                    :disabled="deleteDisable" @click="delLifecycle">{{ $ts('page.delete') }}</el-button>
+                  <el-button v-access="'s3:PutLifecycleConfiguration'" class="golden" @click="addModBtn('add')">{{
+                    $ts('page.create') }}</el-button>
                 </div>
                 <div class="right">
-                  <el-tooltip content="刷新" placement="top" effect="dark">
+                  <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
                     <i class="el-icon-refresh" @click="getBucketLifecycle" />
                   </el-tooltip>
                 </div>
               </el-row>
-              <el-input v-model="searchName" class="searchIpt" clearable placeholder="按名称搜索生命周期规则" />
+              <el-input v-model="searchName" class="searchIpt" clearable
+                :placeholder="$ts('bucket.searchLifeCycleRuleName')" />
               <el-table ref="multipleTable" :data="tableSlicePage" border tooltip-effect="dark" style="width: 100%"
                 :row-key="(row) => row.ID" highlight-current-row @selection-change="handleSelection">
                 <!-- @current-change="handleRowChange" -->
@@ -48,36 +49,36 @@
 </el-table-column> -->
                 <!-- <el-table-column type="selection" width="55" reserve-selection /> -->
                 <el-table-column type="selection" />
-                <el-table-column prop="ID" label="生命周期规则名称" sortable>
+                <el-table-column prop="ID" :label="$ts('bucket.lifeCycleRuleName')" sortable>
                   <template slot-scope="scope">
                     <el-button type="text" @click="handleClickName(scope.row)">{{ scope.row.ID }}</el-button>
                   </template>
                 </el-table-column>
-                <el-table-column prop="area" label="范围" sortable>
+                <el-table-column prop="area" :label="$ts('bucket.lifeCycleApplyRange')" sortable>
                   <template slot-scope="scope">
                     {{ applyRange(scope) }}
                   </template>
                 </el-table-column>
                 <!-- <el-table-column prop="content" label="规则内容" sortable /> -->
-                <el-table-column prop="Status" label="状态" sortable>
+                <el-table-column prop="Status" :label="$ts('page.status')" sortable>
                   <template slot-scope="scope">
                     <span :class="scope.row.Status === 'Enabled' ? 'green' : 'red'">
                       {{
-                        scope.row.Status === "Enabled" ? "启用" : "未启用"
+                        scope.row.Status === "Enabled" ? $ts('page.enable') : $ts('page.disable')
                       }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="" label="启用/禁用">
+                <el-table-column prop="" :label="$ts('page.enable') + '/' + $ts('page.disable')">
                   <template slot-scope="scope">
                     <el-dropdown @command="handleStatus">
                       <el-button v-access="'s3:PutLifecycleConfiguration'" type="primary" class="blue">
-                        操作<i class="el-icon-arrow-down el-icon--right" />
+                        {{ $ts('page.action') }}<i class="el-icon-arrow-down el-icon--right" />
                       </el-button>
                       <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item :command="changeStatus('enable', scope.row)" :class="scope.row.Status === 'Enabled' ? 'forbidBtn' : ''
-                          ">启用规则</el-dropdown-item>
+                          ">{{ $ts('bucket.enableRule') }}</el-dropdown-item>
                         <el-dropdown-item :command="changeStatus('disabled', scope.row)" :class="scope.row.Status === 'Enabled' ? '' : 'forbidBtn'
-                          ">停用规则</el-dropdown-item>
+                          ">{{ $ts('bucket.disableRule') }}</el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
                   </template>
@@ -90,18 +91,17 @@
           </div>
         </div>
       </div>
-      <el-dialog ref="formData" :title="addOperate ? '创建生命周期规则' : '编辑生命周期规则'" width="850px" :visible.sync="visibleFlag"
-        class="dialog" @close="handleScroll('formData')">
-        <!-- 生命周期配置规则 -->
-        <h1 class="titleh1">生命周期配置规则</h1>
+      <el-dialog ref="formData" :title="addOperate ? $ts('bucket.createRule') : $ts('bucket.modifyRule')" width="850px"
+        :visible.sync="visibleFlag" class="dialog" @close="handleScroll('formData')">
         <el-form ref="createForm" :model="createForm" :rules="rules">
-          <el-form-item label="生命周期规则名称" prop="ID">
-            <el-input v-model="createForm.ID" placeholder="输入规则名称" clearable />
+          <el-form-item :label="$ts('bucket.lifeCycleRuleName')" prop="ID">
+            <el-input v-model="createForm.ID"
+              :placeholder="$ts('validate.iptItem', { name: $ts('bucket.lifeCycleRuleName') })" clearable />
           </el-form-item>
-          <el-form-item label="选择规则范围" class="ruleRange">
-            <el-radio v-model="createForm.range" label="1">使用一个或多个筛选条件限制此规则的范围
+          <el-form-item :label="$ts('bucket.ruleApplyRange')" class="ruleRange">
+            <el-radio v-model="createForm.range" label="1">{{ $ts('bucket.filterRuleConfig') }}
             </el-radio>
-            <el-radio v-model="createForm.range" label="2">应用到存储桶中的所有对象
+            <el-radio v-model="createForm.range" label="2">{{ $ts('bucket.filterApplyAll') }}
             </el-radio>
           </el-form-item>
           <el-row v-if="createForm.range === '1'">
@@ -109,12 +109,13 @@
             <p class="tipText">
               您可以按前缀、对象标签、对象大小或者适合您的使用案例的任何组合来筛选对象。
             </p> -->
-            <p class="normalText obstacleTop">前缀</p>
+            <p class="normalText obstacleTop">{{ $ts('bucket.prefix') }}</p>
             <p class="tipText">
-              添加筛选条件，以便将此规则的范围限制为单个前缀。
+              {{ $ts('bucket.prefixTip') }}
             </p>
             <el-form-item prop="prefixIpt">
-              <el-input v-model="createForm.prefixIpt" placeholder="输入前缀" clearable />
+              <el-input v-model="createForm.prefixIpt"
+                :placeholder="$ts('validate.iptItem', { name: $ts('bucket.prefix') })" clearable />
             </el-form-item>
 
             <!-- 对象标签 -->
@@ -229,29 +230,29 @@
               </div>
             </el-checkbox-group> -->
 
-            <!-- 生命周期配置规则 -->
           </el-row>
-          <h1 class="titleh1">生命周期规则操作</h1>
+          <h1 class="titleh1">{{ $ts('bucket.ruleOperateTitle') }}</h1>
           <el-checkbox-group v-model="ruleOperate" class="obstacleTop" @change="changeCheckBox">
             <!-- <el-checkbox label="r1">在存储类之间移动对象的当前版本</el-checkbox>
             <el-checkbox label="r2">在存储类之间移动对象的非当前版本</el-checkbox> -->
 
-            <el-checkbox label="r3">将对象的当前版本设为过期</el-checkbox>
-            <el-checkbox label="r4">永久删除对象的非当前版本</el-checkbox>
-            <el-checkbox label="r5" :disabled="disableDelExpiredRule">删除过期的对象删除标记或未完成的分段上传
+            <el-checkbox label="r3">{{ $ts('bucket.setCurrentVersionExpired') }}</el-checkbox>
+            <el-checkbox label="r4">{{ $ts('bucket.deleteNonCurrentVersion') }}</el-checkbox>
+            <el-checkbox label="r5" :disabled="disableDelExpiredRule">{{
+              $ts('bucket.deleteExpiredObjectOrAbortMultiple') }}
             </el-checkbox>
           </el-checkbox-group>
           <div style="font-size: 12px; margin: -18px 0 20px 25px;">
-            按对象标签或对象大小进行筛选时，不支持这些操作。
+            {{ $ts('bucket.filterSignOrObjectSizeTip') }}
           </div>
 
           <!-- 在存储类之间移动对象的当前版本 -->
           <div v-if="ruleOperate.includes('r1')" class="obstacleTop">
-            <h1 class="titleh1">在存储类之间移动对象的当前版本</h1>
+            <h1 class="titleh1">{{ $ts('bucket.changeCurrentVersion') }}</h1>
             <div v-if="createForm.Transition && createForm.Transition.length > 0">
               <p class="objectLabelTitle" style="width:590px">
-                <span>选择存储类转换</span>
-                <span style="margin-left:200px">创建对象以来的天数</span>
+                <span>{{ $ts('bucket.selectStorageClass') }}</span>
+                <span style="margin-left:200px">{{ $ts('bucket.objectCreatedDay') }}</span>
               </p>
               <div v-for="(item, i) in createForm.Transition" :key="item.key" class="objectLabelTitle"
                 style="width: 100%;">
@@ -269,24 +270,26 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item :prop="`Transition.${i}.value`" :rules="rules.objTransferDay">
-                  <el-input v-model="item.value" placeholder="天数" class="obstacleRight" />
+                  <el-input v-model="item.value" :placeholder="$ts('bucket.day')" class="obstacleRight" />
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="danger" @click="delTransition(i, 'currentVer')">删除</el-button>
+                  <el-button type="danger" @click="delTransition(i, 'currentVer')">{{ $ts('page.delete') }}</el-button>
                 </el-form-item>
               </div>
-              <el-button :disabled="disableAddTransform" @click="addTransitionType('currentVer')">添加转换</el-button>
+              <el-button :disabled="disableAddTransform" @click="addTransitionType('currentVer')">{{
+                $ts('bucket.addTransfer')
+              }}</el-button>
             </div>
           </div>
 
           <!-- 在存储类之间移动对象的非当前版本 -->
           <div v-if="ruleOperate.includes('r2')" class="obstacleTop">
-            <h1 class="titleh1">在存储类之间移动对象的非当前版本</h1>
+            <h1 class="titleh1">{{ $ts('bucket.changeNonCurrentVersion') }}</h1>
             <div v-if="createForm.NoncurrentVersionTransitions && createForm.NoncurrentVersionTransitions.length > 0">
               <p class="objectLabelTitle" style="width:700px">
-                <span>选择存储类转换</span>
-                <span style="margin-left:80px">对象变为非当前对象以来的天数</span>
-                <span>要保留的较新版本的数量 – 可选</span>
+                <span>{{ $ts('bucket.selectStorageClass') }}</span>
+                <span style="margin-left:80px">{{ $ts('bucket.objectChangeNonCurrent') }}</span>
+                <span>{{ $ts('bucket.saveLatestCurrentNo') }}</span>
               </p>
               <div v-for="(item, i) in createForm.NoncurrentVersionTransitions" :key="item.key" class="objectLabelTitle"
                 style="width: 800px">
@@ -302,43 +305,52 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item :prop="`NoncurrentVersionTransitions.${i}.value`" :rules="rules.objTransferDayNC">
-                  <el-input v-model="item.value" placeholder="天数" class="obstacleRight" />
+                  <el-input v-model="item.value" :placeholder="$ts('bucket.day')" class="obstacleRight" />
                 </el-form-item>
                 <el-form-item :prop="`NoncurrentVersionTransitions.${i}.ver`" :rules="rules.objTransferVerNC">
-                  <el-input v-model="item.ver" placeholder="版本数" class="obstacleRight" />
-                  <p style="width:250px;line-height:16px;color:rgb(104, 112, 120);font-size:12px">最高可以是 10000 版本。
-                    所有其他非当前版本都将被移动。</p>
+                  <el-input v-model="item.ver"
+                    :placeholder="$ts('validate.iptItem', { name: $ts('bucket.versionCount') })"
+                    class="obstacleRight" />
+                  <p style="width:250px;line-height:16px;color:rgb(104, 112, 120);font-size:12px">
+                    {{ $ts('bucket.HighestVersion') }}
+                  </p>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="danger" @click="delTransition(i, 'notCurrentVer')">删除</el-button>
+                  <el-button type="danger" @click="delTransition(i, 'notCurrentVer')">{{ $ts('page.delete')
+                    }}</el-button>
                 </el-form-item>
               </div>
-              <el-button :disabled="disableAddTransformNC" @click="addTransitionType('notCurrentVer')">添加转换</el-button>
+              <el-button :disabled="disableAddTransformNC" @click="addTransitionType('notCurrentVer')">{{
+                $ts('bucket.addTransfer') }}</el-button>
             </div>
           </div>
 
           <!-- r2 end -->
 
           <div v-if="ruleOperate.includes('r3')" class="obstacleTop">
-            <h1 class="titleh1">将对象的当前版本设为过期</h1>
-            <el-form-item label="创建对象以来的天数" prop="Expiration">
-              <el-input v-model="createForm.Expiration" style="width: 520px" placeholder="输入天数" clearable />
+            <h1 class="titleh1">{{ $ts('bucket.setCurrentVersionExpired') }}</h1>
+            <el-form-item :label="$ts('bucket.objectCreatedDay')" prop="Expiration">
+              <el-input v-model="createForm.Expiration" style="width: 520px"
+                :placeholder="$ts('validate.iptItem', { name: $ts('bucket.day') })" clearable />
             </el-form-item>
+
           </div>
           <!-- 永久删除对象 -->
           <div v-if="ruleOperate.includes('r4')" class="obstacleTop">
-            <h1 class="titleh1">永久删除对象的非当前版本</h1>
+            <h1 class="titleh1">{{ $ts('bucket.deleteNonCurrentVersion') }}</h1>
             <el-row :gutter="60">
               <el-col :span="12">
-                <el-form-item label="对象变为非当前对象以来的天数" prop="noncurrentDays">
-                  <el-input v-model="createForm.noncurrentDays" placeholder="输入天数" clearable />
+                <el-form-item :label="$ts('bucket.objectChangeNonCurrent')" prop="noncurrentDays">
+                  <el-input v-model="createForm.noncurrentDays"
+                    :placeholder="$ts('validate.iptItem', { name: $ts('bucket.day') })" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="要保留的较新版本的数量 – 可选" prop="NewerNoncurrentVersions">
-                  <el-input v-model="createForm.NewerNoncurrentVersions" placeholder="版本数" clearable />
+                <el-form-item :label="$ts('bucket.saveLatestCurrentNo')" prop="NewerNoncurrentVersions">
+                  <el-input v-model="createForm.NewerNoncurrentVersions"
+                    :placeholder="$ts('validate.iptItem', { name: $ts('bucket.versionCount') })" clearable />
                   <p class="tipText">
-                    最高可以是 100000 版本。 所有其他非当前版本都将被移动。
+                    {{ $ts('bucket.HighestVersion') }}
                   </p>
                 </el-form-item>
               </el-col>
@@ -346,127 +358,130 @@
           </div>
           <!-- 删除过期的对象 -->
           <div v-if="ruleOperate.includes('r5')" class="obstacleTop">
-            <h1 class="titleh1">删除过期的对象删除标记或未完成的分段上传</h1>
-            <p class="normalText">过期的对象删除标记</p>
+            <h1 class="titleh1">{{ $ts('bucket.deleteExpiredObjectOrAbortMultiple') }}</h1>
+            <p class="normalText">{{ $ts('bucket.deleteExpirationObject') }}</p>
             <p class="tipText">
-              此操作将删除过期的对象删除标记，并可能提高性能。如果在删除某个启用了版本控制的对象后，该对象所有的非当前版本过期，则将删除过期的对象删除标记。选中“将对象的当前版本设为过期”时，此操作不可用。
+              {{ $ts('bucket.deleteExpirationTip') }}
             </p>
             <el-checkbox v-model="createForm.AbortIncompleteMultipartUpload.deleteExpired" class="obstacleTop"
-              :disabled="ruleOperate.includes('r3')">删除过期的对象删除标记</el-checkbox>
+              :disabled="ruleOperate.includes('r3')">{{ $ts('bucket.deleteExpirationObjectMark') }}</el-checkbox>
             <p v-if="ruleOperate.includes('r3')" style="margin: -15px 0 20px 0">
-              <i class="el-icon-warning-outline">如果启用将当前的对象版本设为过期，则无法启用删除过期的对象删除标记。</i>
+              <i class="el-icon-warning-outline">{{ $ts('bucket.deleteExpirationObjectMarkTip') }}</i>
             </p>
-            <p class="normalText">未完成的分段上传</p>
+            <p class="normalText">{{ $ts('bucket.uncompletedMultiple') }}</p>
             <p class="tipText">
-              此操作将停止所有未完成的分段上传并删除与分段上传相关的分段。
+              {{ $ts('bucket.deleteUncompletedTip') }}
             </p>
-            <el-checkbox v-model="createForm.AbortIncompleteMultipartUpload.deleteUncompleted"
-              class="obstacleTop">删除未完成的分段上传</el-checkbox>
+            <el-checkbox v-model="createForm.AbortIncompleteMultipartUpload.deleteUncompleted" class="obstacleTop">{{
+              $ts('bucket.deleteUncompleted') }}</el-checkbox>
             <div v-if="createForm.AbortIncompleteMultipartUpload.deleteUncompleted">
-              <el-form-item label="天数" prop="AbortIncompleteMultipartUpload.deleteUncompletedDay"
+              <el-form-item :label="$ts('bucket.day')" prop="AbortIncompleteMultipartUpload.deleteUncompletedDay"
                 :rules="rules.deleteUncompleted">
                 <el-input v-model="createForm.AbortIncompleteMultipartUpload.deleteUncompletedDay" style="width: 520px"
-                  clearable placeholder="输入天数" />
+                  clearable :placeholder="$ts('validate.iptItem', { name: $ts('bucket.day') })" />
               </el-form-item>
             </div>
           </div>
           <!-- 审查转换和过期操作 创建修改 -->
-          <h1 class="titleh1">审查转换和过期操作</h1>
+          <h1 class="titleh1">{{ $ts('bucket.transferAndExpiration') }}</h1>
           <div class="configList">
             <div class="currentVersion">
-              <h3 class="title">当前版本操作</h3>
-              第 0 天
+              <h3 class="title">{{ $ts('bucket.currentVersionOperate') }}</h3>
+              {{ $ts('bucket.zeroDay') }}
               <p>
-                <span v-if="ruleOperate.includes('r1') || ruleOperate.includes('r3')">已上传对象</span>
-                <span v-else>没有定义任何操作。</span>
+                <span v-if="ruleOperate.includes('r1') || ruleOperate.includes('r3')">{{ $ts('bucket.uploadObject')
+                  }}</span>
+                <span v-else>{{ $ts('bucket.noOperate') }}</span>
               </p>
               <!-- 将对象的当前版本设为过期 -->
 
               <div v-if="ruleOperate.includes('r1')">
                 <div v-for="(item) in createForm.Transition" :key="item.key">
                   <i class="el-icon-bottom" />
-                  <p>第{{ item.value || "--" }}天</p>
-                  <p><span>对象移动到&nbsp;&nbsp;{{ RuleMap[item.key] }}</span></p>
+                  <p>{{ $ts('bucket.countDay', { day: item.value || "--" }) }}</p>
+                  <p><span>{{ $ts('bucket.objectMove') }}&nbsp;&nbsp;{{ RuleMap[item.key] }}</span></p>
                 </div>
               </div>
               <div v-if="ruleOperate.includes('r3')">
                 <i class="el-icon-bottom" />
-                <p>第{{ createForm.Expiration || "--" }}天</p>
-                <p><span>对象过期时间</span></p>
+                <p>{{ $ts('bucket.countDay', { day: createForm.Expiration || "--" }) }}</p>
+                <p><span>{{ $ts('bucket.objectExpirationTime') }}</span></p>
               </div>
             </div>
             <div class="notCurrentVersion">
-              <h3 class="title">非当前版本操作</h3>
-              第 0 天
+              <h3 class="title">{{ $ts('bucket.nonCurrentVersionOperate') }}</h3>
+              {{ $ts('bucket.zeroDay') }}
               <p>
-                <span v-if="ruleOperate.includes('r2') || ruleOperate.includes('r4')">对象变为非当前对象</span>
-                <span v-else>没有定义任何操作。</span>
+                <span v-if="ruleOperate.includes('r2') || ruleOperate.includes('r4')">{{
+                  $ts('bucket.objectTransferNonCurrent') }}</span>
+                <span v-else>{{ $ts('bucket.noOperate') }}</span>
               </p>
               <!-- 永久删除对象的非当前版本 option4-->
-
               <div v-if="ruleOperate.includes('r2')">
                 <div v-for="(item) in createForm.NoncurrentVersionTransitions" :key="item.key">
                   <i class="el-icon-bottom" />
-                  <p>第{{ item.value || "--" }}天</p>
-                  <p><span>保留 {{ item.ver || 0 }} 个最新的非当前版本</span></p>
-                  <p><span>所有其他非当前版本都将移动到&nbsp;&nbsp;{{ RuleMap[item.key] }}</span></p>
+                  <p> {{ $ts('bucket.countDay', { day: item.value || "--" }) }}</p>
+                  <p><span>{{ $ts('bucket.keepCountNonCurrentVersion', { count: item.ver || 0 }) }}</span></p>
+                  <p><span>{{ $ts('bucket.otherNonCurrentVersion') }}&nbsp;&nbsp;{{ RuleMap[item.key] }}</span></p>
                 </div>
               </div>
 
               <div v-if="ruleOperate.includes('r4')">
                 <i class="el-icon-bottom" />
-                <p>第{{ createForm.noncurrentDays || "--" }}天</p>
-                <p>
-                  <span>保留{{
-                    createForm.NewerNoncurrentVersions || 0
-                    }}个最新的非当前版本</span>
+                <p> {{ $ts('bucket.countDay', { day: createForm.noncurrentDays || "--" }) }}</p>
+                <p><span>{{ $ts('bucket.keepCountNonCurrentVersion', {
+                  count: createForm.NewerNoncurrentVersions ||
+                    0
+                }) }}</span>
                 </p>
-                <p><span>所有其他非当前版本都将被永久删除</span></p>
+                <p><span>{{ $ts('bucket.deleteOtherNonCurrentVersion') }}</span></p>
               </div>
             </div>
             <span class="border" />
           </div>
           <p v-if="validRuleOption" style="color: #f56c6c">
             <i class="el-icon-circle-close" />
-            需要为规则定义至少一个转换或过期操作。
+            {{ $ts('bucket.addOneLeastOpertate') }}
           </p>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button class="blue" @click="visibleFlag = false">{{
-            $ts("button.cancel")
-            }}</el-button>
-          <el-button class="golden" type="primary" @click="submitCreate">{{ addOperate ? '创建' : '保存' }}</el-button>
+            $ts("page.cancel")
+          }}</el-button>
+          <el-button class="golden" type="primary" @click="submitCreate">{{ addOperate ? $ts('page.create') :
+            $ts('page.save') }}</el-button>
         </div>
       </el-dialog>
       <!-- 详情 -->
-      <el-dialog ref="infoData" title="生命周期配置规则" :visible.sync="visibleFlagInfo" class="infoDialog" width="1200px"
-        @close="handleScroll('infoData')">
+      <el-dialog ref="infoData" :title="$ts('bucket.ruleDetail')" :visible.sync="visibleFlagInfo" class="infoDialog"
+        width="1200px" @close="handleScroll('infoData')">
         <div class="infoMenu titleh1">
           <h3 class="">{{ selectConfig.ID }}</h3>
           <div>
             <el-button v-access="'s3:PutLifecycleConfiguration'" type="primary" class="golden"
-              @click="addModBtn('modify'); visibleFlagInfo = false; visibleFlag = true">编辑</el-button>
+              @click="addModBtn('modify'); visibleFlagInfo = false; visibleFlag = true">{{ $ts('page.modify')
+              }}</el-button>
             <el-button v-access="'s3:PutLifecycleConfiguration;s3:DeleteBucketLifecycle'" type="danger" class="red"
-              @click="delLifecycle">删除</el-button>
+              @click="delLifecycle">{{ $ts('page.delete') }}</el-button>
             <el-dropdown style="margin-left:10px" @command="handleStatus">
               <el-button v-access="'s3:PutLifecycleConfiguration'" type="primary" class="blue">
-                操作<i class="el-icon-arrow-down el-icon--right" />
+                {{ $ts('page.action') }}<i class="el-icon-arrow-down el-icon--right" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item :command="changeStatus('enable', createForm)" :class="selectConfig.Status === 'Enabled' ? 'forbidBtn' : ''
-                  ">启用规则</el-dropdown-item>
+                  ">{{ $ts('bucket.enableRule') }}</el-dropdown-item>
                 <el-dropdown-item :command="changeStatus('disabled', createForm)" :class="selectConfig.Status === 'Enabled' ? '' : 'forbidBtn'
-                  ">停用规则</el-dropdown-item>
+                  ">{{ $ts('bucket.disableRule') }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
         </div>
         <div class="configList">
           <p>
-            生命周期规则名称 <span>{{ selectConfig.ID }}</span>
+            {{ $ts('bucket.lifeCycleRuleName') }} <span>{{ selectConfig.ID }}</span>
           </p>
           <p>
-            前缀 <span>{{ selectConfig.Filter && selectConfig.Filter.Prefix || "-" }}</span>
+            {{ $ts('bucket.prefix') }} <span>{{ selectConfig.Filter && selectConfig.Filter.Prefix || "-" }}</span>
             <span class="border bL" />
             <span class="border bR" />
           </p>
@@ -478,10 +493,10 @@
           </p> -->
 
           <p>
-            状态
+            {{ $ts('page.status') }}
             <span :style="{
               color: selectConfig.Status === 'Enabled' ? 'green' : 'red',
-              }">{{ selectConfig.Status === "Enabled" ? "已启用" : "未启用" }}</span>
+            }">{{ selectConfig.Status === "Enabled" ? $ts('page.enable') : $ts('page.disable') }}</span>
           </p>
 
           <!-- <p>
@@ -498,85 +513,94 @@
           </p> -->
 
           <p>
-            范围<span>{{ selectRange }}</span>
+            {{ $ts('bucket.lifeCycleApplyRange') }}<span>{{ selectRange }}</span>
           </p>
         </div>
-        <h3 class="titleh1">审查转换和过期操作</h3>
+        <h3 class="titleh1">{{ $ts('bucket.transferAndExpiration') }}</h3>
         <div class="configList" style="margin-right: 250px">
           <div class="currentVersion">
-            <h3 class="title">当前版本操作</h3>
-            第 0 天
+            <h3 class="title">{{ $ts('bucket.currentVersionOperate') }}</h3>
+            {{ $ts('bucket.zeroDay') }}
             <p>
               <span
-                v-if="selectConfig.Expiration && selectConfig.Expiration.Days || selectConfig.Transitions && selectConfig.Transitions.length">已上传对象</span>
-              <span v-else>没有定义任何操作。</span>
+                v-if="selectConfig.Expiration && selectConfig.Expiration.Days || selectConfig.Transitions && selectConfig.Transitions.length">{{
+                  $ts('bucket.uploadObject') }}</span>
+              <span v-else>{{ $ts('bucket.noOperate') }}</span>
             </p>
             <div v-if="selectConfig.Transitions && selectConfig.Transitions.length">
               <div v-for="item in selectConfig.Transitions" :key="item.day">
                 <i class="el-icon-bottom" />
-                <p>
-                  第{{ item.Days }}天
-                </p>
-                <p><span>对象移动到&nbsp;{{ RuleMapTxt[item.StorageClass] }}</span></p>
+                <p>{{ $ts('bucket.countDay', { day: item.Days }) }}</p>
+                <p><span>{{ $ts('bucket.objectMove') }}&nbsp;{{ RuleMapTxt[item.StorageClass] }}</span></p>
               </div>
             </div>
             <div v-if="selectConfig.Expiration && selectConfig.Expiration.Days">
               <i class="el-icon-bottom" />
-              <p>第{{ selectConfig.Expiration.Days }}天</p>
-              <p><span>对象过期时间</span></p>
+              <p>{{ $ts('bucket.countDay', { day: selectConfig.Expiration.Days }) }}</p>
+              <p><span>{{ $ts('bucket.objectExpirationTime') }}</span></p>
             </div>
           </div>
           <div class="notCurrentVersion">
-            <h3 class="title">非当前版本操作</h3>
-            第 0 天
+            <h3 class="title">{{ $ts('bucket.nonCurrentVersionOperate') }}</h3>
+            {{ $ts('bucket.zeroDay') }}
             <p>
-
               <span
-                v-if="selectConfig.NoncurrentVersionTransitions && selectConfig.NoncurrentVersionTransitions.length || selectConfig.NoncurrentVersionExpiration && selectConfig.NoncurrentVersionExpiration.NoncurrentDays">对象变为非当前对象</span>
-              <span v-else>没有定义任何操作。</span>
+                v-if="selectConfig.NoncurrentVersionTransitions && selectConfig.NoncurrentVersionTransitions.length || selectConfig.NoncurrentVersionExpiration && selectConfig.NoncurrentVersionExpiration.NoncurrentDays">{{
+                  $ts('bucket.objectTransferNonCurrent') }}</span>
+              <span v-else>{{ $ts('bucket.noOperate') }}</span>
             </p>
             <div v-if="selectConfig.NoncurrentVersionTransitions && selectConfig.NoncurrentVersionTransitions.length">
               <div v-for="item in selectConfig.NoncurrentVersionTransitions" :key="item.day">
                 <i class="el-icon-bottom" />
                 <p>
-                  第{{ item.NoncurrentDays }}天
+                  {{ $ts('bucket.countDay', { day: item.NoncurrentDays }) }}
                 </p>
-                <p><span>保留 &nbsp;{{ item.NewerNoncurrentVersions || "--" }} 个最新的非当前版本</span></p>
-                <p><span>所有其他非当前版本都将移动到&nbsp;{{ RuleMapTxt[item.StorageClass] }}</span></p>
+                <p><span>{{ $ts('bucket.keepCountNonCurrentVersion', {
+                  count: item.NewerNoncurrentVersions || "--"
+                }) }}</span>
+                </p>
+                <p><span>{{ $ts('bucket.otherNonCurrentVersion') }}&nbsp;{{ RuleMapTxt[item.StorageClass] }}</span></p>
               </div>
             </div>
             <div v-if="selectConfig.NoncurrentVersionExpiration">
 
               <i class="el-icon-bottom" />
               <p>
-                第{{
-                  selectConfig.NoncurrentVersionExpiration.NoncurrentDays || "--"
-                }}天
+                {{ $ts('bucket.countDay', { day: selectConfig.NoncurrentVersionExpiration.NoncurrentDays || "--" }) }}
               </p>
               <p>
-                <span>保留{{
-                  selectConfig.NoncurrentVersionExpiration
-                    .NewerNoncurrentVersions
-                }}个最新的非当前版本</span>
+                <span>
+                  {{ $ts('bucket.keepCountNonCurrentVersion', {
+                    count: selectConfig.NoncurrentVersionExpiration
+                      .NewerNoncurrentVersions
+                  }) }}</span>
               </p>
-              <p><span>所有其他非当前版本都将被永久删除</span></p>
+              <p><span>{{ $ts('bucket.deleteOtherNonCurrentVersion') }}</span></p>
             </div>
           </div>
         </div>
-        <h3 class="titleh1">删除过期的对象删除标记或未完成的分段上传</h3>
+        <h3 class="titleh1">{{ $ts('bucket.deleteExpirationObjectMarkOrUncompleteMult') }}</h3>
         <div class="configList" style="margin-right:250px">
           <div class="currentVersion">
-            过期的对象删除标记
-            <p><span> {{ selectConfig.Expiration && selectConfig.Expiration.ExpiredObjectDeleteMarker ? '删除过期的对象删除标记' : '-'
+            {{ $ts('bucket.deleteExpirationObject') }}
+            <p><span> {{ selectConfig.Expiration && selectConfig.Expiration.ExpiredObjectDeleteMarker ?
+              $ts('bucket.deleteExpirationObjectMark') :
+              '-'
                 }}</span></p>
           </div>
           <div class="notCurrentVersion">
-            未完成的分段上传
+            {{ $ts('bucket.uncompletedMultiple') }}
             <p>
               <span>
                 {{
-                  selectConfig.AbortIncompleteMultipartUpload && selectConfig.AbortIncompleteMultipartUpload.DaysAfterInitiation ? '在' + selectConfig.AbortIncompleteMultipartUpload.DaysAfterInitiation
-                    + '天后删除' : '-' }}
+                  selectConfig.AbortIncompleteMultipartUpload &&
+                    selectConfig.AbortIncompleteMultipartUpload.DaysAfterInitiation
+                    ?
+                    $ts('bucket.deleteAfterCountDay', {
+                      day: selectConfig.AbortIncompleteMultipartUpload.DaysAfterInitiation
+                    })
+                    :
+                    '-' }}
               </span>
             </p>
           </div>
@@ -613,17 +637,17 @@ export default {
       if (currentkey === 1) {
         // 遵循一个规则大于30
         if (data < 30) {
-          return callback('至少需要 30 天才能转换到 标准 – IA。')
+          return callback(this.$ts('bucket.standTransitionLimit'))
         }
       }
 
       // 智能分层
       if (currentkey === 2) {
         if (preKey === 1 && data - preData < 30) {
-          return callback('智能分层 的整数值必须至少比 标准 – IA 的值大 30。')
+          return callback(this.$ts('bucket.smartLargeStand30'))
         } else if (!preKey) {
           if (data < 0) {
-            return callback('必须提供有效的整数值。')
+            return callback(this.$ts('bucket.validNum'))
           } else {
             return callback()
           }
@@ -632,16 +656,16 @@ export default {
       // 单区  case 1
       if (currentkey === 3) {
         if (preKey === 2 && data - preData < 30) {
-          return callback('单区 – IA 的整数值必须至少比 智能分层 的值大 30。')
+          return callback(this.$ts('bucket.iaLargeSmart30'))
         } else if (preKey === 1 && data - preData < 30) {
           // case 2
-          return callback('单区 – IA 的整数值必须至少比 标准 – IA 的值大 30。')
+          return callback(this.$ts('bucket.iaLargeStand30'))
         } else if (!preKey) {
           // case 3
           if (data > 30) {
             return callback()
           } else {
-            return callback('至少需要 30 天才能转换到 单区 – IA。')
+            return callback(this.$ts('bucket.iaTransitionLimit'))
           }
         }
       }
@@ -651,17 +675,17 @@ export default {
       if (currentkey === 4) {
         if (preKey === 2 && data < preData) {
           return callback(
-            'Glacier Instant Retrieval 的整数值必须至少比 智能分层 的值大 0。'
+            this.$ts('bucket.girLargeSmart0')
           )
         } else if (preKey === 1 && data - preData < 30) {
           return callback(
-            'Glacier Instant Retrieval 的整数值必须至少比 标准 – IA 的值大 30'
+            this.$ts('bucket.girLargeStand30')
           )
         } else if (!preKey) {
           if (data >= 0) {
             return callback()
           } else {
-            return callback('必须提供有效的整数值。')
+            return callback(this.$ts('bucket.validNum'))
           }
         }
       }
@@ -670,25 +694,25 @@ export default {
       if (currentkey === 5) {
         if (preKey === 4 && data - preData < 90) {
           return callback(
-            'Glacier Flexible Retrieval (以前称为 Glacier) 的整数值必须至少比 Glacier Instant Retrieval 的值大 90。'
+            this.$ts('bucket.gfrLargeGIR90')
           )
         } else if (preKey === 3 && data - preData < 30) {
           return callback(
-            'Glacier Flexible Retrieval (以前称为 Glacier) 的整数值必须至少比 单区 – IA 的值大 30。'
+            this.$ts('bucket.gfrLargeIA30')
           )
         } else if (preKey === 2 && data < preData) {
           return callback(
-            'Glacier Flexible Retrieval (以前称为 Glacier) 的整数值必须至少比 智能分层 的值大 0。'
+            this.$ts('bucket.gfrLargeSmart0')
           )
         } else if (preKey === 1 && data - preData < 30) {
           return callback(
-            'Glacier Flexible Retrieval (以前称为 Glacier) 的整数值必须至少比 标准 – IA 的值大 30。'
+            this.$ts('bucket.gfrLargeStand30')
           )
         } else if (!preKey) {
           if (data >= 0) {
             return callback()
           } else {
-            return callback('必须提供有效的整数值。')
+            return callback(this.$ts('bucket.validNum'))
           }
         }
       }
@@ -697,29 +721,29 @@ export default {
       if (currentkey === 6) {
         if (preKey === 5 && data - preData < 90) {
           return callback(
-            'Glacier Deep Archive 的整数值必须至少比 Glacier Flexible Retrieval (以前称为 Glacier) 的值大 90。'
+            this.$ts('bucket.gdaLargeGFR90')
           )
         } else if (preKey === 4 && data - preData < 90) {
           return callback(
-            'Glacier Deep Archive 的整数值必须至少比 Glacier Instant Retrieval 的值大 90。'
+            this.$ts('bucket.gdaLarageGIR90')
           )
         } else if (preKey === 3 && data - preData < 30) {
           return callback(
-            'Glacier Deep Archive 的整数值必须至少比 单区 – IA 的值大 30。'
+            this.$ts('bucket.gdaLargeIA30')
           )
         } else if (preKey === 2 && data < preData) {
           return callback(
-            'Glacier Deep Archive 的整数值必须至少比 智能分层 的值大 0。'
+            this.$ts('bucket.gdaLargeSmart')
           )
         } else if (preKey === 1 && data - preData < 30) {
           return callback(
-            'Glacier Deep Archive 的整数值必须至少比 标准 – IA 的值大 30。'
+            this.$ts('bucket.gdaLargeStand30')
           )
         } else if (!preKey) {
           if (data >= 0) {
             return callback()
           } else {
-            return callback('必须提供有效的整数值。')
+            return callback(this.$ts('bucket.validNum'))
           }
         }
       }
@@ -741,17 +765,17 @@ export default {
       if (currentkey === 1) {
         // 遵循一个规则大于30
         if (data < 30) {
-          return callback('至少需要 30 天才能转换到 标准 – IA。')
+          return callback(this.$ts('bucket.standTransitionLimit'))
         }
       }
 
       // 智能分层
       if (currentkey === 2) {
         if (preKey === 1 && data - preData < 30) {
-          return callback('智能分层 的整数值必须至少比 标准 – IA 的值大 30。')
+          return callback(this.$ts('bucket.smartLargeStand30'))
         } else if (!preKey) {
           if (data < 0) {
-            return callback('必须提供有效的整数值。')
+            return callback(this.$ts('bucket.validNum'))
           } else {
             return callback()
           }
@@ -760,16 +784,16 @@ export default {
       // 单区  case 1
       if (currentkey === 3) {
         if (preKey === 2 && data - preData < 30) {
-          return callback('单区 – IA 的整数值必须至少比 智能分层 的值大 30。')
+          return callback(this.$ts('bucket.iaLargeSmart30'))
         } else if (preKey === 1 && data - preData < 30) {
           // case 2
-          return callback('单区 – IA 的整数值必须至少比 标准 – IA 的值大 30。')
+          return callback(this.$ts('bucket.iaLargeStand30'))
         } else if (!preKey) {
           // case 3
           if (data > 30) {
             return callback()
           } else {
-            return callback('至少需要 30 天才能转换到 单区 – IA。')
+            return callback(this.$ts('bucket.iaTransitionLimit'))
           }
         }
       }
@@ -779,17 +803,17 @@ export default {
       if (currentkey === 4) {
         if (preKey === 2 && data < preData) {
           return callback(
-            'Glacier Instant Retrieval 的整数值必须至少比 智能分层 的值大 0。'
+            this.$ts('bucket.girLargeSmart0')
           )
         } else if (preKey === 1 && data - preData < 30) {
           return callback(
-            'Glacier Instant Retrieval 的整数值必须至少比 标准 – IA 的值大 30'
+            this.$ts('bucket.girLargeStand30')
           )
         } else if (!preKey) {
           if (data >= 0) {
             return callback()
           } else {
-            return callback('必须提供有效的整数值。')
+            return callback(this.$ts('bucket.validNum'))
           }
         }
       }
@@ -798,25 +822,25 @@ export default {
       if (currentkey === 5) {
         if (preKey === 4 && data - preData < 90) {
           return callback(
-            'Glacier Flexible Retrieval (以前称为 Glacier) 的整数值必须至少比 Glacier Instant Retrieval 的值大 90。'
+            this.$ts('bucket.gfrLargeGIR90')
           )
         } else if (preKey === 3 && data - preData < 30) {
           return callback(
-            'Glacier Flexible Retrieval (以前称为 Glacier) 的整数值必须至少比 单区 – IA 的值大 30。'
+            this.$ts('bucket.gfrLargeIA30')
           )
         } else if (preKey === 2 && data < preData) {
           return callback(
-            'Glacier Flexible Retrieval (以前称为 Glacier) 的整数值必须至少比 智能分层 的值大 0。'
+            this.$ts('bucket.gfrLargeSmart0')
           )
         } else if (preKey === 1 && data - preData < 30) {
           return callback(
-            'Glacier Flexible Retrieval (以前称为 Glacier) 的整数值必须至少比 标准 – IA 的值大 30。'
+            this.$ts('bucket.gfrLargeStand30')
           )
         } else if (!preKey) {
           if (data >= 0) {
             return callback()
           } else {
-            return callback('必须提供有效的整数值。')
+            return callback(this.$ts('bucket.validNum'))
           }
         }
       }
@@ -825,29 +849,29 @@ export default {
       if (currentkey === 6) {
         if (preKey === 5 && data - preData < 90) {
           return callback(
-            'Glacier Deep Archive 的整数值必须至少比 Glacier Flexible Retrieval (以前称为 Glacier) 的值大 90。'
+            this.$ts('bucket.gdaLargeGFR90')
           )
         } else if (preKey === 4 && data - preData < 90) {
           return callback(
-            'Glacier Deep Archive 的整数值必须至少比 Glacier Instant Retrieval 的值大 90。'
+            this.$ts('bucket.gdaLarageGIR90')
           )
         } else if (preKey === 3 && data - preData < 30) {
           return callback(
-            'Glacier Deep Archive 的整数值必须至少比 单区 – IA 的值大 30。'
+            this.$ts('bucket.gdaLargeIA30')
           )
         } else if (preKey === 2 && data < preData) {
           return callback(
-            'Glacier Deep Archive 的整数值必须至少比 智能分层 的值大 0。'
+            this.$ts('bucket.gdaLargeSmart')
           )
         } else if (preKey === 1 && data - preData < 30) {
           return callback(
-            'Glacier Deep Archive 的整数值必须至少比 标准 – IA 的值大 30。'
+            this.$ts('bucket.gdaLargeStand30')
           )
         } else if (!preKey) {
           if (data >= 0) {
             return callback()
           } else {
-            return callback('必须提供有效的整数值。')
+            return callback(this.$ts('bucket.validNum'))
           }
         }
       }
@@ -878,14 +902,14 @@ export default {
       const transData = isNaN(Number(data)) ? -1 : Number(data)
       // 当前data为空，则无需校验
       if (transData === -1) {
-        return callback('输入正整数')
+        return callback(this.$ts('validate.positiveNumber'))
       }
       if (transData > 100) {
-        return callback('最高可以是 100 版本。')
+        return callback(this.$ts('bucket.topVersion'))
       }
       // 0 校验
       if (data !== '' && transData < preVer) {
-        return callback(`该整数值必须大于或等于${preVer} 。`)
+        return callback(`${this.$ts('bucket.largerThanOrEqual')}${preVer} 。`)
       }
       callback()
       // 当前的版本数 规则大于等于前一项
@@ -894,7 +918,7 @@ export default {
     const validateMinIpt = (rule, data, callback) => {
       const reg = /^[\d]*$/
       if (!reg.test(data)) {
-        return callback('请输入正整数')
+        return callback(this.$ts('validate.positiveNumber'))
       } else {
         this.$refs['createForm'].clearValidate('minSizeIpt')
         this.$refs['createForm'].clearValidate('maxSizeIpt')
@@ -907,7 +931,7 @@ export default {
           0 &&
           this.objectSize.includes('max')
         ) {
-          return callback(new Error('最小对象大小必须小于最大对象大小。'))
+          return callback(new Error(this.$ts('bucket.minObjectSizeSmallMaxObject')))
         } else {
           callback()
         }
@@ -918,7 +942,7 @@ export default {
     const validateMaxIpt = (rule, data, callback) => {
       const reg = /^[\d]*$/
       if (!reg.test(data) || (Number(data) === 0 && data !== '')) {
-        return callback('请输入正整数')
+        return callback(this.$ts('validate.positiveNumber'))
       } else {
         this.$refs['createForm'].validateField('minSizeIpt')
         if (!this.createForm.minSizeIpt || !data) {
@@ -930,7 +954,7 @@ export default {
           0 &&
           this.objectSize.includes('min')
         ) {
-          return callback(new Error('最大对象大小必须大于最小对象大小。'))
+          return callback(new Error(this.$ts('bucket.maxObjectSizeLargeminObjectSize')))
         } else {
           callback()
         }
@@ -945,13 +969,13 @@ export default {
         ).sort((a, b) => b - a)[0]
         : 0
       if (data && String(data).indexOf('.') > -1) {
-        return callback('请填入正整数')
+        return callback(this.$ts('validate.positiveNumber'))
       }
       data = isNaN(Number(data)) ? -1 : Number(data)
       if (data > 10000) {
-        return callback('必须小于或等于10000')
+        return callback(this.$ts('bucket.smallerThanOrEqual10000'))
       } else if (data < lastVer) {
-        return callback(`该整数值必须大于或等于${lastVer}`)
+        return callback(`${this.$ts('bucket.largerThanOrEqual')}${lastVer}`)
       } else {
         callback()
       }
@@ -963,27 +987,27 @@ export default {
         ? Number(this.createForm.NoncurrentVersionTransitions[len - 1].value)
         : 0
       if (data && String(data).indexOf('.') > -1) {
-        return callback('请填入正整数')
+        return callback(this.$ts('validate.positiveNumber'))
       }
       data = isNaN(Number(data)) ? -1 : Number(data)
       if (data <= lastDay) {
-        return callback(`该整数值必须大于${lastDay}`)
+        return callback(`${this.$ts('bucket.largerThan')}${lastDay}`)
       } else if (data > 36135) {
-        return callback('该整数值必须小于或等于 36135')
+        return callback(this.$ts('bucket.expirationReg'))
       } else {
         callback()
       }
     }
     const checkPositiveNumber = (rule, data, callback) => {
       if (data > 36135) {
-        return callback('该整数值必须小于或等于 36135')
+        return callback(this.$ts('bucket.expirationReg'))
       }
       if (data && String(data).indexOf('.') > -1) {
-        return callback('请填入正整数')
+        return callback(this.$ts('validate.positiveNumber'))
       }
       data = isNaN(Number(data)) ? 0 : Number(data)
       if (!data || data < 0) {
-        return callback('请填入正整数')
+        return callback(this.$ts('validate.positiveNumber'))
       } else {
         return callback()
       }
@@ -997,7 +1021,7 @@ export default {
         : 0
       data = isNaN(Number(data)) ? -1 : Number(data)
       if (data <= lastValue) {
-        return callback(`该整数值必须大于 ${lastValue}`)
+        return callback(`${this.$ts('bucket.largerThan')} ${lastValue}`)
       } else {
         callback()
       }
@@ -1007,7 +1031,7 @@ export default {
       const name = this.RuleMap[data]
       if (this.minSizeTransLimit && data < 5) {
         return callback(
-          `已定义的对象大小筛选条件小于转换到 ${name}的对象的最小大小。请更改对象大小筛选条件或使用其他存储类。`
+          this.$ts('bucket.minObjectSizeLimitReg', { name })
         )
       } else {
         callback()
@@ -1018,7 +1042,7 @@ export default {
       const name = this.RuleMap[data]
       if (this.minSizeTransLimit && data < 5) {
         return callback(
-          `已定义的对象大小筛选条件小于转换到 ${name}的对象的最小大小。请更改对象大小筛选条件或使用其他存储类。`
+          this.$ts('bucket.minObjectSizeLimitReg', { name })
         )
       } else {
         callback()
@@ -1028,13 +1052,13 @@ export default {
     const checkRuleName = (rule, data, callback) => {
       const reg = /^[0-9a-zA-Z]{1,255}$/
       if (!reg.test(data)) {
-        return callback('名称只能输入英文及数字，长度限制为255位')
+        return callback(this.$ts('bucket.ruleNameReg'))
       }
       return callback()
     }
     const checknetworkExpiration = (rule, data, callback) => {
       if (data > 36135) {
-        return callback('该整数值必须小于或等于36135')
+        return callback(this.$ts('bucket.expirationReg'))
       }
       return callback()
     }
@@ -1056,20 +1080,20 @@ export default {
         6: 'DEEP_ARCHIVE'
       },
       RuleMap: {
-        1: '标准 – IA',
-        2: '智能分层',
-        3: '单区 – IA',
-        4: 'Glacier Instant Retrieval',
-        5: '对象移动到 Glacier Flexible Retrieval (以前称为 Glacier)',
-        6: 'Glacier Deep Archive'
+        1: this.$ts('bucket.standTransition'),
+        2: this.$ts('bucket.smartTransition'),
+        3: this.$ts('bucket.individualAreaTransition'),
+        4: this.$ts('bucket.GlacierInstantRetrieval'),
+        5: this.$ts('bucket.GlacierFlex'),
+        6: this.$ts('bucket.GlacierDeepArchive')
       },
       RuleMapTxt: {
-        STANDARD_IA: '标准 – IA',
-        INTELLIGENT_TIERING: '智能分层',
-        ONEZONE_IA: '单区 – IA',
-        GLACIER_IR: 'Glacier Instant Retrieval',
-        GLACIER: '对象移动到 Glacier Flexible Retrieval (以前称为 Glacier)',
-        DEEP_ARCHIVE: 'Glacier Deep Archive'
+        STANDARD_IA: this.$ts('bucket.standTransition'),
+        INTELLIGENT_TIERING: this.$ts('bucket.smartTransition'),
+        ONEZONE_IA: this.$ts('bucket.individualAreaTransition'),
+        GLACIER_IR: this.$ts('bucket.GlacierInstantRetrieval'),
+        GLACIER: this.$ts('bucket.GlacierFlex'),
+        DEEP_ARCHIVE: this.$ts('bucket.GlacierDeepArchive')
       },
       RuleMapVal: {
         STANDARD_IA: 1,
@@ -1118,7 +1142,7 @@ export default {
       },
       objectSize: [],
       sizeSelect: [
-        { label: '字节', value: 'byte' },
+        { label: this.$ts('bucket.byte'), value: 'byte' },
         { label: 'KB', value: 'KB' },
         { label: 'MB', value: 'MB' },
         { label: 'GB', value: 'GB' }
@@ -1129,41 +1153,41 @@ export default {
       ruleOperate: [],
       storageTransition: [
         {
-          label: '标准-IA',
+          label: this.$ts('bucket.standTransition'),
           value: 1,
-          tip: '支持毫秒级访问的不经常访问的数据(每月一次)',
-          day: '30 天 天最短存储时间'
+          tip: this.$ts('bucket.standTip'),
+          day: this.$ts('bucket.storageTime30Day')
         },
         {
-          label: '智能分层',
+          label: this.$ts('bucket.smartTransition'),
           value: 2,
-          tip: '访问模式发生变化或未知的数据',
-          day: '无最短存储持续时间'
+          tip: this.$ts('bucket.smartTip'),
+          day: this.$ts('bucket.storageTimeNoSet')
         },
         {
-          label: '单区-IA',
+          label: this.$ts('bucket.individualAreaTransition'),
           value: 3,
           tip:
-            '存储在支持毫秒级访问的单个可用区中的可重新创建且不经常访问的数据(每月一次)',
-          day: '30 天 天最短存储时间'
+            this.$ts('bucket.individualAreaTip'),
+          day: this.$ts('bucket.storageTime30Day')
         },
         {
-          label: 'Glacier Instant Retrieval',
+          label: this.$ts('bucket.GlacierInstantRetrieval'),
           value: 4,
-          tip: '支持几毫秒级即时检索、长期保存且每季度访问一次的归档数据',
-          day: '90 天 天最短存储时间'
+          tip: this.$ts('bucket.GlacierInstantRetrievalTip'),
+          day: this.$ts('bucket.storageTime90Day')
         },
         {
-          label: 'Glacier Flexible Retrieval',
+          label: this.$ts('bucket.GlacierFlexibleRetrieval'),
           value: 5,
-          tip: '检索时间为几分钟到几小时、长期保存且每年访问一次的归档数据',
-          day: '90 天 天最短存储时间'
+          tip: this.$ts('bucket.GlacierFlexibleRetrievalTip'),
+          day: this.$ts('bucket.storageTime90Day')
         },
         {
-          label: 'Glacier Deep Archive',
+          label: this.$ts('bucket.GlacierDeepArchive'),
           value: 6,
-          tip: '检索时间为几个小时、长期保存且每年访问少于一次的归档数据',
-          day: '180 天 天最短存储时间'
+          tip: this.$ts('bucket.GlacierDeepArchiveTip'),
+          day: this.$ts('bucket.storageTime180Day')
         }
       ],
       selectConfig: {
@@ -1178,7 +1202,7 @@ export default {
         ID: [
           {
             required: true,
-            message: '生命周期规则名称为必填项',
+            message: this.$ts('validate.requiredReg', { name: this.$ts('bucket.lifeCycleRuleName') }),
             trigger: 'change'
           },
           {
@@ -1189,13 +1213,13 @@ export default {
         prefixIpt: [
           {
             required: true,
-            message: '限制规则范围时，您必须指定一个前缀或另一个筛选条件',
+            message: this.$ts('bucket.prefixReg'),
             trigger: 'change'
           },
-          { max: 255, message: '不能超过S3规范1024个字符', trigger: 'change' }
+          { max: 255, message: this.$ts('validate.limitRange', { range: this.$ts('bucket.characterLength') }), trigger: 'change' }
         ],
         Key: [
-          { required: true, message: '键名必填', trigger: ['blur', 'change'] }
+          { required: true, message: this.$ts('validate.requiredReg', { name: this.$ts('bucket.keyName') }), trigger: ['blur', 'change'] }
         ],
         minSizeIpt: [
           {
@@ -1218,7 +1242,7 @@ export default {
         noncurrentDays: [
           {
             required: true,
-            message: '所选操作需要设置过期时间。请输入值或取消选择该操作。',
+            message: this.$ts('bucket.expirationTimeTip'),
             trigger: ['blur', 'change']
           },
           {
@@ -1229,7 +1253,7 @@ export default {
         Expiration: [
           {
             required: true,
-            message: '所选操作需要设置过期时间。请输入值或取消选择该操作。',
+            message: this.$ts('bucket.expirationTimeTip'),
             trigger: ['blur', 'change']
           },
           {
@@ -1257,7 +1281,7 @@ export default {
         deleteUncompleted: [
           {
             required: true,
-            message: '请填入正整数',
+            message: this.$ts('validate.positiveNumber'),
             trigger: ['change', 'blur']
           },
           {
@@ -1317,8 +1341,8 @@ export default {
     },
     selectRange () {
       return Object.keys(this.selectConfig.Filter || {}).length
-        ? '已筛选'
-        : '整个存储桶'
+        ? this.$ts('bucket.hasFilter')
+        : this.$ts('bucket.allBucket')
     },
     maxSizeIptBytes () {
       return (
@@ -1450,7 +1474,7 @@ export default {
         this.showPrefixRule = true
         this.rules.prefixIpt.push({
           required: true,
-          message: '限制规则范围时，您必须指定一个前缀或另一个筛选条件。',
+          message: this.$ts('bucket.prefixReg'),
           trigger: 'change'
         })
         // this.$refs['createForm'].validateField('prefixIpt')
@@ -1467,7 +1491,7 @@ export default {
             this.rules.minSizeIpt.push({
               required: true,
               message:
-                '限制规则范围时，您必须指定最小对象大小或另一个筛选条件。',
+                this.$ts('bucket.minSizeReg'),
               trigger: 'change'
             })
           }
@@ -1480,7 +1504,7 @@ export default {
             this.rules.maxSizeIpt.push({
               required: true,
               message:
-                '限制规则范围时，您必须指定最大对象大小或另一个筛选条件。',
+                this.$ts('bucket.maxSizeReg'),
               trigger: 'change'
             })
           }
@@ -1522,7 +1546,7 @@ export default {
         this.createForm.maxSizeIpt = ''
         this.rules.prefixIpt.push({
           required: true,
-          message: '限制规则范围时，您必须指定一个前缀或另一个筛选条件。',
+          message: this.$ts('bucket.prefixReg'),
           trigger: 'change'
         })
         if (!this.createForm.prefixIpt) {
@@ -1670,9 +1694,9 @@ export default {
     },
     applyRange (scope) {
       if (Object.keys(scope.row.Filter || {}).length) {
-        return '已筛选'
+        return this.$ts('bucket.hasFilter')
       } else {
-        return '整个存储桶'
+        return this.$ts('bucket.allBucket')
       }
     },
     clearSelectRadio () {
@@ -1683,11 +1707,11 @@ export default {
         const name = this.selectRule.map(item => item.ID).join(';')
         const Rules = this.filterDiff(this.tableData, this.selectRule, 'ID')
         this.$confirm(
-          '此操作将删除生命周期规则，可能会导致现有对象保留或停止自动转换到不同的存储层，这将影响您的成本。',
-          `是否删除生命周期规则 ${name} ?`,
+          this.$ts('bucket.deleteRuleTip'),
+          this.$ts('bucket.deleteNameTip', { name }),
           {
-            confirmButtonText: '删除',
-            cancelButtonText: '取消',
+            confirmButtonText: this.$ts('page.delete'),
+            cancelButtonText: this.$ts('page.cancel'),
             type: 'warning'
           }
         ).then(() => {
@@ -1707,7 +1731,7 @@ export default {
                 } else {
                   this.$msg({
                     type: 'success',
-                    text: this.$ts('response.success')
+                    text: this.$ts('page.responseSuccess')
                   })
                   this.visibleFlagInfo = false
                   this.clearSelectRadio()
@@ -1727,7 +1751,7 @@ export default {
                 } else {
                   this.$msg({
                     type: 'success',
-                    text: this.$ts('response.success')
+                    text: this.$ts('page.responseSuccess')
                   })
                   this.visibleFlagInfo = false
                   this.clearSelectRadio()
@@ -1790,7 +1814,6 @@ export default {
       // 特殊校验 如果对象大小 最小或最大对象大小的值 有小于128kb则 添加option禁用
       // 禁用范围 从标准-IA 到 GIR
       if (this.minSizeTransLimit) {
-        console.log('option', '禁用')
         for (let i = 0; i < this.storageTransition.length; i++) {
           if (i < 4) {
             this.storageTransition[i].disabled = true
@@ -2157,7 +2180,7 @@ export default {
                 } else {
                   this.$msg({
                     type: 'success',
-                    text: this.$ts('response.success')
+                    text: this.$ts('page.responseSuccess')
                   })
                   this.visibleFlag = false
                   this.getBucketLifecycle()
@@ -2363,11 +2386,10 @@ export default {
       // console.log(selectName, index, 'index', str, 'str')
       if (str.command === 'disabled') {
         this.$confirm(
-          '此操作将禁用生命周期规则，可能会删除现有对象或停止自动转换到不同的存储层，这将影响您的成本。',
-          '是否禁用生命周期规则 ' + selectName + ' ?',
+          this.$ts('bucket.disableRuleTip'), this.$ts('bucket.disableNameTip', { name: selectName }),
           {
-            confirmButtonText: '禁用',
-            cancelButtonText: '取消',
+            confirmButtonText: this.$ts('page.disable'),
+            cancelButtonText: this.$ts('page.cancel'),
             type: 'warning'
           }
         ).then(() => {
@@ -2391,7 +2413,7 @@ export default {
                 this.clearSelectRadio()
                 this.$msg({
                   type: 'success',
-                  text: this.$ts('response.success')
+                  text: this.$ts('page.responseSuccess')
                 })
               }
             }
@@ -2399,11 +2421,10 @@ export default {
         })
       } else {
         this.$confirm(
-          '此操作将启用生命周期规则，可能会删除现有对象或开始自动转换到不同的存储层，这将影响您的成本。',
-          '是否启用生命周期规则 ' + selectName + ' ?',
+          this.$ts('bucket.enableRuleTip'), this.$ts('bucket.enableNameTip', { name: selectName }),
           {
-            confirmButtonText: '启用',
-            cancelButtonText: '取消',
+            confirmButtonText: this.$ts('page.enable'),
+            cancelButtonText: this.$ts('page.cancel'),
             type: 'warning'
           }
         ).then(() => {
@@ -2427,7 +2448,7 @@ export default {
                 this.clearSelectRadio()
                 this.$msg({
                   type: 'success',
-                  text: this.$ts('response.success')
+                  text: this.$ts('page.responseSuccess')
                 })
               }
             }
@@ -2642,6 +2663,7 @@ export default {
   //   border: 1px solid #ccc;
   // }
   span {
+
     // color: #16191f;
     // font-weight: 0 !important;
     &:nth-of-type(n + 2) {
@@ -2652,4 +2674,3 @@ export default {
   }
 }
 </style>
-

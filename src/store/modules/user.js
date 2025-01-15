@@ -5,6 +5,7 @@ import router, { resetRouter } from '@/router'
 import { getPermission } from '@/api/policy'
 import config from '../../../proxy.config'
 import { systemPermission } from '@/utils/permission-language'
+import { statusCode } from '@/utils/statusCode'
 const state = {
   token: getToken(),
   name: '',
@@ -17,7 +18,8 @@ const state = {
   port: '',
   user: '',
   activeRoute: false,
-  systemPermission
+  systemPermission,
+  statusCode
 }
 
 const mutations = {

@@ -3,7 +3,7 @@
     <div class="page_content_wrap">
       <div class="mb_15 clearfix">
         <div class="right">
-          <el-tooltip content="刷新" placement="top" effect="dark">
+          <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
             <i class="el-icon-refresh" @click="searchVal = ''; init()" />
           </el-tooltip>
         </div>
@@ -12,7 +12,7 @@
       </div>
       <DataTable style="width: 100%;" :table-data="filterData" :loading="loading" :columns="columns"
         :page-obj="{ pageSize: 10, currentPage: 1 }">
-        <el-table-column slot="bucketName" label="桶名称" min-width="150px">
+        <el-table-column slot="bucketName" :label="$ts('bucket.name')" min-width="150px">
           <template slot-scope="scope">
             <a class="blue" @click="viewDetail(scope.row.bucketName)">{{ scope.row.bucketName }}</a>
           </template>
@@ -101,7 +101,7 @@ export default {
       }).then(() => {
         this.$msg({
           type: 'success',
-          text: this.$ts('response.success')
+          text: this.$ts('page.responseSuccess')
         })
       })
         .finally(() => {

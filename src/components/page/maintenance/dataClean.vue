@@ -5,7 +5,7 @@
         <el-button size="small" type="primary" class="golden" @click="manualExecution()">
           {{ $ts('manualExecution') }}
         </el-button>
-        <el-tooltip content="刷新" placement="top" effect="dark">
+        <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
           <i class="el-icon-refresh right" @click="searchVal = ''; getDataTaskList()" />
         </el-tooltip>
         <el-input v-model="searchVal" class="search_style right" placeholder="任务过滤" width="14" clearable />
@@ -84,7 +84,7 @@ export default {
       addManualObjectCleanUp().then((res) => {
         this.$msg({
           type: 'success',
-          text: this.$ts('response.success')
+          text: this.$ts('page.responseSuccess')
         })
         this.getDataTaskList()
       })

@@ -2,48 +2,48 @@
   <div>
     <div v-loading="loading" class="container page_content_wrap">
       <div v-show="!loading" class="globalstyle">
-        <h2 style="font-size: 17px;">全局配置</h2>
-        <el-tooltip content="刷新" placement="top" effect="dark">
+        <h2 style="font-size: 17px;">{{ $ts('globalConfig.title') }}</h2>
+        <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
           <i class="el-icon-refresh" @click="getConfig()" />
         </el-tooltip>
       </div>
       <el-form v-show="!loading" ref="form" :model="form" class="form" label-width="150px" :rules="rules">
         <el-form-item prop="notSafeAuth">
           <span slot="label">
-            低安全等级鉴权
+            {{ $ts('globalConfig.LowSecurityLevelAuthentication') }}
             <el-popover width="360" trigger="hover" placement="top-start" :open-delay="200"
-              content="统一认证中心服务不可用时，会影响console用户无法登录控制台，以及会影响token即将到期的gateway用户无法进行put、get等需要进行S3鉴权的操作。开启后，可以让以上描述的console用户和gateway用户能正常使用。">
+              :content="$ts('globalConfig.LowSecurityLevelAuthenticationDesc')">
               <svg slot="reference" class="icon icon-question" aria-hidden="true">
                 <use xlink:href="#icon-question" />
               </svg>
             </el-popover>
           </span>
           <el-radio-group v-model="form.notSafeAuth" :disabled="formControl.editAuthSafe">
-            <el-radio :label="false">关闭</el-radio>
-            <el-radio :label="true">开启</el-radio>
+            <el-radio :label="false">{{ $ts('page.close') }}</el-radio>
+            <el-radio :label="true">{{ $ts('page.open') }}</el-radio>
           </el-radio-group>
           <i v-show="disabledEdit('editAuthSafe')" class="el-icon-edit-outline" @click="edit('editAuthSafe')" />
         </el-form-item>
         <el-form-item prop="openQos">
           <span slot="label">
-            QoS管理开关
+            {{ $ts('globalConfig.qosControl') }}
           </span>
           <el-radio-group v-model="form.openQos" :disabled="formControl.editQos">
-            <el-radio :label="false">关闭</el-radio>
-            <el-radio :label="true">开启</el-radio>
+            <el-radio :label="false">{{ $ts('page.close') }}</el-radio>
+            <el-radio :label="true">{{ $ts('page.open') }}</el-radio>
           </el-radio-group>
           <i v-show="disabledEdit('editQos')" class="el-icon-edit-outline" @click="edit('editQos')" />
         </el-form-item>
-        <el-form-item prop="gatewayCount" label="Gateway节点数">
-          <el-input v-model="form.gatewayCount" placeholder="请输入正整数" style="width:134px"
-            :disabled="formControl.editGateway" @input="renderPositiveNum()" />
+        <el-form-item prop="gatewayCount" :label="$ts('globalConfig.NumberofGatewayNodes')">
+          <el-input v-model="form.gatewayCount" :placeholder="$ts('validate.positiveNumberRange', { min: 1, max: 200 })"
+            style="width:250px" :disabled="formControl.editGateway" @input="renderPositiveNum()" clearable />
           <i v-show="disabledEdit('editGateway')" class="el-icon-edit-outline" @click="edit('editGateway')" />
         </el-form-item>
         <el-form-item v-show="golden" label=" ">
           <el-row class="mv_20">
-            <el-button type="default" class="blue" @click="editVersionControls('form')">取消
+            <el-button type="default" class="blue" @click="editVersionControls('form')">{{ $ts('page.cancel') }}
             </el-button>
-            <el-button class="golden" :loading="loading" @click="onCheckSave">{{ $ts('save') }}
+            <el-button class="golden" :loading="loading" @click="onCheckSave">{{ $ts('page.save') }}
             </el-button>
           </el-row>
         </el-form-item>
@@ -72,10 +72,8 @@ export default {
       rules: {
         gatewayCount: {
           validator: (_, val, cb) => {
-            if (Number(val) == 0) {
-              return cb('请输入1-200的整数')
-            } else if (Number(val) > 200) {
-              return cb('请输入1-200的整数')
+            if (Number(val) == 0 || Number(val) > 200) {
+              return cb(this.$ts('validate.positiveNumberRange', { min: 1, max: 200 }))
             } else {
               return cb('')
             }
@@ -142,7 +140,7 @@ export default {
               if (res.msg === 'success') {
                 this.$msg({
                   type: 'success',
-                  text: this.$ts('response.success')
+                  text: this.$ts('page.responseSuccess')
                 })
               }
               this.golden = false
@@ -218,7 +216,7 @@ export default {
 }
 
 :deep(.el-input-number) {
-  width: 134px;
+  width: 250px;
 
   .el-input-number__decrease {
     height: 15px !important;

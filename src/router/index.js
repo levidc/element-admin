@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 const originalPush = Router.prototype.push
-Router.prototype.push = function push(location) {
+Router.prototype.push = function push (location) {
   return originalPush.call(this, location).catch(err => err)
 }
 /* Layout */
@@ -426,7 +426,7 @@ export const asyncRoutes = [
         component: () => import('@/components/page/objectStorage/objectResource'),
         name: 'ObjectResourceList',
         meta: { title: 'ObjectResourceM', icon: '', noCache: true },
-        privilege: ['admin:ListStorageDeviceController']
+        permission: ['admin:ListStorageDeviceController']
       },
       {
         path: 'LoadGroup',
@@ -458,20 +458,30 @@ export const asyncRoutes = [
         path: 'strategyDictionary',
         name: 'strategyDictionary',
         component: () => import('@/components/page/StrategyDictionary/index'),
-        meta: { title: 'strategyDictionary', icon: '', noCache: true }
+        meta: { title: 'strategyDictionary', icon: '', noCache: true },
+        permission: ['admin:StrategyDictionaryController']
       },
       {
         path: 'strategyExpress',
         name: 'strategyExpress',
         component: () => import('@/components/page/StrategyDictionary/strategyExpress'),
-        meta: { title: 'strategyExpress', icon: '', noCache: true }
+        meta: { title: 'strategyExpress', icon: '', noCache: true },
+        permission: ['admin:PolicyExpressionController']
       },
       {
-        path: 'bucketStrategyExpress',
+        path: 'BucketStrategyExpress',
         name: 'bucketStrategyExpress',
         component: () => import('@/components/page/StrategyDictionary/bucketStrategyExpress'),
-        meta: { title: 'strategyDictionary', icon: '', noCache: true }
-      }
+        meta: { title: 'bucketStrategyExpress', icon: '', noCache: true },
+        permission: ['admin:BucketExpressionController']
+      },
+      {
+        path: 'tempConfigFile',
+        name: 'tempConfigFile',
+        component: () => import('@/components/page/StrategyDictionary/tempConfigFile'),
+        meta: { title: 'tempConfigFile', icon: '', noCache: true },
+        // permission: ['admin:GlacierRestoreFileDictController']
+      },
     ]
   },
   // {
@@ -950,7 +960,7 @@ const createRouter = () => new Router({
 const router = createRouter()
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
-export function resetRouter() {
+export function resetRouter () {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router
 }

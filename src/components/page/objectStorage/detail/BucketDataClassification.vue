@@ -8,8 +8,8 @@
               <h3 id="openCache">冷热分层开关 </h3>
               <el-button v-show="!editVersionControl && !loading" v-access="'s3:PutBucketVersioning'" class="modBtn"
                 type="text" :disabled="!hideDisableTip" @click="editVersionControl = !editVersionControl">
-                <span style="color: #ff8746;position: relative;top:3px"
-                  :style="{ opacity: hideDisableTip ? 1 : .7 }">编辑</span>
+                <span style="color: #ff8746;position: relative;top:3px" :style="{ opacity: hideDisableTip ? 1 : .7 }">
+                  {{ $ts('page.edit') }}</span>
               </el-button>
               <el-popover v-if="!hideDisableTip" placement="right" trigger="hover">
                 <p style="line-height:1.6;">冷热分层全局开关开启时才能配置</p>
@@ -23,15 +23,17 @@
                 <li>
                   <span class="item-descr-tit">当前状态</span>
                   <span v-show="!editVersionControl && !loading" style="color:#ff8746" class="item-descr-txt">{{
-                    openCache?"开启":"关闭" }}</span>
+                    openCache ? "开启" : "关闭" }}</span>
                   <el-switch v-show="editVersionControl" v-model="openCache" :width="40" />
                 </li>
                 <li v-show="editVersionControl">
                   <span class="item-descr-tit" />
                   <div class="versionControlBtnWrap">
                     <el-button type="default" size="mini" class="blue"
-                      @click="editVersionControl = !editVersionControl; getConfig()">取消</el-button>
-                    <el-button type="primary" class="golden" size="mini" @click="doSaveVersion();">应用更改</el-button>
+                      @click="editVersionControl = !editVersionControl; getConfig()">{{ $ts('page.cancel')
+                      }}</el-button>
+                    <el-button type="primary" class="golden" size="mini" @click="doSaveVersion();"> {{
+                      $ts('page.applySet') }}</el-button>
                   </div>
                 </li>
               </ul>
@@ -99,7 +101,7 @@ export default {
       }).then(() => {
         this.$msg({
           type: 'success',
-          text: this.$ts('response.success')
+          text: this.$ts('page.responseSuccess')
         })
       })
         .finally(() => {

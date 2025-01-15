@@ -94,7 +94,7 @@
               @click="searchParams"
             >查询</el-button>
             <el-tooltip
-              content="刷新"
+              :content="$ts('page.refresh')"
               placement="top"
               effect="dark"
             >

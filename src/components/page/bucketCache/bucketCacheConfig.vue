@@ -1,28 +1,14 @@
 <template>
   <div>
     <div>
-      <el-container
-        v-loading="loading"
-        class="page_content_wrap"
-        style="min-height:300px"
-      >
+      <el-container v-loading="loading" class="page_content_wrap" style="min-height:300px">
         <el-main v-show="!loading">
           <div class="configInfo">
             <div class="globalstyle">
               <h2 style="font-size: 17px;">全局配置</h2>
-              <span
-                class="editestyle"
-                @click="drawerFlag=true"
-              ><a>编辑</a></span>
-              <el-tooltip
-                content="刷新"
-                placement="top"
-                effect="dark"
-              >
-                <i
-                  class="el-icon-refresh"
-                  @click="init()"
-                />
+              <span class="editestyle" @click="drawerFlag = true"><a> {{ $ts('page.edit') }}</a></span>
+              <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
+                <i class="el-icon-refresh" @click="init()" />
               </el-tooltip>
             </div>
             <div class="config_container">
@@ -44,95 +30,54 @@
             <h2 style="font-size: 20px;">热数据缓存</h2>
             <div class="usedChart">
               <div>
-                <svg
-                  class="icon usedCount"
-                  aria-hidden="true"
-                >
+                <svg class="icon usedCount" aria-hidden="true">
                   <use xlink:href="#icon-usedCount2" />
                 </svg>
                 <span>已缓存对象数量
-                  {{ bigNumberTransform(cacheCount.val) }}
+                  {{ $store.getters.language === 'zh' ? bigNumberTransform(cacheCount.val) : preciseDemi(cacheCount.val)
+                  }}
                 </span>
               </div>
             </div>
           </div>
-          <DataTable
-            style="width: 100%;margin-bottom:20px;"
-            :table-data="resoureData"
-            :loading="false"
-            :columns="columns"
-            pagination
-          >
-            <el-table-column
-              slot="resourceName"
-              label="资源名"
-              min-width="100px"
-            >
+          <DataTable style="width: 100%;margin-bottom:20px;" :table-data="resoureData" :loading="false"
+            :columns="columns" pagination>
+            <el-table-column slot="resourceName" label="资源名" min-width="100px">
               <template slot-scope="scope">
                 <showToolTip :text="scope.row.resourceName" />
               </template>
             </el-table-column>
-            <el-table-column
-              slot="deviceName"
-              label="设备名"
-              min-width="100px"
-            >
+            <el-table-column slot="deviceName" label="设备名" min-width="100px">
               <template slot-scope="scope">
                 <showToolTip :text="scope.row.deviceName" />
               </template>
             </el-table-column>
-            <el-table-column
-              slot="loadGroupName"
-              label="负载组名"
-              min-width="100px"
-            >
+            <el-table-column slot="loadGroupName" label="负载组名" min-width="100px">
               <template slot-scope="scope">
                 <showToolTip :text="scope.row.loadGroupName" />
               </template>
             </el-table-column>
-            <el-table-column
-              slot="capacityRatio"
-              label="缓存最大空间"
-              min-width="200px"
-            >
+            <el-table-column slot="capacityRatio" label="缓存最大空间" min-width="200px">
               <template slot-scope="scope">
                 <span>{{ renderCapacityRatio(scope.row) }}</span>
-                <i
-                  v-if="Number(scope.row.capacity)!==-1"
-                  style="margin-left:15px;font-size:16px;cursor:pointer;color:#ff8746"
-                  class="el-icon-edit"
-                  @click="editPopover(scope.row)"
-                />
+                <i v-if="Number(scope.row.capacity) !== -1"
+                  style="margin-left:15px;font-size:16px;cursor:pointer;color:#ff8746" class="el-icon-edit"
+                  @click="editPopover(scope.row)" />
               </template>
             </el-table-column>
-            <el-table-column
-              slot="usedCount"
-              label="已缓存对象数"
-              prop="usedCount"
-              width="120px"
-              fixed="right"
-            >
+            <el-table-column slot="usedCount" label="已缓存对象数" prop="usedCount" width="120px" fixed="right">
               <template slot-scope="scope">
                 {{ renderUsedCount(scope.row.usedCount) }}
               </template>
             </el-table-column>
             <template slot="chart">
-              <el-table-column
-                label="用量情况"
-                width="200px"
-                align="center"
-                fixed="right"
-              >
+              <el-table-column label="用量情况" width="200px" align="center" fixed="right">
                 <template slot-scope="scope">
-                  <div v-if="!loading && Number(scope.row.capacity)!==-1">
-                    <Echarts
-                      :datas="renderData(scope.row.cacheSize)"
-                      :options="renderOption(scope.row.cacheSize)"
-                      width="100%"
-                      height="120px"
-                    />
+                  <div v-if="!loading && Number(scope.row.capacity) !== -1">
+                    <Echarts :datas="renderData(scope.row.cacheSize)" :options="renderOption(scope.row.cacheSize)"
+                      width="100%" height="120px" />
                   </div>
-                  <span v-else>无上限</span>
+                  <span v-else>{{ $ts('loadGroupRoute.noLimit') }}</span>
                 </template>
               </el-table-column>
             </template>
@@ -140,117 +85,48 @@
         </el-main>
       </el-container>
     </div>
-    <el-drawer
-      :visible.sync="drawerFlag"
-      size="50%"
-      destroy-on-close
-      @close="init"
-    >
-      <div
-        slot="title"
-        style="color:#ccc;font-size: 20px;"
-      >
+    <el-drawer :visible.sync="drawerFlag" size="50%" destroy-on-close @close="init">
+      <div slot="title" style="color:#ccc;font-size: 20px;">
         更改配置
       </div>
-      <el-form
-        ref="modifyForm"
-        :rules="modifyRules"
-        :model="modifyForm"
-        style="width: 90%;margin-left: 20px;"
-      >
-        <el-descriptions
-          :content-style="rowCenter"
-          :label-style="rowCenter"
-          direction="vertical"
-          :column="1"
-          border
-        >
+      <el-form ref="modifyForm" :rules="modifyRules" :model="modifyForm" style="width: 90%;margin-left: 20px;">
+        <el-descriptions :content-style="rowCenter" :label-style="rowCenter" direction="vertical" :column="1" border>
           <el-descriptions-item label="冷热分层开关">
             <el-form-item prop="openCache">
-              <el-switch
-                v-model="modifyForm.openCache"
-                active-text="开"
-                inactive-text="关"
-                :width="50"
-              >
+              <el-switch v-model="modifyForm.openCache" active-text="开" inactive-text="关" :width="50">
                 />
               </el-switch>
             </el-form-item>
           </el-descriptions-item>
           <el-descriptions-item label="缓存最大对象">
-            <el-form-item
-              prop="maxObjectSize"
-              class="slider_maxObjectSize"
-            >
-              <el-slider
-                v-model="modifyForm.maxObjectSize"
-                style="width: 80%;transform: translateX(25%);"
-                :marks="marksSize"
-                :min="1"
-                show-input
-                :format-tooltip="val => val + 'MB'"
-              />
+            <el-form-item prop="maxObjectSize" class="slider_maxObjectSize">
+              <el-slider v-model="modifyForm.maxObjectSize" style="width: 80%;transform: translateX(25%);"
+                :marks="marksSize" :min="1" show-input :format-tooltip="val => val + 'MB'" />
             </el-form-item>
           </el-descriptions-item>
           <el-descriptions-item label="缓存过期时间">
             <el-form-item prop="maxExpires">
-              <el-slider
-                v-model="modifyForm.maxExpires"
-                style="width: 80%;transform: translateX(25%);"
-                :marks="marksTime"
-                :min="1"
-                :max="168"
-                show-input
-                :format-tooltip="val => val + 'h'"
-              />
+              <el-slider v-model="modifyForm.maxExpires" style="width: 80%;transform: translateX(25%);"
+                :marks="marksTime" :min="1" :max="168" show-input :format-tooltip="val => val + 'h'" />
             </el-form-item>
           </el-descriptions-item>
         </el-descriptions>
         <el-row style="margin-top: 50px;float:right">
-          <el-button
-            class="blue"
-            @click="drawerFlag = false"
-          >取消</el-button>
-          <el-button
-            class="golden"
-            @click="confirmApply"
-          >应用</el-button>
+          <el-button class="blue" @click="drawerFlag = false">{{ $ts('page.cancel') }}</el-button>
+          <el-button class="golden" @click="confirmApply">应用</el-button>
         </el-row>
       </el-form>
     </el-drawer>
-    <el-drawer
-      :visible.sync="visible"
-      size="50%"
-      destroy-on-close
-      @close="init"
-    >
-      <div
-        slot="title"
-        style="color:#ccc;font-size: 20px;"
-      >
+    <el-drawer :visible.sync="visible" size="50%" destroy-on-close @close="init">
+      <div slot="title" style="color:#ccc;font-size: 20px;">
         更改缓存空间
       </div>
       <div style="height:200px;position:relative;padding:10px;">
-        <el-slider
-          v-model="modifyResource.cacheMaxSizeRatio"
-          style="width: 90%;transform: translateX(12%);"
-          :marks="getMarks(modifyResource)"
-          show-input
-          :min="1"
-          :format-tooltip="formatTooltip"
-        />
-        <div
-          class="mt_20"
-          style="position:absolute;right:0; bottom:20px"
-        >
-          <el-button
-            class="blue"
-            @click="visible=false"
-          >取消</el-button>
-          <el-button
-            class="golden"
-            @click="updateResource"
-          >应用</el-button>
+        <el-slider v-model="modifyResource.cacheMaxSizeRatio" style="width: 90%;transform: translateX(12%);"
+          :marks="getMarks(modifyResource)" show-input :min="1" :format-tooltip="formatTooltip" />
+        <div class="mt_20" style="position:absolute;right:0; bottom:20px">
+          <el-button class="blue" @click="visible = false">{{ $ts('page.cancel') }}</el-button>
+          <el-button class="golden" @click="updateResource">应用</el-button>
         </div>
       </div>
     </el-drawer>
@@ -269,11 +145,11 @@ export default {
   name: 'ClassificationConfig',
   components: { Echarts },
   filters: {
-    renderRatio(val) {
+    renderRatio (val) {
       return val < 1 ? '0%' : Math.round(val) + '%'
     }
   },
-  data() {
+  data () {
     return {
       modifyResource: {},
       visible: false,
@@ -361,7 +237,7 @@ export default {
           title: '总容量',
           minWidth: '120px',
           formatter: (row, __, val) => {
-            return Number(val) === -1 ? '无上限' : this.byteConvert(val)
+            return Number(val) === -1 ? this.$ts('loadGroupRoute.noLimit') : this.byteConvert(val)
           }
         },
         {
@@ -402,14 +278,17 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.init()
   },
   methods: {
-    renderUsedCount(count) {
+    renderCacheCount () {
+      return this.$store.getters.language === 'zh' ? this.bigNumberTransform(this.cacheCount.val) : this.preciseDemi(this.cacheCount.val)
+    },
+    renderUsedCount (count) {
       return Number(count) > 0 ? this.bigNumberTransform(count) : 0
     },
-    getSummaries(param) {
+    getSummaries (param) {
       const { columns, data } = param
       const sums = []
       console.log(columns, 'params', param)
@@ -436,7 +315,7 @@ export default {
 
       return sums
     },
-    init() {
+    init () {
       this.loading = true
       getGlobalCacheConfig().then(res => {
         const { nasResources, maxObjectSize, maxExpires, openCache } = res.data || {}
@@ -463,8 +342,8 @@ export default {
           }
           x.percent = percent
           Object.assign(x, {
-            realCapacity: String(realCapacity) !== '-1' ? this.byteConvert(realCapacity) : '无上限', // 可用容量
-            usedCapacity: String(usedCapacity) !== '-1' ? this.byteConvert(usedCapacity) : '无上限', // 已用容量
+            realCapacity: String(realCapacity) !== '-1' ? this.byteConvert(realCapacity) : this.$ts('loadGroupRoute.noLimit'), // 可用容量
+            usedCapacity: String(usedCapacity) !== '-1' ? this.byteConvert(usedCapacity) : this.$ts('loadGroupRoute.noLimit'), // 已用容量
             capacity: String(realCapacity) !== '-1' ? capacity : '-1',
             percent: (percent * 100).toFixed(2),
             cacheSize: {
@@ -484,7 +363,7 @@ export default {
         this.loading = false
       })
     },
-    formatTooltip(val) {
+    formatTooltip (val) {
       // 添加step、处理step显示的容量与百分比
       const {
         realCapacity = '0',
@@ -494,7 +373,7 @@ export default {
       const percentCapacity = this.byteConvert(totalCapacity * val * 0.01)
       return val + '%' + '\r' + '|' + ' ' + percentCapacity
     },
-    handleSizeReq(size, type) {
+    handleSizeReq (size, type) {
       if (type === 'req') {
         // 最小单位h
         return size * 1024 * 1024
@@ -502,7 +381,7 @@ export default {
         return parseInt(size / (1024 * 1024))
       }
     },
-    handleTimeReq(time = 0, type) {
+    handleTimeReq (time = 0, type) {
       if (type === 'req') {
         // 最小单位h
         return time * 3600 * 1000
@@ -510,25 +389,25 @@ export default {
         return parseInt(time / (3600 * 1000))
       }
     },
-    handleCascaderSearch(node, value) {
+    handleCascaderSearch (node, value) {
       return node.text.toLowerCase().indexOf(value.toLowerCase()) > -1
     },
-    renderCapacityRatio(row) {
+    renderCapacityRatio (row) {
       const {
         capacityRatio,
         realCapacity,
         capacity
       } = row
-      return capacity === '-1' ? '无上限' : capacityRatio + '%' + ' | ' + realCapacity + ''
+      return capacity === '-1' ? this.$ts('loadGroupRoute.noLimit') : capacityRatio + '%' + ' | ' + realCapacity + ''
     },
-    renderData(obj) {
+    renderData (obj) {
       if (JSON.stringify(obj) === '{}') return []
       else {
         const { percent, title } = obj
         return [{ value: percent ? percent * 100 : '', name: title }]
       }
     },
-    renderOption({ val, percent }) {
+    renderOption ({ val, percent }) {
       const option = {
         series: [
           {
@@ -585,7 +464,7 @@ export default {
             animation: false,
             detail: {
               valueAnimation: false,
-              formatter: function(value) {
+              formatter: function (value) {
                 if (value) {
                   return '{value|' + value.toFixed(0) + '%' + '}' + '\n' + '{data|' + val + '}'
                 } else {
@@ -615,7 +494,7 @@ export default {
       }
       return option
     },
-    editPopover(row) {
+    editPopover (row) {
       this.visible = true
       this.modifyResource = JSON.parse(JSON.stringify(
         Object.assign(this.modifyResource, {
@@ -624,7 +503,7 @@ export default {
         })
       ))
     },
-    getMarks(row) {
+    getMarks (row) {
       const {
         realCapacity = '0',
         capacity
@@ -643,21 +522,21 @@ export default {
       }
       return marks
     },
-    updateResource() {
+    updateResource () {
       const { deviceId, resourceId, cacheMaxSizeRatio } = this.modifyResource
       updateObjectStorageResource({
         deviceId, resourceId, cacheMaxSizeRatio
       }).then(() => {
         this.$msg({
           type: 'success',
-          text: this.$ts('response.success')
+          text: this.$ts('page.responseSuccess')
         })
         this.visible = false
       }).finally(() => {
         this.init()
       })
     },
-    confirmApply() {
+    confirmApply () {
       // 百分比 int、size 转换byte、时间转换ms
       this.$refs['modifyForm'].validate((valid) => {
         if (valid) {
@@ -669,7 +548,7 @@ export default {
           }).then(res => {
             this.$msg({
               type: 'success',
-              text: this.$ts('response.success')
+              text: this.$ts('page.responseSuccess')
             })
             this.drawerFlag = false
           })
@@ -691,6 +570,7 @@ export default {
   overflow-y: scroll;
   background-color: #36464e;
 }
+
 :deep(.el-slider__marks-text) {
   white-space: pre-wrap;
   line-height: 20px;
@@ -708,14 +588,17 @@ export default {
     box-shadow: 0 4px 15px 0 rgb(0, 0, 0, 0.4);
     margin-bottom: 50px;
     padding-bottom: 10px;
+
     .config_container {
       display: flex;
       justify-content: space-between;
     }
+
     .globalstyle {
       position: relative;
       display: flex;
       justify-content: space-between;
+
       .editestyle {
         position: absolute;
         left: 70px;
@@ -731,6 +614,7 @@ export default {
     display: flex;
     padding: 30px 0;
     justify-content: space-between;
+
     .el-tag {
       width: fit-content;
       font-size: 14px;
@@ -738,6 +622,7 @@ export default {
       background-color: transparent;
       border-color: transparent;
       margin-bottom: 5px;
+
       span {
         margin-left: 10px;
         color: #e39606;
@@ -752,6 +637,7 @@ export default {
     margin-top: 100px;
   }
 }
+
 :deep(.slider_maxObjectSize) .el-form-item__error {
   margin: 12px 0 0 150px;
 }
@@ -759,13 +645,16 @@ export default {
 .el-loading-spinner {
   margin-top: 50px;
 }
+
 .title {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
+
   .usedChart {
     justify-content: flex-end;
     display: flex;
+
     div {
       padding: 0 20px;
       display: flex;
@@ -774,7 +663,8 @@ export default {
 
       .usedCount {
         font-size: 60px;
-        & + span {
+
+        &+span {
           width: 140px;
           white-space: pre-wrap;
           display: inline-block;

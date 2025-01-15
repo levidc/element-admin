@@ -58,7 +58,8 @@ const getGatewayHeaders = ({ path, param = '', region = '', httpMethod = 'GET', 
   }
 
   const calcAuthorization = (headers) => {
-    const signMap = { ...headers,
+    const signMap = {
+      ...headers,
       date: headers['x-amz-date'].substring(0, 8),
       region,
       service: 's3',
@@ -109,9 +110,9 @@ request.interceptors.response.use(res => {
   } else if (!error.request.response) {
     !error.config.ignoreNotice && temp.$ts({
       type: 'error',
-      text: '错误：' + temp.$ts(error.request.statusText)
+      text: temp.$ts(error.request.statusText)
     })
-    return Promise.reject({ message: '错误：' + temp.$ts(error.request.statusText) })
+    return Promise.reject({ message: temp.$ts(error.request.statusText) })
   } else if (typeof error.request.response === 'string' && error.request.response.substring(0, 5) == '<?xml') {
     const err = new AWS.XML.Parser().parse(error.request.response)
     const errText = temp.$ts(err.Code) + '：' + temp.$ts(err.Message)
@@ -122,10 +123,10 @@ request.interceptors.response.use(res => {
     return Promise.reject({ code: err.Code, message: errText })
   } else if (error.response.data.message.indexOf('auth-error') > -1 || error.response.data.message.indexOf('token timeout') > -1) {
     // s3 bucketList调用登出、若eip环境、路由拦截处理跳转eipInfo
-    setTimeout(async() => {
-      temp.$ts({
+    setTimeout(async () => {
+      temp.$msg({
         type: 'error',
-        text: 'token已失效，请重新登录'
+        text: temp.$ts('error.tokenTimeout')
       })
       await store.dispatch('user/logout')
       router.push(`/login}`)
@@ -146,16 +147,18 @@ const GatewayImpl = (config) => {
   const region = config.region
 
   const call = (cfg) => {
-    cfg = { ...{
-      path: '',
-      param: {},
-      method: 'GET'
-    }, ...cfg, ...{
-      baseURL: endpoint,
-      accessKeyId,
-      secretAccessKey,
-      region
-    }}
+    cfg = {
+      ...{
+        path: '',
+        param: {},
+        method: 'GET'
+      }, ...cfg, ...{
+        baseURL: endpoint,
+        accessKeyId,
+        secretAccessKey,
+        region
+      }
+    }
     cfg.param = cfg.param ? AWS.util.queryParamsToString(cfg.param) : ''
 
     const headers = getGatewayHeaders({ ...cfg, httpMethod: cfg.method })

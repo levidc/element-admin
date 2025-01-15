@@ -54,7 +54,7 @@ request.interceptors.request.use(config => {
           async () => {
             temp.$msg({
               type: 'error',
-              text: 'token已失效，请重新登录'
+              text: temp.$ts('error.tokenTimeout')
             })
             await store.dispatch('user/logout')
             router.push(`/login?redirect=${router.currentRoute.fullPath}`)
@@ -90,25 +90,29 @@ request.interceptors.response.use(res => {
       case '200':
         return res.data
       case 200:
-        return res.data
+        if (res.config.url.indexOf('download') > -1) {
+          return res
+        } else {
+          return res.data
+        }
       case 'buz-error':
         if (msg.indexOf('username:') > -1 && msg.indexOf('already exits') > -1) {
           temp.$msg({
             type: 'error',
-            text: '用户名:' + msg.match(/\s+(\w+)/)[0].trim() + '已存在'
+            text: temp.$ts('page.username') + ':' + msg.match(/\s+(\w+)/)[0].trim() + temp.$ts('page.exist')
           })
           return Promise.reject(msg)
         } else if (msg.indexOf('group Already exists ：') > -1) {
           temp.$msg({
             type: 'error',
-            text: '群组名:' + msg.split('group Already exists ：')[1] + '已存在'
+            text: temp.$ts('page.groupName') + ':' + msg.split('group Already exists ：')[1] + temp.$ts('page.exist')
           })
           return Promise.reject(msg)
         }
         if (msg === 'token timeout' || msg === 'token已过期，请重新登录' || msg === 'token is timeout') {
           temp.$msg({
             type: 'error',
-            text: 'token已过期，请重新登录'
+            text: temp.$ts('error.tokenTimeout')
           });
           (
             async () => {
@@ -122,14 +126,14 @@ request.interceptors.response.use(res => {
         if (msg === 'auth-error') {
           temp.$msg({
             type: 'error',
-            text: '没有相关权限，请稍后重试'
+            text: temp.$ts('error.noAuth')
           })
           return Promise.reject(msg)
         }
         if (msg.indexOf('permission list is conflict with permission group') > -1) {
           temp.$msg({
             type: 'error',
-            text: `当前权限列表与组合包${msg.match(/【.*】/)[0]}中权限列表冲突`
+            text: temp.$ts('error.permissionListError', `${msg.match(/【.*】/)[0]}`)
           })
           return Promise.reject(msg)
         }
@@ -151,7 +155,7 @@ request.interceptors.response.use(res => {
         } else {
           temp.$msg({
             type: 'error',
-            text: '没有相关权限，请稍后重试'
+            text: temp.$ts('error.noAuth')
           })
         }
         return Promise.reject(msg)
@@ -179,7 +183,7 @@ request.interceptors.response.use(res => {
       async () => {
         temp.$msg({
           type: 'error',
-          text: 'token已失效，请重新登录'
+          text: temp.$ts('error.tokenTimeout')
         })
         await store.dispatch('user/logout')
         router.push(`/login?redirect=${router.currentRoute.fullPath}`)

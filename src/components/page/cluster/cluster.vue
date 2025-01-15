@@ -4,7 +4,7 @@
       <el-row class="mv_10">
 
         <el-tooltip
-          content="刷新"
+          :content="$ts('page.refresh')"
           placement="top"
           effect="dark"
         >

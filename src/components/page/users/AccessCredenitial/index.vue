@@ -24,7 +24,7 @@
             listAccounts()
           "
         >{{ $ts("REFRESH") }}</el-button> -->
-        <el-tooltip content="刷新" placement="top" effect="dark">
+        <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
           <i class="el-icon-refresh right" @click=" searchVal = ''; listAccounts()" />
         </el-tooltip>
         <el-input v-model="searchVal" class="search_style right" placeholder="访问凭证过滤" width="14" clearable
@@ -52,7 +52,7 @@
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column label="操作" prop="name" align="center">
+        <el-table-column :label="$ts('page.action')" prop="name" align="center">
           <template slot-scope="scope">
             <svg v-access="'admin:RemoveAccessCredential'" @click="deleteAccount(scope.row)" class="icon icon-trash"
               aria-hidden="true">
@@ -89,8 +89,8 @@
 
         </el-form>
         <div slot="footer" style="display:flex;justify-content:flex-end;margin-top:40px">
-          <el-button type="primary" class="golden" @click="createServiceAccount">{{ $ts('create') }}</el-button>
-          <el-button @click="serviceDialog = false">{{ $ts('cancel') }}</el-button>
+          <el-button type="primary" class="golden" @click="createServiceAccount">{{ $ts("page.create") }}</el-button>
+          <el-button @click="serviceDialog = false">{{ $ts('page.cancel') }}</el-button>
         </div>
       </div>
       <div v-else>
@@ -123,8 +123,8 @@
         {{ selectAccount }}
       </p>
       <div slot="footer">
-        <el-button @click="deleteFlag = false">{{ $ts('cancel') }}</el-button>
-        <el-button type="primary" class="golden" @click="confirmDelete">{{ $ts('delete') }}</el-button>
+        <el-button @click="deleteFlag = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button type="primary" class="golden" @click="confirmDelete">{{ $ts('page.delete') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -283,7 +283,7 @@ export default {
         .then(res => {
           this.$msg({
             type: 'success',
-            text: this.$ts('response.success')
+            text: this.$ts('page.responseSuccess')
           })
         })
         .then(res => {
@@ -417,7 +417,7 @@ export default {
           }).then(res => {
             this.$ts({
               type: 'success',
-              text: this.$ts('response.success')
+              text: this.$ts('page.responseSuccess')
             })
             this.serviceCreateDone = true
             this.listAccounts()

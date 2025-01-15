@@ -5,23 +5,23 @@
         <div class="bucket-panel">
           <div id="openCache-info-field" class="param-box">
             <div class="param-hd">
-              <h3 id="openCache">负载路由</h3>
+              <h3 id="openCache">{{ $ts('route.BucketLoadGroup') }}</h3>
               <el-button v-show="!editVersionControl && !loading" class="modBtn" type="text"
                 @click="editVersionControl = !editVersionControl">
-                <span style="color: #ff8746;position: relative;top:3px">编辑</span>
+                <span style="color: #ff8746;position: relative;top:3px"> {{ $ts('page.edit') }}</span>
               </el-button>
             </div>
             <div v-loading="loading" class="param-bd">
               <el-form label-position="left" :model="editForm">
                 <el-form-item>
                   <span slot="label">
-                    当前配置
+                    {{ $ts('bucket.currentConfig') }}
                   </span>
                   <span v-show="!editVersionControl && !loading" style="color:#ff8746" class="item-descr-txt">
                     <el-tag v-if="loadGroupName">
                       {{ loadGroupName }}
                     </el-tag>
-                    <span v-else>无</span>
+                    <span v-else>{{ $ts('page.null') }}</span>
                   </span>
                   <el-select v-if="editVersionControl" v-model="editForm.editLoadGroup" value-key="value"
                     style="width:22%" filterable>
@@ -34,8 +34,9 @@
                 <el-form-item v-if="editVersionControl">
                   <span slot="label" style="opacity:0">#</span>
                   <el-button type="default" size="mini" class="blue"
-                    @click="editVersionControl = !editVersionControl; getConfig()">取消</el-button>
-                  <el-button type="primary" class="golden" size="mini" @click="saveConfig();">应用更改</el-button>
+                    @click="editVersionControl = !editVersionControl; getConfig()">{{ $ts('page.cancel') }}</el-button>
+                  <el-button type="primary" class="golden" size="mini" @click="saveConfig();"> {{ $ts('page.applySet')
+                    }}</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -88,7 +89,13 @@ export default {
       listUserBuckets().then((res) => {
         this.buckets = res.data.list || []
         // const bucketId = '127827857484759040'
-        this.bucketId = this.buckets.find(x => x.name === this.bucketName).id.toString()
+        const result = this.buckets.find(x => x.name === this.bucketName)
+        this.bucketId = result && res.id.toString()
+          .id.toString()
+        if (!this.bucketId) {
+          this.loading = false
+          return
+        }
         Promise.allSettled([
           getBucketExtend({
             bucketId: this.bucketId
@@ -107,10 +114,10 @@ export default {
             const group = all[1].value.data || []
             let selectGroup = ''
             this.loadGroupList = [
-              { label: 'S3负载组', options: [] },
-              { label: 'NAS负载组', options: [] },
-              { label: 'AWS负载组', options: [] },
-              { label: '冰资源负载组', options: [] }
+              { label: this.$ts('loadGroupRoute.s3LoadGroup'), options: [] },
+              { label: this.$ts('loadGroupRoute.nasLoadGroup'), options: [] },
+              { label: this.$ts('loadGroupRoute.awsLoadGroup'), options: [] },
+              { label: this.$ts('bucket.glacierGroup'), options: [] }
             ]
             group.forEach(x => {
               if (x.id === configId) {
@@ -169,7 +176,7 @@ export default {
       }).then(res => {
         this.$msg({
           type: 'success',
-          text: this.$ts('response.success')
+          text: this.$ts('page.responseSuccess')
         })
         this.openModal = false
       }).finally(() => {

@@ -1,10 +1,10 @@
 <template>
   <div>
     <el-table ref="multipleTable" v-loading="loading"
-      :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)" tooltip-effect="dark" style="width: 100%"
-      :default-sort="{ prop: 'updateTime', order: 'descending' }" @selection-change="handleSelectionChange"
-      @sort-change="sortFunction">
-      <el-table-column :label="$ts('qos.name')" sortable="custom" prop="name" min-width="150px">
+      :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)" tooltip-effect="dark"
+      style="width: 100%" :default-sort="{ prop: 'updateTime', order: 'descending' }"
+      @selection-change="handleSelectionChange" @sort-change="sortFunction">
+      <el-table-column :label="$ts('policies.policyName')" sortable="custom" prop="name" min-width="150px">
         <template slot-scope="scope">
           <el-tooltip placement="top" :content="$ts('view.policy.detail')">
             <a v-access:disable="'admin:GetPolicy'" class="blue" @click="viewDetail(scope.row)">
@@ -13,19 +13,19 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column :label="$ts('directory.update.time')" sortable="custom" prop="updateTime" min-width="100px">
+      <el-table-column :label="$ts('policies.updateTime')" sortable="custom" prop="updateTime" min-width="100px">
         <template slot-scope="scope">
           {{ scope.row.updateTime ? formatDate(scope.row.updateTime) : '/' }}
         </template>
       </el-table-column>
-      <el-table-column :label="$ts('action')" width="140" align="center">
+      <el-table-column :label="$ts('page.action')" width="140" align="center">
         <template slot-scope="scope">
           <div style="width: 40px;margin: auto;text-align:left;">
-            <el-tooltip content="关联用户" placement="top">
+            <el-tooltip :content="$ts('policies.applyUser')" placement="top">
               <i v-access="'admin:ListUsersByUserPolicy'" class="userStyle  el-icon-user-solid"
                 @click="getUser(scope.row.name); userDetailFlag = true" />
             </el-tooltip>
-            <el-tooltip content="删除策略" placement="top">
+            <el-tooltip :content="$ts('policies.deletePolicy')" placement="top">
               <svg v-if="showMenu(scope.row)" v-access="'admin:DeletePolicy'"
                 @click="selectPolicy = scope.row.name; deleteFlag = true" class="icon icon-trash" aria-hidden="true">
                 <use xlink:href="#icon-trash" />
@@ -40,26 +40,26 @@
         layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
         @current-change="handleCurrentChange" />
     </div>
-    <el-dialog title="删除策略" :visible.sync="deleteFlag" width="650px">
-      <p>删除如下策略:
+    <el-dialog :title="$ts('policies.deletePolicy')" :visible.sync="deleteFlag" width="650px">
+      <p>{{ $ts('policies.deleteFollowPolicy') }}:
         <span style="color:#ff8746"> {{ selectPolicy }}</span>
       </p>
       <div slot="footer">
-        <el-button @click="deleteFlag = false">{{ $ts('cancel') }}</el-button>
-        <el-button class="golden" type="primary" @click="confirmDelete">{{ $ts('delete') }}</el-button>
+        <el-button @click="deleteFlag = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button class="golden" type="primary" @click="confirmDelete">{{ $ts('page.delete') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="用户详情" :visible.sync="userDetailFlag" width="680px" :before-close="handleClose" destroy-on-close>
+    <el-dialog :title="$ts('policies.userDetail')" :visible.sync="userDetailFlag" width="680px"
+      :before-close="handleClose" destroy-on-close>
       <div>
         <el-table v-loading="loadingUSer" :data="tableUserData" style="width: 100%"
           :default-sort="{ prop: 'createTime', order: 'descending' }" @sort-change="SortChange">
-          <el-table-column prop="userName" label="用户名称" sortable="custom" />
-          <el-table-column prop="createTime" label="创建时间" sortable="custom">
+          <el-table-column prop="userName" :label="$ts('policies.userName')" sortable="custom" />
+          <el-table-column prop="createTime" :label="$ts('policies.createTime')" sortable="custom">
             <template slot-scope="scope">
               {{ scope.row.createTime }}
             </template>
           </el-table-column>
-
         </el-table>
         <div class="page_block">
           <el-pagination :current-page="currentUserPage" :page-sizes="[5, 10, 50, 100]" :page-size="pageUserSize"
@@ -150,11 +150,11 @@ export default {
     },
     confirmDelete () {
       this.$confirm(
-        '删除后将会使已分配此策略的<b style="color:#ff8746">用户</b>和<b style="color:#ff8746">用户组</b>失效, 是否继续?',
+        this.$ts('policies.deleteTip', { error: `<b style="color:#ff8746">${this.$ts('user.user')}</b>和<b style="color:#ff8746">${this.$ts('group.userGroup')}</b>` }),
         '',
         {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
+          confirmButtonText: this.$ts('page.confirm'),
+          cancelButtonText: this.$ts('page.cancel'),
           type: 'warning',
           dangerouslyUseHTMLString: true
         }
@@ -166,7 +166,7 @@ export default {
             .then(res => {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
               this.listPolicies()
               this.deleteFlag = false
@@ -180,8 +180,6 @@ export default {
         })
     },
     viewDetail (row) {
-      // console.log(row, 'row')
-      // resource、action 处理单独和多个
       row.Statement.forEach(item => {
         if (typeof item.Resource === 'string') {
           item.Resource = [item.Resource]
@@ -197,7 +195,6 @@ export default {
       })
     },
     doModifyRole: function (row) {
-      // 子组件中触发父组件方法ee并传值cc12345
       this.$emit('doModifyRole', row)
     },
     listPolicies () {
@@ -289,6 +286,6 @@ export default {
 }
 
 ::v-deep .el-pagination__jump {
-  margin-left:-6px;
+  margin-left: -6px;
 }
 </style>

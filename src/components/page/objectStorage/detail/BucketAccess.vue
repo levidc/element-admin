@@ -5,22 +5,22 @@
         <div class="bucket-panel">
           <div id="basic-info-field" class="param-box">
             <div class="param-hd">
-              <h3>访问控制列表(ACL)</h3>
+              <h3>{{ $ts('route.BucketAccess') }}</h3>
               <el-button v-show="!editStatus && !loading" v-access="'s3:PutBucketAcl'" type="text"
                 style="position:relative;top:3px" @click="editConfig">
-                <span style="color:#ff8746;">编辑</span>
+                <span style="color:#ff8746;"> {{ $ts('page.edit') }}</span>
               </el-button>
             </div>
             <el-form :model="formAcl" label-width="120px">
-              <el-form-item v-if="!editStatus && !loading" label="桶ACL" style="width:50%">
+              <el-form-item v-if="!editStatus && !loading" :label="$ts('bucket.bucketAcl')" style="width:50%">
                 <el-button type="text">{{ formAcl.readAcl }}</el-button>
               </el-form-item>
 
               <!-- 额外用户start -->
               <el-table v-show="!editStatus && tableData.length" v-loading="loading" :data="tableData">
-                <el-table-column prop="owner" label="被授权者" width="500px">
+                <el-table-column prop="owner" :label="$ts('bucket.owner')" width="500px">
                   <template slot-scope="scope">
-                    {{ scope.row.userName }} {{ scope.row.owner ? '(桶owner)' : '' }}
+                    {{ scope.row.userName }} {{ scope.row.owner ? `(${$ts('bucket.bucketOwner')})` : '' }}
                   </template>
                 </el-table-column>
                 <el-table-column label="">
@@ -52,26 +52,27 @@
               </el-table>
               <!-- 额外用户end -->
 
-              <el-form-item v-if="editStatus" label="桶ACL" prop="setAcl">
+              <el-form-item v-if="editStatus" :label="$ts('bucket.bucketAcl')" prop="setAcl">
                 <el-radio-group v-model="formAcl.selectAcl">
-                  <el-radio label="private">私有</el-radio>
-                  <el-radio label="public-read">公共读</el-radio>
-                  <el-radio label="public-read-write">公共读写</el-radio>
-                  <el-radio label="authenticated-read">认证读</el-radio>
+                  <el-radio label="private">{{ $ts('bucket.private') }}</el-radio>
+                  <el-radio label="public-read">{{ $ts('bucket.publicRead') }}</el-radio>
+                  <el-radio label="public-read-write">{{ $ts('bucket.publicReadWrite') }}</el-radio>
+                  <el-radio label="authenticated-read">{{ $ts('bucket.authenticatedRead') }}</el-radio>
                 </el-radio-group>
               </el-form-item>
             </el-form>
 
             <div v-show="editStatus" v-access="'admin:ListUsers'" class="addOtherAccount">
-              <h3>其他账号的访问权限</h3>
-              <el-button v-access="'admin:ListUsers'" class="golden" @click="flag = true">添加授权用户</el-button>
+              <h3>{{ $ts('bucket.otherAccountPermission') }}</h3>
+              <el-button v-access="'admin:ListUsers'" class="golden" @click="flag = true">{{ $ts('bucket.addAuthUser')
+                }}</el-button>
               <el-form ref="form" :model="form">
                 <el-table v-if="form.granteeTable && form.granteeTable.length" :data="form.granteeTable">
-                  <el-table-column label="被授权者ID" width="450px">
+                  <el-table-column :label="$ts('bucket.ownerId')" width="450px">
                     <template slot-scope="scope">
                       <!--  :rules="ruleId" -->
                       <el-form-item :rules="ruleId" :prop="'granteeTable.' + scope.$index + '.userName'">
-                        {{ scope.row.userName }} {{ scope.row.owner ? '(桶owner)' : '' }}
+                        {{ scope.row.userName }} {{ scope.row.owner ? `(${$ts('bucket.bucketOwner')})` : '' }}
                         <!-- <el-input style="margin-top:20px" v-model="scope.row.userName" placeholder="输入规范ID" readonly/> -->
                       </el-form-item>
                     </template>
@@ -81,10 +82,10 @@
                     <template slot-scope="scope">
                       <div class="">
                         <el-checkbox v-model="scope.row.READ" :disabled="scope.row.owner">
-                          读
+                          {{ $ts('bucket.read') }}
                         </el-checkbox>
                         <el-checkbox v-model="scope.row.WRITE" :disabled="scope.row.owner">
-                          写
+                          {{ $ts('bucket.write') }}
                         </el-checkbox>
                       </div>
                     </template>
@@ -93,15 +94,15 @@
                     <template slot-scope="scope">
                       <div class="">
                         <el-checkbox v-model="scope.row.READ_ACP" :disabled="scope.row.owner">
-                          读ACL
+                          {{ $ts('bucket.READ_ACP') }}
                         </el-checkbox>
                         <el-checkbox v-model="scope.row.WRITE_ACP" :disabled="scope.row.owner">
-                          写ACL
+                          {{ $ts('bucket.WRITE_ACP') }}
                         </el-checkbox>
                       </div>
                     </template>
                   </el-table-column>
-                  <el-table-column label="操作">
+                  <el-table-column :label="$ts('page.action')">
                     <template slot-scope="scope">
                       <svg v-if="!scope.row.owner" @click="form.granteeTable.splice(scope.$index, 1)"
                         class="icon icon-trash" aria-hidden="true">
@@ -113,35 +114,36 @@
               </el-form>
             </div>
             <div v-show="editStatus" class="bottomMenu">
-              <el-button class="blue" @click="editStatus = false; getBucketAcl()">取消</el-button>
-              <el-button type="primary" class="golden" @click="saveConfig">保存</el-button>
+              <el-button class="blue" @click="editStatus = false; getBucketAcl()">{{ $ts('page.cancel') }}</el-button>
+              <el-button type="primary" class="golden" @click="saveConfig">{{ $ts('page.save') }}</el-button>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <el-dialog ref="userDialog" title="选择额外授权用户" :visible.sync="flag" @close="handleScroll('userDialog')">
+    <el-dialog ref="userDialog" :title="$ts('bucket.selectExtraAuthUser')" :visible.sync="flag"
+      @close="handleScroll('userDialog')">
       <div class="clearfix">
         <el-row>
           <el-col :span="8">
-            <el-select v-model="userGroup" style="width: 100%;" multiple collapse-tags placeholder="已选用户"
-              @change="changeSelect">
+            <el-select v-model="userGroup" style="width: 100%;" multiple collapse-tags
+              :placeholder="$ts('bucket.selectedUser')" @change="changeSelect">
               <el-option v-for="item in listGroup" :key="item.userName" :label="item.userName" :value="item.userName" />
             </el-select>
           </el-col>
           <el-col :span="8" class="ipt">
-            <el-input v-model="userName" placeholder="用户名过滤" clearable />
+            <el-input v-model="userName" :placeholder="$ts('group.searchUsername')" clearable />
           </el-col>
         </el-row>
       </div>
       <el-table ref="userTable" :data="userData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
         :row-key="(row) => row.userName" @selection-change="handleSelectionChange">
         <el-table-column type="selection" reserve-selection width="55" />
-        <el-table-column label="用户名" prop="userName" />
+        <el-table-column :label="$ts('user.username')" prop="userName" />
       </el-table>
       <div slot="footer">
-        <el-button class="blue" @click="flag = false">{{ $ts('button.cancel') }}</el-button>
-        <el-button type="primary" class="golden" @click="addAccount()">{{ $ts('button.confirm') }}</el-button>
+        <el-button class="blue" @click="flag = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button type="primary" class="golden" @click="addAccount()">{{ $ts('page.confirm') }}</el-button>
       </div>
       <div v-show="total" class="page_block">
         <el-pagination :current-page="currentPage" :page-sizes="[5, 10, 50, 100]" :page-size="pageSize"
@@ -168,7 +170,7 @@ export default {
           data === this.form.granteeTable[i].userName ||
           data === this.tableData[0].ID
         ) {
-          return callback('必须指定唯一的被授权者。')
+          return callback(this.$ts('bucket.ownerReg'))
         }
       }
       callback()
@@ -211,7 +213,7 @@ export default {
       ruleId: [
         {
           required: true,
-          message: '被授权者不能为空。请指定或删除被授权者。',
+          message: this.$ts('bucket.ownerRequired'),
           trigger: ['blur', 'change']
         },
         {
@@ -315,21 +317,21 @@ export default {
               if (URI === 'http://acs.amazonaws.com/groups/global/AllUsers') {
                 const Permission = group[0].Permission
                 if (Permission === 'READ') {
-                  this.formAcl.readAcl = '公共读'
+                  this.formAcl.readAcl = this.$ts('bucket.publicRead')
                   this.formAcl.selectAcl = 'public-read'
                 } else if (Permission === 'WRITE') {
-                  this.formAcl.readAcl = '公共读写'
+                  this.formAcl.readAcl = this.$ts('bucket.publicReadWrite')
                   this.formAcl.selectAcl = 'public-read-write'
                 }
               } else if (
                 URI ===
                 'http://acs.amazonaws.com/groups/global/AuthenticatedUsers'
               ) {
-                this.formAcl.readAcl = '认证读'
+                this.formAcl.readAcl = this.$ts('bucket.authenticatedRead')
                 this.formAcl.selectAcl = 'authenticated-read'
               }
             } else {
-              this.formAcl.readAcl = '私有'
+              this.formAcl.readAcl = this.$ts('bucket.private')
               this.formAcl.selectAcl = 'private'
             }
             // 处理同一用户多个权限、将通过前面的permission数组添加对应的数据
@@ -365,7 +367,7 @@ export default {
         }
       })
       const users = this.filterDiff(this.selected, restGroup, 'userName') // 切换表格勾选数据
-      console.log(users, 'users')
+      // console.log(users, 'users')
       users.forEach(item => {
         this.$refs.userTable.toggleRowSelection(item)
       })
@@ -388,22 +390,22 @@ export default {
     },
     bucketMap (val) {
       if (val.READ_ACP && val.WRITE_ACP) {
-        return '读写ACL'
+        return this.$ts('bucket.READWRITE_ACP')
       } else if (val.READ_ACP) {
-        return '读ACL'
+        return this.$ts('bucket.READ_ACP')
       } else if (val.WRITE_ACP) {
-        return '写ACL'
+        return this.$ts('bucket.WRITE_ACP')
       } else {
         return ''
       }
     },
     objectMap (val) {
       if (val.READ && val.WRITE) {
-        return '读写'
+        return this.$ts('bucket.readWrite')
       } else if (val.WRITE) {
-        return '写'
+        return this.$ts('bucket.write')
       } else if (val.READ) {
-        return '读'
+        return this.$ts('bucket.read')
       } else {
         return '-'
       }
@@ -529,7 +531,7 @@ export default {
           } else {
             this.$msg({
               type: 'success',
-              text: this.$ts('response.success')
+              text: this.$ts('page.responseSuccess')
             })
             this.getBucketAcl()
             this.editStatus = false

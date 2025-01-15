@@ -1,3 +1,4 @@
+import i18n from "@/lang"
 export const permission = {
   // 磁盘
   // 'admin:ListArchivesController': { 'cn': '磁盘列表', sort: 1 },
@@ -216,139 +217,143 @@ export const permission = {
 // to do 权限按菜单显示、s3权限无分组支持查询权限
 
 export const systemPermission = [
-  {
-    key: 'Dashboard',
-    label: 'Dashboard',
-    children:
-      [
-        {
-          key: 'admin:HomepageReportController', label: '访问Dashboard'
-        }
-      ]
-  },
+  // {
+  //   key: 'Dashboard',
+  //   label: 'Dashboard',
+  //   children:
+  //     [
+  //       {
+  //         key: 'admin:HomepageReportController', label: '访问Dashboard'
+  //       }
+  //     ]
+  // },
   {
     key: 'resource',
     label: '资源管理',
     children: [
-      { key: 'admin:ListStorageResourceController', label: '访问存储资源' },
-      { key: 'admin:AddStorageResourceController', label: '创建存储资源' },
-      { key: 'admin:GetResourceController', label: '查询存储资源' },
-      { key: 'admin:DeleteResourceController', label: '删除存储资源' },
-      { key: 'admin:UpdateStorageResourceController', label: '更新存储资源' },
-      { key: 'admin:ListStorageDeviceController', label: '访问存储设备' },
-      { key: 'admin:AddStorageDeviceController', label: '创建存储设备' },
-      { key: 'admin:UpdateStorageDeviceController', label: '更新存储设备' },
-      { key: 'admin:DeleteStorageDeviceController', label: '删除存储设备' },
-      { key: 'admin:GetDefaultNextResourceController', label: '获取设备中的默认资源和下一个资源' },
-      { key: 'admin:SetDefaultNextResourceController', label: '设置默认和下一个资源' },
-      { key: 'admin:ListAllStorageResourceController', label: '获取所有底层资源' },
-      { key: 'admin:AssociateBucketAndResourceGroup', label: '桶关联和查看资源负载组' },
-      { key: 'admin:BucketExtendInfoController', label: '负载路由管理' }
+      { key: 'admin:ListStorageResourceController', label: i18n.t('permissionConfig.ListStorageResourceController') },
+      { key: 'admin:AddStorageResourceController', label: i18n.t('permissionConfig.AddStorageResourceController') },
+      { key: 'admin:GetResourceController', label: i18n.t('permissionConfig.GetResourceController') },
+      { key: 'admin:DeleteResourceController', label: i18n.t('permissionConfig.DeleteResourceController') },
+      { key: 'admin:UpdateStorageResourceController', label: i18n.t('permissionConfig.UpdateStorageResourceController') },
+      { key: 'admin:ListStorageDeviceController', label: i18n.t('permissionConfig.ListStorageDeviceController') },
+      { key: 'admin:AddStorageDeviceController', label: i18n.t('permissionConfig.AddStorageDeviceController') },
+      { key: 'admin:UpdateStorageDeviceController', label: i18n.t('permissionConfig.UpdateStorageDeviceController') },
+      { key: 'admin:DeleteStorageDeviceController', label: i18n.t('permissionConfig.DeleteStorageDeviceController') },
+      { key: 'admin:GetDefaultNextResourceController', label: i18n.t('permissionConfig.GetDefaultNextResourceController') },
+      { key: 'admin:SetDefaultNextResourceController', label: i18n.t('permissionConfig.SetDefaultNextResourceController') },
+      { key: 'admin:ListAllStorageResourceController', label: i18n.t('permissionConfig.ListAllStorageResourceController') },
+      { key: 'admin:AssociateBucketAndResourceGroup', label: i18n.t('permissionConfig.AssociateBucketAndResourceGroup') },
+      { key: 'admin:BucketExtendInfoController', label: i18n.t('permissionConfig.BucketExtendInfoController') }
+    ]
+  },
+  {
+    key: 'schedulingStrategy',
+    label: '调度策略',
+    children: [
+      { key: 'admin:StrategyDictionaryController', label: i18n.t('permissionConfig.StrategyDictionaryController') },
+      { key: 'admin:PolicyExpressionController', label: i18n.t('permissionConfig.PolicyExpressionController') },
+      { key: 'admin:BucketExpressionController', label: i18n.t('permissionConfig.BucketExpressionController') },
+      { key: 'admin:GlacierRestoreFileDictController', label: i18n.t('permissionConfig.GlacierRestoreFileDictController') },
     ]
   },
   {
     key: 'user',
     label: '用户',
     children: [
-      {
-        key: 'admin:ListUsers',
-        label: '用户列表'
-      },
-      {
-        key: 'admin:CreateUser',
-        label: '创建用户'
-      },
-      { key: 'admin:DeleteUser', label: '删除用户' },
-      { key: 'admin:UpdateUser', label: '更新用户' },
-      { key: 'admin:EnableUser', label: '启用用户' },
-      { key: 'admin:DisableUser', label: '禁用用户' },
-      { key: 'admin:GetUser', label: '用户详情' },
-      { key: 'admin:AddGroupToUser', label: '用户配置用户组' },
-      { key: 'admin:ListGroups', label: '用户组列表' },
-      { key: 'admin:AddGroup', label: '创建用户组' },
-      { key: 'admin:DeleteGroup', label: '删除用户组' },
-      { key: 'admin:EnableGroup', label: '启用用户组' },
-      { key: 'admin:DisableGroup', label: '禁用用户组' },
-      { key: 'admin:AddUserToGroup', label: '用户组分配用户' }
+      { key: 'admin:ListUsers', label: i18n.t('permissionConfig.ListUsers') },
+      { key: 'admin:CreateUser', label: i18n.t('permissionConfig.CreateUser') },
+      { key: 'admin:DeleteUser', label: i18n.t('permissionConfig.DeleteUser') },
+      { key: 'admin:UpdateUser', label: i18n.t('permissionConfig.UpdateUser') },
+      { key: 'admin:EnableUser', label: i18n.t('permissionConfig.EnableUser') },
+      { key: 'admin:DisableUser', label: i18n.t('permissionConfig.DisableUser') },
+      { key: 'admin:GetUser', label: i18n.t('permissionConfig.GetUser') },
+      { key: 'admin:AddGroupToUser', label: i18n.t('permissionConfig.AddGroupToUser') },
+      { key: 'admin:ListGroups', label: i18n.t('permissionConfig.ListGroups') },
+      { key: 'admin:AddGroup', label: i18n.t('permissionConfig.AddGroup') },
+      { key: 'admin:DeleteGroup', label: i18n.t('permissionConfig.DeleteGroup') },
+      { key: 'admin:EnableGroup', label: i18n.t('permissionConfig.EnableGroup') },
+      { key: 'admin:DisableGroup', label: i18n.t('permissionConfig.DisableGroup') },
+      { key: 'admin:AddUserToGroup', label: i18n.t('permissionConfig.AddUserToGroup') }
     ]
   },
   {
     key: 'policy',
     label: '权限管理',
     children: [
-      { key: 'admin:GetPolicy', label: '策略列表' },
-      { key: 'admin:CreatePolicy', label: '创建策略' },
-      { key: 'admin:DeletePolicy', label: '删除策略,' },
-      { key: 'admin:SetUserOrGroupPolicy', label: '用户或用户组详情策略分配策略权限' },
-      { key: 'admin:ListPermissionGroupController', label: '查询S3权限组合' }
+      { key: 'admin:GetPolicy', label: i18n.t('permissionConfig.GetPolicy') },
+      { key: 'admin:CreatePolicy', label: i18n.t('permissionConfig.CreatePolicy') },
+      { key: 'admin:DeletePolicy', label: i18n.t('permissionConfig.DeletePolicy') },
+      { key: 'admin:SetUserOrGroupPolicy', label: i18n.t('permissionConfig.SetUserOrGroupPolicy') },
+      { key: 'admin:ListPermissionGroupController', label: i18n.t('permissionConfig.ListPermissionGroupController') }
     ]
   },
-  {
-    key: 'operation',
-    label: '操作管理',
-    children: [
-      {
-        key: 'admin:SysAuditLogController',
-        label: '系统审计日志'
-      }
-    ]
-  },
-  {
-    key: 'lifecycle',
-    label: 'lifecycle管理',
-    children: [
-      { key: 'admin:LifeCycleBucketController', label: '访问Lifecycle桶列表' },
-      { key: 'admin:LifeCycleTaskInfoController', label: '访问Lifecycle任务列表' },
-      { key: 'admin:LifeCycleTaskRuleController', label: '访问Lifecycle任务配置' }
-    ]
-  },
-  {
-    key: 'bucketCache',
-    label: '冷热数据分层管理',
-    children: [
-      { key: 'admin:BucketCache', label: '冷热数据分层' }
-    ]
-  },
-  {
-    key: 'dataRecycle',
-    label: '数据回收站',
-    children: [
-      { key: 'admin:ListDeletedObjects', label: '查看删除留痕' },
-      { key: 'admin:GetDeleteRecord', label: ' 删除留痕对象快查' },
-      { key: 'admin:ListRestoreRecords', label: '列出恢复留痕历史' },
-      { key: 'admin:ListUserBuckets', label: '列出用户所有的桶' }
-    ]
-  },
-  {
-    key: 'qosControl',
-    label: '集群',
-    children: [
-      {
-        key: 'admin:QosController',
-        label: '访问集群资源'
-      }
-    ]
-  },
+  // {
+  //   key: 'operation',
+  //   label: '操作管理',
+  //   children: [
+  //     {
+  //       key: 'admin:SysAuditLogController',
+  //       label: '系统审计日志'
+  //     }
+  //   ]
+  // },
+  // {
+  //   key: 'lifecycle',
+  //   label: 'lifecycle管理',
+  //   children: [
+  //     { key: 'admin:LifeCycleBucketController', label: '访问Lifecycle桶列表' },
+  //     { key: 'admin:LifeCycleTaskInfoController', label: '访问Lifecycle任务列表' },
+  //     { key: 'admin:LifeCycleTaskRuleController', label: '访问Lifecycle任务配置' }
+  //   ]
+  // },
+  // {
+  //   key: 'bucketCache',
+  //   label: '冷热数据分层管理',
+  //   children: [
+  //     { key: 'admin:BucketCache', label: '冷热数据分层' }
+  //   ]
+  // },
+  // {
+  //   key: 'dataRecycle',
+  //   label: '数据回收站',
+  //   children: [
+  //     { key: 'admin:ListDeletedObjects', label: '查看删除留痕' },
+  //     { key: 'admin:GetDeleteRecord', label: ' 删除留痕对象快查' },
+  //     { key: 'admin:ListRestoreRecords', label: '列出恢复留痕历史' },
+  //     { key: 'admin:ListUserBuckets', label: '列出用户所有的桶' }
+  //   ]
+  // },
+  // {
+  //   key: 'qosControl',
+  //   label: '集群',
+  //   children: [
+  //     {
+  //       key: 'admin:QosController',
+  //       label: '访问集群资源'
+  //     }
+  //   ]
+  // },
   {
     key: 'globalConfig',
     label: '全局配置',
     children: [
-      { key: 'admin:GetGlobalConfig', label: '访问全局配置' },
-      { key: 'admin:SetGlobalConfig', label: '设置全局配置' }
+      { key: 'admin:GetGlobalConfig', label: i18n.t('permissionConfig.GetGlobalConfig') },
+      { key: 'admin:SetGlobalConfig', label: i18n.t('permissionConfig.SetGlobalConfig') }
     ]
   },
   {
     key: 'other',
     label: '其他功能',
     children: [
-      { key: 'admin:UpdateBucketQuota', label: '更新桶配额' },
-      { key: 'admin:BucketChartController', label: '桶用量分析' },
-      { key: 'admin:ListBucketQuota', label: '查询桶用量' },
-      { key: 'admin:CreateBucket', label: '创建桶' },
-      { key: 'admin:UpdateBucket', label: '修改桶' },
-      { key: 'admin:PutBucketPolicy', label: '设置桶策略' },
-      { key: 'admin:GetBucketPolicy', label: '获取桶策略' },
-      { key: 'admin:QosController', label: '桶QoS' }
+      { key: 'admin:UpdateBucketQuota', label: i18n.t('permissionConfig.UpdateBucketQuota') },
+      { key: 'admin:BucketChartController', label: i18n.t('permissionConfig.BucketChartController') },
+      { key: 'admin:ListBucketQuota', label: i18n.t('permissionConfig.ListBucketQuota') },
+      { key: 'admin:CreateBucket', label: i18n.t('permissionConfig.CreateBucket') },
+      { key: 'admin:UpdateBucket', label: i18n.t('permissionConfig.UpdateBucket') },
+      { key: 'admin:PutBucketPolicy', label: i18n.t('permissionConfig.PutBucketPolicy') },
+      { key: 'admin:GetBucketPolicy', label: i18n.t('permissionConfig.GetBucketPolicy') },
+      { key: 'admin:QosController', label: i18n.t('permissionConfig.QosController') }
     ]
   }
 ]

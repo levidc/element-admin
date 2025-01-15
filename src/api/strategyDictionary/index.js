@@ -1,6 +1,6 @@
 import request from '../request'
 
-export function listStrategyDictionary(params) {
+export function listStrategyDictionary (params) {
   return request({
     method: 'get',
     url: 'listStrategyDictionary',
@@ -8,7 +8,7 @@ export function listStrategyDictionary(params) {
   })
 }
 
-export function createStrategyDictionary(data) {
+export function createStrategyDictionary (data) {
   return request({
     method: 'post',
     url: 'createStrategyDictionary',
@@ -24,7 +24,7 @@ export const listPolicyExpression = (params) => {
   })
 }
 
-export function createPolicyExpression(data) {
+export function createPolicyExpression (data) {
   return request({
     method: 'post',
     url: 'createPolicyExpression',
@@ -32,7 +32,7 @@ export function createPolicyExpression(data) {
   })
 }
 
-export function updatePolicyExpression(data) {
+export function updatePolicyExpression (data) {
   return request({
     method: 'post',
     url: 'updatePolicyExpression',
@@ -40,7 +40,7 @@ export function updatePolicyExpression(data) {
   })
 }
 
-export function deletePolicyExpression(params) {
+export function deletePolicyExpression (params) {
   return request({
     method: 'delete',
     url: 'deletePolicyExpression',
@@ -48,7 +48,7 @@ export function deletePolicyExpression(params) {
   })
 }
 
-export function createOrUpdateBucketExpression(data) {
+export function createOrUpdateBucketExpression (data) {
   return request({
     method: 'post',
     url: 'createOrUpdateBucketExpression',
@@ -56,7 +56,7 @@ export function createOrUpdateBucketExpression(data) {
   })
 }
 
-export function queryBucketExpression(params) {
+export function queryBucketExpression (params) {
   return request({
     method: 'get',
     url: 'queryBucketExpression',
@@ -64,11 +64,60 @@ export function queryBucketExpression(params) {
   })
 }
 
-export function listBucketExpression(params) {
+export function listBucketExpression (params) {
   return request({
     method: 'get',
     url: 'listBucketExpression',
     params
+  })
+}
+
+export function getGlacier (params) {
+  return request({
+    method: 'get',
+    url: 'glacier/content/get',
+    params
+  })
+}
+
+export function listGlacier (params) {
+  return request({
+    method: 'get',
+    url: 'glacier/content/list',
+    params
+  })
+}
+
+export function deleteGlacier (params) {
+  return request({
+    method: 'delete',
+    url: 'glacier/content/delete',
+    params
+  })
+}
+
+export function addGlacier (data) {
+  return request({
+    method: 'post',
+    url: 'glacier/content/add',
+    data
+  })
+}
+
+export function updateGlacier (data) {
+  return request({
+    method: 'post',
+    url: 'glacier/content/update',
+    data
+  })
+}
+
+export function downLoadGlacier (params) {
+  return request({
+    method: 'get',
+    url: 'glacier/content/download',
+    params,
+    responseType: 'arraybuffer'
   })
 }
 

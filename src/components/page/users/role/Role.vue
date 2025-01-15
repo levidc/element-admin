@@ -2,7 +2,7 @@
   <div>
     <div class="page_content_wrap">
       <el-row class="mb_15">
-        <el-button size="small" type="primary" @click="addRole">{{ $ts("CREATE") }}</el-button>
+        <el-button size="small" type="primary" @click="addRole">{{ $ts("page.create") }}</el-button>
         <el-button size="small" type="danger" :disabled="delBtn" @click="listNames()">{{ $ts("DELETE") }}</el-button>
         <el-button class="right tab_search_btn" type="primary" @click="searchVal = ''; refresh()">{{ $ts("REFRESH")
           }}</el-button>
@@ -27,10 +27,11 @@
               $ts('role.next.step') }}</el-button>
             <!-- 创建 -->
             <el-button v-if="active == 2" class="pull_right" size="mini" @click="editRole()">{{
-              isAdd ? $ts('CREATE') : $ts("MODIFY") }}</el-button>
+              isAdd ? $ts("page.create") : $ts("MODIFY") }}</el-button>
             <!-- 上一步 -->
-            <el-button :disabled="active == 0" class="pull_right" size="mini" style="margin-right:5px;" @click="prev()">{{
-              $ts('role.pre.step') }}</el-button>
+            <el-button :disabled="active == 0" class="pull_right" size="mini" style="margin-right:5px;"
+              @click="prev()">{{
+                $ts('role.pre.step') }}</el-button>
           </div>
           <div class="clear" />
         </div>
@@ -92,7 +93,7 @@
 
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="editDialog = false; resetForm('createForm')">{{ $ts('button.cancel') }}</el-button>
+        <el-button @click="editDialog = false; resetForm('createForm')">{{ $ts('page.cancel') }}</el-button>
       </div>
     </el-dialog>
 
@@ -101,8 +102,8 @@
       <p>{{ $ts('role.delete.info') }}</p>
       <div>{{ names }}</div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="isDelete = false; doDelete()">{{ $ts('button.confirm') }}</el-button>
-        <el-button @click="isDelete = false">{{ $ts('button.cancel') }}</el-button>
+        <el-button type="primary" @click="isDelete = false; doDelete()">{{ $ts('page.confirm') }}</el-button>
+        <el-button @click="isDelete = false">{{ $ts('page.cancel') }}</el-button>
       </span>
     </el-dialog>
 
@@ -350,7 +351,7 @@ export default {
           } else {
             temp.$ts({
               type: 'success',
-              text: temp.$ts('response.success')
+              text: temp.$ts('page.responseSuccess')
             })
           }
 
@@ -389,7 +390,7 @@ export default {
             } else {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
             }
             loading.close()
@@ -421,7 +422,7 @@ export default {
             } else {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
             }
             this.$refs.roletable.listRole()

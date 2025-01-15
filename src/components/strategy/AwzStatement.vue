@@ -6,7 +6,8 @@
         <div v-else class="input">{{ statement.Sid }}</div>
       </el-descriptions-item> -->
       <!-- 桶授权用户 -->
-      <el-descriptions-item v-if="!hidePrincipal" label="授权用户" :span="3" label-class-name="desc-label">
+      <el-descriptions-item v-if="!hidePrincipal" :label="$ts('policies.authorizationUser')" :span="3"
+        label-class-name="desc-label">
         <div v-if="(statement.Principal || []).length > 0" class="resource-containor" style="margin-bottom: 15px;"
           :style="{ flexDirection: editable ? 'column' : undefined }">
           <el-tag v-for="(pri, idx) in statement.Principal" :key="idx" :type="editable ? '' : 'info'"
@@ -19,15 +20,14 @@
               <i class="el-icon-money" />
             </div> -->
             <div class="resource-item">
-              <span>用户名：</span>
-              <el-autocomplete v-model="principal.val" size="mini" class="resource-input" placeholder="[必填] 用户名称"
-                clearable style="width: 200px;" :fetch-suggestions="searchUserNames" />
+              <span>{{ $ts('policies.userName') }}</span>
+              <el-autocomplete v-model="principal.val" size="mini" class="resource-input"
+                :placeholder="$ts('policies.requiredUsername')" clearable style="width: 200px;"
+                :fetch-suggestions="searchUserNames" />
             </div>
             <div class="resource-label label-right">
-              <el-tooltip :content="btnNotice" placement="right" :open-delay="800" :hide-after="4000">
-                <el-button plain class="golden" @click="handleAddPrincipalItem">添加</el-button>
-                <!-- <el-button icon="el-icon-circle-plus" plain type="primary" @click="handleAddPrincipalItem" /> -->
-              </el-tooltip>
+              <el-button plain class="golden" @click="handleAddPrincipalItem">{{ $ts('page.add') }}</el-button>
+              <!-- <el-button icon="el-icon-circle-plus" plain type="primary" @click="handleAddPrincipalItem" /> -->
             </div>
           </div>
         </div>
@@ -36,39 +36,35 @@
 
       <el-descriptions-item :span="3" label-class-name="desc-label">
         <template slot="label">
-          <span>资源</span>
-          <el-popover placement="top-start" title="通配符" width="500" trigger="hover">
+          <span>{{ $ts('policies.resource') }}</span>
+          <el-popover placement="top-start" :title="$ts('policies.Wildcards')" width="500" trigger="hover">
             <svg slot="reference" style="margin-left:5px;" class="icon icon-question" aria-hidden="true">
               <use xlink:href="#icon-question" />
             </svg>
             <!-- <i slot="reference" class="el-icon-question" style="margin-left:5px;font-size:14px;" /> -->
             <ul class="ul">
-              <li class="li">您可在任何 ARN 分段 (⽤冒号分隔的部分) 中使⽤通配符 (* 和 ?)。星号 (*) 表示 0个或多个字符的任意组合，问号 (?) 表示任何单个字符。您可在每个分段中使⽤多个
-                *
-                或 ?字符，但通配符不能跨分段。</li>
-              <li class="li">以下 ARN 在此 ARN 的相对 ID 部分使⽤通配符 * 来标识 examplebucket 存储桶中的所有对象：arn:aws:s3:::examplebucket/*
-              </li>
-              <li class="li">以下 ARN 使⽤ * 来表示所有 Amazon S3 资源（所有 S3 存储桶和对象）：arn:aws:s3:::*</li>
-              <li class="li">以下 ARN 在 * 部分中同时使⽤通配符 ?和 relative-ID。它标识存储桶 (例如example1bucket、example2bucket、example3bucket
-                等) 中的所有对：arn:aws:s3:::example?bucket/*</li>
+              <li class="li">{{ $ts('policies.resourceTip1') }}</li>
+              <li class="li">{{ $ts('policies.resourceTip2') }}</li>
+              <li class="li">{{ $ts('policies.resourceTip3') }}</li>
+              <li class="li">{{ $ts('policies.resourceTip4') }}</li>
             </ul>
           </el-popover>
         </template>
         <div v-if="routeBucketName">
           <el-radio-group v-model="isResourceAll" style="margin: 2px 0;" @input="handleChangeResourceType">
-            <el-radio :label="true">整个Bucket</el-radio>
-            <el-radio :label="false">指定资源</el-radio>
+            <el-radio :label="true">{{ $ts('policies.allBucket') }}</el-radio>
+            <el-radio :label="false">{{ $ts('policies.SpecifyResources') }}</el-radio>
           </el-radio-group>
           <div v-if="isResourceAll" style="margin: 18px 0 2px;">
             {{ shotResource(statement.Resource[0]) }}
           </div>
           <div v-else style="max-width: 433px; margin: 18px 0 0;">
             <AwzBucketResourceItem v-for="(res, idx) in statement.Resource || []" :key="idx" :idx="idx" :value="res"
-              class="resource-bucket-item" :err="checkResourceSame(idx) ? '重复' : void 0"
+              class="resource-bucket-item" :err="checkResourceSame(idx) ? $ts('policies.Duplicate') : void 0"
               @change="handleChangeBucketResourceItem" @del="handleDelResourceItem" />
             <AwzBucketResourceItem :value="resource.prepend + '::' + routeBucketName" addable
               class="resource-bucket-item" @add="handleAddBucketResourceItem" />
-            <p v-if="isshow">格式错误，仅支持英文、数字和-_.?*</p>
+            <p v-if="isshow">{{ $ts('policies.resourceShowTip') }}</p>
           </div>
         </div>
         <div v-else>
@@ -93,29 +89,29 @@
             </div> -->
               <!-- <div class="resource-label">:</div> -->
               <div v-if="!routeBucketName" class="resource-item">
-                <span class="lb2">桶名称：</span>
+                <span class="lb2">{{ $ts('policies.bucketName') }}</span>
                 <el-radio-group v-model="isBucketNameAll">
-                  <el-radio :label="true" class="w1">全部桶（*）</el-radio>
-                  <el-radio :label="false" class="w2">指定桶</el-radio>
+                  <el-radio :label="true" class="w1">{{ $ts('policies.allBuckets') }}</el-radio>
+                  <el-radio :label="false" class="w2">{{ $ts('policies.specifyBucket') }}</el-radio>
                 </el-radio-group>
                 <el-autocomplete v-if="!isBucketNameAll" v-model="resource.bucketName" size="mini"
-                  popper-class="resource-input" placeholder="[必填] 桶名称" clearable :fetch-suggestions="searchBucketNames"
-                  @focus="focus.bucketName = true" @blur="focus.bucketName = false" />
+                  popper-class="resource-input" :placeholder="$ts('policies.requiredBucketName')" clearable
+                  :fetch-suggestions="searchBucketNames" @focus="focus.bucketName = true"
+                  @blur="focus.bucketName = false" />
               </div>
               <!-- <div class="resource-label">/</div> -->
               <div class="resource-item">
-                <span class="lb2">对象名称：</span>
+                <span class="lb2">{{ $ts('policies.objectName') }}</span>
                 <el-radio-group v-model="isKeyNameAll">
-                  <el-radio :label="true" class="w1">全部对象（*）</el-radio>
-                  <el-radio :label="false" class="w2">指定对象</el-radio>
+                  <el-radio :label="true" class="w1">{{ $ts('policies.allObject') }}</el-radio>
+                  <el-radio :label="false" class="w2">{{ $ts('policies.specifyObject') }}</el-radio>
                 </el-radio-group>
                 <el-input v-if="!isKeyNameAll" v-model="resource.keyName" size="mini" class="resource-input"
-                  placeholder="对象名称" clearable @focus="focus.keyName = true" @blur="focus.keyName = false" />
+                  :placeholder="$ts('policies.objectNamePlaceholder')" clearable @focus="focus.keyName = true"
+                  @blur="focus.keyName = false" />
               </div>
               <div class="resource-label label-right">
-                <el-tooltip :content="btnNotice" placement="right" :open-delay="800" :hide-after="4000">
-                  <el-button plain class="golden" @click="handleAddResourceItem">添加</el-button>
-                </el-tooltip>
+                <el-button plain class="golden" @click="handleAddResourceItem">{{ $ts('page.add') }}</el-button>
               </div>
             </div>
           </div>
@@ -123,18 +119,19 @@
       </el-descriptions-item>
 
       <!-- 权限 -->
-      <el-descriptions-item label="权限" :span="3" label-class-name="desc-label">
+      <el-descriptions-item :label="$ts('policies.permission')" :span="3" label-class-name="desc-label">
         <el-radio-group v-if="editable && routeBucketName" v-model="isActionGroup" style="margin: 4px 0 20px;"
           @input="changeActionState">
-          <el-radio :label="1">简单设置</el-radio>
-          <el-radio :label="0">高级设置</el-radio>
+          <el-radio :label="1">{{ $ts('policies.simpleConfig') }}</el-radio>
+          <el-radio :label="0">{{ $ts('policies.advancedConfig') }}</el-radio>
         </el-radio-group>
         <div v-if="isActionGroup">
           <el-radio-group v-if="editable" v-model="permissionGroupId" size="mini" class="permi-gps"
             @input="changePermissionGroup">
             <el-radio v-for="pg in permissionGroupList" :key="pg.id" :label="pg.id" border>
               {{ pg.name }}
-              <el-popover placement="top" title="该设置将授予以下Permission" width="300" trigger="hover" :open-delay="500">
+              <el-popover placement="top" :title="$ts('policies.permissionGroupTip')" width="300" trigger="hover"
+                :open-delay="500">
                 <svg slot="reference" style="margin-left:5px;" class="icon icon-question" aria-hidden="true">
                   <use xlink:href="#icon-question" />
                 </svg>
@@ -148,7 +145,8 @@
           <div v-else>
             <el-tag type="info" effect="plain">
               {{ permissionGroup.name }}
-              <el-popover placement="top" title="该设置将授予以下Permission" width="300" trigger="hover" :open-delay="500">
+              <el-popover placement="top" :title="$ts('policies.permissionGroupTip')" width="300" trigger="hover"
+                :open-delay="500">
                 <svg slot="reference" style="margin-left:5px;" class="icon icon-question" aria-hidden="true">
                   <use xlink:href="#icon-question" />
                 </svg>
@@ -172,20 +170,21 @@
       </el-descriptions-item>
 
       <!-- 效力 -->
-      <el-descriptions-item v-if="!isActionGroup" label="效⼒" :span="3" label-class-name="desc-label">
-        <el-switch v-model="statement.Effect" size="small" :disabled="!editable" active-text="启用" inactive-text="禁用"
-          active-value="Allow" inactive-value="Deny" @change="emitChange" />
+      <el-descriptions-item v-if="!isActionGroup" :label="$ts('policies.effect')" :span="3"
+        label-class-name="desc-label">
+        <el-switch v-model="statement.Effect" size="small" :disabled="!editable" :active-text="$ts('page.enable')"
+          :inactive-text="$ts('page.disable')" active-value="Allow" inactive-value="Deny" @change="emitChange" />
       </el-descriptions-item>
 
       <!-- principle 系统权限 -->
       <el-descriptions-item :span="3" label-class-name="desc-label">
         <template slot="label">
-          <span>条件</span>
-          <el-popover placement="top-start" title="注意" width="500" trigger="hover">
-            <i slot="reference" class="el-icon-question" style="margin-left:5px;font-size:14px;" />
-            <ul class="ul">
-              <li class="li">相同项目和符号只能有一个配置，重复添加时会覆盖旧的配置</li>
-            </ul>
+          <span>{{ $ts('policies.condition') }}</span>
+          <el-popover placement="top-start" :title="$ts('policies.tip')" width="500" trigger="hover">
+            <svg slot="reference" class="icon icon-question" aria-hidden="true" style="margin-left:5px;font-size:14px;">
+              <use xlink:href="#icon-question" />
+            </svg>
+            <p class="li">{{ $ts('policies.conditionTip') }}</p>
           </el-popover>
         </template>
         <el-card v-if="conditionArr.length > 0" :class="[!editable ? 'simple-card' : '']"
@@ -206,8 +205,8 @@
             <!-- <div class="resource-label label-left">
               <i class="el-icon-s-operation" />
             </div> -->
-            <el-select v-model="condition.key" size="mini" class="resource-input" placeholder="[必填] 项目"
-              style="width: 130px;" @change="filterSymbol">
+            <el-select v-model="condition.key" size="mini" class="resource-input"
+              :placeholder="$ts('policies.requiredKey')" style="width: 130px;" @change="filterSymbol">
               <el-option v-for="k in conditionKeys" :key="k.value" :label="k.label" :value="k.value">
                 <div class="condition-opt">
                   <span class="label">{{ k.label }}</span>
@@ -216,8 +215,8 @@
               </el-option>
             </el-select>
             <!-- <div class="resource-label">&nbsp;</div> -->
-            <el-select v-model="condition.symbol" size="mini" class="resource-input" placeholder="[必填] 符号"
-              style="width: 130px;">
+            <el-select v-model="condition.symbol" size="mini" class="resource-input"
+              :placeholder="$ts('policies.requiredSymbol')" style="width: 130px;">
               <el-option v-for="sb in copyConditionSymbols" :key="sb.value" :label="sb.label" :value="sb.value">
                 <div class="condition-opt">
                   <span class="label">{{ sb.label }}</span>
@@ -226,13 +225,11 @@
               </el-option>
             </el-select>
             <!-- <div class="resource-label">&nbsp;</div> -->
-            <el-input v-model="condition.val" size="mini" class="resource-input" placeholder="[必填] 值" clearable
-              style="width: 170px;" />
+            <el-input v-model="condition.val" size="mini" class="resource-input"
+              :placeholder="$ts('policies.requiredValue')" clearable style="width: 170px;" />
           </div>
           <div class="resource-label label-right" style="margin-top: 5px;">
-            <el-tooltip :content="btnNotice" placement="right" :open-delay="800" :hide-after="4000">
-              <el-button plain class="golden" @click="handleAddConditionItem">添加</el-button>
-            </el-tooltip>
+            <el-button plain class="golden" @click="handleAddConditionItem">{{ $ts('page.add') }}</el-button>
           </div>
         </div>
       </el-descriptions-item>
@@ -302,26 +299,22 @@ export default {
     conditionSymbols: {
       type: Array,
       default: () => [
-        { value: 'StringEquals', label: '(字符串) =' },
-        { value: 'IpAddress', label: '(IP地址) 是' },
-        { value: 'NotIpAddress', label: '(IP地址) 否' }
+        // { value: 'StringEquals', label: '(字符串) =' },
+        // { value: 'IpAddress', label: '(IP地址) 是' },
+        // { value: 'NotIpAddress', label: '(IP地址) 否' }
       ]
     },
     conditionKeys: {
       type: Array,
       default: () => [
-        { value: 's3:prefix', label: '前缀' },
-        { value: 's3:delimiter', label: '分隔符' },
-        { value: 'aws:SourceIp', label: 'IP地址' }
+        // { value: 's3:prefix', label: '前缀' },
+        // { value: 's3:delimiter', label: '分隔符' },
+        // { value: 'aws:SourceIp', label: 'IP地址' }
       ]
     },
     conditionHeight: {
       type: String,
       default: '300px'
-    },
-    btnNotice: {
-      type: String,
-      default: '按下“enter键”或点击“+”添加'
     }
   },
   data () {
@@ -456,15 +449,15 @@ export default {
       const reg = /^[0-9a-zA-Z-_/:*.]+$/
       const val = this.principal.val.trim()
       if (!val) {
-        this.$message.error(`请填写用户名称`)
+        this.$message.error(this.$ts('policies.inputUserName'))
         return
       }
       if (!reg.test(val)) {
-        this.$message.error(`用户名称格式错误，仅支持英文、数字和-_/:*.`)
+        this.$message.error(this.$ts('policies.iptUserReg'))
         return
       }
       if (this.statement.Principal.some(r => r === val)) {
-        this.$message.error(`该用户已存在，请不要重复添加`)
+        this.$message.error(this.$ts('policies.duplicateUserName'))
         return
       }
       this.statement.Principal.push(val)
@@ -474,15 +467,14 @@ export default {
     },
     handleDelPrincipalItem (index) {
       const pri = this.statement.Principal[index]
-      this.$confirm(`您确定要删除 <b style="color:#ff8746"> ${pri}</b> 吗？`, '确认删除', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$ts('policies.deletePrincipal', { error: `<b style="color:#ff8746"> ${pri}</b> ` }), '', {
+        confirmButtonText: this.$ts('page.confirm'),
+        cancelButtonText: this.$ts('page.cancel'),
         type: 'warning',
         dangerouslyUseHTMLString: true
       })
         .then(() => {
           this.statement.Principal.splice(index, 1)
-          // this.$message.success('删除成功')
           this.emitChange()
         })
         .catch(() => { })
@@ -508,14 +500,14 @@ export default {
         keyName: this.resource.keyName.trim()
       }
       const itemEnum = {
-        region: { name: '区域', reg: /^[0-9a-zA-Z-_.?*]+$/, msg: '格式错误，仅支持英文、数字和-_.?*' },
-        userName: { name: '用户名', reg: /^[0-9a-zA-Z-_.?*]+$/, msg: '格式错误，仅支持英文、数字和-_.?*' },
-        bucketName: { name: '桶名称', reg: /^[0-9a-zA-Z-_.?*]+$/, msg: '格式错误，仅支持英文、数字和-_.?*' },
-        keyName: { name: '对象名称', reg: /^([0-9a-zA-Z-_.?*][/]?)+$/, msg: '格式错误，仅支持英文、数字和/-_.?*且不能以"/"开头或者连续"/"' }
+        region: { name: this.$ts('policies.region'), reg: /^[0-9a-zA-Z-_.?*]+$/, msg: this.$ts('policies.resourceItemTip') },
+        userName: { name: this.$ts('user.userName'), reg: /^[0-9a-zA-Z-_.?*]+$/, msg: this.$ts('policies.resourceItemTip') },
+        bucketName: { name: this.$ts('bucket.name'), reg: /^[0-9a-zA-Z-_.?*]+$/, msg: this.$ts('policies.resourceItemTip') },
+        keyName: { name: this.$ts('bucket.objectName'), reg: /^([0-9a-zA-Z-_.?*][/]?)+$/, msg: this.$ts('policies.resourceObjectNameTip') }
       }
 
       if (!resource.bucketName) {
-        this.$message.error(`请填写桶名称`)
+        this.$message.error(this.$ts('policies.iptBucketName'))
         return false
       }
       for (const k in itemEnum) {
@@ -528,7 +520,7 @@ export default {
         `${this.resource.prepend}${resource.region}:${resource.userName}:${resource.bucketName}` +
         (resource.keyName ? `/${resource.keyName}` : '')
       if (this.statement.Resource.some(r => r === res)) {
-        this.$message.error(`该配置已存在，请不要重复添加`)
+        this.$message.error(this.$ts('policies.duplicateConfig'))
         return false
       }
       this.statement.Resource.push(res)
@@ -566,7 +558,7 @@ export default {
     handleAddBucketResourceItem (resource, target) {
       this.resource = { ...this.resource, ...resource }
       if (!this.resource.keyName) {
-        this.$message.error('请填写资源')
+        this.$message.error(this.$ts('policies.iptResource'))
         return
       }
       if (this.handleAddResourceItem()) {
@@ -575,9 +567,9 @@ export default {
     },
     handleDelResourceItem (index, target = undefined) {
       const res = this.statement.Resource[index]
-      this.$confirm(`您确定要删除 <b style="color:#ff8746">${res}</b> 吗？`, '确认删除', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$ts('policies.deletePrincipal', { error: `<b style="color:#ff8746"> ${res}</b> ` }), '', {
+        confirmButtonText: this.$ts('page.confirm'),
+        cancelButtonText: this.$ts('page.cancel'),
         type: 'warning',
         dangerouslyUseHTMLString: true
       })
@@ -610,26 +602,26 @@ export default {
     handleAddConditionItem () {
       let reg = /^[0-9a-zA-Z-_/]+$/
       if (!this.condition.key) {
-        this.$message.error('请选择项目')
+        this.$message.error(this.$ts('policies.iptKey'))
         return
       }
       if (!this.condition.symbol) {
-        this.$message.error('请选择符号')
+        this.$message.error(this.$ts('policies.iptSymbol'))
         return
       }
       const val = this.condition.val.trim()
       if (!val) {
-        this.$message.error('请填写值')
+        this.$message.error(this.$ts('policies.iptValue'))
         return
       }
       if (this.condition.key === 'aws:SourceIp') {
         reg = /^(\*|(((\*|2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(\*|2[0-4]\d|25[0-5]|[01]?\d\d?)))$/
         const len = val.match(/\*/g)
         if (!reg.test(val) || (len && len.length > 1)) {
-          return this.$message.error(`值格式错误，请输入合法ip地址`)
+          return this.$message.error(this.$ts('policies.ipError'))
         }
       } else if (!reg.test(val)) {
-        this.$message.error(`值格式错误，仅支持英文、数字和"-_/"`)
+        this.$message.error(this.$ts('policies.valueError'))
         return
       }
       if (!(this.condition.symbol in this.statement.Condition)) {
@@ -644,9 +636,9 @@ export default {
       this.emitChange()
     },
     handleDelConditiionItem (symbol, key) {
-      this.$confirm(`您确定要删除当前的条件吗？`, '确认删除', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$ts('policies.delCondition'), '', {
+        confirmButtonText: this.$ts('page.confirm'),
+        cancelButtonText: this.$ts('page.cancel'),
         type: 'warning'
       })
         .then(() => {

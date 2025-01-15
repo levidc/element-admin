@@ -13,34 +13,33 @@
           </div>
           <div class="rightMenu">
             <div>
-              <span>用户状态:
-                <span v-if="enableUser" class="green">启用</span>
-                <span v-else class="red">未启用</span>
+              <span>{{ $ts('user.userStatus') }}
+                <span v-if="enableUser" class="green">{{ $t('page.enable') }}</span>
+                <span v-else class="red">{{ $ts('page.disable') }}</span>
               </span>
               <el-switch v-if="currentName !== 'superAdmin'" v-model="enableUser"
                 v-access="'admin:EnableUser;admin:DisableUser'" @change="switchUserStatus" />
             </div>
             <div>
-              <el-tooltip content="删除用户" placement="top" effect="dark">
-                <svg
-                  v-if="String($store.state.isEip) !== 'true' && currentName !== 'superAdmin' && $store.state.role === 'superAdmin'"
+              <el-tooltip :content="$ts('user.delUser')" placement="top" effect="dark">
+                <svg v-if="currentName !== 'superAdmin' && $store.state.user.role === 'superAdmin'"
                   v-access="'admin:DeleteUser'" class="icon backicon" aria-hidden="true" @click="deleteFlag = true">
                   <use xlink:href="#icon-trash" />
                 </svg>
               </el-tooltip>
-              <el-tooltip v-if="userType !== 2" content="更改密码" placement="top" effect="dark">
+              <el-tooltip v-if="userType !== 2" :content="$ts('user.changePwd')" placement="top" effect="dark">
                 <svg style="font-size: 20px;" v-access="'admin:UpdateUser'" class="icon backicon" aria-hidden="true"
                   @click="resetPassword">
                   <use xlink:href="#icon-password" />
                 </svg>
               </el-tooltip>
 
-              <el-tooltip content="返回用户列表" placement="top" effect="dark">
+              <el-tooltip :content="$ts('page.return')" placement="top" effect="dark">
                 <svg class="icon backicon" aria-hidden="true" @click="$router.push({ name: 'Users' })">
                   <use xlink:href="#icon-fanhui" />
                 </svg>
               </el-tooltip>
-              <el-tooltip content="刷新" placement="top" effect="dark">
+              <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
                 <svg class="icon backicon" aria-hidden="true" @click="getUser">
                   <use xlink:href="#icon-refresh" />
                 </svg>
@@ -52,26 +51,26 @@
       <el-container v-show="!loading">
         <el-aside width="200px">
           <el-tabs v-model="tabName" tab-position="left" class="tabs">
-            <el-tab-pane label="存储桶" name="Bucket" />
-            <el-tab-pane label="用户组" name="groups" />
-            <!-- <el-tab-pane label="访问凭证" name="serviceAccounts" /> -->
-            <el-tab-pane label="策略" name="Policy" />
+            <el-tab-pane :label="$ts('route.bucket')" name="Bucket" />
+            <el-tab-pane :label="$ts('group.userGroup')" name="groups" />
+            <el-tab-pane :label="$ts('group.policies')" name="Policy" />
           </el-tabs>
         </el-aside>
         <el-main>
           <div v-show="tabName === 'groups'">
             <div class="clearfix">
-              <h3 class="left">用户组</h3>
+              <h3 class="left">{{ $ts('group.userGroup') }}</h3>
               <el-button v-access="'admin:AddGroupToUser;admin:RemoveGroupFromUser'" class="right golden"
                 @click="searchUserGroup = ''; groupDialog = true">
-                配置用户组
+                {{ $ts('group.configGroup') }}
               </el-button>
-              <el-input v-model="searchUserGroup" class="right searchIpt" placeholder="用户组名搜索" clearable />
+              <el-input v-model="searchUserGroup" class="right searchIpt" :placeholder="$ts('group.groupNameSearch')"
+                clearable />
             </div>
             <el-table :data="userGroup" border>
-              <el-table-column prop="groupName" label="名称">
+              <el-table-column prop="groupName" :label="$ts('group.groupName')">
                 <template slot-scope="scope">
-                  <el-tooltip content="用户组详情" placement="top">
+                  <el-tooltip :content="$ts('route.GroupDetail')" placement="top">
                     <a v-access:disable="'admin:GetGroup'" class="blue"
                       @click="$router.push({ name: 'GroupDetail', params: { name: scope.row.groupName } })">
                       {{ scope.row.groupName }}
@@ -79,7 +78,7 @@
                   </el-tooltip>
                 </template>
               </el-table-column>
-              <el-table-column label="移除用户组">
+              <el-table-column :label="$ts('user.removeGroup')">
                 <template slot-scope="scope">
                   <svg v-access="'admin:AddGroupToUser;admin:RemoveGroupFromUser'" class="icon icon-trash"
                     aria-hidden="true" @click="deleteGroup(scope.row)">
@@ -89,40 +88,26 @@
               </el-table-column>
             </el-table>
           </div>
-          <div v-show="tabName === 'serviceAccounts'">
-            <div class="clearfix">
-              <h3 class="left">访问凭证</h3>
-              <div class="right">
-                <el-button v-access="'admin:RemoveAccessCredential'" type="danger" class="red"
-                  :disabled="!selectedServiceAccounts.length" @click="deleteAccess = true">删除</el-button>
-                <!-- <el-button type="primary" @click="serviceDialog=true">创建</el-button> -->
-              </div>
-            </div>
-            <el-table :data="serviceData" border max-height="600" @selection-change="handleServiceAccountsChange">
-              <el-table-column type="selection" reverse-selection align="center" />
-              <el-table-column prop="name" label="访问凭证" />
-            </el-table>
-          </div>
 
           <div v-show="tabName === 'Policy'">
             <div class="clearfix">
-              <h3 class="left">策略</h3>
+              <h3 class="left">{{ $ts('group.policies') }}</h3>
               <el-button v-access="'admin:SetUserOrGroupPolicy'" class="right golden" type="primary"
-                @click="searchPolicy = ''; policyDialog = true">配置策略</el-button>
-              <el-input v-model="searchPolicy" class="right searchIpt" placeholder="策略名搜索" clearable />
+                @click="searchPolicy = ''; policyDialog = true">{{ $ts('group.setPolicies') }}</el-button>
+              <el-input v-model="searchPolicy" class="right searchIpt" :placeholder="$ts('group.searchPolicyName')"
+                clearable />
             </div>
             <el-table :data="userPolicy" border max-height="600">
-              <el-table-column prop="name" label="策略名">
+              <el-table-column prop="name" :label="$ts('group.policyName')">
                 <template slot-scope="scope">
-                  <el-tooltip content="策略详情" placement="top">
+                  <el-tooltip :content="$ts('policies.policyDetail')" placement="top">
                     <a class="blue" @click="getIntoPolicy(scope.row.name)">
                       {{ scope.row.name }}
                     </a>
-
                   </el-tooltip>
                 </template>
               </el-table-column>
-              <el-table-column label="移除策略">
+              <el-table-column :label="$ts('group.removePolicy')">
                 <template slot-scope="scope">
                   <svg v-if="scope.row.name !== 'BasePolicy'" v-access="'admin:SetUserOrGroupPolicy'"
                     class="icon icon-trash" aria-hidden="true" @click="deletePolicy(scope.row)">
@@ -134,19 +119,19 @@
           </div>
           <div v-show="tabName === 'Bucket'">
             <div class="clearfix">
-              <h3 class="left">存储桶</h3>
+              <h3 class="left">{{ $ts('route.bucket') }}</h3>
             </div>
             <el-descriptions style="width: 50%;" :content-style="rowCenter" :label-style="rowCenter"
               direction="vertical" :column="2" border>
-              <el-descriptions-item label="对象总数(个)">
+              <el-descriptions-item :label="$ts('bucket.objectCount')">
                 <el-tag size="small">{{ quotaData.objectCount | precisionNum }}</el-tag>
               </el-descriptions-item>
-              <el-descriptions-item label="对象总容量">
+              <el-descriptions-item :label="$ts('bucket.objectSize')">
                 <el-tag size="small">{{ byteConvert(quotaData.objectSize) }}</el-tag>
               </el-descriptions-item>
             </el-descriptions>
             <div class="clearfix">
-              <h3 class="left bucket_column">桶名称</h3>
+              <h3 class="left bucket_column">{{ $ts('bucket.name') }}</h3>
             </div>
             <el-table class="outerTable" :data="bucketData" style="width:100%;margin:30px 0 0 0"
               :default-expand-all="true" :row-class-name="getRowClass">
@@ -169,20 +154,22 @@
                       <el-table-column prop="Action" label="Action" min-width="120">
                         <template slot-scope="inner">
                           <div>
-                            <span>{{ (inner.row.group && inner.row.group.name) || '高级设置' }}</span>
+                            <span>{{ (inner.row.group && inner.row.group.name) }}</span>
                             <el-popover class="ml_10" placement="right" width="350" trigger="hover">
                               <p v-for="(item, i) in handleStrOrArr(inner, 'Action')" :key="item + i"
                                 style="line-height:1.6;">
                                 {{ item }}
                               </p>
-                              <i slot="reference" class="el-icon-question" />
+                              <svg slot="reference" class="icon icon-question" aria-hidden="true">
+                                <use xlink:href="#icon-question" />
+                              </svg>
                             </el-popover>
                           </div>
                         </template>
                       </el-table-column>
                       <el-table-column prop="Condition" min-width="150">
                         <template slot="header">
-                          <span style="margin-left:8px;">Condition (项/符号/值)</span>
+                          <span style="margin-left:8px;">{{ $ts('policies.Condition') }}</span>
                         </template>
                         <template slot-scope="inner">
                           <el-table v-if="renderCondition(inner.row.Condition).length"
@@ -197,7 +184,7 @@
                                 {{ conditionSymbols.find(x=>x.value===data.row.symbol).label }}
                               </template>
     </el-table-column> -->
-                            <el-table-column label="值" prop="value">
+                            <el-table-column :label="$ts('policies.value')" prop="value">
                               <template slot-scope="data">
                                 {{ conditionArr.find(x => x.value === data.row.key).label + ' / ' +
                                   conditionSymbols.find(x => x.value === data.row.symbol).label + ' / ' + data.row.value
@@ -221,153 +208,62 @@
         </el-main>
       </el-container>
     </el-container>
-    <el-dialog :visible.sync="groupDialog" title="设置用户组" width="750px" style="padding:0 5%"
+    <el-dialog :visible.sync="groupDialog" :title="$ts('group.configGroup')" width="750px" style="padding:0 5%"
       @close="handleScroll('groupTable')">
       <div class="clearfix ipt">
-        <span class="left">分配用户组</span>
-        <el-input v-model="groupName" class="right" placeholder="用户组名过滤" clearable />
+        <el-input v-model="groupName" class="right" :placeholder="$ts('group.groupNameSearch')" clearable />
       </div>
-
       <el-table ref="groupTable" class="groupData" :data="groupData" border max-height="400"
         :row-key="(row) => row.groupName" @selection-change="handleGroupChange">
         <el-table-column type="selection" width="55" reserve-selection align="center" />
-        <el-table-column prop="groupName" label="组名" />
+        <el-table-column prop="groupName" :label="$ts('group.groupName')" />
       </el-table>
       <div slot="footer">
-        <el-button @click="cancelGroup">重置</el-button>
-        <el-button type="primary" class="golden" @click="confirmGroup">{{ $ts('button.confirm') }}</el-button>
+        <el-button @click="cancelGroup">{{ $ts('page.reset') }}</el-button>
+        <el-button type="primary" class="golden" @click="confirmGroup">{{ $ts('page.confirm') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="更改用户密码" :visible.sync="passwordDialog" width="700px" @close="resetModForm">
+    <el-dialog :title="$ts('user.changePwd')" :visible.sync="passwordDialog" width="700px" @close="resetModForm">
       <el-form ref="modifyPassword" class="modifyPassword" :model="modifyPassword" label-width="150px"
         style="padding:0 5%" :rules="rules">
-        <el-form-item label="重设密码的用户(AK)">
+        <el-form-item :label="$ts('user.username')">
           {{ currentName }}
         </el-form-item>
-        <el-form-item label="输入密码" prop="pwd">
-          <el-input ref="ipt" v-model="modifyPassword.pwd" type="password" placeholder="请输入新密码" clearable />
+        <el-form-item :label="$ts('user.firstPwd')" prop="pwd">
+          <el-input ref="ipt" v-model="modifyPassword.pwd" type="password" :placeholder="$ts('user.pwdRequired')"
+            clearable />
         </el-form-item>
-
-        <el-form-item label="再次输入密码" prop="confirmPwd">
-          <el-input v-model="modifyPassword.confirmPwd" type="password" placeholder="请再次输入新密码" clearable />
+        <el-form-item :label="$ts('user.secondPwd')" prop="confirmPwd">
+          <el-input v-model="modifyPassword.confirmPwd" type="password" :placeholder="$ts('user.pwdAgain')" clearable />
         </el-form-item>
       </el-form>
       <div slot="footer">
-        <el-button @click="passwordDialog = false">{{ $ts('cancel') }}</el-button>
+        <el-button @click="passwordDialog = false">{{ $ts('page.cancel') }}</el-button>
         <el-button type="primary" class="golden" @click="confirmPassword">{{ $ts('save') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="设置策略" :visible.sync="policyDialog" width="700px" @close="handleScroll('policyTable')">
+    <el-dialog :title="$ts('group.setPolicy')" :visible.sync="policyDialog" width="700px"
+      @close="handleScroll('policyTable')">
       <div class="clearfix ipt">
-        <span class="left">分配策略</span>
-        <el-input v-model="policyName" class="right" placeholder="策略名过滤" clearable />
+        <el-input v-model="policyName" class="right" :placeholder="$ts('group.searchPolicyName')" clearable />
       </div>
       <el-table ref="policyTable" border class="policyData" :data="policyData" max-height="400"
         :row-key="(row) => row.name" @selection-change="handlePolicyChange">
         <el-table-column type="selection" width="55" reserve-selection align="center" :selectable="checkBasePolicy" />
-        <el-table-column prop="name" label="策略名" />
+        <el-table-column prop="name" :label="$ts('group.policyName')" />
       </el-table>
       <div slot="footer">
-        <el-button @click="resetPolicy">{{ $ts('reset') }}</el-button>
-        <el-button type="primary" class="golden" @click="confirmPolicy(false)">{{ $ts('button.confirm') }}</el-button>
+        <el-button @click="resetPolicy">{{ $ts('page.reset') }}</el-button>
+        <el-button type="primary" class="golden" @click="confirmPolicy(false)">{{ $ts('page.confirm') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog :title="serviceCreateDone ? '新的访问凭证已创建' : '创建访问凭证'" :visible.sync="serviceDialog" width="650px"
-      style="padding:0 5%" class="serviceAccount" @opened="clearServiceValidate">
-      <div v-if="!serviceCreateDone">
-        <!-- <p>Service Accounts inherit the policy explicitly attached to the parent user and the policy attached to each group in which the parent user has membership. You can specify an optional JSON-formatted policy below to restrict the Service Account access to a subset of actions and resources explicitly allowed for the parent user.
-          <br>
-          You cannot modify the Service Account optional policy after saving.</p> -->
-        <el-form ref="serviceForm" :model="serviceForm" :rules="rules">
-          <!-- Customize Credentials -->
-          <el-form-item label="自定义凭证" class="clearfix">
-            <el-popover placement="top-start" width="250" trigger="hover" content="若不启用自定义凭证则启用随机账户">
-              <i slot="reference" class="el-icon-question" style="margin-left:-100px" />
-            </el-popover>
-            <el-switch v-model="serviceForm.credentials" class="right" active-text="ON" inactive-text="OFF"
-              active-color="#13ce66" />
-          </el-form-item>
-          <el-row v-if="serviceForm.credentials">
-            <el-form-item label="Access Key" prop="accessKey">
-              <el-input v-model="serviceForm.accessKey" placeholder="enter Access Key" />
-            </el-form-item>
-            <el-form-item label="Secret Key" prop="secretKey">
-              <el-input v-model="serviceForm.secretKey" placeholder="enter secret Key" />
-            </el-form-item>
-          </el-row>
-
-          <!-- <el-form-item label="Restrict with policy" class="clearfix">
-            <el-switch
-              v-model="serviceForm.policy"
-              class="right"
-              active-text="ON"
-              inactive-text="OFF"
-              active-color="#13ce66"
-            />
-          </el-form-item> -->
-          <!-- <div v-if="serviceForm.policy" style="width: 100%;margin-top: 30px;">
-            <vue-json-editor
-              ref="jsonEditor"
-              v-model="jsonString"
-              :show-btns="false"
-              :mode="'code'"
-              @json-change="onJsonChange"
-              @json-save="onJsonSave"
-              @has-error="onError"
-            />
-            <div class="bottomMenu">
-              <i class="el-icon-s-operation" title="格式化json" @click="eslintJson" />
-              <i class="el-icon-document-copy" title="复制到剪贴板" @click="copyJSON" />
-            </div>
-          </div> -->
-
-        </el-form>
-        <div slot="footer" style="display:flex;justify-content:flex-end;margin-top:40px">
-          <el-button @click="clearJSON">{{ $ts('alert.clear') }}</el-button>
-          <el-button type="primary" class="golden" @click="createServiceAccount">{{ $ts('create') }}</el-button>
-        </div>
-      </div>
-      <div v-else>
-        <p>A new Service Account has been created with the following details:</p>
-        <h3>Console Credentials
-        </h3>
-        <div>
-          <span>Access Key:</span>
-          <el-input v-model="serviceForm.accessKey" readonly />
-          <i class="el-icon-document-copy" title="复制到剪贴板" @click="copyCode(serviceForm.accessKey)" />
-        </div>
-        <div>
-          <span>Secret Key:</span>
-          <el-input v-model="serviceForm.secretKey" readonly />
-          <i class="el-icon-document-copy" title="复制到剪贴板" @click="copyCode(serviceForm.secretKey)" />
-        </div>
-        <p class="red">
-          <i class="fa el-icon-warning-outline red" />
-          Write these down, as this is the only time the secret will be displayed.
-        </p>
-        <div slot="footer" style="display:flex;justify-content:flex-end;margin-top:40px">
-          <el-button @click="serviceDialog = false">{{ $ts('wtstype.none') }}</el-button>
-          <el-button type="primary" class="golden" @click="downloadSecretAccount"> 下载 </el-button>
-        </div>
-      </div>
-    </el-dialog>
-    <el-dialog title="删除访问凭证" :visible.sync="deleteAccess" width="650px">
-      <p>删除所选访问凭证:</p>
-      <p v-for="(item, i) in selectedServiceAccounts" :key="i" style="margin-left:150px">
-        {{ item.name }}
-      </p>
-      <div slot="footer">
-        <el-button @click="deleteAccess = false">{{ $ts('cancel') }}</el-button>
-        <el-button type="primary" class="golden" @click="deleteAccessCredential">{{ $ts('delete') }}</el-button>
-      </div>
-    </el-dialog>
-    <el-dialog title="删除用户" :visible.sync="deleteFlag" width="650px">
-      <p>删除当前用户:
+    <el-dialog :title="$ts('user.delUser')" :visible.sync="deleteFlag" width="650px">
+      <p>{{ $ts('user.delCurrentUser') }}
         {{ currentName }}
       </p>
       <div slot="footer">
-        <el-button @click="deleteFlag = false">{{ $ts('cancel') }}</el-button>
-        <el-button type="primary" class="golden" @click="deleteUser">{{ $ts('delete') }}</el-button>
+        <el-button @click="deleteFlag = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button type="primary" class="golden" @click="deleteUser">{{ $ts('page.delete') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -409,30 +305,12 @@ export default {
     //   }
     //   return callback()
     // }
-    const checkKeyReg = (rule, data, callback) => {
-      if (data.indexOf('#') !== -1) {
-        return callback('输入内容有非法字符')
-      } else if (data.length < 3 || data.length > 20) {
-        return callback('输入长度限制为3-20')
-      } else {
-        return callback()
-      }
-    }
-    const checkSecretReg = (rule, data, callback) => {
-      if (data.indexOf('#') !== -1) {
-        return callback('输入内容有非法字符')
-      } else if (data.length < 8 || data.length > 40) {
-        return callback('输入长度限制为8-40')
-      } else {
-        return callback()
-      }
-    }
     var validatePass = (rule, value, callback) => {
       const reg = /[\u4e00-\u9fa5]/
       if (value === '') {
-        return callback(new Error(this.$ts('please.enter.pwd')))
+        return callback(new Error(this.$ts('user.pwdRequired')))
       } else if (reg.test(value)) {
-        return callback('密码不能包含中文')
+        return callback(this.$ts('user.pwdHasChinese'))
       } else {
         if (this.modifyPassword.confirmPwd !== '') {
           this.$refs.modifyPassword.validateField('confirmPwd')
@@ -443,25 +321,25 @@ export default {
     var validateConfirmPwd = (rule, value, callback) => {
       const reg = /[\u4e00-\u9fa5]/
       if (value === '' && this.modifyPassword.pwd !== '') {
-        return callback(new Error(this.$ts('please.enter.pwd.again')))
+        return callback(new Error(this.$ts('user.pwdAgain')))
       } else if (value !== this.modifyPassword.pwd) {
-        return callback(new Error(this.$ts('pwd.confirm.error')))
+        return callback(new Error(this.$ts('user.confirmPwd')))
       } else if (reg.test(value)) {
-        return callback('密码不能包含中文')
+        return callback(this.$ts('user.pwdHasChinese'))
       } else {
         callback()
       }
     }
     return {
       conditionSymbols: [
-        { value: 'StringEquals', label: '匹配' },
-        { value: 'IpAddress', label: '允许访问' },
-        { value: 'NotIpAddress', label: '禁止访问' }
+        { value: 'StringEquals', label: this.$ts('bucket.equal') },
+        { value: 'IpAddress', label: this.$ts('bucket.allow') },
+        { value: 'NotIpAddress', label: this.$ts('bucket.notAllow') }
       ],
       conditionArr: [
-        { value: 's3:prefix', label: '前缀' },
-        { value: 's3:delimiter', label: '分隔符' },
-        { value: 'aws:SourceIp', label: 'IP地址' }
+        { value: 's3:prefix', label: this.$ts('bucket.prefix') },
+        { value: 's3:delimiter', label: this.$ts('bucket.delimiter') },
+        { value: 'aws:SourceIp', label: this.$ts('bucket.SourceIp') }
       ],
       permissionGroup: [],
       bucketData: [],
@@ -518,15 +396,7 @@ export default {
             validator: validateConfirmPwd,
             trigger: ['change', 'blur']
           }
-        ],
-        accessKey: {
-          validator: checkKeyReg,
-          trigger: ['change', 'blur']
-        },
-        secretKey: {
-          validator: checkSecretReg,
-          trigger: ['change', 'blur']
-        }
+        ]
       },
       quotaData: {
       },
@@ -551,7 +421,6 @@ export default {
       if (val) {
         this.getUser()
         this.listGroups()
-        // api 获取新的用户所选group及其他信息
       } else {
         this.getUser()
         this.cancelGroup()
@@ -639,7 +508,7 @@ export default {
         if (res.code === '200') {
           this.$msg({
             type: 'success',
-            text: this.$ts('response.success')
+            text: this.$ts('page.responseSuccess')
           })
           this.deleteAccess = false
           this.getUser()
@@ -660,7 +529,7 @@ export default {
           .then(res => {
             this.$msg({
               type: 'success',
-              text: this.$ts('response.success')
+              text: this.$ts('page.responseSuccess')
             })
             this.getUser()
           })
@@ -672,7 +541,7 @@ export default {
           .then(res => {
             this.$msg({
               type: 'success',
-              text: this.$ts('response.success')
+              text: this.$ts('page.responseSuccess')
             })
             this.getUser()
           })
@@ -697,36 +566,10 @@ export default {
     eslintJson () {
       this.$refs['jsonEditor'].editor.format()
     },
-    copyJSON () {
-      var str = this.$refs['jsonEditor'].editor.getText()
-      navigator.clipboard.writeText(str)
-      this.$msg({
-        type: 'success',
-        text: '复制成功'
-      })
-    },
-    submitCreate () {
-      if (this.hasJsonFlag === false) {
-        return this.$msg({
-          type: 'error',
-          text: 'json格式不正确'
-        })
-      } else {
-        console.log('success', this.jsonString)
-      }
-    },
     clearServiceValidate () {
       this.serviceForm.accessKey = ''
       this.serviceForm.secretKey = ''
       this.$refs['serviceForm'].resetFields()
-      // 重置json
-    },
-    copyCode (val) {
-      navigator.clipboard.writeText(val)
-      this.$msg({
-        type: 'success',
-        text: '复制成功'
-      })
     },
     downloadSecretAccount () {
       // {"console":[{"url":"undefined","access_key":"aptx789","secret_key":"policyTable123","api":"s3v4","path":"auto"}]}
@@ -772,7 +615,7 @@ export default {
               this.passwordDialog = false
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
             })
             .catch(err => {
@@ -814,7 +657,7 @@ export default {
             if (!isTrue.length) {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
             } else {
               this.$msg({
@@ -837,7 +680,7 @@ export default {
           .then(res => {
             this.$msg({
               type: 'success',
-              text: this.$ts('response.success')
+              text: this.$ts('page.responseSuccess')
             })
             this.groupDialog = false
           })
@@ -852,7 +695,7 @@ export default {
           .then(res => {
             this.$msg({
               type: 'success',
-              text: this.$ts('response.success')
+              text: this.$ts('page.responseSuccess')
             })
             this.groupDialog = false
           })
@@ -872,7 +715,7 @@ export default {
         .then(res => {
           this.$msg({
             type: 'success',
-            text: this.$ts('response.success')
+            text: this.$ts('page.responseSuccess')
           })
           this.getUser()
         })
@@ -901,7 +744,7 @@ export default {
       }).then(res => {
         this.$msg({
           type: 'success',
-          text: this.$ts('response.success')
+          text: this.$ts('page.responseSuccess')
         })
         if (flag) {
           this.getUser()
@@ -942,7 +785,7 @@ export default {
           // }).then(res => {
           //   this.$msg({
           //     type: 'success',
-          //     text: this.$ts('response.success')
+          //     text: this.$ts('page.responseSuccess')
           //   })
           //   this.serviceCreateDone = true
           //   this.listAccounts()
@@ -995,7 +838,7 @@ export default {
           this.$router.push({ name: 'Users' })
           return this.$msg({
             type: 'error',
-            text: '当前用户不存在'
+            text: this.$ts('user.userNotExist')
           })
         }
         res.data.groups = res.data.groups || []
@@ -1123,10 +966,10 @@ export default {
         this.deleteFlag = false
         const group = this.userGroup.map(item => item.groupName)
         this.$confirm(
-          `该用户已关联如下用户组 <b style="color:#ff8746">${group}</b>,删除后将从以上组中<b style="color:#ff8746">移除该用户</b>，是否确定?`,
+          `${this.$ts("user.delUserTip", { error: `<b style="color: #ff8746">${group}</b>`, error2: `<b style="color: #ff8746">${this.$ts('user.removeGroupUser')}</b>` })}`,
           {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
+            confirmButtonText: this.$ts('page.confirm'),
+            cancelButtonText: this.$ts('page.cancel'),
             type: 'warning',
             dangerouslyUseHTMLString: true
           }
@@ -1142,7 +985,7 @@ export default {
         .then(res => {
           this.$msg({
             type: 'success',
-            text: this.$ts('response.success')
+            text: this.$ts('page.responseSuccess')
           })
           this.$router.push({ name: 'Users' })
         })

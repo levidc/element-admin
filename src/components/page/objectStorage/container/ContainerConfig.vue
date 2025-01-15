@@ -5,7 +5,7 @@
         <el-button v-access="'admin:CreateOrUpdateContainerConfigController'" style="margin-bottom:10px" type="primary"
           class="golden" @click="openCreate">创建</el-button>
         <div class="right">
-          <el-tooltip content="刷新" placement="top" effect="dark">
+          <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
             <i class="el-icon-refresh" @click="listContainerConfig" />
           </el-tooltip>
         </div>
@@ -27,11 +27,11 @@
             <span :class="[scope.row.autoCreate?'status_green':'status_red']">{{ scope.row.autoCreate ? '已启用':'未启用' }}</span>
           </template>
         </el-table-column> -->
-        <el-table-column :label="$ts('action')" width="140">
+        <el-table-column :label="$ts('page.action')" width="140">
           <template slot-scope="scope">
             <el-dropdown v-access="'admin:CreateOrUpdateContainerConfigController'" size="small">
               <el-button type="primary" class="blue">
-                {{ $ts('action') }}<i class="el-icon-arrow-down el-icon--right" />
+                {{ $ts('page.action') }}<i class="el-icon-arrow-down el-icon--right" />
               </el-button>
 
               <el-dropdown-menu slot="dropdown">
@@ -85,9 +85,9 @@
         </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" class="golden" @click="createOrUpdate('createForm')">{{ $ts('button.confirm')
+        <el-button type="primary" class="golden" @click="createOrUpdate('createForm')">{{ $ts('page.confirm')
           }}</el-button>
-        <el-button @click="isCreate = false; resetForm('createForm')">{{ $ts('button.cancel') }}</el-button>
+        <el-button @click="isCreate = false; resetForm('createForm')">{{ $ts('page.cancel') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -228,7 +228,7 @@ export default {
           } else {
             this.$msg({
               type: 'success',
-              text: this.$ts('response.success')
+              text: this.$ts('page.responseSuccess')
             })
           }
           this.listContainerConfig()
@@ -293,7 +293,7 @@ export default {
               } else {
                 this.$msg({
                   type: 'success',
-                  text: this.$ts('response.success')
+                  text: this.$ts('page.responseSuccess')
                 })
                 this.resetForm('createForm')
               }

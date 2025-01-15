@@ -1,103 +1,44 @@
 <template>
   <div>
     <div class="page_content_wrap">
-      <el-form
-        ref="form"
-        :model="form"
-        :form="form"
-        :rules="rules"
-        label-width="80px"
-        label-position="right"
-        class="search"
-      >
+      <el-form ref="form" :model="form" :form="form" :rules="rules" label-width="80px" label-position="right"
+        class="search">
         <div class="search-group">
           <div class="search-content">
-            <el-form-item
-              label="存储桶"
-              prop="bucketId"
-            >
-              <el-select
-                v-model="form.bucketId"
-                filterable
-                clearable
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="(bk,i) in buckets"
-                  :key="(bk.id).toString()+i"
-                  :label="bk.name"
-                  :value="bk.id.toString()"
-                />
+            <el-form-item label="存储桶" prop="bucketId">
+              <el-select v-model="form.bucketId" filterable clearable placeholder="请选择">
+                <el-option v-for="(bk, i) in buckets" :key="(bk.id).toString() + i" :label="bk.name"
+                  :value="bk.id.toString()" />
               </el-select>
             </el-form-item>
-            <el-form-item
-              label="对象key"
-              prop="prefix"
-            >
-              <el-input
-                v-model="form.prefix"
-                clearable
-                placeholder="请输入"
-              />
+            <el-form-item label="对象key" prop="prefix">
+              <el-input v-model="form.prefix" clearable placeholder="请输入" />
             </el-form-item>
-            <el-form-item
-              label="选择时间"
-              prop="deleteEndTime"
-            >
+            <el-form-item label="选择时间" prop="deleteEndTime">
               <div style="min-width: 286px;">
-                <el-date-picker
-                  v-model="form.deleteStartTime"
-                  type="datetime"
-                  value-format="yyyy-MM-dd HH:mm:ss"
-                  format="yyyy-MM-dd HH:mm"
-                  placeholder="开始时间"
-                />
+                <el-date-picker v-model="form.deleteStartTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
+                  format="yyyy-MM-dd HH:mm" placeholder="开始时间" />
                 <span> ~ </span>
-                <el-date-picker
-                  v-model="form.deleteEndTime"
-                  type="datetime"
-                  value-format="yyyy-MM-dd HH:mm:ss"
-                  format="yyyy-MM-dd HH:mm"
-                  placeholder="结束时间"
-                />
+                <el-date-picker v-model="form.deleteEndTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
+                  format="yyyy-MM-dd HH:mm" placeholder="结束时间" />
               </div>
             </el-form-item>
           </div>
           <div class="search-action">
-            <el-button
-              class="right ml_10"
-              @click="onReset"
-            >重置</el-button>
-            <el-button
-              class="right golden"
-              type="primary"
-              @click="getListRestoreRecords(1)"
-            >查询</el-button>
+            <el-button class="right ml_10" @click="onReset">重置</el-button>
+            <el-button class="right golden" type="primary" @click="getListRestoreRecords(1)">查询</el-button>
           </div>
         </div>
       </el-form>
-      <TableData
-        :columns="columns"
-        :loading="loading"
-        :table-data="tableData"
-        :page-obj="page"
-        @go-page="onGoPage"
-      >
-        <el-table-column
-          slot="size"
-          label="文件大小"
-          width="120px"
-        >
+      <TableData :columns="columns" :loading="loading" :table-data="tableData" :page-obj="page" @go-page="onGoPage">
+        <el-table-column slot="size" label="文件大小" width="120px">
           <template slot-scope="scope">
             <span>{{ byteConvert(scope.row.size) }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          slot="versionId"
-          label="版本号"
-        >
+        <el-table-column slot="versionId" label="版本号">
           <template slot-scope="scope">
-            <span>{{ (scope.row.versionId && scope.row.versionId != 'null')?scope.row.versionId:'' }}</span>
+            <span>{{ (scope.row.versionId && scope.row.versionId != 'null') ? scope.row.versionId : '' }}</span>
           </template>
         </el-table-column>
       </TableData>
@@ -111,10 +52,10 @@ import { listUserBuckets } from '@/api/bucket'
 import { validateObjectKey } from '@/utils/validate'
 export default {
   name: 'RestoreRecords',
-  data() {
+  data () {
     const validBucketName = (rule, data, callback) => {
       if (!data) {
-        return callback(new Error('请选择存储桶'))
+        return callback(new Error(this.$ts('tempConfigFile.selectBucket')))
       } else {
         callback()
       }
@@ -175,14 +116,14 @@ export default {
       }
     }
   },
-  async mounted() {
+  async mounted () {
     this.getTime()
     await this.listUserBuckets()
     this.form.bucketId = this.buckets[0]?.id.toString()
     this.getListRestoreRecords(1)
   },
   methods: {
-    getTime() {
+    getTime () {
       const date = new Date()
       const year = date.getFullYear()
       const month = (date.getMonth() + 1).toString().padStart(2, '0')
@@ -201,7 +142,7 @@ export default {
       this.form.deleteEndTime = deleteEndTime
       this.form.deleteStartTime = deleteStartTime
     },
-    getListRestoreRecords(page = void 0) {
+    getListRestoreRecords (page = void 0) {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           this.loading = true
@@ -225,12 +166,12 @@ export default {
         }
       })
     },
-    listUserBuckets() {
+    listUserBuckets () {
       return listUserBuckets().then((res) => {
         this.buckets = res.data.list
       })
     },
-    onReset() {
+    onReset () {
       this.getTime()
       this.form = {
         bucketId: this.buckets[0]?.id.toString(),
@@ -241,7 +182,7 @@ export default {
       }
       this.getListRestoreRecords(1)
     },
-    onGoPage(page) {
+    onGoPage (page) {
       this.page = { ...this.page, ...page }
       this.getListRestoreRecords()
     }
@@ -292,6 +233,7 @@ export default {
 ::v-deep .el-form-item {
   margin-right: 0px !important;
 }
+
 .right {
   position: relative;
   top: 9px;
@@ -301,12 +243,15 @@ export default {
 a {
   color: #ff8746;
 }
+
 ::v-deep .el-form.search .el-date-editor--date {
   width: 173px !important;
 }
+
 .el-form.search .search-group .search-content .el-form-item .el-input {
   width: 177px !important;
 }
+
 ::v-deep .recordTypeStyle .el-input {
   width: 150px !important;
 }

@@ -1,10 +1,10 @@
 <template>
   <div>
     <el-table ref="multipleTable" v-loading="loading" stripe border
-      :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)" tooltip-effect="dark" style="width: 100%"
-      :default-sort="{ prop: 'CreateDate', order: 'descending' }" @selection-change="handleSelectionChange"
-      @sort-change="sortFunction">
-      <el-table-column label="名称" sortable="custom" prop="BucketName" min-width="120px" fixed>
+      :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)" tooltip-effect="dark"
+      style="width: 100%" :default-sort="{ prop: 'CreateDate', order: 'descending' }"
+      @selection-change="handleSelectionChange" @sort-change="sortFunction">
+      <el-table-column :label="$ts('bucket.name')" sortable="custom" prop="BucketName" min-width="120px" fixed>
         <template slot-scope="scope">
           <showToolTip :text="scope.row.BucketName" use-slot>
             <a slot="data" class="blue" @click="viewDetail(scope.row)">{{ scope.row.BucketName }}</a>
@@ -24,55 +24,56 @@
           </div>
         </template>
       </el-table-column> -->
-      <el-table-column label="是否融合桶" sortable="custom" prop="Integrated" min-width="120px">
+      <el-table-column :label="$ts('bucket.IntegratedBucket')" sortable="custom" prop="Integrated" min-width="120px">
         <template slot-scope="scope">
-          {{ scope.row.Integrated == true ? '融合桶' : '非融合桶' }}
+          {{ scope.row.Integrated == true ? $ts('bucket.isIntegratedBucket') : $ts('bucket.notIntegratedBucket') }}
         </template>
       </el-table-column>
-      <el-table-column label="对象总数(个)" sortable="custom" prop="UsedCount" min-width="125px">
+      <el-table-column :label="$ts('bucket.UsedCount')" sortable="custom" prop="UsedCount" min-width="125px">
         <template slot-scope="scope">
           {{ scope.row.UsedCount }}
         </template>
       </el-table-column>
-      <el-table-column label="对象总容量" sortable="custom" prop="UsedSize" min-width="120px">
+      <el-table-column :label="$ts('bucket.UsedSize')" sortable="custom" prop="UsedSize" min-width="120px">
         <template slot-scope="scope">
           {{ byteConvert(scope.row.UsedSize) }}
         </template>
       </el-table-column>
-      <el-table-column label="配置对象总数(个)" sortable="custom" prop="QuotaCount" min-width="160px">
+      <el-table-column :label="$ts('bucket.QuotaCount')" sortable="custom" prop="QuotaCount" min-width="160px">
         <template slot-scope="scope">
-          {{ scope.row.QuotaCount < 0 || scope.row.QuotaCount == 0 ? '无限制' : scope.row.QuotaCount }} </template>
-      </el-table-column>
-      <el-table-column label="配置对象总容量" sortable="custom" prop="QuotaSize" min-width="160px">
-        <template slot-scope="scope">
-          {{ scope.row.QuotaSize < 0 || scope.row.QuotaSize == 0 ? '无限制' : byteConvert(scope.row.QuotaSize, symbols) }}
+          {{ scope.row.QuotaCount < 0 || scope.row.QuotaCount == 0 ? $ts('page.noLimit') : scope.row.QuotaCount }}
             </template>
       </el-table-column>
-      <el-table-column label="是否文件系统" min-width="120px" prop="SupportFs">
+      <el-table-column :label="$ts('bucket.QuotaSize')" sortable="custom" prop="QuotaSize" min-width="160px">
         <template slot-scope="scope">
-          {{ scope.row.SupportFs ? '是' : '否' }}
+          {{ scope.row.QuotaSize < 0 || scope.row.QuotaSize == 0 ? $ts('page.noLimit') : byteConvert(scope.row.QuotaSize,
+            symbols) }} </template>
+      </el-table-column>
+      <el-table-column :label="$ts('bucket.supportFs')" min-width="120px" prop="SupportFs">
+        <template slot-scope="scope">
+          {{ scope.row.SupportFs ? $ts('page.Yes') : $ts('page.No') }}
         </template>
       </el-table-column>
-      <el-table-column prop="CreateDate" label="创建时间" sortable width="150px">
+      <el-table-column prop="CreateDate" :label="$ts('policies.createTime')" sortable width="150px">
         <template slot-scope="scope">
           {{ timeTrans(scope.row.CreateDate) }}
         </template>
       </el-table-column>
-      <el-table-column :label="$ts('action')" width="140" align="center" fixed="right">
+      <el-table-column :label="$ts('page.action')" width="140" align="center" fixed="right">
         <template slot-scope="scope">
           <el-dropdown v-access="'s3:DeleteBucket||admin:UpdateBucket'" size="small">
             <el-button type="primary" class="blue">
-              {{ $ts('action') }}<i class="el-icon-arrow-down el-icon--right" />
+              {{ $ts('page.action') }}<i class="el-icon-arrow-down el-icon--right" />
             </el-button>
 
             <el-dropdown-menu slot="dropdown">
               <!-- <el-dropdown-item v-if="showOwner" v-access="'admin:UpdateBucket'" @click.native="updateUser(scope.row)">修改桶拥有者</el-dropdown-item> -->
               <div :class="[scope.row.SupportFs ? 'cursorDisabled' : null]">
-                <el-dropdown-item :disabled="scope.row.SupportFs"
-                  @click.native="transFormFS(scope.row)">转换文件系统</el-dropdown-item>
+                <el-dropdown-item :disabled="scope.row.SupportFs" @click.native="transFormFS(scope.row)">{{
+                  $ts('bucket.transFs') }}</el-dropdown-item>
               </div>
-              <el-dropdown-item v-access="'s3:DeleteBucket'"
-                @click.native="deleteBucket(scope.row)">删除存储桶</el-dropdown-item>
+              <el-dropdown-item v-access="'s3:DeleteBucket'" @click.native="deleteBucket(scope.row)">{{
+                $ts('bucket.deleteBucket') }}</el-dropdown-item>
               <!-- <el-dropdown-item  @click.native="">修改配额</el-dropdown-item>
 							<el-dropdown-item  @click.native="">修改访问权限</el-dropdown-item>
 							<el-dropdown-item  @click.native="">修改拥有者</el-dropdown-item>
@@ -92,21 +93,21 @@
         layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
         @current-change="handleCurrentChange" />
     </div>
-    <el-dialog width="40%" title="转换文件系统" :visible.sync="modal">
+    <el-dialog width="40%" :title="$ts('bucket.transFs')" :visible.sync="modal">
       <el-form ref="form" :model="form" label-width="150px" :rules="rules" label-position="right">
-        <el-form-item label="桶名称" prop="bucketName">
+        <el-form-item :label="$ts('bucket.name')" prop="bucketName">
           <span>{{ form.BucketName }}</span>
         </el-form-item>
-        <el-form-item label="读写权限" prop="ro" required>
+        <el-form-item :label="this.$ts('client.readWritePermission')" prop="ro" required>
           <el-radio-group v-model="form.ro">
-            <el-radio :label="true">只读</el-radio>
-            <el-radio :label="false">读写</el-radio>
+            <el-radio :label="true">{{ $ts('client.readonly') }}</el-radio>
+            <el-radio :label="false">{{ $ts('client.readWrite') }}</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button class="blue" @click="modal = false">{{ $ts('button.cancel') }}</el-button>
-        <el-button :loading="loadingMount" type="primary" class="golden" @click="confirmTrans">{{ $ts('button.confirm')
+        <el-button class="blue" @click="modal = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button :loading="loadingMount" type="primary" class="golden" @click="confirmTrans">{{ $ts('page.confirm')
           }}</el-button>
       </div>
     </el-dialog>
@@ -133,17 +134,17 @@ export default {
       modal: false,
       Fsbucket: [],
       rules: {
-        fsName: {
-          required: true,
-          trigger: ['change', 'blur'],
-          validator: (rule, val, cb) => {
-            if (!val) {
-              return cb('请输入文件系统名称')
-            } else {
-              return cb()
-            }
-          }
-        }
+        // fsName: {
+        //   required: true,
+        //   trigger: ['change', 'blur'],
+        //   validator: (rule, val, cb) => {
+        //     if (!val) {
+        //       return cb('请输入文件系统名称')
+        //     } else {
+        //       return cb()
+        //     }
+        //   }
+        // }
       },
       form: {
         fsName: '',
@@ -216,7 +217,7 @@ export default {
           mountFS(data).then((res) => {
             this.$msg({
               type: 'success',
-              text: this.$ts('response.success')
+              text: this.$ts('page.responseSuccess')
             })
             this.modal = false
           }).finally(() => {

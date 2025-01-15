@@ -65,7 +65,7 @@
             <span>{{ recordTypes[scope.row.recordType] || '未知' }}</span>
           </template>
         </el-table-column>
-        <el-table-column slot="action" label="操作" width="80px">
+        <el-table-column slot="action" :label="$ts('page.action')" width="80px">
           <template slot-scope="scope">
             <a v-if="scope.row.recordType == 'LogicDelete'" @click="onRestore(scope.row)">恢复</a>
           </template>
@@ -240,7 +240,7 @@ export default {
       // console.log(record)
       this.$confirm(force ? '对象已存在，确定要强制恢复该资源吗？' : '确定要恢复该资源吗？', '确认', {
         confirmButtonText: force ? '强制恢复' : '恢复',
-        cancelButtonText: '取消',
+        cancelButtonText: this.$ts('page.cancel'),
         type: 'warning'
       })
         .then(() => {

@@ -2,10 +2,11 @@
   <div>
     <div class="page_content_wrap">
       <div class="mb_15 clearfix">
-        <el-button v-access="'admin:CreateBucket'" class="golden" type="primary" @click="handleCreate">{{ $ts("CREATE")
+        <el-button v-access="'admin:CreateBucket'" class="golden" type="primary" @click="handleCreate">{{
+          $ts("page.create")
         }}</el-button>
         <div class="right">
-          <el-tooltip content="刷新" placement="top" effect="dark">
+          <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
             <i class="el-icon-refresh" @click="searchVal = ''; refreshList(true)" />
           </el-tooltip>
         </div>
@@ -13,87 +14,71 @@
           clearable /> -->
       </div>
       <!-- <el-tabs v-model="tagName" /> -->
-      <DataTable
-        ref="DataTable"
-        :table-data="tableData"
-        pagination
-        :columns="columns"
-        :loading="loading"
-        style="width: 100%;"
-        :page-obj="{ currentPage: 1, pageSize: 10 }"
-        :total="total"
-        @renderPagination="renderPagination"
-      >
-        <el-table-column slot="action" label="操作" width="150px" fixed="right">
+      <DataTable ref="DataTable" :table-data="tableData" pagination :columns="columns" :loading="loading"
+        style="width: 100%;" :page-obj="{ currentPage: 1, pageSize: 10 }" :total="total"
+        @renderPagination="renderPagination">
+        <el-table-column slot="action" :label="$ts('page.action')" width="150px" fixed="right">
           <template slot-scope="scope">
             <el-dropdown size="small">
               <el-button type="primary" class="blue">
-                {{ $ts('action') }}<i class="el-icon-arrow-down el-icon--right" />
+                {{ $ts('page.action') }}<i class="el-icon-arrow-down el-icon--right" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-popover
-                  :ref="`popRef` + String(scope.row.id)"
-                  placement="left"
-                  width="600"
-                  trigger="click"
-                  @after-enter="handleResize"
-                >
-                  <p style="color: #d3d6d8;margin-bottom: 20px;font-size: 16px">文件系统</p>
+                <el-popover :ref="`popRef` + String(scope.row.id)" placement="left" width="600" trigger="click"
+                  @after-enter="handleResize">
+                  <p style="color: #d3d6d8;margin-bottom: 20px;font-size: 16px">{{ $ts('client.fileSystem') }}</p>
                   <DataTable :table-data="clientFs" :loading="showPopover" :columns="fsColumns" />
-                  <el-dropdown-item slot="reference" @click.native="viewClientFs(scope.row)">查看关联文件系统</el-dropdown-item>
+                  <el-dropdown-item slot="reference" @click.native="viewClientFs(scope.row)">{{
+                    $ts('client.viewClientFs') }}</el-dropdown-item>
                 </el-popover>
-                <el-dropdown-item @click.native="handleDelete(scope.row)">删除</el-dropdown-item>
+                <el-dropdown-item @click.native="handleDelete(scope.row)">{{ $ts('page.delete') }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
       </DataTable>
     </div>
-    <el-dialog v-if="isDelete" title="删除客户端" :visible.sync="isDelete" width="30%">
-      <p>确定删除下面的客户端吗？</p>
+    <el-dialog v-if="isDelete" :title="$ts('client.deleteClient')" :visible.sync="isDelete" width="30%">
+      <p>{{ $ts('client.deleteTip') }}</p>
       <span class="dialogDrag_Obj">IP:{{ selectedData.name }}</span>
       <span slot="footer" class="dialog-footer">
-        <el-button class="blue" @click="isDelete = false">{{ $ts('button.cancel') }}</el-button>
-        <el-button type="primary" class="golden" @click="isDelete = false; doDelete()">{{ $ts('button.confirm')
-        }}</el-button>
+        <el-button class="blue" @click="isDelete = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button type="primary" class="golden" @click="isDelete = false; doDelete()">{{ $ts('page.confirm')
+          }}</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="创建客户端" :visible.sync="modal" width="680px" @open="dialogOpen('tableFocus')">
-      <el-form
-        ref="createForm"
-        :model="createForm"
-        :rules="createRules"
-        size="mini"
-        label-width="100px"
-        style="padding:0 5%;"
-      >
-        <el-form-item label="名称" prop="name">
-          <el-input ref="tableFocus" v-model="createForm.name" placeholder="请输入客户端名称" />
+    <el-dialog :title="$ts('client.createClient')" :visible.sync="modal" width="680px" @open="dialogOpen('tableFocus')">
+      <el-form ref="createForm" :model="createForm" :rules="createRules" size="mini" label-width="100px"
+        style="padding:0 5%;">
+        <el-form-item :label="$ts('client.name')" prop="name">
+          <el-input ref="tableFocus" v-model="createForm.name"
+            :placeholder="$ts('validate.iptItem', { name: $ts('client.name') })" />
         </el-form-item>
-        <el-form-item label="客户端IP" prop="hostname">
-          <el-input v-model="createForm.hostname" auto-complete="off" clearable placeholder="请输入客户端IP" />
+        <el-form-item :label="$ts('client.hostname')" prop="hostname">
+          <el-input v-model="createForm.hostname" auto-complete="off" clearable
+            :placeholder="$ts('validate.iptItem', { name: $ts('client.hostname') })" />
         </el-form-item>
         <el-row>
           <el-col :span="24">
-            <el-form-item label="访问权限" prop="readonly">
-              <el-radio v-model="createForm.readonly" :label="true">只读</el-radio>
-              <el-radio v-model="createForm.readonly" :label="false">读写</el-radio>
+            <el-form-item :label="$ts('client.readonlyPermission')" prop="readonly">
+              <el-radio v-model="createForm.readonly" :label="true">{{ $ts('client.readonly') }}</el-radio>
+              <el-radio v-model="createForm.readonly" :label="false">{{ $ts('client.readWrite') }}</el-radio>
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item label="同步/异步" prop="sync">
+            <el-form-item :label="$ts('client.sync') + '/' + $ts('client.async')" prop="sync">
               <el-radio-group v-model="createForm.sync">
-                <el-radio :label="true">同步</el-radio>
-                <el-radio :label="false">异步</el-radio>
+                <el-radio :label="true">{{ $ts('client.sync') }}</el-radio>
+                <el-radio :label="false">{{ $ts('client.async') }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button class="blue" @click="modal = false">{{ $ts('button.cancel') }}</el-button>
-        <el-button type="primary" class="golden" @click="confirmCreate('createForm')">{{ $ts('button.confirm')
-        }}</el-button>
+        <el-button class="blue" @click="modal = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button type="primary" class="golden" @click="confirmCreate('createForm')">{{ $ts('page.confirm')
+          }}</el-button>
       </div>
     </el-dialog>
 
@@ -107,13 +92,13 @@ import {
   deleteNfsClient,
   listClientFS
 }
-from '@/api/bucket'
+  from '@/api/bucket'
 // let count = 0
 export default {
   name: '',
   components: {},
   props: {},
-  data() {
+  data () {
     return {
       localPopRef: null,
       clientFs: [],
@@ -135,19 +120,19 @@ export default {
       fsColumns: [
         {
           prop: 'fsName',
-          label: '名称'
+          label: this.$ts('fileSystem.name')
         },
         {
           prop: 'ro',
-          label: '读写权限',
+          label: this.$ts('client.readWritePermission'),
           formatter: (_, __, val) => {
             switch (val) {
               case true:
-                return '只读'
+                return this.$ts('client.readonly')
               case false:
-                return '读写'
+                return this.$ts('client.readWrite')
               default:
-                return '只读'
+                return this.$ts('client.readonly')
             }
           }
         }
@@ -155,29 +140,29 @@ export default {
       columns: [
         {
           prop: 'name',
-          label: '客户端名称',
+          label: this.$ts('client.name'),
           fixed: 'left',
           minWidth: 150
         },
         {
           prop: 'hostname',
-          label: '客户端IP',
+          label: this.$ts('client.hostname'),
           minWidth: 140
         },
         {
           prop: 'readOnly',
-          label: '访问权限',
+          label: this.$ts('client.readonlyPermission'),
           minWidth: 100,
           formatter: (__, _, val) => {
-            return val ? '只读' : '读写'
+            return val ? this.$ts('client.readonly') : this.$ts('client.readWrite')
           }
         },
         {
           prop: 'sync',
-          label: '同步/异步',
+          label: this.$ts('client.sync') + '/' + this.$ts('client.async'),
           minWidth: 100,
           formatter: (__, _, val) => {
-            return val ? '同步' : '异步'
+            return val ? this.$ts('client.sync') : this.$ts('client.async')
           }
         },
         {
@@ -187,7 +172,7 @@ export default {
       createRules: {
         name: {
           required: true,
-          message: '请输入客户端名称',
+          message: this.$ts('validate.iptItem', this.$ts('client.name')),
           trigger: ['blur', 'change']
         },
         hostname: [
@@ -197,9 +182,9 @@ export default {
             validator: (_, val, cb) => {
               const reg = /^((http|https):\/\/)?((([0-9]{1,3}\.){3}[0-9]{1,3})|(([a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}))(:(([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])))?$/
               if (!val) {
-                return cb('请输入客户端IP')
+                return cb(this.$ts('validate.iptItem', this.$ts('client.hostname')))
               } else if (!reg.test(val)) {
-                return cb('请输入正确的IP格式')
+                return cb(this.$ts('client.hostnameReg'))
               } else {
                 return cb()
               }
@@ -211,18 +196,18 @@ export default {
   },
   computed: {},
   watch: {},
-  created() { },
-  mounted() {
+  created () { },
+  mounted () {
     // this.mock()
     this.init()
   },
   methods: {
-    handleResize() {
+    handleResize () {
       window.onresize = () => {
         this.$refs[this.localPopRef] && this.$refs[this.localPopRef].doClose()
       }
     },
-    mock() {
+    mock () {
       const length = 52
       this.tableData = Array.from({ length }, (i, d) => {
         // console.log(i, 'd', d)
@@ -236,24 +221,24 @@ export default {
       this.total = this.tableData.length
       this.tableData = this.tableData.slice(0, 10)
     },
-    doDelete() {
+    doDelete () {
       deleteNfsClient({
         nfsClientName: this.selectedData.name
       }).then(res => {
         this.$msg({
           type: 'success',
-          text: this.$ts('response.success')
+          text: this.$ts('page.responseSuccess')
         })
       }).finally(() => {
         this.isDelete = false
         this.refreshList()
       })
     },
-    handleDelete(row) {
+    handleDelete (row) {
       this.selectedData = row
       this.isDelete = true
     },
-    renderPagination(val) {
+    renderPagination (val) {
       const {
         pageSize,
         pageNumber
@@ -262,9 +247,8 @@ export default {
         pageIndex: pageNumber,
         pageNum: pageSize
       })
-      console.log(val, '123')
     },
-    init(pageReqBody) {
+    init (pageReqBody) {
       pageReqBody = pageReqBody || {
         pageIndex: 1,
         pageNum: 10
@@ -289,7 +273,7 @@ export default {
         // count += 1
       })
     },
-    handleCreate() {
+    handleCreate () {
       this.modal = true
       this.createForm = {
         hostname: '',
@@ -301,12 +285,12 @@ export default {
         this.$refs['createForm'].clearValidate()
       })
     },
-    dialogOpen(e) {
-      this.$nextTick(function() {
+    dialogOpen (e) {
+      this.$nextTick(function () {
         this.$refs[e].$el.querySelector('input').focus()
       })
     },
-    confirmCreate(e) {
+    confirmCreate (e) {
       this.$refs[e].validate((valid) => {
         const {
           hostname,
@@ -321,7 +305,7 @@ export default {
         }).then(res => {
           this.$msg({
             type: 'success',
-            text: this.$ts('response.success')
+            text: this.$ts('page.responseSuccess')
           })
           console.log(res, '123')
           this.modal = false
@@ -332,7 +316,7 @@ export default {
     },
     // 测试刷新后、数据减少、导致当前currentPage不存在场景、自动跳转?
     // 创建或者更新删除数据跳转1页、需同步分页器数据
-    refreshList(flag = false) {
+    refreshList (flag = false) {
       if (this.$refs['DataTable']) {
         const {
           pageSize,
@@ -348,7 +332,7 @@ export default {
       }
     },
     // 查看关联fs
-    viewClientFs(row) {
+    viewClientFs (row) {
       // this.showPopover = true
       // setTimeout(() => {
       //   this.clientFs = [{

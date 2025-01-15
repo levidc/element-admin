@@ -3,7 +3,7 @@
     <div class="page_content_wrap">
       <div class="right mb_12">
         <el-tooltip
-          content="刷新"
+          :content="$ts('page.refresh')"
           placement="top"
           effect="dark"
         >

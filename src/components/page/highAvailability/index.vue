@@ -3,14 +3,14 @@
     <div class="bucket-panel">
       <div id="openCache-info-field" class="param-box">
         <div class="param-hd">
-          <h3 id="openCache">高可用管理 </h3>
+          <h3 id="openCache">{{ $ts('route.highAvailability') }}</h3>
         </div>
       </div>
       <div class="mv_20">
         <div class="clearfix">
-          <el-button class="golden" @click="showCreate()">创建</el-button>
+          <el-button class="golden" @click="showCreate()">{{ $ts('page.create') }}</el-button>
           <div class="right">
-            <el-tooltip content="刷新" placement="top" effect="dark">
+            <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
               <i class="el-icon-refresh" @click="init()" />
             </el-tooltip>
           </div>
@@ -22,14 +22,14 @@
             <el-form label-position="left" inline>
               <el-row>
                 <el-col :span="12">
-                  <el-form-item label="关联负载组：">
+                  <el-form-item :label="$ts('loadGroupRoute.applyLoadRoute')">
                     <span> {{ mapSelectLoadGroup(item.loadGroupId) }}</span>
                   </el-form-item>
                 </el-col>
                 <el-col
                   v-if="item.designMasterStorage && item.designMasterStorage.length && JSON.stringify(item.designMasterStorage) !== '[]'"
                   :span="12">
-                  <el-form-item label="副本一/副本二:">
+                  <el-form-item :label="$ts('bucket.designMasterStorage')">
                     <span> {{ mapResource(JSON.parse(item.designMasterStorage)[0]) }}
                       <span>
                         {{ '/ ' + mapResource(JSON.parse(item.designMasterStorage)[1]) }}
@@ -38,28 +38,29 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item label="副本数量：">
+                  <el-form-item :label="$ts('bucket.replicaNumber')">
                     <span>{{ item.replicaNumber }}</span>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item label="重构优先级：">
+                  <el-form-item :label="$ts('bucket.rebuildLevelEnum')">
                     <span> {{ mapSelectLabel(item.rebuildLevel, RebuildLevelEnum) }}</span>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item label="重构起止时间：">
+                  <el-form-item :label="$ts('bucket.rebuildStartTime')">
                     <span> {{ item.rebuildStartTime ? item.rebuildStartTime.split(',').join('~') : '-' }}</span>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item label="同步方式：">
+                  <el-form-item :label="$ts('bucket.AsyncType')">
                     <span> {{ mapSelectLabel(item.aSync, AsyncType) }}</span>
                   </el-form-item>
                 </el-col>
                 <el-col v-if="item.aSync !== 'SYNC'" :span="12">
-                  <el-form-item label="异步写进度：">
-                    <span> {{ item.rebuildRate === 'FINISH_EQUALIZER' ? '完成追平' : '未追平' }}</span>
+                  <el-form-item :label="$ts('bucket.rebuildRate')">
+                    <span> {{ item.rebuildRate === 'FINISH_EQUALIZER' ? $ts('bucket.FINISH_EQUALIZER') :
+                      $ts('bucket.NOT_FINISH_EQUALIZER') }}</span>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -67,18 +68,19 @@
               <div class="btn">
                 <el-button v-access="'admin:UpdateStorageResourceController'" class="blue"
                   @click="updateForm(item, true)">{{
-                    $ts('modify') }}</el-button>
+                    $ts('page.modify') }}</el-button>
                 <el-button v-access="'admin:DeleteStorageDeviceController'" type="danger" class="red"
-                  @click="handleDel(item)">{{ $ts('delete') }}</el-button>
+                  @click="handleDel(item)">{{ $ts('page.delete') }}</el-button>
               </div>
             </el-form>
           </div>
         </div>
         <div v-else style="width:100%">
-          <el-empty image="" description="请先创建高可用策略" />
+          <el-empty image="" :description="$ts('bucket.createHighPolicyTip')" />
         </div>
       </div>
-      <el-dialog :visible.sync="fromModal" width="900px" :title="isAdd ? '创建高可用策略' : '修改高可用策略'">
+      <el-dialog :visible.sync="fromModal" width="900px"
+        :title="isAdd ? $ts('bucket.createHightPolicy') : $ts('bucket.modifyHightPolicy')">
         <el-form ref="form" :model="form" :rules="rules" label-width="150px">
           <el-row>
             <!-- <el-col :span="12">
@@ -89,7 +91,7 @@
               </el-form-item>
             </el-col> -->
             <el-col :span="12">
-              <el-form-item prop="loadGroupId" label="选择负载组">
+              <el-form-item prop="loadGroupId" :label="$ts('bucket.selectLoadGroup')">
                 <el-select v-model="form.loadGroupId" value-key="value" @change="clearResource">
                   <el-option-group v-for="group in filterLoadGroupSelect" :key="group.label" :label="group.label">
                     <el-option v-for="{ label, value } in group.options" :key="label" :label="label" :value="value" />
@@ -101,7 +103,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item prop="designType" label="指定资源">
+              <el-form-item prop="designType" :label="$ts('bucket.selectResource')">
                 <el-select v-model="form.designType" style="width:100%" @change="clearResource">
                   <el-option v-for="item in designTypeEnum" :key="item.label" :label="item.label" :value="item.value" />
                 </el-select>
@@ -110,18 +112,18 @@
           </el-row>
           <el-row v-if="form.loadGroupId && form.designType === 'DesignResource'">
             <el-col :span="12">
-              <el-form-item prop="designListFst" label="选择副本一">
-                <el-select v-model="form.designListFst" v-loading="loadingSel" placeholder="选择副本一" style="width:100%"
-                  clearable>
+              <el-form-item prop="designListFst" :label="$ts('bucket.designListFst')">
+                <el-select v-model="form.designListFst" v-loading="loadingSel"
+                  :placeholder="$ts('bucket.designListFst')" style="width:100%" clearable>
                   <el-option v-for="item in filterDesignLists(form.designListSec)" :key="item.label" :label="item.label"
                     :value="item.value" />
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item prop="designListSec" label="选择副本二">
-                <el-select v-model="form.designListSec" v-loading="loadingSel" placeholder="选择副本二" style="width:100%"
-                  clearable>
+              <el-form-item prop="designListSec" :label="$ts('bucket.designListSec')">
+                <el-select v-model="form.designListSec" v-loading="loadingSel"
+                  :placeholder="$ts('bucket.designListSec')" style="width:100%" clearable>
                   <el-option v-for="item in filterDesignLists(form.designListFst)" :key="item.label" :label="item.label"
                     :value="item.value" />
                 </el-select>
@@ -130,28 +132,28 @@
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item prop="replicaNumber" label="副本数量">
-                <el-input v-model.trim="form.replicaNumber" placeholder="请输入2-64字符" clearable
+              <el-form-item prop="replicaNumber" :label="$ts('bucket.replicaNumber')">
+                <el-input v-model.trim="form.replicaNumber" :placeholder="$ts('objectResource.urlIpt')" clearable
                   @input="val => inputPositiveNum(val, 'replicaNumber')" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="重构时间" required>
+              <el-form-item :label="$ts('bucket.rebuildTime')" required>
                 <div style="width:100%;display:flex;justify-content:space-between;">
                   <el-form-item label="" prop="rebuildStartTime">
                     <el-time-picker v-model="form.rebuildStartTime" format="HH:mm" value-format="HH:mm"
-                      placeholder="开始时间" />
+                      :placeholder="$ts('bucket.startTime')" />
                   </el-form-item>
                   <span style="margin:0 10px">-</span>
                   <el-form-item label="" prop="rebuildEndTime">
                     <el-time-picker v-model="form.rebuildEndTime" format="HH:mm" value-format="HH:mm"
-                      placeholder="结束时间" />
+                      :placeholder="$ts('bucket.endTime')" />
                   </el-form-item>
                 </div>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item prop="rebuildLevel" label="重构优先级">
+              <el-form-item prop="rebuildLevel" :label="$ts('bucket.rebuildLevelEnum')">
                 <el-select v-model="form.rebuildLevel" style="width:100%">
                   <el-option v-for="item in RebuildLevelEnum" :key="item.label" :label="item.label"
                     :value="item.value" />
@@ -159,7 +161,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item prop="aSync" label="同步方式">
+              <el-form-item prop="aSync" :label="$ts('bucket.AsyncType')">
                 <el-select v-model="form.aSync" style="width:100%">
                   <el-option v-for="item in AsyncType" :key="item.label" :label="item.label" :value="item.value" />
                 </el-select>
@@ -168,8 +170,8 @@
           </el-row>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button class="blue" @click="fromModal = false">{{ $ts('button.cancel') }}</el-button>
-          <el-button class="golden" type="primary" @click="confirmSubmit">{{ $ts('button.confirm') }}</el-button>
+          <el-button class="blue" @click="fromModal = false">{{ $ts('page.cancel') }}</el-button>
+          <el-button class="golden" type="primary" @click="confirmSubmit">{{ $ts('page.confirm') }}</el-button>
         </div>
       </el-dialog>
     </div>
@@ -202,28 +204,28 @@ export default {
       hasConfig: false,
       loadingSel: false,
       designTypeEnum: [
-        { label: '不指定资源', value: 'NotDesign' },
+        { label: this.$ts('bucket.notSelectResource'), value: 'NotDesign' },
         // { label: '指定设备', value: 'DesignStorage' },
-        { label: '指定资源', value: 'DesignResource' }
+        { label: this.$ts('bucket.selectResource'), value: 'DesignResource' }
         // { label: '指定设备标签', value: 'DesignStorageLabel' },
         // { label: '指定设备类型', value: 'DesignStorageType' }
       ],
       ReplicaRedundancyTypeEnum: [
         {
-          label: '设备', value: 'Device'
+          label: this.$ts('objectResource.device'), value: 'Device'
         }
         // {
         //   label: '资源', value: 'Resource'
         // }
       ],
       AsyncType: [
-        { label: '同步', value: 'SYNC' },
-        { label: '异步', value: 'ASYNC' }
+        { label: this.$ts('client.sync'), value: 'SYNC' },
+        { label: this.$ts('client.async'), value: 'ASYNC' }
       ],
       RebuildLevelEnum: [
-        { label: '高', value: 'HIGH' },
-        { label: '中', value: 'MIDDLE' },
-        { label: '低', value: 'LOW' }
+        { label: this.$ts('bucket.HIGH'), value: 'HIGH' },
+        { label: this.$ts('bucket.MIDDLE'), value: 'MIDDLE' },
+        { label: this.$ts('bucket.LOW'), value: 'LOW' }
       ],
       bucketList: [],
       allResourceList: [],
@@ -249,7 +251,7 @@ export default {
       rules: {
         bucketId: [
           {
-            required: true, message: '存储桶名必填', trigger: ['blur', 'change']
+            required: true, message: this.$ts('validate.requiredReg', { name: this.$ts('bucket.name') }), trigger: ['blur', 'change']
           },
           {
             validator: validBucketName, trigger: ['blur', 'change']
@@ -262,27 +264,27 @@ export default {
         },
         loadGroupId: {
           required: true,
-          message: '请选择负载组',
+          message: this.$ts('validate.selectItem', { name: this.$ts('loadGroup.loadGroup') }),
           trigger: ['blur', 'change']
         },
         designListFst: {
           required: true,
-          message: '请选择副本一',
+          message: this.$ts('validate.selectItem', { name: this.$ts('bucket.replicaNo1') }),
           trigger: ['blur', 'change']
         },
         designListSec: {
           required: true,
-          message: '请选择副本二',
+          message: this.$ts('validate.selectItem', { name: this.$ts('bucket.replicaNo2') }),
           trigger: ['blur', 'change']
         },
         rebuildStartTime: {
           required: true,
-          message: '请选择开始时间',
+          message: this.$ts('validate.selectItem', { name: this.$ts('bucket.startTime') }),
           trigger: ['blur', 'change']
         },
         rebuildEndTime: {
           required: true,
-          message: '请选择结束时间',
+          message: this.$ts('validate.selectItem', { name: this.$ts('bucket.endTime') }),
           trigger: ['blur', 'change']
         }
       },
@@ -301,11 +303,11 @@ export default {
       tableData: [],
       columns: [
         {
-          title: '桶名称',
+          title: this.$ts('bucket.name'),
           prop: 'name'
         },
         {
-          title: '创建时间',
+          title: this.$ts('policies.createTime'),
           prop: 'creationDate',
           formatter: (__, _, val) => {
             return moment(val).format('YYYY-MM-DD HH:mm:ss')
@@ -332,9 +334,6 @@ export default {
           return x.options.every(y => !LoadGroupIds.includes(String(y.value)))
         })
       }
-    },
-    showLabel () {
-      return this.form.designType.indexOf('DesignStorage') > -1 ? '选择设备' : '选择资源'
     },
     showDesignSel () {
       return this.form.designType === 'DesignStorage' || this.form.designType === 'DesignResource'
@@ -484,14 +483,14 @@ export default {
             this.loadGroupSelect = []
             if (String(dataLoadGroupId) !== '0' && String(dataLoadGroupId) !== 'null') {
               this.loadGroupSelect.push({
-                label: 'S3负载组', options: [{
+                label: this.$ts('loadGroupRoute.s3LoadGroup'), options: [{
                   label: loadGroupMap[dataLoadGroupId], value: dataLoadGroupId
                 }]
               })
             }
             if (String(glacierLoadGroupId) !== '0' && String(glacierLoadGroupId) !== 'null') {
               this.loadGroupSelect.push({
-                label: '冰负载组', options: [{ label: loadGroupMap[glacierLoadGroupId], value: glacierLoadGroupId }]
+                label: this.$ts('loadGroupRoute.glacierGroup'), options: [{ label: loadGroupMap[glacierLoadGroupId], value: glacierLoadGroupId }]
               })
             }
             resolve(true)
@@ -653,7 +652,7 @@ export default {
             createHighBucketConfig(obj).then(res => {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
               this.fromModal = false
               // console.log(res, 'res')
@@ -678,7 +677,7 @@ export default {
             updateHighBucketConfig(obj).then(res => {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
               this.fromModal = false
               this.init()
@@ -711,9 +710,9 @@ export default {
       this.opType = 'update'
     },
     handleDel (row) {
-      this.$confirm('确认删除当前所选配置吗', {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
+      this.$confirm(this.$ts('bucket.deleteCurrentConfig'), {
+        confirmButtonText: this.$ts('page.confirm'),
+        cancelButtonText: this.$ts('page.cancel'),
         type: 'warning'
       }).then(res => {
         deleteHighBucketConfig({
@@ -721,7 +720,7 @@ export default {
         }).then((res) => {
           this.$msg({
             type: 'success',
-            text: this.$ts('response.success')
+            text: this.$ts('page.responseSuccess')
           })
           this.init()
         })

@@ -2,74 +2,35 @@
   <div class="mv_10">
     <div v-access="'s3:ListBucket'">
       <el-header class="bdetail_header">
-        <span
-          class="bdetail_title"
-          style="margin-top:-2px"
-        >文件路径:</span>
-        <span
-          v-for="(item, index) in routeArr"
-          :key="item + index"
-          class="bdetail_title"
-        >
-          <router-link
-            :is="disabledUrl ? 'span' : 'router-link'"
-            v-if="index == 0"
-            class="blue"
-            :to="{ name: 'BucketList' }"
-          >
+        <span class="bdetail_title" style="margin-top:-2px">{{ $ts('bucket.routeArr') }}</span>
+        <span v-for="(item, index) in routeArr" :key="item + index" class="bdetail_title">
+          <router-link :is="disabledUrl ? 'span' : 'router-link'" v-if="index == 0" class="blue"
+            :to="{ name: 'BucketList' }">
             {{ item }}
-            <span
-              role="presentation"
-              class="el-breadcrumb__separator"
-            >&gt;</span>
+            <span role="presentation" class="el-breadcrumb__separator">&gt;</span>
           </router-link>
-          <router-link
-            :is="disabledUrl ? 'span' : 'router-link'"
-            v-else-if="index !== 0 && index !== routeArr.length - 1"
-            class="blue"
-            :to="{ name: 'BucketList', query: { filename: directoryPath(item) + '/' } }"
-          >
+          <router-link :is="disabledUrl ? 'span' : 'router-link'"
+            v-else-if="index !== 0 && index !== routeArr.length - 1" class="blue"
+            :to="{ name: 'BucketList', query: { filename: directoryPath(item) + '/' } }">
             {{ item + '/' }}
-            <span
-              role="presentation"
-              class="el-breadcrumb__separator"
-            >&gt;</span>
+            <span role="presentation" class="el-breadcrumb__separator">&gt;</span>
           </router-link>
           <span v-else>{{ item }}</span>
         </span>
       </el-header>
       <div class="bucket-detail">
-        <div
-          v-loading="loading"
-          class="bucket-detail-inner"
-        >
-          <div
-            v-show="!hideMenuFlag"
-            class="mb_15 mt-10 clearfix"
-          >
+        <div v-loading="loading" class="bucket-detail-inner">
+          <div v-show="!hideMenuFlag" class="mb_15 mt-10 clearfix">
             <!-- <el-button v-access="'s3:PutObject'" type="primary" @click="clearFileInput();isCreate=true">上传文件</el-button> -->
             <!-- <el-button type="primary" :disabled="deleteButtonDisabled" @click="doMulDel()">批量删除</el-button> -->
             <div class="right">
-              <el-tooltip
-                content="刷新"
-                placement="top"
-                effect="dark"
-              >
-                <i
-                  class="el-icon-refresh"
-                  @click="refresh();searchVal=''"
-                />
+              <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
+                <i class="el-icon-refresh" @click="refresh(); searchVal = ''" />
               </el-tooltip>
             </div>
-            <el-input
-              v-model="searchVal"
-              class="search_style right mr_10"
-              style="width:300px;top:-2px;"
-              placeholder="支持前缀查找对象，按“Enter”键查询"
-              clearable
-              @input="val=>searchVal=val.replace(/\/\//g,'')"
-              @keyup.enter.native="listObject"
-            >
+            <el-input v-model="searchVal" class="search_style right mr_10" style="width:300px;top:-2px;"
+              :placeholder="$ts('bucket.searchObjectPrefix')" clearable
+              @input="val => searchVal = val.replace(/\/\//g, '')" @keyup.enter.native="listObject">
               <!-- <el-button
                 slot="append"
                 style="background: #ff8746;border-color: #ff8746;color: #3c4c54;position: relative;top:-1px;"
@@ -79,61 +40,21 @@
                 @click="listObject"
               /> -->
             </el-input>
-            <span
-              v-show="versionControl != 'Suspended'"
-              v-access="'s3:GetBucketVersioning'"
-            >
-              <span style="margin:0 10px">列出历史版本</span>
-              <el-switch
-                v-model="showHistory"
-                :disabled="disabledUrl"
-                @change="changeShowStatus()"
-              />
+            <span v-show="versionControl != 'Suspended'" v-access="'s3:GetBucketVersioning'">
+              <span style="margin:0 10px">{{ $ts('bucket.versionCtrl') }}</span>
+              <el-switch v-model="showHistory" :disabled="disabledUrl" @change="changeShowStatus()" />
             </span>
 
           </div>
-          <BucketVersionTable
-            v-if="versionControl != 'Suspended' && showHistory"
-            ref="bucketdetailtable"
-            class="mt_10"
-            :search-val="searchVal"
-            @hideMenu="hideMenu"
-            @disablePathClick="disablePathClick"
-          />
-          <BucketDetailTable
-            v-else
-            ref="bucketdetailtable"
-            class="mt_10"
-            :search-val="searchVal"
-            @hideMenu="hideMenu"
-            @disablePathClick="disablePathClick"
-          />
+          <BucketVersionTable v-if="versionControl != 'Suspended' && showHistory" ref="bucketdetailtable" class="mt_10"
+            :search-val="searchVal" @hideMenu="hideMenu" @disablePathClick="disablePathClick" />
+          <BucketDetailTable v-else ref="bucketdetailtable" class="mt_10" :search-val="searchVal" @hideMenu="hideMenu"
+            @disablePathClick="disablePathClick" />
         </div>
-        <el-dialog
-
-          title="上传文件"
-          :visible.sync="isCreate"
-          width="800px"
-          @open="dialogOpen('tableFocus')"
-        >
-          <el-form
-            ref="createForm"
-            :model="createForm"
-            size="mini"
-            label-width="100px"
-            style="padding:0 5%"
-          >
-            <el-form-item
-              label=""
-              prop="folderName"
-            >
-              <el-popover
-                slot="label"
-                placement="top"
-                width="300"
-                :open-delay="500"
-                trigger="hover"
-              >
+        <el-dialog title="上传文件" :visible.sync="isCreate" width="800px" @open="dialogOpen('tableFocus')">
+          <el-form ref="createForm" :model="createForm" size="mini" label-width="100px" style="padding:0 5%">
+            <el-form-item label="" prop="folderName">
+              <el-popover slot="label" placement="top" width="300" :open-delay="500" trigger="hover">
                 <p>
                   1. 可用数字、中英文和可见字符的组合<br>
                   2. 用 / 分割路径，可快速创建子目录<br>
@@ -142,52 +63,24 @@
                 </p>
                 <span slot="reference">名称&nbsp;<i class="fa  fa-question-circle" /></span>
               </el-popover>
-              <el-input
-                ref="tableFocus"
-                v-model="createForm.folderName"
-                auto-complete="off"
-                clearable
-              />
+              <el-input ref="tableFocus" v-model="createForm.folderName" auto-complete="off" clearable />
             </el-form-item>
-            <el-form-item
-              label=""
-              prop=""
-            >
+            <el-form-item label="" prop="">
               <!-- :before-upload="validateFileRule" -->
               <!-- :accept=",,拼接可接受文件类型 image/* 任意图片文件" -->
               <!-- :http-request="uploadFile"  覆盖原生action上传方法-->
               <!-- var formData = new FormData();  //  用FormData存放上传文件 -->
               <!-- formData.append('paramsName','file') -->
-              <el-upload
-                ref="uploadFile"
-                action="#"
-                :auto-upload="false"
-                :on-change="changeFile"
-                :on-preview="handlePreview"
-                :on-remove="handleRemove"
-                :before-remove="beforeRemove"
-                multiple
-                :show-file-list="false"
-                :file-list="fileList"
-              >
-                <el-button
-                  size="small"
-                  type="primary"
-                  @click="postFolder('file')"
-                >上传文件</el-button>
-                <el-button
-                  size="small"
-                  type="primary"
-                  @click="postFolder('folder')"
-                >上传文件夹</el-button>
+              <el-upload ref="uploadFile" action="#" :auto-upload="false" :on-change="changeFile"
+                :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" multiple
+                :show-file-list="false" :file-list="fileList">
+                <el-button size="small" type="primary" @click="postFolder('file')">上传文件</el-button>
+                <el-button size="small" type="primary" @click="postFolder('folder')">上传文件夹</el-button>
               </el-upload>
               <!-- <input type="file" id="upload" ref="inputer" name="file" multiple /> -->
             </el-form-item>
             <el-table :data="fileListArr.slice((currentPage - 1) * pageSize, currentPage * pageSize)">
-              <el-table-column
-                label="名称"
-                prop="name"
-              />
+              <el-table-column label="名称" prop="name" />
               <el-table-column label="文件夹">
                 <template slot-scope="scope">
                   {{ scope.row.raw.webkitRelativePath ? scope.row.raw.webkitRelativePath : '-' }}
@@ -204,20 +97,13 @@
                 </template>
               </el-table-column>
             </el-table>
-            <el-pagination
-              v-show="total"
-              :current-page="currentPage"
-              :page-sizes="[5, 10, 50, 100]"
-              :page-size="pageSize"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="total"
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-            />
+            <el-pagination v-show="total" :current-page="currentPage" :page-sizes="[5, 10, 50, 100]"
+              :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="total"
+              @size-change="handleSizeChange" @current-change="handleCurrentChange" />
           </el-form>
           <div slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="createFile()">{{ $ts('button.confirm') }}</el-button>
-            <el-button @click="isCreate = false;">{{ $ts('button.cancel') }}</el-button>
+            <el-button type="primary" @click="createFile()">{{ $ts('page.confirm') }}</el-button>
+            <el-button @click="isCreate = false;">{{ $ts('page.cancel') }}</el-button>
           </div>
         </el-dialog>
         <!-- <el-dialog  title="修改访问权限" :visible.sync="isModifyAccess" width="600px">
@@ -227,8 +113,8 @@
             <el-radio v-model="modifyAccessForm.publicRadio" label="3">公有读私有写</el-radio>
           </el-form>
           <div slot="footer" class="dialog-footer">
-            <el-button type="primary">{{ $ts('button.confirm') }}</el-button>
-            <el-button @click="isModifyAccess = false;">{{ $ts('button.cancel') }}</el-button>
+            <el-button type="primary">{{ $ts('page.confirm') }}</el-button>
+            <el-button @click="isModifyAccess = false;">{{ $ts('page.cancel') }}</el-button>
           </div>
         </el-dialog> -->
         <!-- <el-dialog  title="删除文件" :visible.sync="isDeleteFile" width="600px">
@@ -243,8 +129,8 @@
             </el-col>
           </el-row>
           <div slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="deleteFile()">{{ $ts('button.confirm') }}</el-button>
-            <el-button @click="isDeleteFile = false;">{{ $ts('button.cancel') }}</el-button>
+            <el-button type="primary" @click="deleteFile()">{{ $ts('page.confirm') }}</el-button>
+            <el-button @click="isDeleteFile = false;">{{ $ts('page.cancel') }}</el-button>
           </div>
         </el-dialog> -->
         <!-- <el-dialog  title="批量删除文件" :visible.sync="isMulDel" width="600px">
@@ -263,17 +149,14 @@
             </el-col>
           </el-row>
           <div slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="deleteMulFile()">{{ $ts('button.confirm') }}</el-button>
-            <el-button @click="isMulDel = false;">{{ $ts('button.cancel') }}</el-button>
+            <el-button type="primary" @click="deleteMulFile()">{{ $ts('page.confirm') }}</el-button>
+            <el-button @click="isMulDel = false;">{{ $ts('page.cancel') }}</el-button>
           </div>
         </el-dialog> -->
       </div>
     </div>
-    <h2
-      v-if="!$store.state.user.api['s3:ListBucket']"
-      style="font-size:16px;margin:20px 0 0 20px"
-    >
-      无对象列表权限
+    <h2 v-if="!$store.state.user.api['s3:ListBucket']" style="font-size:16px;margin:20px 0 0 20px">
+      {{ $ts('bucket.noListObjectAuth') }}
     </h2>
   </div>
 </template>
@@ -288,7 +171,7 @@ export default {
     BucketVersionTable
   },
   filters: {},
-  data() {
+  data () {
     return {
       hideMenuFlag: false,
       currentPage: 1,
@@ -323,7 +206,7 @@ export default {
   computed: {
   },
   watch: {
-    '$route.query.filename': function(oldVal, newVal) {
+    '$route.query.filename': function (oldVal, newVal) {
       this.routeArr = []
       this.routeArr.push(this.$route.params.id)
       if (this.$route.query.filename) {
@@ -335,14 +218,14 @@ export default {
         this.$refs.bucketdetailtable.listObject()
       }
     },
-    $route(to, from) {
+    $route (to, from) {
       if (this.searchVal) {
         // 如发生跳转则是有文件夹调到对应下面的对象下、需要情况搜索条件
         this.searchVal = ''
       }
     }
   },
-  mounted() {
+  mounted () {
     if (this.$store.state['user']['api']['s3:GetBucketVersioning']) {
       // 无接口权限、不调用版本开关接口
       this.getVersionControl()
@@ -359,51 +242,51 @@ export default {
     }
     // console.log(this.routeArr, 'menuarrr')
   },
-  destroyed() { },
+  destroyed () { },
   methods: {
-    directoryPath(path) {
+    directoryPath (path) {
       let index = this.routeArr.findIndex(x => x === path)
       index = index > 1 ? index + 1 : 2
       var temp = [...this.routeArr].slice(1, index).join('/')
       return temp
     },
-    disablePathClick(val) {
+    disablePathClick (val) {
       this.disabledUrl = val
     },
-    hideMenu(val) {
+    hideMenu (val) {
       this.hideMenuFlag = val
     },
-    postFolder(type) {
+    postFolder (type) {
       // if (type === 'file') {
       //   $('.el-upload__input')[0].webkitdirectory = false
       // } else {
       //   $('.el-upload__input')[0].webkitdirectory = true
       // }
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       this.pageSize = val
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       this.currentPage = val
     },
-    handleRemove(file, fileList) {
+    handleRemove (file, fileList) {
       console.log(file, fileList)
     },
-    handlePreview(file) {
+    handlePreview (file) {
       console.log(file)
     },
-    beforeRemove(file, fileList) {
+    beforeRemove (file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`)
     },
-    changeFile(file, fileList) {
+    changeFile (file, fileList) {
       this.fileListArr = fileList
       this.total = this.fileListArr.length
       console.log(file, fileList, 'changeFileFun')
     },
-    listObject() {
+    listObject () {
       this.$refs.bucketdetailtable.searchPrefix()
     },
-    refresh() {
+    refresh () {
       this.$refs.bucketdetailtable.listObject()
     },
     // buttonControl (selection) {
@@ -420,22 +303,22 @@ export default {
     //     this.chooseObjArr.push(selection[i])
     //   }
     // },
-    changeShowStatus() {
+    changeShowStatus () {
       sessionStorage.setItem('showHistory', this.showHistory)
     },
-    dialogOpen(e) {
+    dialogOpen (e) {
       const ipt = e
-      this.$nextTick(function() {
+      this.$nextTick(function () {
         this.$refs[ipt].$el.querySelector('input').focus()
       })
     },
-    resetForm(formName) {
+    resetForm (formName) {
       console.log('resetForm')
       if (this.$refs[formName] != undefined) {
         this.$refs[formName].resetFields()
       }
     },
-    clearFileInput() {
+    clearFileInput () {
       this.resetForm('createForm')
       if (document.getElementById('upload')) {
         document.getElementById('upload').value = ''
@@ -445,7 +328,7 @@ export default {
     //   this.resetForm('modifyAccessForm')
     //   this.isModifyAccess = true
     // },
-    doMulDel(selection) {
+    doMulDel (selection) {
       this.isMulDel = true
     },
     // doDeleteFile (row) {
@@ -484,7 +367,7 @@ export default {
     //     } else {
     //       this.$ts({
     //         type: 'success',
-    //         text: this.$ts('response.success')
+    //         text: this.$ts('page.responseSuccess')
     //       })
     //       this.loading = false
     //     }
@@ -522,14 +405,14 @@ export default {
     //     temp.$refs.bucketdetailtable.listObject()
     //   })
     // },
-    validateFileRule(file) {
+    validateFileRule (file) {
       const that = this
-      const isSize = new Promise(function(resolve, reject) {
+      const isSize = new Promise(function (resolve, reject) {
         const width = 750
         const height = 1334
         const _URL = window.URL || window.webkitURL
         const image = new Image()
-        image.onload = function() {
+        image.onload = function () {
           console.log(image, 'image')
           console.log(_URL)
           const valid = image.width < width || image.height < height
@@ -537,8 +420,8 @@ export default {
             // 不符合
             that
               .$confirm('图片尺寸小于750*1334, 是否继续?', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
+                confirmButtonText: this.$ts('page.confirm'),
+                cancelButtonText: this.$ts('page.cancel'),
                 type: 'warning'
               })
               .then(() => {
@@ -566,7 +449,7 @@ export default {
       console.log(isSize, 'return')
       return isSize
     },
-    createFile() {
+    createFile () {
       const temp = this
       // const form = new FormData()
       // this.fileListArr.forEach(item => {
@@ -605,7 +488,7 @@ export default {
         Body: file
       }
       console.log(params, '123', params.Key)
-      this.$store.state.user._S3.putObject(params, function(err, response) {
+      this.$store.state.user._S3.putObject(params, function (err, response) {
         if (err) {
           console.log(err)
         } else {
@@ -618,12 +501,12 @@ export default {
         }
       })
     },
-    getVersionControl() {
+    getVersionControl () {
       const temp = this
       var params = {
         Bucket: this.$route.params.id
       }
-      this.$store.state.user._S3.getBucketVersioning(params, function(
+      this.$store.state.user._S3.getBucketVersioning(params, function (
         err,
         response
       ) {

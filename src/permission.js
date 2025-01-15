@@ -73,7 +73,7 @@ const presistStoreState = () => {
     store.commit('user/SET_USER', user)
     store.commit('user/SET_ROLE', role)
     const port = localStorage.getItem('port')
-    const s3 = store.state._S3
+    const s3 = store.state.user._S3
     if (!s3 && port !== 'null') {
       var S3 = new AWS.S3({
         accessKeyId: 'test',

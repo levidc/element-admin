@@ -1,7 +1,7 @@
 <template>
   <div style="display: flex;flex-direction: column;">
     <el-header class="bdetail_header">
-      <span class="bdetail_title" style="margin-top:-2px">对象路径:</span>
+      <span class="bdetail_title" style="margin-top:-2px">{{ $ts('bucket.objectPath') }}</span>
       <span v-for="(item, index) in routeArr" :key="item + index" class="bdetail_title">
         <router-link :is="loading ? 'span' : 'router-link'" v-if="index == 0" class="blue" :to="{ name: 'BucketList' }">
           {{ item }}
@@ -24,7 +24,7 @@
               <showToolTip :text="showFileName(resInfo.Prefix)" />
               <!-- <el-tooltip
                 placement="top"
-                content="复制"
+                :content="$ts('page.copy')"
                 :open-delay="300"
               >
                 <i
@@ -54,39 +54,39 @@
 
           <!-- object tab -->
           <el-tabs v-model="activeName" class="tabCard" @tab-click="handleClick">
-            <el-tab-pane label="属性" name="property">
+            <el-tab-pane :label="$ts('bucket.property')" name="property">
               <div>
-                <h3 class="titleh1">基本信息</h3>
+                <h3 class="titleh1">{{ $ts('bucket.baseInfo') }}</h3>
                 <div class="configList">
                   <div class="content">
                     <div class="contentL">
                       <p>
-                        对象Key
+                        {{ $ts('bucket.objectKey') }}
                         <span>
-                          <el-tooltip placement="top" content="复制" :open-delay="300">
+                          <el-tooltip placement="top" :content="$ts('page.copy')" :open-delay="300">
                             <i class="el-icon-document-copy" @click="copyCode(baseInfo.objectKey)" />
                           </el-tooltip>
                           {{ baseInfo.objectKey || '-' }}
                         </span>
                       </p>
                       <p>
-                        大小
+                        {{ $ts('bucket.fileSize') }}
                         <span>{{ file.size }}</span>
                       </p>
                       <p>
-                        类型
+                        {{ $ts('tempConfigFile.type') }}
                         <span>{{ file.type }}</span>
                       </p>
                       <p>
-                        上次修改时间
+                        {{ $ts('bucket.LastModified') }}
                         <span>{{ file.LastModified }}</span>
                       </p>
                       <p>
-                        桶名称
+                        {{ $ts('bucket.name') }}
                         <span>{{ baseInfo.bucketName || '-' }}</span>
                       </p>
                       <p>
-                        版本ID
+                        {{ $ts('bucket.versionId') }}
                         <span>{{ baseInfo.versionId === 'null' ? '-' : baseInfo.versionId }}</span>
                       </p>
                       <p>
@@ -129,20 +129,20 @@
                   </div>
                 </div>
                 <div class="headFlex" style="margin-top:50px;">
-                  <h3 class="titleh1">底层资源</h3>
+                  <h3 class="titleh1">{{ $ts('bucket.bottomObjectInfo') }}</h3>
                 </div>
                 <el-table :data="bottomObjectInfos" style="width:80%;">
-                  <el-table-column prop="resourceName" label="资源名称" min-width="120px" />
-                  <el-table-column prop="size" label="资源容量" min-width="100px">
+                  <el-table-column prop="resourceName" :label="$ts('loadGroup.resourceName')" min-width="120px" />
+                  <el-table-column prop="size" :label="$ts('bucket.bottomObjectSize')" min-width="100px">
                     <template slot-scope="scope">
                       {{ byteConvert(scope.row.size || 0) }}
                     </template>
                   </el-table-column>
-                  <el-table-column prop="bottomKey" label="底层key" min-width="120px" />
-                  <el-table-column prop="coordinatorType" label="资源类型" min-width="100px" />
+                  <el-table-column prop="bottomKey" :label="$ts('bucket.bottomKey')" min-width="120px" />
+                  <el-table-column prop="coordinatorType" :label="$ts('bucket.coordinatorType')" min-width="100px" />
                 </el-table>
                 <div class="headFlex" style="margin-top:50px;">
-                  <h3 class="titleh1">扩展信息</h3>
+                  <h3 class="titleh1">{{ $ts('bucket.extendInfo') }}</h3>
                   <!-- <h3 class="titleh1">元信息</h3> -->
                 </div>
                 <div class="configList">
@@ -187,67 +187,69 @@
                 </div>
               </div>
             </el-tab-pane>
-            <el-tab-pane v-loading="tabLoading" label="对象锁定" name="lock">
+            <el-tab-pane v-loading="tabLoading" :label="$ts('route.BucketObjectLock')" name="lock">
               <div v-if="bucketConfig.objectLock">
                 <div v-loading="legalHoldLoading">
-                  <h3 class="titleh1">对象锁定依法保留
+                  <h3 class="titleh1">{{ $ts('bucket.legalHoldLoading') }}
                     <el-button type="text" @click="legalHoldFlag = true">
-                      <span style="color:#ff8746">编辑</span>
+                      <span style="color:#ff8746"> {{ $ts('page.edit') }}</span>
                     </el-button>
                   </h3>
                   <div class="mb_15">
-                    <p>依法保留</p>
-                    <div>{{ enableRention ? '已启用' : '已禁用' }}</div>
+                    <p>{{ $ts('bucket.legalHold') }}</p>
+                    <div>{{ enableRention ? $ts('page.enable') : $ts('page.disable') }}</div>
                   </div>
                 </div>
                 <div v-loading="objectRetentionFlag">
-                  <h3 class="titleh1">对象锁定保留
+                  <h3 class="titleh1">{{ $ts('bucket.objectLockHold') }}
                     <el-button type="text" @click="objectRentionFlag = true">
-                      <span style="color:#ff8746">编辑</span>
+                      <span style="color:#ff8746"> {{ $ts('page.edit') }}</span>
                     </el-button>
                   </h3>
                   <div class="mb_15">
-                    <p>保留模式</p>
-                    <div>{{ mode ? mode === 'GOVERNANCE' ? '监管模式' : '合规模式' : '已禁用' }}</div>
+                    <p>{{ $ts('bucket.holdMode') }}</p>
+                    <div>{{ mode ? mode === 'GOVERNANCE' ? $ts('bucket.GOVERNANCEMODE') : $ts('bucket.COMPLIANCEMODE') :
+                      $ts('page.disable') }}</div>
                   </div>
                   <div v-if="mode" class="mb_15">
-                    <p>保留到期日</p>
+                    <p>{{ $ts('bucket.RetainUntilDate') }}</p>
                     <div>{{ RetainUntilDate }}</div>
                   </div>
                 </div>
               </div>
               <div v-else>
-                <h3 class="titleh1">对象锁定</h3>
+                <h3 class="titleh1">{{ $ts('route.BucketObjectLock') }}</h3>
                 <p>
-                  已禁用
+                  {{ $ts('page.disable') }}
                 </p>
               </div>
             </el-tab-pane>
-            <el-tab-pane v-loading="tabLoading" label="权限" name="permission">
+            <el-tab-pane v-loading="tabLoading" :label="$ts('policies.permission')" name="permission">
               <div class="param-box">
                 <div class="param-hd">
-                  <h3>访问控制列表(ACL)</h3>
+                  <h3>{{ $ts('route.BucketAccess') }}</h3>
                   <el-button v-show="!editStatus && !disableAcl" :disabled="disableAclBtn" type="text"
                     style="position:relative;top:3px" @click="editConfig">
-                    <span style="color:#ff8746">编辑</span>
+                    <span style="color:#ff8746"> {{ $ts('page.edit') }}</span>
                   </el-button>
                 </div>
               </div>
               <el-form :model="formAcl" label-width="120px">
-                <el-form-item v-if="!editStatus && !loading" label="对象ACL" style="width:50%">
+                <el-form-item v-if="!editStatus && !loading" :label="$ts('bucket.objectACL')" style="width:50%">
                   <span v-if="!disableAcl">
                     {{ formAcl.readAcl }}
                   </span>
-                  <span v-else>删除标记无法设置Acl
+                  <span v-else>{{ $ts('bucket.deleteMarkCannotSetAcl') }}
                   </span>
                   <!-- <el-button type="text">{{ formAcl.readAcl }}</el-button> -->
                 </el-form-item>
 
                 <!-- 额外用户start -->
                 <el-table v-show="!editStatus && tableData.length" :data="tableData">
-                  <el-table-column prop="owner" label="被授权者" width="500px">
+                  <el-table-column prop="owner" :label="$ts('bucket.owner')" width="500px">
                     <template slot-scope="scope">
-                      {{ scope.row.userName }} {{ scope.row.FULL_CONTROL || scope.row.owner ? "(桶owner)" : "" }}
+                      {{ scope.row.userName }} {{ scope.row.FULL_CONTROL || scope.row.owner ?
+                        `(${$ts('bucket.bucketOwner')})` : "" }}
                     </template>
                   </el-table-column>
                   <el-table-column label="">
@@ -279,24 +281,27 @@
                 </el-table>
                 <!-- 额外用户end -->
 
-                <el-form-item v-if="editStatus" label="对象ACL" prop="setAcl">
+                <el-form-item v-if="editStatus" :label="$ts('bucket.objectACL')" prop="setAcl">
                   <el-radio-group v-model="formAcl.selectAcl">
-                    <el-radio label="private">私有</el-radio>
-                    <el-radio label="public-read">公共读</el-radio>
+                    <el-radio label="private">{{ $ts('bucket.private') }}</el-radio>
+                    <el-radio label="public-read">{{ $ts('bucket.publicRead') }}</el-radio>
                     <!-- <el-radio label="public-read-write">公共读写</el-radio> -->
-                    <el-radio label="authenticated-read">认证读</el-radio>
+                    <el-radio label="authenticated-read">{{ $ts('bucket.authenticatedRead') }}</el-radio>
                   </el-radio-group>
                 </el-form-item>
               </el-form>
 
               <div v-show="editStatus" class="addOtherAccount">
-                <h3>其他账号的访问权限</h3>
-                <el-button v-access="'admin:ListUsers'" class="golden" @click="flag = true">添加授权用户</el-button>
+                <h3>{{ $ts('bucket.otherAccountPermission') }}</h3>
+                <el-button v-access="'admin:ListUsers'" class="golden" @click="flag = true">{{ $ts('bucket.addAuthUser')
+                  }}</el-button>
                 <el-form ref="form" :model="form">
                   <el-table v-if="form.granteeTable && form.granteeTable.length" :data="form.granteeTable">
-                    <el-table-column label="被授权者" width="500px">
+                    <el-table-column :label="$ts('bucket.owner')" width="500px">
                       <template slot-scope="scope">
-                        {{ scope.row.userName }}{{ scope.row.FULL_CONTROL || scope.row.owner ? "(桶owner)" : "" }}
+                        {{ scope.row.userName }}{{ scope.row.FULL_CONTROL || scope.row.owner ?
+                          `(${$ts('bucket.bucketOwner')})`
+                          : "" }}
                         <!-- <el-form-item :rules="ruleId" :prop="'granteeTable.'+ scope.$index +'.ID'">
                         <el-input v-model="scope.row.ID" placeholder="输入规范ID" />
                       </el-form-item> -->
@@ -306,7 +311,7 @@
                       <template slot-scope="scope">
                         <div>
                           <el-checkbox v-model="scope.row.READ" :disabled="scope.row.FULL_CONTROL || scope.row.owner">
-                            读
+                            {{ $ts('bucket.read') }}
                           </el-checkbox>
                           <!-- <el-checkbox v-model="scope.row.WRITE">
                             写
@@ -319,11 +324,11 @@
                         <div>
                           <el-checkbox v-model="scope.row.READ_ACP"
                             :disabled="scope.row.FULL_CONTROL || scope.row.owner">
-                            读ACL
+                            {{ $ts('bucket.READ_ACP') }}
                           </el-checkbox>
                           <el-checkbox v-model="scope.row.WRITE_ACP"
                             :disabled="scope.row.FULL_CONTROL || scope.row.owner">
-                            写ACL
+                            {{ $ts('bucket.WRITE_ACP') }}
                           </el-checkbox>
                         </div>
                       </template>
@@ -341,9 +346,9 @@
 
                 <!-- Contents 当前版本 -->
                 <!-- Versions  版本管理-->
-                <h3 style="margin: 20px 0">指定的对象</h3>
+                <h3 style="margin: 20px 0">{{ $ts('bucket.selectedObject') }}</h3>
                 <el-table :data="[tableObj]">
-                  <el-table-column label="名称" width="300px">
+                  <el-table-column :label="$ts('bucket.propertyName')" width="300px">
                     <template slot-scope="scope">
                       <a class="blue" @click="activeName = 'property'">
                         <!-- <i class="fa fa-file-o" /> -->
@@ -351,22 +356,22 @@
                       </a>
                     </template>
                   </el-table-column>
-                  <el-table-column v-if="isVersion" label="版本ID" prop="" width="300px">
+                  <el-table-column v-if="isVersion" :label="$ts('bucket.versionId')" prop="" width="300px">
                     <template>
                       {{ $route.query.VersionId || '/' }}
                     </template>
                   </el-table-column>
-                  <el-table-column label="类型" prop="">
+                  <el-table-column :label="$ts('tempConfigFile.type')" prop="">
                     <template>
                       {{ getFileType(resInfo.Prefix) }}
                     </template>
                   </el-table-column>
-                  <el-table-column label="上次修改时间" prop="" width="300px">
+                  <el-table-column :label="$ts('bucket.LastModified')" prop="" width="300px">
                     <template slot-scope="scope">
                       {{ formatDate(new Date(scope.row.LastModified)) || '/' }}
                     </template>
                   </el-table-column>
-                  <el-table-column label="大小" prop="">
+                  <el-table-column :label="$ts('bucket.fileSize')" prop="">
                     <template slot-scope="scope">
                       {{ byteConvert(scope.row.Size) || '/' }}
                     </template>
@@ -374,22 +379,23 @@
                 </el-table>
 
                 <div class="bottomMenu">
-                  <el-button class="blue" @click="editStatus = false; getObjectAcl()">取消</el-button>
-                  <el-button class="golden" @click="saveConfig">保存</el-button>
+                  <el-button class="blue" @click="editStatus = false; getObjectAcl()">{{
+                    $ts('page.cancel') }}</el-button>
+                  <el-button class="golden" @click="saveConfig">{{ $ts('page.save') }}</el-button>
                 </div>
               </div>
 
             </el-tab-pane>
-            <el-tab-pane label="版本" name="version">
-              <h3 class="titleh1">对象版本信息</h3>
+            <el-tab-pane :label="$ts('bucket.version')" name="version">
+              <h3 class="titleh1">{{ $ts('bucket.objectVersionInfo') }}</h3>
               <el-table :data="versionTable" :max-height="500" @sort-change="sortFunction">
-                <el-table-column label="版本ID" width="350px" prop="VersionId" sortable="custom"
+                <el-table-column :label="$ts('bucket.versionId')" width="350px" prop="VersionId" sortable="custom"
                   :default-sort="defaultSort">
                   <template slot-scope="scope">
                     <!-- <i class="fa fa-file-o" /> -->
                     <el-tooltip
                       v-if="$route.query.VersionId && scope.row.VersionId !== $route.query.VersionId && !scope.row.delMarker"
-                      placement="top" content="查看版本">
+                      placement="top" :content="$ts('bucket.viewVersion')">
                       <span class="alink" @click="handleClickRow(scope.row)">
                         {{ scope.row.VersionId }} <span class="orange">
                           {{ mapVersion(scope.row) }}
@@ -403,22 +409,23 @@
                     </span>
                   </template>
                 </el-table-column>
-                <el-table-column label="类型" prop="type" sortable="custom">
+                <el-table-column :label="$ts('tempConfigFile.type')" prop="type" sortable="custom">
                   <template slot-scope="scope">
-                    {{ scope.row.delMarker ? '删除标记' : getFileType(scope.row.Key) }}
+                    {{ scope.row.delMarker ? $ts('bucket.deleteMark') : getFileType(scope.row.Key) }}
                   </template>
                 </el-table-column>
-                <el-table-column label="上次修改时间" prop="LastModified" width="300px" sortable="custom">
+                <el-table-column :label="$ts('bucket.LastModified')" prop="LastModified" width="300px"
+                  sortable="custom">
                   <template slot-scope="scope">
                     {{ formatDate(scope.row.LastModified) || '/' }}
                   </template>
                 </el-table-column>
-                <el-table-column label="大小" prop="Size" sortable="custom">
+                <el-table-column :label="$ts('bucket.fileSize')" prop="Size" sortable="custom">
                   <template slot-scope="scope">
                     {{ scope.row.delMarker ? '/' : byteConvert(scope.row.Size) || '/' }}
                   </template>
                 </el-table-column>
-                <el-table-column label="存储类" prop="StorageClass" sortable="custom">
+                <el-table-column :label="$ts('bucket.StorageClass')" prop="StorageClass" sortable="custom">
                   <template slot-scope="scope">
                     {{ transClass(scope.row.StorageClass) || '/' }}
                   </template>
@@ -428,79 +435,90 @@
           </el-tabs>
         </div>
       </div>
-      <el-dialog title="编辑对象锁定依法保留" :visible.sync="legalHoldFlag" width="500px">
-        <h3 class="titleh1">对象锁定依法保留</h3>
+      <el-dialog :title="$ts('bucket.editObjectLockLeaglHold')" :visible.sync="legalHoldFlag" width="500px">
+        <h3 class="titleh1">{{ $ts('bucket.legalHoldLoading') }}</h3>
         <el-radio-group v-model="legalHoldRaido" class="reverseColumn">
-          <el-radio label="OFF">禁用</el-radio>
-          <el-radio label="ON">启用</el-radio>
+          <el-radio label="OFF">{{ $ts('page.disable') }}</el-radio>
+          <el-radio label="ON">{{ $ts('page.enable') }}</el-radio>
         </el-radio-group>
         <div slot="footer">
-          <el-button @click="legalHoldFlag = false">{{ $ts('cancel') }}</el-button>
+          <el-button @click="legalHoldFlag = false">{{ $ts('page.cancel') }}</el-button>
           <el-button type="primary" class="golden" @click="saveObjectLegalHold">{{ $ts('save') }}</el-button>
         </div>
       </el-dialog>
-      <el-dialog title="编辑对象锁定保留" :visible.sync="objectRentionFlag" width="700px">
-        <h3 class="titleh1">对象锁定保留</h3>
+      <el-dialog :title="$ts('bucket.editObjectLockRention')" :visible.sync="objectRentionFlag" width="700px">
+        <h3 class="titleh1">{{ $ts('bucket.objectLockHold') }}</h3>
         <el-form ref="objectRentionForm" :model="objectRentionForm" :rules="rules">
           <el-radio-group v-model="objectRentionForm.objectRentionRaido" class="reverseColumn"
             :disabled="disableObjectLock && disableMode">
-            <el-radio label="OFF">禁用</el-radio>
-            <el-radio label="ON">启用</el-radio>
+            <el-radio label="OFF">{{ $ts('page.disable') }}</el-radio>
+            <el-radio label="ON">{{ $ts('page.enable') }}</el-radio>
           </el-radio-group>
           <div v-if="objectRentionForm.objectRentionRaido == 'ON'">
-            <el-form-item label="保留模式" class="reverseColumn">
+            <el-form-item :label="$ts('bucket.holdMode')" class="reverseColumn">
               <el-radio-group v-model="objectRentionForm.Mode" class="reverseColumn" :disabled="disableMode">
-                <el-radio label="GOVERNANCE">监管模式</el-radio>
-                <el-radio label="COMPLIANCE">合规模式</el-radio>
+                <el-radio label="GOVERNANCE">{{ $ts('bucket.GOVERNANCEMODE') }}</el-radio>
+                <el-radio label="COMPLIANCE">{{ $ts('bucket.COMPLIANCEMODE') }}</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="保留到期日" prop="timePicker" class="reverseColumn">
+            <el-form-item :label="$ts('bucket.RetainUntilDate')" prop="timePicker" class="reverseColumn">
               <el-date-picker v-model="objectRentionForm.timePicker" :picker-options="disableCurrentDate"
-                type="datetime" placeholder="选择日期时间" />
+                type="datetime" :placeholder="$ts('bucket.selectDate')" />
             </el-form-item>
             <div v-if="disableObjectLock">
               <i class="fa el-icon-warning-outline red" />
               <b>
-                在{{ mode === 'GOVERNANCE' ? '监管模式' : '合规模式' }}下，在保留期到期之前，对象不可变
+                {{ $ts('bucket.objectCannotChange', {
+                  mode: mode === 'GOVERNANCE' ? $ts('bucket.GOVERNANCEMODE') :
+                    $ts('bucket.COMPLIANCEMODE')
+                }) }}
               </b>
-              <p v-if="mode === 'COMPLIANCE'" class="red">只能将保留日期更改为{{ RetainUntilDate }}之后的日期。</p>
+              <p v-if="mode === 'COMPLIANCE'" class="red">
+                {{ $ts('bucket.COMPLIANCERetainUntilDate', { Date: RetainUntilDate }) }}
+              </p>
             </div>
             <div v-else-if="objectRentionForm.objectRentionRaido === 'ON'" class="red">
               <i class="fa el-icon-warning-outline" />
-              在{{ objectRentionForm.Mode === 'GOVERNANCE' ? '监管模式' : '合规模式' }}下，在保留期到期之前，对象不可变
-              <p v-if="mode === 'COMPLIANCE'" class="red">只能将保留日期更改为{{ RetainUntilDate }}之后的日期。</p>
+              {{ $ts('bucket.objectCannotChange', {
+                mode: objectRentionForm.Mode === 'GOVERNANCE' ? $ts('bucket.GOVERNANCEMODE') :
+                  $ts('bucket.COMPLIANCEMODE')
+              }) }}
+              <p v-if="mode === 'COMPLIANCE'" class="red">
+                {{ $ts('bucket.COMPLIANCERetainUntilDate', { Date: RetainUntilDate }) }}
+              </p>
             </div>
           </div>
         </el-form>
         <div slot="footer">
-          <el-button @click="objectRentionFlag = false">{{ $ts('cancel') }}</el-button>
+          <el-button @click="objectRentionFlag = false">{{ $ts('page.cancel') }}</el-button>
           <el-button type="primary" class="golden" @click="saveObjectRention">{{ $ts('save') }}</el-button>
         </div>
       </el-dialog>
 
-      <el-dialog ref="userDialog" title="选择额外授权用户" :visible.sync="flag" @close="handleScroll('userDialog')">
+      <el-dialog ref="userDialog" :title="$ts('bucket.selectExtraAuthUser')" :visible.sync="flag"
+        @close="handleScroll('userDialog')">
         <div class="clearfix">
           <el-row>
             <el-col :span="8">
-              <el-select v-model="userGroup" style="width: 100%;" multiple collapse-tags placeholder="已选用户"
-                @change="changeSelect">
+              <el-select v-model="userGroup" style="width: 100%;" multiple collapse-tags
+                :placeholder="$ts('bucket.selectedUser')" @change="changeSelect">
                 <el-option v-for="item in listGroup" :key="item.userName" :label="item.userName"
                   :value="item.userName" />
               </el-select>
             </el-col>
             <el-col :span="8" class="ipt">
-              <el-input v-model="userName" placeholder="用户名过滤" />
+              <el-input v-model="userName" :placeholder="$ts('group.searchUsername')" />
             </el-col>
           </el-row>
         </div>
         <el-table ref="userTable" :data="userData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
           :row-key="(row) => row.userName" @selection-change="handleSelectionChange">
           <el-table-column type="selection" reserve-selection width="55" />
-          <el-table-column label="用户名" prop="userName" />
+          <el-table-column :label="$ts('user.username')" prop="userName" />
         </el-table>
         <div slot="footer">
-          <el-button class="blue" @click="flag = false">{{ $ts('button.cancel') }}</el-button>
-          <el-button class="golden" @click="addAccount()">{{ $ts('button.confirm') }}</el-button>
+          <el-button class="blue" @click="flag = false">{{ $ts('page.cancel') }}</el-button>
+          <el-button class="golden" @click="addAccount()">{{ $ts('page.confirm') }}</el-button>
         </div>
         <div v-show="total" class="page_block">
           <el-pagination :current-page="currentPage" :page-sizes="[5, 10, 50, 100]" :page-size="pageSize"
@@ -526,10 +544,10 @@ export default {
         this.RetainUntilDate &&
         selectTime < new Date(this.RetainUntilDate).getTime()
       ) {
-        return callback(`请选择${this.RetainUntilDate}之后的时间。`)
+        return callback(this.$ts('bucket.selectAfterDateTime', { Date: this.RetainUntilDate }))
       } else
         if (selectTime < currentTime) {
-          return callback('保留到期日必须为未来的日期')
+          return callback(this.$ts('bucket.retainDayReg'))
         } else {
           callback()
         }
@@ -543,7 +561,7 @@ export default {
           data === this.form.granteeTable[i].ID ||
           data === this.tableData[0].ID
         ) {
-          return callback('必须指定唯一的被授权者。')
+          return callback(this.$ts('bucket.ownerReg'))
         }
       }
       callback()
@@ -614,7 +632,7 @@ export default {
       ruleId: [
         {
           required: true,
-          message: '被授权者不能为空。请指定或删除被授权者。',
+          message: this.$ts('bucket.ownerRequired'),
           trigger: ['blur', 'change']
         },
         {
@@ -651,7 +669,7 @@ export default {
           {
             required: true,
             trigger: ['blur', 'change'],
-            message: '请配置到期日'
+            message: this.$ts('bucket.setExpirationTime')
           }
         ]
       }
@@ -780,7 +798,7 @@ export default {
     },
     mapVersion (row) {
       if (row.IsLatest) {
-        return '(当前版本)'
+        return this.$ts('bucket.currentVerion')
       }
       // console.log(row, 'row')
       // if (row.VersionId === this.$route.query.VersionId) {
@@ -835,7 +853,7 @@ export default {
             this.$router.go(-1)
             this.$msg({
               type: 'error',
-              text: '当前对象异常'
+              text: this.$ts('bucket.objectError')
             })
           }
           this.resInfo.Prefix = data.Key
@@ -872,7 +890,7 @@ export default {
         this.file.Owner = (Owner && Owner.DisplayName) || ''
         this.file.LastModified = this.formatDate(new Date(LastModified))
         this.file.size = Size ? this.byteConvert(Size) : '-'
-        this.file.type = Key === 'Del' ? '删除标记' : this.getFileType(Key)
+        this.file.type = Key === 'Del' ? $ts('bucket.deleteMark') : this.getFileType(Key)
         this.file.S3URL =
           's3://' + Name + Delimiter + this.$route.query.filename
         this.file.ARN =
@@ -995,7 +1013,7 @@ export default {
       if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
         this.$msg({
           type: 'success',
-          text: '复制成功'
+          text: this.$ts('page.copied')
         })
         return navigator.clipboard.writeText(str)
       } else {
@@ -1005,7 +1023,7 @@ export default {
         textarea.select()
         this.$msg({
           type: 'success',
-          text: '复制成功'
+          text: this.$ts('page.copied')
         })
         return new Promise((res, rej) => {
           document.execCommand('copy') ? res() : rej()
@@ -1033,7 +1051,7 @@ export default {
             this.legalHoldFlag = false
             this.$msg({
               type: 'success',
-              text: this.$ts('response.success')
+              text: this.$ts('page.responseSuccess')
             })
           }
         }
@@ -1118,7 +1136,7 @@ export default {
                   this.objectRentionFlag = false
                   this.$msg({
                     type: 'success',
-                    text: this.$ts('response.success')
+                    text: this.$ts('page.responseSuccess')
                   })
                 }
               }
@@ -1155,7 +1173,7 @@ export default {
                 this.objectRentionFlag = false
                 this.$msg({
                   type: 'success',
-                  text: this.$ts('response.success')
+                  text: this.$ts('page.responseSuccess')
                 })
                 console.log(data, 'putobjectRention')
               }
@@ -1287,7 +1305,7 @@ export default {
           } else {
             this.$msg({
               type: 'success',
-              text: this.$ts('response.success')
+              text: this.$ts('page.responseSuccess')
             })
             this.editStatus = false
             this.getObjectAcl()
@@ -1371,21 +1389,21 @@ export default {
               if (URI === 'http://acs.amazonaws.com/groups/global/AllUsers') {
                 const Permission = group[0].Permission
                 if (Permission === 'READ') {
-                  this.formAcl.readAcl = '公共读'
+                  this.formAcl.readAcl = this.$ts('bucket.publicRead')
                   this.formAcl.selectAcl = 'public-read'
                 } else if (Permission === 'WRITE') {
-                  this.formAcl.readAcl = '公共读写'
+                  this.formAcl.readAcl = this.$ts('bucket.publicReadWrite')
                   this.formAcl.selectAcl = 'public-read-write'
                 }
               } else if (
                 URI ===
                 'http://acs.amazonaws.com/groups/global/AuthenticatedUsers'
               ) {
-                this.formAcl.readAcl = '认证读'
+                this.formAcl.readAcl = this.$ts('bucket.authenticatedRead')
                 this.formAcl.selectAcl = 'authenticated-read'
               }
             } else {
-              this.formAcl.readAcl = '私有'
+              this.formAcl.readAcl = this.$ts('bucket.private')
               this.formAcl.selectAcl = 'private'
             }
             // 处理同一用户多个权限、将通过前面的permission数组添加对应的数据
@@ -1462,29 +1480,29 @@ export default {
     transClass (val) {
       switch (val) {
         case 'STANDARD':
-          return '标准'
+          return this.$ts('bucket.standard')
         default:
           break
       }
     },
     bucketMap (val) {
       if (val.READ_ACP && val.WRITE_ACP) {
-        return '读写ACL'
+        return this.$ts('bucket.READWRITE_ACP')
       } else if (val.READ_ACP) {
-        return '读ACL'
+        return this.$ts('bucket.READ_ACP')
       } else if (val.WRITE_ACP) {
-        return '写ACL'
+        return this.$ts('bucket.WRITE_ACP')
       } else {
         return ''
       }
     },
     objectMap (val) {
       if (val.READ && val.WRITE) {
-        return '读写'
+        return this.$ts('bucket.readWrite')
       } else if (val.WRITE) {
-        return '写'
+        return this.$ts('bucket.write')
       } else if (val.READ) {
-        return '读'
+        return this.$ts('bucket.read')
       } else {
         return '/'
       }

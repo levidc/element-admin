@@ -134,7 +134,9 @@ export default {
     any: 'any',
     thirdparty: 'Or connect with',
     thirdpartyTips: 'Can not be simulated on local, so please combine you own business simulation! ! !',
-    tipCapLock: 'Caps lock is On'
+    tipCapLock: 'Caps lock is On',
+    title: 'More safe',
+    subTitle: 'Let everything go naturally'
   },
   documentation: {
     documentation: 'Documentation',
@@ -226,5 +228,36 @@ export default {
     tagsView: 'Open Tags-View',
     fixedHeader: 'Fixed Header',
     sidebarLogo: 'Sidebar Logo'
+  },
+  user: {
+    user: '用户',
+    userName: '用户名：',
+    username: '用户名',
+    allUser: 'All User'
+  },
+  group: {
+    name: '组名',
+    userGroup: '用户组',
+    groupName: '用户组名',
+    groupNameSearch: '用户组名过滤',
+    viewGroupDetail: '查看用户组详情',
+    createUser: '创建人',
+    createGroup: '创建用户组',
+    iptGroupName: '填写组名',
+    selectUser: '选择用户',
+    searchUsername: '用户名过滤',
+    policies: '策略',
+    selectPolicy: '选择策略',
+    searchPolicyName: '策略名过滤',
+    policyName: '策略名',
+    deleteGroup: '删除用户组',
+    deleteCurrentGroup: '删除当前用户组：',
+    groupNameReg: '用户组名只能输入英文及数字，长度限制为8-40位',
+    toRemoveUser: '去移除用户',
+    deleteGroupTip: '当前用户组已分配如下用户{error}，需要移除组下{error2}才能删除'
+  },
+  bucket: {
+    name: '桶名称',
+    objectName: '对象名称'
   }
 }

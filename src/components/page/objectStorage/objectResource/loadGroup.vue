@@ -1,67 +1,30 @@
 <template>
   <div>
     <div class="page_content_wrap">
-      <el-button
-        class="golden"
-        :disabled="loading || innerFormLoading"
-        @click="flag=true;opt='add'"
-      >创建负载</el-button>
+      <el-button class="golden" :disabled="loading || innerFormLoading" @click="flag = true; opt = 'add'">{{
+        $ts('loadGroup.create') }}</el-button>
       <div class="right">
-        <el-tooltip
-          content="刷新"
-          placement="top"
-          effect="dark"
-        >
-          <i
-            class="el-icon-refresh"
-            @click="filterText='';init()"
-          />
+        <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
+          <i class="el-icon-refresh" @click="filterText = ''; init()" />
         </el-tooltip>
       </div>
     </div>
     <div class="treeContent">
       <div class="tree">
-        <el-input
-          v-model="filterText"
-          placeholder="负载组或资源名过滤"
-          class="mb_10"
-          clearable
-        />
-        <div
-          v-loading="loading"
-          class="stauts"
-        >
-          <el-tree
-            v-if="!loading"
-            ref="tree"
-            :data="tableData"
-            node-key="id"
-            :props="treeOpt"
-            default-expand-all
-            icon-class="none"
-            :expand-on-click-node="false"
-            :filter-node-method="filterNode"
-            highlight-current
-            @node-click="getInfo"
-          >
-            <span
-              slot-scope="{ data }"
-              class="custom-tree-node"
-            >
+        <el-input v-model="filterText" :placeholder="$ts('loadGroup.searchLoadOrResource')" class="mb_10" clearable />
+        <div v-loading="loading" class="stauts">
+          <el-tree v-if="!loading" ref="tree" :data="tableData" node-key="id" :props="treeOpt" default-expand-all
+            icon-class="none" :expand-on-click-node="false" :filter-node-method="filterNode" highlight-current
+            @node-click="getInfo">
+            <span slot-scope="{ data }" class="custom-tree-node">
               <!-- 负载组 -->
               <span v-if="!('storageName' in data)">
                 <span class="deviceContainer">
                   <span class="deviceIcon">
-                    <svg
-                      class="icon"
-                      aria-hidden="true"
-                    >
+                    <svg class="icon" aria-hidden="true">
                       <use xlink:href="#icon-loadGroup" />
                     </svg>
-                    <showToolTip
-                      :text="data.loadGroupName"
-                      width="60%"
-                    />
+                    <showToolTip :text="data.loadGroupName" width="60%" />
                   </span>
                   <div>
                     <!-- <svg class="icon" aria-hidden="true" style="position:relative;top:5px;font-size:26px;">
@@ -70,11 +33,11 @@
                       />
                     </svg> -->
                     <el-tag v-if="data.defaultGroup">ACTIVE</el-tag>
-                    <el-tag v-if="data.groupTag==='DATA'">冷存储</el-tag>
-                    <el-tag v-if="data.groupTag==='CACHE'">缓存</el-tag>
-                    <el-tag v-if="data.groupTag==='GLACIER'">冰存储</el-tag>
-                    <el-tag v-if="data.groupTag==='WARM'">温存储</el-tag>
-                    <el-tag v-if="data.groupTag==='RESTORE'">解冻存储</el-tag>
+                    <el-tag v-if="data.groupTag === 'DATA'">{{ $ts('loadGroup.dataLoad') }}</el-tag>
+                    <el-tag v-if="data.groupTag === 'CACHE'">{{ $ts('loadGroup.cacheLoad') }}</el-tag>
+                    <el-tag v-if="data.groupTag === 'GLACIER'">{{ $ts('loadGroup.glacierLoad') }}</el-tag>
+                    <el-tag v-if="data.groupTag === 'WARM'">{{ $ts('loadGroup.warmLoad') }}</el-tag>
+                    <el-tag v-if="data.groupTag === 'RESTORE'">{{ $ts('loadGroup.restoreLoad') }}</el-tag>
                   </div>
                 </span>
               </span>
@@ -82,10 +45,7 @@
                 <span class="resourceContainer">
                   <span class="resourcename">
                     <el-tag style="margin-right:5px;">{{ renderStorageType(data.storageType) }}</el-tag>
-                    <showToolTip
-                      :text="data.loadGroupName"
-                      width="48%"
-                    />
+                    <showToolTip :text="data.loadGroupName" width="48%" />
                   </span>
                   <div>
                     <!-- <svg class="icon" aria-hidden="true" style="position:relative;top:5px;font-size:26px;">
@@ -101,93 +61,61 @@
           </el-tree>
         </div>
       </div>
-      <div
-        v-loading="loading||innerFormLoading"
-        class="content"
-      >
-        <div
-          v-show="showDetailContent ==='loadGroup'&&!innerFormLoading"
-          class="expandDeviceForm"
-        >
-          <el-form
-            label-position="left"
-            inline
-          >
+      <div v-loading="loading || innerFormLoading" class="content">
+        <div v-show="showDetailContent === 'loadGroup' && !innerFormLoading" class="expandDeviceForm">
+          <el-form label-position="left" inline>
             <el-row>
               <el-col :span="12">
-                <el-form-item label="负载名称">
+                <el-form-item :label="$ts('loadGroup.name')">
                   <span>{{ fillForm.loadGroupName }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="默认负载">
-                  <span
-                    v-if="fillForm.defaultGroup"
-                    class="green"
-                  >是</span>
-                  <span v-else>否</span>
+                <el-form-item :label="$ts('loadGroup.defaultLoad')">
+                  <span v-if="fillForm.defaultGroup" class="green">{{ $ts('page.Yes') }}</span>
+                  <span v-else>{{ $ts('page.No') }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="是否启用">
-                  <span
-                    v-if="fillForm.isOpen==='OPEN'"
-                    class="green"
-                  >是</span>
-                  <span
-                    v-else
-                    class="red"
-                  >否</span>
+                <el-form-item :label="$ts('page.isEnable')">
+                  <span v-if="fillForm.isOpen === 'OPEN'" class="green">{{ $ts('page.Yes') }}</span>
+                  <span v-else class="red">{{ $ts('page.No') }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item>
                   <span slot="label">
-                    状态
-                    <el-popover
-                      placement="top"
-                      width="250"
-                      trigger="hover"
-                      style="position:absolute;"
-                    >
-                      <p style="line-height:1.6;"> 绿色：有两个及以上健康资源</p>
-                      <p style="line-height:1.6;"> 黄色：只有一个健康资源</p>
-                      <p style="line-height:1.6;"> 红色：没有健康资源</p>
+                    {{ $ts('page.status') }}
+                    <el-popover placement="top" width="250" trigger="hover" style="position:absolute;">
+                      <p style="line-height:1.6;"> {{ $ts('loadGroup.greenStatus') }}</p>
+                      <p style="line-height:1.6;"> {{ $ts('loadGroup.yellowStatus') }}</p>
+                      <p style="line-height:1.6;"> {{ $ts('loadGroup.redStatus') }}</p>
                       <svg slot="reference" class="icon icon-question" aria-hidden="true" style="margin-left:10px">
                         <use xlink:href="#icon-question" />
                       </svg>
                     </el-popover>
                   </span>
-                  <svg
-                    class="icon"
-                    aria-hidden="true"
-                    style="font-size:26px;position:relative;top:6px;left:-4px;"
-                  >
+                  <svg class="icon" aria-hidden="true" style="font-size:26px;position:relative;top:6px;left:-4px;">
                     <use :xlink:href="renderLoadGroupStatus(fillForm.healthStatus)" />
                   </svg>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="负载用途">
+                <el-form-item :label="$ts('loadGroup.groupTag')">
                   <span>{{ renderGroupTag(fillForm.groupTag) }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="负载类型">
-                  <span>{{ fillForm.storageType==='IAM'?'AWS': fillForm.storageType }}</span>
+                <el-form-item :label="$ts('loadGroup.loadType')">
+                  <span>{{ fillForm.storageType === 'IAM' ? 'AWS' : fillForm.storageType }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item>
                   <span slot="label">
-                    策略类型
-                    <el-popover
-                      placement="top"
-                      width="250"
-                      trigger="hover"
-                      style="position:absolute;"
-                    >
-                      <p style="line-height:1.6;">AUTO:按资源的剩余空间大小自动调整写入的分配比例</p>
+                    {{ $ts('loadGroup.loadStrategy') }}
+                    <el-popover placement="top" width="250" trigger="hover" style="position:absolute;">
+                      <p style="line-height:1.6;">{{ $ts('loadGroup.loadStrategyTip') }}</p>
                       <svg slot="reference" class="icon icon-question" aria-hidden="true" style="margin-left:10px">
                         <use xlink:href="#icon-question" />
                       </svg>
@@ -199,55 +127,25 @@
             </el-row>
             <el-row>
               <el-col :span="24">
-                <el-table
-                  :data="fillForm.items"
-                  style="width: 90%;margin: 30px 0"
-                >
-                  <el-table-column
-                    prop="storageName"
-                    label="资源名称"
-                    show-overflow-tooltip
-                    min-width="150px"
-                  />
-                  <el-table-column
-                    prop="status"
-                    label="状态"
-                    align="center"
-                    width="150px"
-                  >
+                <el-table :data="fillForm.items" style="width: 90%;margin: 30px 0">
+                  <el-table-column prop="storageName" :label="$ts('loadGroup.resourceName')" show-overflow-tooltip
+                    min-width="150px" />
+                  <el-table-column prop="status" :label="$ts('page.status')" align="center" width="150px">
                     <template slot-scope="scope">
-                      <span
-                        v-if="Number(scope.row.isOpen)===1"
-                        class="green"
-                      >启用</span>
-                      <span
-                        v-else
-                        class="red"
-                      >禁用</span>
+                      <span v-if="Number(scope.row.isOpen) === 1" class="green">{{ $ts('page.enable') }}</span>
+                      <span v-else class="red">{{ $ts('page.disable') }}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column
-                    prop="resourceStatus"
-                    label="占用率"
-                    align="center"
-                    min-width="180px"
-                  >
+                  <el-table-column prop="resourceStatus" :label="$ts('loadGroup.utilityRatio')" align="center"
+                    min-width="180px">
                     <template slot-scope="scope">
-                      <span
-                        v-for="(item,i) in renderUtilityRatio(scope.row) "
-                        :key="i"
-                        :style="{color:item.color}"
-                      >
+                      <span v-for="(item, i) in renderUtilityRatio(scope.row) " :key="i" :style="{ color: item.color }">
                         {{ item.val }}
                       </span>
                     </template>
                   </el-table-column>
-                  <el-table-column
-                    prop="resourceStatus"
-                    label="资源阈值"
-                    align="center"
-                    min-width="180px"
-                  >
+                  <el-table-column prop="resourceStatus" :label="$ts('loadGroup.threshold')" align="center"
+                    min-width="180px">
                     <template slot-scope="scope">
                       {{ scope.row.threshold }}
                     </template>
@@ -257,87 +155,40 @@
             </el-row>
             <el-row>
               <el-col :span="24">
-                <el-table
-                  :data="fillForm.gateway"
-                  style="width:90%"
-                >
-                  <el-table-column
-                    prop="gatewayAddress"
-                    label="gateway地址"
-                    min-width="150px"
-                    show-overflow-tooltip
-                  />
-                  <el-table-column
-                    prop="gatewayStatus"
-                    label="服务状态"
-                    align="center"
-                    width="150px"
-                  >
+                <el-table :data="fillForm.gateway" style="width:90%">
+                  <el-table-column prop="gatewayAddress" :label="$ts('loadGroup.gatewayAddress')" min-width="150px"
+                    show-overflow-tooltip />
+                  <el-table-column prop="gatewayStatus" :label="$ts('loadGroup.gatewayStatus')" align="center"
+                    width="150px">
                     <template slot-scope="scope2">
-                      <span
-                        v-if="scope2.row.gatewayStatus"
-                        class="green"
-                      >正常</span>
-                      <span
-                        v-else
-                        class="red"
-                      >异常</span>
+                      <span v-if="scope2.row.gatewayStatus" class="green">{{ $ts('page.normal') }}</span>
+                      <span v-else class="red">{{ $ts('page.abnormal') }}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column
-                    prop="resourceStatus"
-                    label="资源连接状态"
-                    align="center"
-                    min-width="180px"
-                  >
+                  <el-table-column prop="resourceStatus" :label="$ts('loadGroup.resourceStatus')" align="center"
+                    min-width="180px">
                     <template slot-scope="scope2">
-                      <el-table
-                        class="innerTable"
-                        :data="scope2.row.resourceList"
-                      >
-                        <el-table-column
-                          label=" "
-                          prop="storageName"
-                        >
+                      <el-table class="innerTable" :data="scope2.row.resourceList">
+                        <el-table-column label=" " prop="storageName">
                           <template slot-scope="scope">
                             <showToolTip :text="scope.row.storageName" />
                           </template>
                         </el-table-column>
-                        <el-table-column
-                          label=" "
-                          prop="resourceStatus"
-                          align="center"
-                        >
+                        <el-table-column label=" " prop="resourceStatus" align="center">
                           <template slot-scope="scope">
-                            <span
-                              v-if="scope.row.resourceStatus === 'OK'"
-                              class="green"
-                            >
+                            <span v-if="scope.row.resourceStatus === 'OK'" class="green">
                               {{ storageTypeEnu[scope.row.resourceStatus] }}
                             </span>
-                            <span
-                              v-else-if="storageTypeEnu[scope.row.resourceStatus]"
-                              class="red"
-                            >
+                            <span v-else-if="storageTypeEnu[scope.row.resourceStatus]" class="red">
                               {{ storageTypeEnu[scope.row.resourceStatus] }}
                             </span>
-                            <span
-                              v-else
-                              class="red"
-                            >
-                              <span
-                                class="red"
-                                type="text"
-                              >
-                                资源异常
+                            <span v-else class="red">
+                              <span class="red" type="text">
+                                {{ $ts('loadGroup.resourceAbnormal') }}
                               </span>
-                              <el-popover
-                                popper-class="text-wrap"
-                                placement="top-start"
-                                title="异常详情"
-                                trigger="hover"
-                                :content="String(scope.row.resourceStatus).trim()"
-                              >
+                              <el-popover popper-class="text-wrap" placement="top-start"
+                                :title="$ts('loadGroup.errorDetail')" trigger="hover"
+                                :content="String(scope.row.resourceStatus).trim()">
                                 <svg slot="reference" class="icon icon-question" aria-hidden="true">
                                   <use xlink:href="#icon-question" />
                                 </svg>
@@ -363,35 +214,22 @@
             </el-row>
             <el-row>
               <div class="btn">
-                <el-button
-                  class="blue"
-                  @click="updateForm"
-                >{{ $ts('modify') }}</el-button>
-                <el-button
-                  type="danger"
-                  class="red"
-                  @click="deleteFlag=true"
-                >{{ $ts('delete') }}</el-button>
+                <el-button class="blue" @click="updateForm">{{ $ts('page.modify') }}</el-button>
+                <el-button type="danger" class="red" @click="deleteFlag = true">{{ $ts('page.delete') }}</el-button>
               </div>
             </el-row>
           </el-form>
         </div>
-        <div
-          v-show="showDetailContent ==='resource'&&!innerFormLoading"
-          class="expandDeviceForm"
-        >
-          <el-form
-            label-position="left"
-            inline
-          >
+        <div v-show="showDetailContent === 'resource' && !innerFormLoading" class="expandDeviceForm">
+          <el-form label-position="left" inline>
             <el-row>
               <el-col :span="12">
-                <el-form-item label="资源名称">
+                <el-form-item :label="$ts('loadGroup.resourceName')">
                   <span>{{ fillSourceForm.storageName }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="地址">
+                <el-form-item :label="$ts('loadGroup.url')">
                   <span>{{ fillSourceForm.url || '-' }}</span>
                 </el-form-item>
               </el-col>
@@ -399,115 +237,102 @@
 
             <el-row>
               <el-col :span="12">
-                <el-form-item label="存储类型">
+                <el-form-item :label="$ts('loadGroup.storageType')">
                   <span>{{ fillSourceForm.storageType }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item
                   v-if="fillSourceForm.storageType === 'S3' || fillSourceForm.storageType === 'GLACIER' || fillSourceForm.storageType === 'WARM'"
-                  label="用户名"
-                >
+                  :label="$ts('page.username')">
                   <span>{{ fillSourceForm.userName || '-' }}</span>
                 </el-form-item>
-                <el-form-item
-                  v-if="fillSourceForm.storageType === 'IAM'"
-                  label="区域"
-                >
+                <el-form-item v-if="fillSourceForm.storageType === 'IAM'" :label="$ts('loadGroup.region')">
                   <span>{{ transRegion(fillSourceForm.region) }}</span>
                 </el-form-item>
-                <el-form-item
-                  v-if="fillSourceForm.storageType === 'NAS'"
-                  label="存储用途"
-                >
-                  <span>{{ fillSourceForm.storageUseType === 'CACHE' ? '缓存' : '直接存储' }}</span>
+                <el-form-item v-if="fillSourceForm.storageType === 'NAS'" :label="$ts('loadGroup.storageUseType')">
+                  <span>{{ fillSourceForm.storageUseType === 'CACHE' ? $ts('loadGroup.cacheLoad') :
+                    $ts('loadGroup.defaultUseType') }}</span>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row v-if="fillSourceForm.storageType === 'NAS' || fillSourceForm.storageType === 'CACHE'">
               <el-col :span="12">
-                <el-form-item label="单个对象最大容量(MB)">
+                <el-form-item :label="$ts('loadGroup.mabObjectSize')">
                   <span>{{ fillSourceForm.extendInfo?.maxObjectSize || '-' }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="目录最大深度">
+                <el-form-item :label="$ts('loadGroup.dirMaxDepth')">
                   <span>{{ fillSourceForm.extendInfo?.dirMaxDepth || '-' }}</span>
                 </el-form-item>
               </el-col>
               <!--  -->
               <el-col :span="12">
-                <el-form-item label="最大子目录数">
+                <el-form-item :label="$ts('loadGroup.dirMaxSubDir')">
                   <span>{{ fillSourceForm.extendInfo?.dirMaxSubDir || '-' }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="单目录存储最大文件数">
+                <el-form-item :label="$ts('loadGroup.dirMaxFile')">
                   <span>{{ fillSourceForm.extendInfo?.dirMaxFile || '-' }}</span>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="12">
-                <el-form-item label="标签名">
+                <el-form-item :label="$ts('loadGroup.sign')">
                   <span>{{ fillSourceForm.sign }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item :label="fillSourceForm.storageType !== 'NAS' && fillSourceForm.storageType !== 'CACHE' ? '存储桶名' : '共享目录'">
+                <el-form-item
+                  :label="fillSourceForm.storageType !== 'NAS' && fillSourceForm.storageType !== 'CACHE' ? $ts('bucket.name') : $ts('loadGroup.sharePath')">
                   <span>{{ fillSourceForm.bucketName }}</span>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="12">
-                <el-form-item label="默认资源">
-                  <span
-                    v-if="fillSourceForm.default"
-                    class="green"
-                  > 是</span>
-                  <span v-else> 否 </span>
+                <el-form-item :label="$ts('loadGroup.defaultResource')">
+                  <span v-if="fillSourceForm.default" class="green">{{ $ts('page.Yes') }}</span>
+                  <span v-else> {{ $ts('page.No') }} </span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="下一个资源">
-                  <span
-                    v-if="fillSourceForm.next"
-                    class="green"
-                  > 是 </span>
-                  <span v-else> 否 </span>
+                <el-form-item :label="$ts('loadGroup.nextResource')">
+                  <span v-if="fillSourceForm.next" class="green"> {{ $ts('page.Yes') }} </span>
+                  <span v-else> {{ $ts('page.No') }} </span>
                 </el-form-item>
               </el-col>
             </el-row>
 
             <el-row>
               <el-col :span="12">
-                <el-form-item label="对象数量上限">
-                  <span v-if="fillSourceForm.objectCount">{{ fillSourceForm.objectCount == -1 ? '无限制' : handleDemi('','',fillSourceForm.objectCount)
-                  }}</span>
+                <el-form-item :label="$ts('loadGroup.objectCountLimit')">
+                  <span v-if="fillSourceForm.objectCount">{{ fillSourceForm.objectCount == -1 ? $ts('page.noLimit') :
+                    handleDemi('', '', fillSourceForm.objectCount)
+                    }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="对象容量上限">
-                  <span>{{ fillSourceForm.objectSize == -1 ? '无限制' : fillSourceForm.objectSize }} {{
+                <el-form-item :label="$ts('loadGroup.objectSizeLimit')">
+                  <span>{{ fillSourceForm.objectSize == -1 ? $ts('page.noLimit') : fillSourceForm.objectSize }} {{
                     fillSourceForm.unit == 'NULL' ? '' : fillSourceForm.unit }}</span>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="12">
-                <el-form-item label="对象已用数量">
+                <el-form-item :label="$ts('loadGroup.usedCount')">
                   <span v-if="fillSourceForm.usedCount">{{ handleDemi('', '', fillSourceForm.usedCount) }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="对象已用容量">
+                <el-form-item :label="$ts('loadGroup.userSize')">
                   <span>{{ byteConvert(fillSourceForm.usedSpace) }}</span>
-                  <span
-                    v-for="(item,i) in renderUtilityRatio(fillSourceForm,false) "
-                    :key="i"
-                    :style="{color:item.color}"
-                  >
+                  <span v-for="(item, i) in renderUtilityRatio(fillSourceForm, false) " :key="i"
+                    :style="{ color: item.color }">
                     {{ item.val }}
                   </span>
                 </el-form-item>
@@ -515,65 +340,28 @@
             </el-row>
             <el-row>
               <el-col :span="24">
-                <el-table
-                  :data="fillSourceForm.gateway"
-                  style="width: 90%;"
-                >
-                  <el-table-column
-                    prop="gatewayAddress"
-                    label="gateway地址"
-                  />
-                  <el-table-column
-                    prop="gatewayStatus"
-                    label="服务状态"
-                    align="center"
-                  >
+                <el-table :data="fillSourceForm.gateway" style="width: 90%;">
+                  <el-table-column prop="gatewayAddress" :label="$ts('loadGroup.gatewayAddress')" />
+                  <el-table-column prop="gatewayStatus" :label="$ts('loadGroup.gatewayStatus')" align="center">
                     <template slot-scope="scope">
-                      <span
-                        v-if="scope.row.gatewayStatus"
-                        class="green"
-                      >正常</span>
-                      <span
-                        v-else
-                        class="red"
-                      >异常</span>
+                      <span v-if="scope.row.gatewayStatus" class="green">{{ $ts('page.normal') }}</span>
+                      <span v-else class="red">{{ $ts('page.abnormal') }}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column
-                    prop="resourceStatus"
-                    label="资源连接状态"
-                    align="center"
-                  >
+                  <el-table-column prop="resourceStatus" :label="$ts('loadGroup.resourceStatus')" align="center">
                     <template slot-scope="scope">
-                      <span
-                        v-if="scope.row.resourceStatus === 'OK'"
-                        class="green"
-                      >
+                      <span v-if="scope.row.resourceStatus === 'OK'" class="green">
                         {{ storageTypeEnu[scope.row.resourceStatus] }}
                       </span>
-                      <span
-                        v-else-if="storageTypeEnu[scope.row.resourceStatus]"
-                        class="red"
-                      >
+                      <span v-else-if="storageTypeEnu[scope.row.resourceStatus]" class="red">
                         {{ storageTypeEnu[scope.row.resourceStatus] }}
                       </span>
-                      <span
-                        v-else
-                        class="red"
-                      >
-                        <span
-                          class="red"
-                          type="text"
-                        >
-                          资源异常
+                      <span v-else class="red">
+                        <span class="red" type="text">
+                          {{ $ts('loadGroup.resourceAbnormal') }}
                         </span>
-                        <el-popover
-                          popper-class="text-wrap"
-                          placement="top-start"
-                          title="异常详情"
-                          trigger="hover"
-                          :content="String(scope.row.resourceStatus).trim()"
-                        >
+                        <el-popover popper-class="text-wrap" placement="top-start" :title="$ts('loadGroup.errorDetail')"
+                          trigger="hover" :content="String(scope.row.resourceStatus).trim()">
                           <svg slot="reference" class="icon icon-question" aria-hidden="true">
                             <use xlink:href="#icon-question" />
                           </svg>
@@ -590,83 +378,56 @@
               class="blue"
               @click="updateForm(fillSourceForm, true)"
             >{{
-              $ts('modify') }}</el-button>
+              $ts('page.modify') }}</el-button>
             <el-button
               v-access="'admin:DeleteStorageDeviceController'"
               type="danger"
               class="red"
               @click="handleDel('object', { row: fillSourceForm })"
-            >{{ $ts('delete') }}</el-button>
+            >{{ $ts('page.delete') }}</el-button>
           </div> -->
           </el-form>
         </div>
       </div>
     </div>
-    <el-dialog
-      :title="isAdd?'创建负载':'修改负载'"
-      :visible.sync="flag"
-      width="1000px"
-    >
-      <el-form
-        ref="form"
-        class="createForm"
-        :model="form"
-        label-width="150px"
-      >
+    <el-dialog :title="isAdd ? $ts('loadGroup.create') : $ts('loadGroup.modify')" :visible.sync="flag" width="1000px">
+      <el-form ref="form" class="createForm" :model="form" label-width="150px">
         <el-row>
           <el-col :span="12">
-            <el-form-item
-              label="负载组名称"
-              prop="loadGroupName"
-              :rules="rules.loadGroupName"
-            >
-              <el-input
-                v-model="form.loadGroupName"
-                placeholder="请输入2-64位英文、中文、数字、'_-."
-              />
+            <el-form-item :label="$ts('loadGroup.loadGroupName')" prop="loadGroupName" :rules="rules.loadGroupName">
+              <el-input v-model="form.loadGroupName" :placeholder="$ts('loadGroup.loadGroupReg')" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item>
               <span slot="label">
-                默认负载
+                {{ $ts('loadGroup.defaultLoad') }}
                 <!-- <el-popover placement="top" width="250" trigger="hover" style="position:absolute;">
                   <p style="line-height:1.6;">默认负载在其他负载生效时将不可更改</p>
                   <i slot="reference" class="fa fa-question-circle" style="margin-left:10px" />
                 </el-popover> -->
               </span>
               <!-- :disabled="isAdd?disableDefaultGroup:currentDefaultGroup" -->
-              <el-radio-group
-                v-model="form.defaultGroup"
-                :disabled="disableDefaultGroup"
-              >
-                <el-radio :label="true">是</el-radio>
-                <el-radio :label="false">否</el-radio>
+              <el-radio-group v-model="form.defaultGroup" :disabled="disableDefaultGroup">
+                <el-radio :label="true">{{ $ts('page.Yes') }}</el-radio>
+                <el-radio :label="false">{{ $ts('page.No') }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item
-              label="是否启用"
-              prop="isOpen"
-            >
+            <el-form-item :label="$ts('page.isEnable')" prop="isOpen">
               <el-radio-group v-model="form.isOpen">
-                <el-radio label="OPEN">是</el-radio>
-                <el-radio label="CLOSE">否</el-radio>
+                <el-radio label="OPEN">{{ $ts('page.Yes') }}</el-radio>
+                <el-radio label="CLOSE">{{ $ts('page.No') }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item prop="loadStrategy">
               <span slot="label">
-                策略类型
-                <el-popover
-                  placement="top"
-                  width="250"
-                  trigger="hover"
-                  style="position:absolute;"
-                >
-                  <p style="line-height:1.6;">AUTO:按资源的剩余空间大小自动调整写入的分配比例</p>
+                {{ $ts('loadGroup.loadStrategy') }}
+                <el-popover placement="top" width="250" trigger="hover" style="position:absolute;">
+                  <p style="line-height:1.6;">{{ $ts('loadGroup.loadStrategyTip') }}</p>
                   <svg style="margin-left:10px" slot="reference" class="icon icon-question" aria-hidden="true">
                     <use xlink:href="#icon-question" />
                   </svg>
@@ -678,51 +439,23 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item
-              label="负载用途"
-              prop="groupTag"
-            >
-              <el-radio-group
-                v-model="form.groupTag"
-                class="radio_storageType"
-                @change="changeGroupTag"
-              >
-                <el-radio
-                  :disabled="disableGroupTag('WARM')"
-                  label="WARM"
-                >温存储</el-radio>
-                <el-radio
-                  :disabled="disableGroupTag('DATA')"
-                  label="DATA"
-                >冷存储</el-radio>
-                <el-radio
-                  :disabled="disableGroupTag('GLACIER')"
-                  label="GLACIER"
-                >冰存储</el-radio>
-                <el-radio
-                  :disabled="disableGroupTag('RESTORE')"
-                  label="RESTORE"
-                >解冻存储</el-radio>
+            <el-form-item :label="$ts('loadGroup.groupTag')" prop="groupTag">
+              <el-radio-group v-model="form.groupTag" class="radio_storageType" @change="changeGroupTag">
+                <el-radio :disabled="disableGroupTag('WARM')" label="WARM">{{ $ts('loadGroup.warmLoad') }}</el-radio>
+                <el-radio :disabled="disableGroupTag('DATA')" label="DATA">{{ $ts('loadGroup.dataLoad') }}</el-radio>
+                <el-radio :disabled="disableGroupTag('GLACIER')" label="GLACIER">{{ $ts('loadGroup.glacierLoad')
+                  }}</el-radio>
+                <el-radio :disabled="disableGroupTag('RESTORE')" label="RESTORE">{{ $ts('loadGroup.restoreLoad')
+                  }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item
-              label="负载类型"
-              prop="storageType"
-            >
-              <el-radio-group
-                v-model="form.storageType"
-                :disabled="!isAdd"
-              >
-                <el-radio
-                  v-if="form.groupTag==='DATA'||form.groupTag==='RESTORE'"
-                  label="S3"
-                >S3</el-radio>
-                <el-radio
-                  v-if="form.groupTag==='WARM'||form.groupTag==='RESTORE'"
-                  label="WARM"
-                >温存储</el-radio>
+            <el-form-item :label="$ts('loadGroup.loadType')" prop="storageType">
+              <el-radio-group v-model="form.storageType" :disabled="!isAdd">
+                <el-radio v-if="form.groupTag === 'DATA' || form.groupTag === 'RESTORE'" label="S3">S3</el-radio>
+                <el-radio v-if="form.groupTag === 'WARM' || form.groupTag === 'RESTORE'" label="WARM">{{
+                  $ts('loadGroup.warmLoad') }}</el-radio>
                 <!-- <el-radio
                   v-if="form.groupTag!=='GLACIER'"
                   label="NAS"
@@ -731,10 +464,8 @@
                   v-if="form.groupTag==='DATA'"
                   label="IAM"
                 >AWS</el-radio> -->
-                <el-radio
-                  v-if="form.groupTag==='GLACIER'"
-                  label="GLACIER"
-                >冰存储</el-radio>
+                <el-radio v-if="form.groupTag === 'GLACIER'" label="GLACIER">{{ $ts('loadGroup.glacierLoad')
+                  }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -742,74 +473,40 @@
         <el-row>
           <el-form-item>
             <span slot="label">
-              选择资源
-              <el-popover
-                placement="top"
-                width="300"
-                trigger="hover"
-                style="position:absolute;"
-              >
-                <p style="line-height:1.6;">负载组中不能添加不同类型的资源</p>
-                <p style="line-height:1.6;">直接存储的负载组不支持缓存类型的资源</p>
-                <p style="line-height:1.6;">缓存的负载组不支持直接存储类型的资源</p>
+              {{ $ts('loadGroup.selectResource') }}
+              <el-popover placement="top" width="300" trigger="hover" style="position:absolute;">
+                <p style="line-height:1.6;">{{ $ts('loadGroup.addResourceTip') }}</p>
+                <p style="line-height:1.6;">{{ $ts('loadGroup.addResourceTip2') }}</p>
+                <p style="line-height:1.6;">{{ $ts('loadGroup.addResourceTip3') }}</p>
                 <svg style="margin-left:10px" slot="reference" class="icon icon-question" aria-hidden="true">
                   <use xlink:href="#icon-question" />
                 </svg>
               </el-popover>
             </span>
-            <el-button
-              class="golden"
-              @click="addResourceSel"
-            >添加</el-button>
+            <el-button class="golden" @click="addResourceSel">{{ $ts('page.add') }}</el-button>
           </el-form-item>
           <el-form-item>
-            <div
-              v-for="(item,index) in form.items"
-              :key="index"
-            >
+            <div v-for="(item, index) in form.items" :key="index">
               <div class="selResourceContainer">
-                <el-form-item
-                  label=" "
-                  :prop="`items.${index}.resourceId`"
-                  :rules="rules.resourceId"
-                  required
-                >
-                  <el-cascader
-                    :ref="`cascader${index}`"
-                    v-model="item.resourceId"
-                    popper-class="resCascader"
-                    placeholder="请选择存储资源"
-                    :show-all-levels="false"
-                    :options="disableCascader()"
-                    :props="{ expandTrigger:'hover' }"
-                    clearable
-                  >
+                <el-form-item label=" " :prop="`items.${index}.resourceId`" :rules="rules.resourceId" required>
+                  <el-cascader :ref="`cascader${index}`" v-model="item.resourceId" popper-class="resCascader"
+                    :placeholder="$ts('loadGroup.selectResourceRequired')" :show-all-levels="false"
+                    :options="disableCascader()" :props="{ expandTrigger: 'hover' }" clearable>
                     <template slot-scope="{ node, data }">
-                      <el-popover
-                        placement="top-start"
-                        title="已关联负载组"
-                        trigger="hover"
-                      >
-                        <p
-                          v-for="t in data.loadGroupName"
-                          :key="t"
-                          style="line-height:1.6;"
-                        >{{ t }}</p>
-                        <i v-if="data.loadGroupName" :style="[{opacity:data.loadGroupName.length?1:0},'position:relative,right:5px']" slot="reference" class="el-icon-warning-outline"></i>
+                      <el-popover placement="top-start" :title="$ts('loadGroup.resourceConfigLoadGroup')"
+                        trigger="hover">
+                        <p v-for="t in data.loadGroupName" :key="t" style="line-height:1.6;">{{ t }}</p>
+                        <i v-if="data.loadGroupName"
+                          :style="[{ opacity: data.loadGroupName.length ? 1 : 0 }, 'position:relative,right:5px']"
+                          slot="reference" class="el-icon-warning-outline"></i>
                       </el-popover>
-                      <span
-                        v-if="node.isLeaf"
-                        style="margin-right:10px"
-                      >
-                        <el-tag class="cascaderTag"> {{ data.storageType === 'IAM' ? 'AWS': data.storageType === 'GLACIER'?'冰存储': data.storageType }} </el-tag>
-                        <el-tag
-                          v-if="data.type==='CACHE'"
-                          class="cascaderTag"
-                        >缓存</el-tag>
-                        <el-tag
-                          v-else-if="data.storageType==='NAS'"
-                          class="cascaderTag"
-                        >直接存储</el-tag>
+                      <span v-if="node.isLeaf" style="margin-right:10px">
+                        <el-tag class="cascaderTag"> {{ data.storageType === 'IAM' ? 'AWS' : data.storageType ===
+                          'GLACIER' ? $ts('loadGroup.glacierLoad') : data.storageType }} </el-tag>
+                        <el-tag v-if="data.type === 'CACHE'" class="cascaderTag">{{ $ts('loadGroup.cacheLoad')
+                          }}</el-tag>
+                        <el-tag v-else-if="data.storageType === 'NAS'" class="cascaderTag">{{
+                          $ts('loadGroup.defaultUseType') }}</el-tag>
                       </span>
                       <span>{{ data.label }}</span>
                       <span v-if="!node.isLeaf"> ({{ renderAccessResCount(data.children) }}) </span>
@@ -817,78 +514,42 @@
                   </el-cascader>
                 </el-form-item>
                 <el-form-item :prop="`items.${index}.isOpen`">
-                  <el-radio-group
-                    v-model="item.isOpen"
-                    style="margin-left:30px"
-                  >
-                    <el-radio :label="1">启用</el-radio>
-                    <el-radio :label="0">禁用</el-radio>
+                  <el-radio-group v-model="item.isOpen" style="margin-left:30px">
+                    <el-radio :label="1">{{ $ts('page.enable') }}</el-radio>
+                    <el-radio :label="0">{{ $ts('page.disable') }}</el-radio>
                   </el-radio-group>
                 </el-form-item>
                 <el-form-item :prop="`items.${index}.threshold`" :rules="rules.threshold">
-                  <el-input
-                    :value="item.threshold"
-                    style="width: 150px"
-                    placeholder="请输入资源阈值"
-                    @input="(val)=>handleValueChange(val,item)"
-                  >
+                  <el-input :value="item.threshold" style="width: 150px"
+                    :placeholder="$ts('loadGroup.thresholdRequired')" @input="(val) => handleValueChange(val, item)">
                     <template slot="suffix">%</template>
                   </el-input>
 
-                  <el-popover
-                    placement="top"
-                    width="220px"
-                    trigger="hover"
-                    style="position:absolute;"
-                  >
-                    <p style="line-height:1.6;">容量到达资源的阈值后不能写入</p>
-                    <svg v-if="index==0" style="margin-left:10px" slot="reference" class="icon icon-question" aria-hidden="true">
+                  <el-popover placement="top" width="220px" trigger="hover" style="position:absolute;">
+                    <p style="line-height:1.6;">{{ $ts('loadGroup.thresholdTip') }}</p>
+                    <svg v-if="index == 0" style="margin-left:10px" slot="reference" class="icon icon-question"
+                      aria-hidden="true">
                       <use xlink:href="#icon-question" />
                     </svg>
                   </el-popover>
                 </el-form-item>
-                <i
-                  v-if="form.items.length!==1"
-                  class="el-icon-delete delBtn"
-                  @click="delResourceSel(index)"
-                />
+                <i v-if="form.items.length !== 1" class="el-icon-delete delBtn" @click="delResourceSel(index)" />
               </div>
             </div>
           </el-form-item>
         </el-row>
       </el-form>
-      <div
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button
-          class="blue"
-          @click="flag = false"
-        >{{ $ts('button.cancel') }}</el-button>
-        <el-button
-          class="golden"
-          type="primary"
-          @click="confirmCreate"
-        >{{ $ts('button.confirm') }}</el-button>
+      <div slot="footer" class="dialog-footer">
+        <el-button class="blue" @click="flag = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button class="golden" type="primary" @click="confirmCreate">{{ $ts('page.confirm') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog
-      title="删除负载组"
-      :visible.sync="deleteFlag"
-      width="650px"
-    >
-      <p>{{ `删除如下负载组: ${selectLoadGroup.loadGroupName}` }}
+    <el-dialog :title="$ts('loadGroup.delete')" :visible.sync="deleteFlag" width="650px">
+      <p>{{ `${$ts('loadGroup.deleteTip')}: ${selectLoadGroup.loadGroupName}` }}
       </p>
       <div slot="footer">
-        <el-button
-          class="blue"
-          @click="deleteFlag = false"
-        >{{ $ts('cancel') }}</el-button>
-        <el-button
-          type="primary"
-          class="golden"
-          @click="confirmDelete"
-        >{{ $ts('delete') }}</el-button>
+        <el-button class="blue" @click="deleteFlag = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button type="primary" class="golden" @click="confirmDelete">{{ $ts('page.delete') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -906,7 +567,7 @@ import {
 } from '@/api/storage'
 export default {
   name: 'LoadGroup',
-  data() {
+  data () {
     return {
       listenGroupType: '',
       stateParams: {},
@@ -919,8 +580,8 @@ export default {
       deleteFlag: false,
       filterSelResource: [],
       storageTypeEnu: {
-        'OK': '连接正常',
-        'NULL': ' 未检测'
+        'OK': this.$ts('loadGroup.connectNormal'),
+        'NULL': this.$ts('loadGroup.notCheck'),
       },
       treeOpt: {
         label: 'loadGroupName',
@@ -955,16 +616,16 @@ export default {
         loadGroupName: {
           required: true,
           trigger: ['blur', 'change'],
-          message: "请输入2-64位英文、中文、数字、'_-.'",
+          message: this.$ts('loadGroup.loadGroupReg'),
           pattern: /^[a-zA-Z0-9_\u4e00-\u9fa5\-\.]{2,64}$/
         },
         threshold: {
           trigger: ['blur', 'change'],
           validator: (data, val, cb) => {
             if (!val) {
-              return cb('请输入资源阈值')
+              return cb(this.$ts('loadGroup.thresholdRequired'))
             } else if (Number(val) < 1 || Number(val) > 100) {
-              return cb('资源阈值范围1-100')
+              return cb(this.$ts('loadGroup.threholdRange'))
             } else {
               return cb()
             }
@@ -973,7 +634,7 @@ export default {
         resourceId: [{
           validator: (data, val, cb) => {
             if (!val || (val && !val.length)) {
-              return cb('请选择存储资源')
+              return cb(this.$ts('loadGroup.selectResourceRequired'))
             } else {
               return cb('')
             }
@@ -989,14 +650,14 @@ export default {
     }
   },
   computed: {
-    isAdd() {
+    isAdd () {
       return this.opt === 'add'
     },
     // judgeSelItem () {
     //   const exist = this.resourceListSel.find(x => this.selResourceId && this.selResourceId.indexOf(x.storageName) > -1)
     //   return exist
     // },
-    disableDefaultGroup() {
+    disableDefaultGroup () {
       // CACHE、DATA
       // this.form.groupTag
       // 新增和修改区分
@@ -1044,23 +705,23 @@ export default {
         }
       }
     },
-    choseResource() {
+    choseResource () {
       return this.form.items.filter(x => x.resourceId.length)
     },
-    enableNasResource() {
+    enableNasResource () {
       return this.$route.query.nas === 'true'
     }
   },
   watch: {
-    'form.groupTag'(cur, pre) {
+    'form.groupTag' (cur, pre) {
       this.listenGroupType = pre
     },
-    'form.storageType'(cur, pre) {
+    'form.storageType' (cur, pre) {
       if (this.changeStorageTypeFlag || !this.isAdd) return
       if (this.choseResource && this.choseResource.length) {
-        this.$confirm('更改负载类型将会清空已选择的资源,是否继续?', '请确认', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
+        this.$confirm(this.$ts('loadGroup.changeStorageTypeTip'), {
+          confirmButtonText: this.$ts('page.confirm'),
+          cancelButtonText: this.$ts('page.cancel'),
           type: 'warning',
           dangerouslyUseHTMLString: true
         }).then(() => {
@@ -1078,23 +739,23 @@ export default {
         })
       }
     },
-    filterText(val) {
+    filterText (val) {
       this.$refs.tree.filter(val)
     },
-    flag(val) {
+    flag (val) {
       if (val && this.isAdd) {
         this.initForm()
       }
     }
   },
-  mounted() {
+  mounted () {
     this.init()
   },
   methods: {
-    renderStorageType(type) {
+    renderStorageType (type) {
       return type === 'IAM' ? 'AWS' : type
     },
-    disableGroupTag(type) {
+    disableGroupTag (type) {
       if (!this.isAdd) return true
       else {
         const { defaultGroup } = this.form
@@ -1107,20 +768,20 @@ export default {
         }
       }
     },
-    clearStateParams() {
+    clearStateParams () {
       this.stateParams = {}
     },
-    transRegion(val) {
-      if (val === 'ap-east-1') return '亚太地区(香港)'
+    transRegion (val) {
+      if (val === 'ap-east-1') return this.$ts('loadGroup.HK')
       else return '-'
     },
-    changeGroupTag(val) {
+    changeGroupTag (val) {
       // 修改用途得同步负载类型、同步资源交给watch监听 负载类型
       const change = this.listenGroupType
       if (this.choseResource && this.choseResource.length) {
-        this.$confirm('更改负载用途将会清空已选择的资源,是否继续?', '请确认', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
+        this.$confirm(this.$ts('loadGroup.changeGroupTagTip'), {
+          confirmButtonText: this.$ts('page.confirm'),
+          cancelButtonText: this.$ts('page.cancel'),
           type: 'warning',
           dangerouslyUseHTMLString: true
         }).then(() => {
@@ -1177,11 +838,11 @@ export default {
         }
       }
     },
-    renderAccessResCount(arr) {
+    renderAccessResCount (arr) {
       return arr.filter(x => !x.disabled).length
     },
     // 选择资源 添加 资源限制
-    disableCascader() {
+    disableCascader () {
       const choseResource = this.form.items.map(x => x.resourceId[1]) // 已添加到配置项的资源
       // 筛选可选资源条件、重复添加及对应类型
       return this.filterSelResource.map(x => {
@@ -1219,7 +880,7 @@ export default {
     //     })
     //   }, 100)
     // },
-    filterMethods(node, val) {
+    filterMethods (node, val) {
       return node.label.toLowerCase().indexOf(val.toLowerCase()) > -1
     },
     // judgeGroupTag (val) {
@@ -1227,8 +888,8 @@ export default {
     // const choseResource = this.form.items.filter(x => x.resourceId)
     // if (choseResource.length) {
     //   this.$confirm('更改负载类型将会清空已选择的资源,是否继续?', '请确认', {
-    //     confirmButtonText: '确定',
-    //     cancelButtonText: '取消',
+    //     confirmButtonText: this.$ts('page.confirm'),
+    //     cancelButtonText: this.$ts('page.cancel'),
     //     type: 'warning',
     //     dangerouslyUseHTMLString: true
     //   }).then(() => {
@@ -1256,19 +917,19 @@ export default {
     //   }
     // }
     // },
-    handleDemi(row, _, value) {
+    handleDemi (row, _, value) {
       value = value === '0' ? '0' : String(value)
       const reg = /\B(?=(\d{3})+(?!\d))/g
       return value.replace(reg, ',')
     },
-    renderUtilityRatio(data, showForLoadGroup = true) {
+    renderUtilityRatio (data, showForLoadGroup = true) {
       const {
         usedSpace,
         unit,
         objectSize
       } = data
       if (String(objectSize) === '-1') {
-        return showForLoadGroup ? [{ val: '无容量上限' }] : [{ val: '' }]
+        return showForLoadGroup ? [{ val: this.$ts('loadGroup.noSizeLimit') }] : [{ val: '' }]
       } else {
         const quotaSize = unit === 'GB' ? objectSize * 1024 ** 3 : objectSize * 1024 ** 4
         const val = (usedSpace / quotaSize) * 100
@@ -1283,7 +944,7 @@ export default {
           }]
       }
     },
-    renderLoadGroupStatus(stauts) {
+    renderLoadGroupStatus (stauts) {
       let icon = ''
       switch (stauts) {
         case 'GREEN':
@@ -1297,7 +958,7 @@ export default {
       }
       return '#icon-' + icon
     },
-    init() {
+    init () {
       this.loading = true
       const ResourceList = listStorageDevice()
       const GroupList = getGroupList()
@@ -1315,7 +976,10 @@ export default {
           })
           if (res[0].value) {
             if (res[0].value.data && !res[0].value.data.length) {
-              return this.$notify.error('请先创建存储资源')
+              return this.$msg({
+                type: 'error',
+                text: this.$ts('loadGroup.createResourceTip')
+              })
             } else {
               this.mapResourceItems(res[0].value.data)
             }
@@ -1376,19 +1040,19 @@ export default {
     //   })
     // },
     // 展示负载组（默认及选中）
-    renderGroupTag(type) {
+    renderGroupTag (type) {
       switch (type) {
         case 'DATA':
-          return '冷存储'
+          return this.$ts('loadGroup.dataLoad')
         case 'GLACIER':
-          return '冰存储'
+          return this.$ts('loadGroup.glacierLoad')
         case 'WARM':
-          return '温存储'
+          return this.$ts('loadGroup.warmLoad')
         case 'RESTORE':
-          return '解冻存储'
+          return this.$ts('loadGroup.restoreLoad')
       }
     },
-    showDefaultGroup() {
+    showDefaultGroup () {
       if (this.tableData && this.tableData.length) {
         // console.log(JSON.stringify(this.selectLoadGroup), 'selectLoadGroup')
         if (JSON.stringify(this.selectLoadGroup) !== '{}') {
@@ -1427,7 +1091,7 @@ export default {
         }
       }
     },
-    mapResourceItems(val) {
+    mapResourceItems (val) {
       // val: 设备资源list添加映射、展示loadGroup下资源名称及相关信息
       if (val && val.length) {
         this.resourceListSel = val.reduce((pre, cur) => {
@@ -1555,10 +1219,10 @@ export default {
       // }
       // keepLoad()
     },
-    delResourceSel(index) {
+    delResourceSel (index) {
       this.form.items.splice(index, 1)
     },
-    addResourceSel() {
+    addResourceSel () {
       this.form.items.push({
         resourceId: '',
         isOpen: 1,
@@ -1566,10 +1230,10 @@ export default {
       })
     },
 
-    handleValueChange(value, item) {
+    handleValueChange (value, item) {
       item.threshold = value.replace(/(^0+)|\D/g, '').replace(/^[1-9]\d{2,}$|^100\d+$/, '100')
     },
-    initForm() {
+    initForm () {
       this.form = {
         loadGroupName: '',
         loadStrategy: 'AUTO',
@@ -1588,7 +1252,7 @@ export default {
         this.$refs['form'].clearValidate()
       })
     },
-    filterNode(value, data) {
+    filterNode (value, data) {
       if (!value) return true
       else {
         // 跳转页面后、需把路由信息记录、用于首次过滤、后续过滤不经过此处过滤
@@ -1609,7 +1273,7 @@ export default {
     },
     // 负载组详情展示
     // 展示资源、启用禁用、 默认负载auto、策略类型auto
-    getInfo(node) {
+    getInfo (node) {
       this.selectLoadGroup = node
       const keys = Object.keys(node)
       if (keys.includes('loadStrategy')) {
@@ -1632,7 +1296,7 @@ export default {
       // 校验是否是负载组、匹配负载组才不展示默认资源或设备
       // 触发负载的点击、获取详情后、通过父组件刷新或其他事件后展示该负载、
     },
-    renderGatewayStatus(node) {
+    renderGatewayStatus (node) {
       this.innerFormLoading = true
       const allStatus = node.items && node.items.map(x => {
         return new Promise((resolve, rej) => {
@@ -1684,7 +1348,7 @@ export default {
         this.innerFormLoading = false
       })
     },
-    judgeChange(row) {
+    judgeChange (row) {
       // 更改开关
       const index = this.fillForm.items.findIndex(x => {
         return x.resourceId === row.resourceId
@@ -1692,7 +1356,7 @@ export default {
       this.$set(this.fillForm.items[index], 'status', !row.status)
       // fetch api
     },
-    updateForm() {
+    updateForm () {
       this.opt = 'update'
       this.flag = true
       // console.log(this.selectLoadGroup, '1233')
@@ -1738,7 +1402,7 @@ export default {
       this.requestForm = JSON.parse(JSON.stringify(this.form))
       // console.log(this.selectLoadGroup, '1233', this.form)
     },
-    confirmDelete() {
+    confirmDelete () {
       deleteLoadGroup({
         loadGroupId: this.selectLoadGroup.id
       }).then(res => {
@@ -1747,7 +1411,7 @@ export default {
         this.init()
       })
     },
-    confirmCreate() {
+    confirmCreate () {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           const {
@@ -1780,7 +1444,7 @@ export default {
             putLoadGroup(obj).then(res => {
               this.$msg({
                 type: 'success',
-                text: '操作成功'
+                text: this.$ts('page.responseSuccess')
               })
               this.flag = false
             }).finally(() => {
@@ -1864,7 +1528,7 @@ export default {
                     putLoadGroup(obj).then(() => {
                       this.$msg({
                         type: 'success',
-                        text: '操作成功'
+                        text: this.$ts('page.responseSuccess')
                       })
                       this.flag = false
                     }).finally(() => {
@@ -1875,7 +1539,7 @@ export default {
                   putLoadGroup(obj).then(() => {
                     this.$msg({
                       type: 'success',
-                      text: '操作成功'
+                      text: this.$ts('page.responseSuccess')
                     })
                     this.flag = false
                   }).finally(() => {
@@ -1893,7 +1557,7 @@ export default {
                       }).then(() => {
                         this.$msg({
                           type: 'success',
-                          text: '操作成功'
+                          text: this.$ts('page.responseSuccess')
                         })
                         this.flag = false
                       }).finally(() => {
@@ -1909,7 +1573,7 @@ export default {
                     }).then(() => {
                       this.$msg({
                         type: 'success',
-                        text: '操作成功'
+                        text: this.$ts('page.responseSuccess')
                       })
                       this.flag = false
                     }).finally(() => {
@@ -1926,7 +1590,7 @@ export default {
                     }).then(() => {
                       this.$msg({
                         type: 'success',
-                        text: '操作成功'
+                        text: this.$ts('page.responseSuccess')
                       })
                       this.flag = false
                     })
@@ -1941,7 +1605,7 @@ export default {
                   }).then(() => {
                     this.$msg({
                       type: 'success',
-                      text: '操作成功'
+                      text: this.$ts('page.responseSuccess')
                     })
                     this.flag = false
                   })
@@ -1958,7 +1622,7 @@ export default {
                   if (flag) {
                     this.$msg({
                       type: 'success',
-                      text: '操作成功'
+                      text: this.$ts('page.responseSuccess')
                     })
                     this.flag = false
                   }
@@ -1986,14 +1650,17 @@ export default {
   padding: 20px;
   box-sizing: border-box;
   width: 100%;
+
   .content {
     flex: 1;
     min-height: 300px;
   }
+
   .tree {
     width: 35%;
     min-width: 400px;
     margin-right: 30px;
+
     .el-tree-node__content {
       height: 45px;
       box-sizing: border-box;
@@ -2016,7 +1683,7 @@ export default {
       }
 
       .el-tree-node.is-current {
-        & > .el-tree-node__content {
+        &>.el-tree-node__content {
           background-color: #19272e;
 
           span {
@@ -2031,12 +1698,14 @@ export default {
       width: 100%;
       font-size: 15px;
       overflow: hidden;
+
       .resourceContainer {
         // padding-left: 20px;
         display: flex;
         box-sizing: border-box;
         width: 100%;
         align-items: center;
+
         // justify-content: space-between;
         .resourcename {
           max-width: 60%;
@@ -2044,21 +1713,25 @@ export default {
           width: 60%;
           position: relative;
           top: -2px;
-          & + div {
+
+          &+div {
             margin-left: 5%;
             min-width: 195px;
             padding-bottom: 6px;
           }
+
           .el-tag {
             width: 72px;
           }
         }
       }
+
       .deviceContainer {
         display: flex;
         box-sizing: border-box;
         align-items: center;
         width: 100%;
+
         // justify-content: space-between;
         .deviceIcon {
           max-width: 60%;
@@ -2067,13 +1740,15 @@ export default {
           position: relative;
           top: -2px;
           line-height: 25px;
-          & + div {
+
+          &+div {
             min-width: 195px;
             margin-left: calc(5% + 8px);
             // padding-bottom: 6px;
           }
         }
       }
+
       .el-tag {
         color: #e39606 !important;
         background-color: #384348;
@@ -2091,14 +1766,17 @@ export default {
         color: unset;
         font-size: 23px;
       }
+
       .block {
         width: 20px;
         height: auto;
         display: inline-block;
       }
+
       .tagContainer {
         float: right;
       }
+
       .deviceIcon {
         position: relative;
         top: -2px;
@@ -2137,45 +1815,55 @@ export default {
   label.el-form-item__label {
     margin-left: -20px;
   }
-  .radio_storageType{
-    .el-radio{
+
+  .radio_storageType {
+    .el-radio {
       margin-right: 12px;
     }
   }
+
   .selResourceContainer {
     margin-bottom: 15px;
     display: flex;
     // justify-content: space-between;
     align-items: center;
+
     .el-form-item {
-      .el-cascader{
-        width: 85%!important;
+      .el-cascader {
+        width: 85% !important;
       }
-      .el-radio{
+
+      .el-radio {
         margin-right: 20px;
       }
+
       &:first-of-type {
         width: 43%;
+
         .el-cascader {
           width: 100%;
         }
+
         label {
           width: 0px !important;
           margin-left: -5px;
           padding-right: 0;
-          & + .el-form-item__content {
+
+          &+.el-form-item__content {
             margin-left: 10px !important;
           }
         }
       }
     }
   }
+
   .delBtn {
     margin-left: 100px;
     color: #ff8746;
     cursor: pointer;
   }
 }
+
 ::v-deep .expandDeviceForm {
   padding: 20px;
   margin: 0 0 20px 20px;
@@ -2188,11 +1876,13 @@ export default {
     justify-content: space-between;
     width: 100%;
   }
+
   .el-form-item__content {
     word-break: break-word;
     flex: 1;
     margin-right: 15px;
   }
+
   label.el-form-item__label {
     width: 50% !important;
     min-width: 120px;
@@ -2201,9 +1891,11 @@ export default {
     color: #97a2a8 !important;
     font-weight: bold;
   }
+
   .btn {
     margin: 30px 0 0 0px;
   }
+
   .el-table {
     background-color: #36464e !important;
   }
@@ -2212,7 +1904,8 @@ export default {
 :deep(.innerTable) {
   .el-table__header-wrapper {
     display: none;
-    & + .el-table__body-wrapper {
+
+    &+.el-table__body-wrapper {
       table {
         tbody {
           tr td {
@@ -2221,6 +1914,7 @@ export default {
               box-sizing: border-box;
             }
           }
+
           .cell {
             padding: 0;
           }

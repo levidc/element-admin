@@ -1,168 +1,80 @@
-
 <template>
   <div class="mv_10">
     <div class="bucket-detail">
       <div class="bucket-detail-inner">
         <div class="bucket-panel">
-          <div
-            id="versionControl-info-field"
-            class="param-box"
-          >
+          <div id="versionControl-info-field" class="param-box">
             <div class="param-hd">
-              <h3 id="versionControl">QoS配置 </h3>
-              <el-button
-                v-if="edit&&!loading"
-                class="modBtn"
-                type="text"
-                @click="edit=false"
-              >
-                <span style="color: #ff8746;position: relative;top:3px">编辑</span>
+              <h3 id="versionControl">{{ $ts('route.BucketQoS') }}</h3>
+              <el-button v-if="edit && !loading" class="modBtn" type="text" @click="edit = false">
+                <span style="color: #ff8746;position: relative;top:3px"> {{ $ts('page.edit') }}</span>
               </el-button>
             </div>
-            <div
-              v-loading="loading"
-              class="param-bd"
-              style="padding-left: 17px;"
-            >
-              <el-form
-                ref="ruleForm"
-                :rules="rules"
-                :model="form"
-                style="display: flex;flex-direction: column; align-items: flex-start;margin-left: -53px;margin-top: 23px;"
-              >
-                <el-form-item
-                  label="QoS管理开关"
-                  prop="openQos"
-                  class="styleWidth"
-                >
-                  <el-radio-group
-                    v-model="form.openQos"
-                    :disabled="edit"
-                  >
-                    <el-radio :label="true">开
+            <div v-loading="loading" class="param-bd" style="padding-left: 17px;">
+              <el-form ref="ruleForm" :rules="rules" :model="form"
+                style="display: flex;flex-direction: column; align-items: flex-start;margin-left: -53px;margin-top: 23px;">
+                <el-form-item :label="$ts('bucket.qosCtrl')" prop="openQos" class="styleWidth">
+                  <el-radio-group v-model="form.openQos" :disabled="edit">
+                    <el-radio :label="true">{{ $ts('page.open') }}
                     </el-radio>
-                    <el-radio :label="false">关
+                    <el-radio :label="false">{{ $ts('page.close') }}
                     </el-radio>
                   </el-radio-group>
                 </el-form-item>
                 <template>
-                  <el-form-item
-                    label="上传带宽"
-                    prop="uploadThroughput"
-                    class="styleWidth"
-                  >
-                    <QuickDefault
-                      v-model="form.uploadThroughput"
-                      :default-value="-1"
-                      label-of-default="无限制"
-                      label-of-value="限制"
-                      class="defaultstyle"
-                      :disabled="edit"
-                    >
-                      <template #default="{ data,onChange:onNetworkThroughPutChange }">
-                        <el-input
-                          v-model="data.value"
-                          placeholder="请输入1-1000的整数"
-                          :disabled="edit"
-                          @input="value => {data.value = value.replace(/(^0+)|\D/g, '').replace(/^[1-9]\d{3,}$|^1000\d+$/, '1000');onNetworkThroughPutChange();}"
-                        >
+                  <el-form-item :label="$ts('bucket.uploadThroughput')" prop="uploadThroughput" class="styleWidth">
+                    <QuickDefault v-model="form.uploadThroughput" :default-value="-1"
+                      :label-of-default="$ts('page.noLimit')" :label-of-value="$ts('page.custom')" class="defaultstyle"
+                      :disabled="edit">
+                      <template #default="{ data, onChange: onNetworkThroughPutChange }">
+                        <el-input v-model="data.value"
+                          :placeholder="$ts('validate.positiveNumberRange', { min: 1, max: 1000 })" :disabled="edit"
+                          @input="value => { data.value = value.replace(/(^0+)|\D/g, '').replace(/^[1-9]\d{3,}$|^1000\d+$/, '1000'); onNetworkThroughPutChange(); }">
                           <template slot="append">Mbps</template>
                         </el-input>
                       </template>
                     </QuickDefault>
                   </el-form-item>
-                  <el-form-item
-                    label="下载带宽"
-                    prop="downloadThroughput"
-                    class="styleWidth"
-                  >
-                    <QuickDefault
-                      v-model="form.downloadThroughput"
-                      :default-value="-1"
-                      label-of-default="无限制"
-                      label-of-value="限制"
-                      class="defaultstyle"
-                      :disabled="edit"
-                    >
+                  <el-form-item :label="$ts('bucket.downloadThroughput')" prop="downloadThroughput" class="styleWidth">
+                    <QuickDefault v-model="form.downloadThroughput" :default-value="-1"
+                      :label-of-default="$ts('page.noLimit')" :label-of-value="$ts('page.custom')" class="defaultstyle"
+                      :disabled="edit">
                       <template #default="{ data, onChange: onInputTpsChange }">
-                        <el-input
-                          v-model="data.value"
-                          placeholder="请输入1-1000的整数"
-                          :disabled="edit"
-                          @input="value => {data.value = value.replace(/(^0+)|\D/g, '').replace(/^[1-9]\d{3,}$|^1000\d+$/, '1000');onInputTpsChange();}"
-                        >
+                        <el-input v-model="data.value"
+                          :placeholder="$ts('validate.positiveNumberRange', { min: 1, max: 1000 })" :disabled="edit"
+                          @input="value => { data.value = value.replace(/(^0+)|\D/g, '').replace(/^[1-9]\d{3,}$|^1000\d+$/, '1000'); onInputTpsChange(); }">
                           <template slot="append">Mbps</template>
                         </el-input>
                       </template>
                     </QuickDefault>
                   </el-form-item>
-                  <el-form-item
-                    label="上传TPS"
-                    prop="uploadTps"
-                    class="styleWidth"
-                  >
-                    <QuickDefault
-                      v-model="form.uploadTps"
-                      :default-value="-1"
-                      label-of-default="无限制"
-                      label-of-value="限制"
-                      class="defaultstyle"
-                      :disabled="edit"
-                    >
+                  <el-form-item :label="$ts('bucket.uploadTps')" prop="uploadTps" class="styleWidth">
+                    <QuickDefault v-model="form.uploadTps" :default-value="-1" :label-of-default="$ts('page.noLimit')"
+                      :label-of-value="$ts('page.custom')" class="defaultstyle" :disabled="edit">
                       <template #default="{ data, onChange: onUploadTpsChange }">
-                        <el-input
-                          v-model="data.value"
-                          style="top:-5px"
-                          placeholder="请输入1-1000的整数"
-                          :disabled="edit"
-                          @input="value => {data.value = value.replace(/(^0+)|\D/g, '').replace(/^[1-9]\d{3,}$|^1000\d+$/, '1000');onUploadTpsChange();}"
-                        />
+                        <el-input v-model="data.value" style="top:-5px"
+                          :placeholder="$ts('validate.positiveNumberRange', { min: 1, max: 1000 })" :disabled="edit"
+                          @input="value => { data.value = value.replace(/(^0+)|\D/g, '').replace(/^[1-9]\d{3,}$|^1000\d+$/, '1000'); onUploadTpsChange(); }" />
                       </template>
                     </QuickDefault>
                   </el-form-item>
-                  <el-form-item
-                    label="下载TPS"
-                    class="styleWidth"
-                    prop="downloadTps"
-                  >
-                    <QuickDefault
-                      v-model="form.downloadTps"
-                      :default-value="-1"
-                      label-of-default="无限制"
-                      label-of-value="限制"
-                      class="defaultstyle"
-                      :disabled="edit"
-                    >
+                  <el-form-item :label="$ts('bucket.downloadTps')" class="styleWidth" prop="downloadTps">
+                    <QuickDefault v-model="form.downloadTps" :default-value="-1" :label-of-default="$ts('page.noLimit')"
+                      :label-of-value="$ts('page.custom')" class="defaultstyle" :disabled="edit">
                       <template #default="{ data, onChange: onDownloadTpsChange }">
-                        <el-input
-                          v-model="data.value"
-                          style="top:-5px"
-                          placeholder="请输入1-1000的整数"
-                          :disabled="edit"
-                          @input="value => {data.value = value.replace(/(^0+)|\D/g, '').replace(/^[1-9]\d{3,}$|^1000\d+$/, '1000');onDownloadTpsChange();}"
-                        />
+                        <el-input v-model="data.value" style="top:-5px"
+                          :placeholder="$ts('validate.positiveNumberRange', { min: 1, max: 1000 })" :disabled="edit"
+                          @input="value => { data.value = value.replace(/(^0+)|\D/g, '').replace(/^[1-9]\d{3,}$|^1000\d+$/, '1000'); onDownloadTpsChange(); }" />
                       </template>
                     </QuickDefault>
                   </el-form-item>
                 </template>
               </el-form>
             </div>
-            <div
-              v-show="!edit"
-              class="versionControlBtnWrap"
-            >
-              <el-button
-                type="default"
-                class="blue"
-                size="mini"
-                @click="init()"
-              >取消</el-button>
-              <el-button
-                type="primary"
-                class="golden"
-                size="mini"
-                @click="doSave();"
-              >应用更改</el-button>
+            <div v-show="!edit" class="versionControlBtnWrap">
+              <el-button type="default" class="blue" size="mini" @click="init()">{{ $ts('page.cancel') }}</el-button>
+              <el-button type="primary" class="golden" size="mini" @click="doSave();"> {{ $ts('page.applySet')
+                }}</el-button>
             </div>
           </div>
         </div>
@@ -180,13 +92,13 @@ export default {
     QuickDefault
   },
   filters: {},
-  data() {
+  data () {
     const checkBandWidth = (rule, data, callback) => {
       // const numberReg = /^\d+$|^\d+[.]?\d+$/
       if (data == '') {
-        return callback(new Error('请输入有效数值'))
+        return callback(new Error(this.$ts('bucket.validNum')))
       } else if (data > 1000) {
-        return callback(new Error('最大数值不超过1000'))
+        return callback(new Error(this.$ts('validate.limitRange', { range: 1000 })))
       } else {
         callback()
       }
@@ -210,11 +122,11 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.init()
   },
   methods: {
-    init() {
+    init () {
       this.loading = true
       this.edit = true
       getBucketQos({ bucketName: this.$route.params.id }).then((res) => {
@@ -228,19 +140,19 @@ export default {
         } = result
         Object.assign(
           this.form, {
-            uploadThroughput,
-            downloadThroughput,
-            uploadTps,
-            downloadTps,
-            openQos
-          }
+          uploadThroughput,
+          downloadThroughput,
+          uploadTps,
+          downloadTps,
+          openQos
+        }
         )
       })
         .finally(() => {
           this.loading = false
         })
     },
-    doSave() {
+    doSave () {
       this.$refs['ruleForm'].validate(valid => {
         if (valid) {
           const {
@@ -261,7 +173,7 @@ export default {
             .then(() => {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
             }).finally(() => {
               this.init()
@@ -277,6 +189,7 @@ export default {
 .versionControlBtnWrap {
   margin-top: 50px;
 }
+
 ::v-deep .el-input__inner {
   height: 30px !important;
 }
@@ -319,10 +232,12 @@ export default {
   margin-top: 6px;
   height: 15px;
 }
+
 :deep(.value-input) {
   position: relative;
   top: 2px !important;
 }
+
 ::v-deep .el-form-item__error {
   width: 300px !important;
   left: 159px !important;

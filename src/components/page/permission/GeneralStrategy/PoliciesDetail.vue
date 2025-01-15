@@ -6,62 +6,66 @@
           <use xlink:href="#icon-policy" />
         </svg>
         <span class="mr_20">
-          IAM 策略:
+          {{ $ts('policies.IAM') }}
           <el-popover placement="right" width="700" trigger="hover">
-            <p style="line-height:1.6;">名称不能与模板策略名称重复、模板名称如下</p>
+            <p style="line-height:1.6;">{{ $ts('policies.templateNameTip') }}</p>
             <div class="templateN">
               <p v-for="item in templatePolicy" :key="item">
                 <span>{{ item }}</span>
               </p>
             </div>
-            <i slot="reference" class="el-icon-question" />
+            <svg slot="reference" class="icon icon-question" aria-hidden="true">
+              <use xlink:href="#icon-question" />
+            </svg>
           </el-popover>
         </span>
         <span v-if="showMenuItem">{{ currentName }}</span>
-        <el-input v-else v-model="policyName" placeholder="名称输入英文及数字，长度限制为8-40位" size="small" class="mt_10" clearable
-          style="width: 400px;margin-left: 20px;" :disabled="!editable" />
+        <el-input v-else v-model="policyName" :placeholder="$ts('policies.policyNameReg')" size="small" class="mt_10"
+          clearable style="width: 400px;margin-left: 20px;" :disabled="!editable" />
       </div>
       <div class="right">
-        <!--  @click="$router.push({ name: 'Policy' })" -->
-        <!-- <el-button type="primary" class="golden medium">取消</el-button> -->
-        <el-tooltip content="返回管控操作权限" placement="top" effect="dark">
+        <el-tooltip :content="$ts('page.return')" placement="top" effect="dark">
           <svg class="icon backicon" aria-hidden="true" @click="onBack">
             <use xlink:href="#icon-fanhui" />
           </svg>
         </el-tooltip>
         <!-- showUpNoMenu -->
         <el-button v-if="showUpNoMenu || showCteatePolicyUp && upShowPolicy" type="warning" class="blue medium"
-          size="mini" @click="editable = true; upPolicy()">修改</el-button>
-        <el-button v-if="restShow" class="right ml_10 medium" size="mini" @click="cancelMod">重置</el-button>
+          size="mini" @click="editable = true; upPolicy()">{{ $ts('page.modify') }}</el-button>
+        <el-button v-if="restShow" class="right ml_10 medium" size="mini" @click="cancelMod">{{ $ts('page.reset')
+          }}</el-button>
         <el-button v-show="editable || showCteatePolicyUp && saveShow" v-access="'admin:CreatePolicy'" type="primary"
-          class="golden medium" size="mini" @click="onSave">保存策略</el-button>
+          class="golden medium" size="mini" @click="onSave">{{ $ts('policies.save') }}</el-button>
         <el-button v-if="showMenu" v-access="'admin:DeletePolicy'" type="danger" class="red medium"
-          @click="deleteFlag = true">删除</el-button>
+          @click="deleteFlag = true">{{ $ts('page.delete') }}</el-button>
       </div>
     </div>
     <Strategy v-if="judgeType" ref="strategy" v-model="strategy" :editable="editable" :action-config="actionConfig"
       height="100%" statement-action-merge-group statement-hide-principal :statement-action-label-width="'150px'"
       :statement-action-item-width="'300px'" :statement-condition-symbols="conditionSymbols"
       :statement-condition-keys="conditionKeys" show-all-permissiion-to-star />
-    <el-dialog :title="(currentName == 'create' ? '创建策略:' : '修改策略:') + policyName" :visible.sync="flag" width="40%">
+    <el-dialog
+      :title="(currentName == 'create' ? $ts('policies.createPolicy') : $ts('policies.modifyPolicy')) + policyName"
+      :visible.sync="flag" width="40%">
       <div style="width: 100%">
         <json-viewer :value="jsonTxt" preview-mode boxed :show-array-index="false"
-          :copyable="{ 'copyText': '复制', 'copiedText': '已复制' }" theme="my-awesome-json-theme" />
+          :copyable="{ 'copyText': $ts('page.copy'), 'copiedText': $ts('page.copied') }"
+          theme="my-awesome-json-theme" />
       </div>
       <div slot="footer">
-        <el-button class="blue" @click="flag = false">{{ $ts("cancel") }}</el-button>
-        <el-button class="golden" @click="submitCreate">{{ $ts("true") }}</el-button>
+        <el-button class="blue" @click="flag = false">{{ $ts("page.cancel") }}</el-button>
+        <el-button class="golden" @click="submitCreate">{{ $ts("page.confirm") }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="删除策略" :visible.sync="deleteFlag" width="650px">
-      <p>删除当前策略:
+    <el-dialog :title="$ts('policies.deletePolicy')" :visible.sync="deleteFlag" width="650px">
+      <p>{{ $ts('policies.deleteFollowPolicy') }}:
         <span style="color:#ff8746">
           {{ policyName }}
         </span>
       </p>
       <div slot="footer">
-        <el-button @click="deleteFlag = false">{{ $ts('cancel') }}</el-button>
-        <el-button class="golden" @click="deletePolicy">{{ $ts('delete') }}</el-button>
+        <el-button @click="deleteFlag = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button class="golden" @click="deletePolicy">{{ $ts('page.delete') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -84,10 +88,10 @@ export default {
       restShow: false,
       upShowPolicy: true,
       conditionSymbols: [
-        { value: 'IpAddress', label: '(IP地址) 是' },
-        { value: 'NotIpAddress', label: '(IP地址) 否' }
+        { value: 'IpAddress', label: this.$ts('policies.IpAddress') },
+        { value: 'NotIpAddress', label: this.$ts('policies.NotIpAddress') }
       ],
-      conditionKeys: [{ value: 'aws:SourceIp', label: 'IP地址' }],
+      conditionKeys: [{ value: 'aws:SourceIp', label: this.$ts('policies.awsSourceIp') }],
       strategy: {
         name: '',
         Statement: []
@@ -302,7 +306,7 @@ export default {
           const arr = [
             {
               key: 'admin',
-              label: '系统权限',
+              label: this.$ts('policies.admin'),
               children: []
             }
             // {
@@ -314,7 +318,7 @@ export default {
           const systemPermission = this.$store.state.user.systemPermission
           const s3Permission = [{
             key: 's3',
-            label: 's3权限',
+            label: this.$ts('policies.s3'),
             children: []
           }]
           for (let i = 0; i < res.data.length; i++) {
@@ -374,7 +378,7 @@ export default {
               this.$router.push({ name: 'GeneralStrategy' })
               return this.$msg({
                 type: 'error',
-                text: '当前策略不存在'
+                text: this.$ts('error.policiesNotExist')
               })
             }
             this.strategy = policyDetail
@@ -446,7 +450,7 @@ export default {
         .then(res => {
           this.$msg({
             type: 'success',
-            text: this.$ts('response.success')
+            text: this.$ts('page.responseSuccess')
           })
           sessionStorage.setItem('policyDetail', null)
           this.$router.push({ name: 'GeneralStrategy' })
@@ -509,7 +513,7 @@ export default {
         .then(res => {
           this.$msg({
             type: 'success',
-            text: this.$ts('response.success')
+            text: this.$ts('page.responseSuccess')
           })
           this.$router.push({
             name: 'GeneralStrategy'
@@ -523,7 +527,7 @@ export default {
       const nameReg = /^[0-9a-zA-Z]{8,40}$/.test(this.policyName)
       if (!nameReg) {
         return this.$message.error(
-          '策略名只能输入英文数字，长度限制为8-40位'
+          this.$ts('policies.policyNameReg')
         )
       }
       // else if (this.templatePolicy.includes(this.policyName)) {
@@ -533,10 +537,10 @@ export default {
         // 用户 Principal参数去除
         delete this.strategy.Statement[i].Principal
         if (!this.strategy.Statement[i].Resource.length) {
-          return this.$message.error('每个授权语句至少需要设置一个资源配置')
+          return this.$message.error(this.$ts('policies.resourceTip'))
         }
         if (!this.strategy.Statement[i].Action.length) {
-          return this.$message.error('每个授权语句至少需要分配一个权限')
+          return this.$message.error(this.$ts('policies.actionTip'))
         }
       }
       // console.log("pass");

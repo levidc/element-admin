@@ -4,115 +4,63 @@
       <el-row class="mb_15">
         <el-button v-access="'admin:CreateUser'" size="small" type="primary" class="golden"
           @click="type = 'add'; isCreate = true">
-          {{ $ts('CREATE') }}
+          {{ $ts("page.create") }}
         </el-button>
-        <!-- <el-button v-access="'admin:UpdateUser'" size="small" type="primary" class="blue" :disabled="!oneSelection"
-          @click="modUser">
-          {{ $ts('modify') }}
-        </el-button>
-        <el-button v-access="'admin:AddGroupToUser'" type="primary" class="blue" :disabled="!oneSelection"
-          @click="type = 'addToGroup'; addGroupDialog = true">
-          {{ $ts('add.to.group') }}
-        </el-button> -->
-        <el-tooltip content="刷新" placement="top" effect="dark">
+        <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
           <i class="el-icon-refresh right" @click="refreshList()" />
         </el-tooltip>
-        <el-input v-model="searchVal" class="search_style right" placeholder="用户名称过滤" width="14" clearable />
+        <el-input v-model="searchVal" class="search_style right" :placeholder="$ts('group.searchUsername')" width="14"
+          clearable />
       </el-row>
 
       <UserTable ref="usertable" :search-val="searchVal" @handleSelection="handleSelection" />
     </div>
-    <!-- 添加user -->
-    <el-dialog class="addUser" :title="isAdd ? $ts('user.model.create') : $ts('user.model.modify')"
-      :visible.sync="isCreate" width="650px" @open="dialogOpen('tableFocus')">
+    <el-dialog class="addUser" :title="isAdd ? $ts('user.createUser') : $ts('user.modifyUser')" :visible.sync="isCreate"
+      width="650px" @open="dialogOpen('tableFocus')">
       <el-form ref="createForm" :model="createForm" :rules="rules" size="mini" label-width="100px" style="padding:0 5%">
-        <el-form-item label="用户类型" required>
+        <el-form-item :label="$ts('user.userType')" required>
           <el-radio-group v-model="createForm.userType">
-            <el-radio :label="1">普通用户</el-radio>
-            <el-radio :label="2">工号用户</el-radio>
+            <el-radio :label="1">{{ $ts('user.commonUser') }}</el-radio>
+            <el-radio :label="2">{{ $ts('user.jobNumberUser') }}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item :label="`${$ts('user.name')}(AK)`" prop="name">
+        <el-form-item :label="`${$ts('user.username')}(AK)`" prop="name">
           <el-input ref="tableFocus" v-model="createForm.name" clearable :readonly="!isAdd"
-            placeholder="用户名只能输入小写英文、数字及中划线、下划线，长度限制为3-63位。" auto-complete="new-password" />
+            :placeholder="$ts('user.userNameReg')" auto-complete="new-password" />
         </el-form-item>
         <el-form-item v-if="isAdd && createForm.userType == 1" :label="$ts('user.pwd')" prop="pwd">
           <el-input v-model="createForm.pwd" type="password" clearable auto-complete="new-password"
-            placeholder="密码建议包含英文大小写、数字及特殊字符中的3种及以上。" />
+            :placeholder="$ts('user.pwsReg')" />
         </el-form-item>
         <el-tabs v-model="activeName" @tab-click="handleScroll">
-          <el-tab-pane label="策略" name="policies">
-            <el-form-item label="选择策略名" class="policyLabel">
-              <el-input v-model="policyName" placeholder="策略名过滤" clearable />
+          <el-tab-pane :label="$ts('group.policies')" name="policies">
+            <el-form-item :label="$ts('group.selectPolicy')" class="policyLabel">
+              <el-input v-model="policyName" :placeholder="$ts('group.searchPolicyName')" clearable />
             </el-form-item>
             <el-table ref="policyTable" border class="policyData" :data="policyData" max-height="400"
               :row-key="(row) => row.name" :default-sort="{ order: 'ascending', prop: 'name' }"
               @selection-change="handlePolicyChange">
               <el-table-column type="selection" reserve-selection align="center" width="100px"
                 :selectable="checkBasePolicy" />
-              <el-table-column prop="name" label="策略名" sortable />
+              <el-table-column prop="name" :label="$ts('group.policyName')" sortable />
             </el-table>
           </el-tab-pane>
-          <el-tab-pane label="用户组" name="groups">
-            <el-form-item label="选择用户组" class="policyLabel">
-              <el-input v-model="groupName" placeholder="用户组名过滤" clearable />
+          <el-tab-pane :label="$ts('group.userGroup')" name="groups">
+            <el-form-item :label="$ts('group.selectGroup')" class="policyLabel">
+              <el-input v-model="groupName" :placeholder="$ts('group.groupNameSearch')" clearable />
             </el-form-item>
             <el-table ref="groupTable" border :data="groupData" class="groupData" max-height="400"
               :row-key="(row) => row.groupName" :default-sort="{ order: 'ascending', prop: 'groupName' }"
               @selection-change="handleGroupChange">
               <el-table-column type="selection" width="100px" reserve-selection align="center" />
-              <el-table-column prop="groupName" label="组名" sortable />
+              <el-table-column prop="groupName" :label="$ts('group.groupName')" sortable />
             </el-table>
           </el-tab-pane>
-          <!-- <el-tab-pane label="访问凭证" name="access">
-            <el-form-item label="选择凭证">
-              <el-input v-model="accessName" placeholder="凭证名过滤" />
-            </el-form-item>
-            <el-table
-              ref="accessTable"
-              border
-              :data="accessData"
-              class="groupData"
-              max-height="300"
-              :row-key="(row)=>row.key"
-              @selection-change="handleAccessChange"
-            >
-              <el-table-column
-                type="selection"
-                width="55"
-                reserve-selection
-                align="center"
-              />
-              <el-table-column prop="key" label="凭证key" />
-            </el-table>
-          </el-tab-pane> -->
         </el-tabs>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button class="blue" @click="isCreate = false">{{ $ts('button.cancel') }}</el-button>
-        <el-button type="primary" class="golden" @click="createUser">{{ $ts('button.confirm') }}</el-button>
-
-      </div>
-    </el-dialog>
-
-    <!-- 添加进用户组 -->
-    <el-dialog :title="$ts('add.to.group')" :visible.sync="addGroupDialog" width="750px">
-      <div class="flexMenu">
-        <span>所选用户</span>
-        <el-input :value="userNameStr" readonly />
-      </div>
-      <div class="flexMenu">
-        <span>分配用户组</span>
-        <el-input v-model="groupName" placeholder="用户组名过滤" />
-      </div>
-      <el-table ref="groupTable" border :data="groupData" class="groupData" max-height="300"
-        :row-key="(row) => row.groupName" @selection-change="handleGroupChange">
-        <el-table-column type="selection" width="55" reserve-selection align="center" />
-        <el-table-column prop="groupName" label="组名" />
-      </el-table>
-      <div slot="footer" class="dialog-footer">
-        <el-button class="blue" @click="addGroupDialog = false">{{ $ts('button.cancel') }}</el-button>
-        <el-button type="primary" class="golden" @click="addToGroup">{{ $ts('button.confirm') }}</el-button>
+        <el-button class="blue" @click="isCreate = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button type="primary" class="golden" @click="createUser">{{ $ts('page.confirm') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -133,26 +81,9 @@ export default {
     const checkNameReg = (rule, data, callback) => {
       const reg = /^[0-9a-z_-]{3,63}$/
       if (!reg.test(data)) {
-        return callback('用户名只能输入小写英文、数字及中划线、下划线，长度限制为3-63位')
+        return callback(this.$ts('user.userNameReg'))
       }
       return callback()
-    }
-    // const checkPasswordReg = (rule, data, callback) => {
-    //   const reg = /[\u4e00-\u9fa5]/
-    //   if (reg.test(data)) {
-    //     return callback('密码不能包含中文')
-    //   } else if (data.length < 11 || data.length > 40) { // 跟华泰系统匹配，密码长度最低要求11位
-    //     return callback('密码长度限制为11-40位')
-    //   }
-    //   return callback()
-    // }
-    const checkPositiveNumber = (rule, data, callback) => {
-      data = isNaN(Number(data)) ? -1 : Number(data)
-      if (data < 0) {
-        return callback('请填入正整数')
-      } else {
-        return callback()
-      }
     }
     return {
       type: 'add',
@@ -164,7 +95,6 @@ export default {
       searchVal: '',
       activeName: '',
       isCreate: false,
-      addGroupDialog: false,
       createForm: {
         name: '',
         pwd: '',
@@ -190,7 +120,7 @@ export default {
         name: [
           {
             required: true,
-            message: this.$ts('user.rule.user.name'),
+            message: this.$ts('user.usernamnRequired'),
             trigger: ['blur', 'change']
           },
           { validator: checkNameReg, trigger: ['blur', 'change'] }
@@ -198,20 +128,11 @@ export default {
         pwd: [
           {
             required: true,
-            message: this.$ts('please.enter.pwd'),
+            message: this.$ts('user.pwdRequired'),
             trigger: ['blur', 'change']
           },
           { validator: checkPasswordReg, trigger: ['blur', 'change'] }
-          // { validator: this.nameValidate(2, 64), trigger: ['blur', 'change'] }
         ],
-        bucketLogic: {
-          validator: checkPositiveNumber,
-          trigger: ['blur', 'change']
-        },
-        objectCount: {
-          validator: checkPositiveNumber,
-          trigger: ['blur', 'change']
-        }
       }
     }
   },
@@ -268,14 +189,6 @@ export default {
         this.listGroup()
       }
     },
-    addGroupDialog (val) {
-      if (val) {
-        this.listGroup()
-      } else {
-        this.groupName = ''
-        this.$refs.groupTable.clearSelection()
-      }
-    }
   },
   mounted () { },
   methods: {
@@ -290,38 +203,7 @@ export default {
       this.type = ''
       this.isCreate = true
     },
-    addToGroup () {
-      const groups = this.selectedGroup.map(item => item.groupName)
-      // 传递多个userName
-      // const userName = this.multipleSelection.reduce((pre, cur) => {
-      //   return pre + cur.userName
-      // }, '')
-      addGroupToUser({
-        groups,
-        userName: this.multipleSelection[0].userName
-      })
-        .then(res => {
-          this.$msg({
-            type: 'success',
-            text: this.$ts('response.success')
-          })
-          this.addGroupDialog = false
-        })
-        .catch(err => {
-          console.error(err)
-        })
-        .finally(() => {
-          this.$refs['usertable'].listUser()
-        })
-      // console.log(
-      //   this.selectedGroup,
-      //   '选择group',
-      //   this.multipleSelection,
-      //   '选择user'
-      // )
-    },
     createUser () {
-      // 创建用户
       this.$refs['createForm'].validate(valid => {
         if (valid) {
           const groups = this.selectedGroup.map(item => {
@@ -348,7 +230,7 @@ export default {
             }).then(res => {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
               this.isCreate = false
               this.refreshList()
@@ -365,7 +247,7 @@ export default {
             createUser(reqParam).then(res => {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
               this.isCreate = false
               this.refreshList()

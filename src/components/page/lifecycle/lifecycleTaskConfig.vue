@@ -4,8 +4,8 @@
       <div v-show="!loading">
         <div class="globalstyle">
           <h2 style="font-size: 17px;">配置</h2>
-          <span v-show="isshow" class="editestyle" @click="edit()"><a>编辑</a></span>
-          <el-tooltip content="刷新" placement="top" effect="dark">
+          <span v-show="isshow" class="editestyle" @click="edit()"><a> {{ $ts('page.edit') }}</a></span>
+          <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
             <i class="el-icon-refresh" @click="getConfig()" />
           </el-tooltip>
         </div>
@@ -37,8 +37,8 @@
               <span>定时任务</span>
             </div>
             <el-radio-group v-model="form.enableTask" :disabled="disableds">
-              <el-radio :label="false">关闭</el-radio>
-              <el-radio :label="true">开启</el-radio>
+              <el-radio :label="false">{{ $ts('page.close') }}</el-radio>
+              <el-radio :label="true">{{ $ts('page.open') }}</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item v-show="form.enableTask" label="物理删除任务执行时间" class="paddingForm">
@@ -121,7 +121,7 @@ export default {
           {
             trigger: ['change', 'blur'], validator: (_, data, callback) => {
               if (data === '') {
-                return callback('请输入有效的数值')
+                return callback(this.$ts('bucket.validNum'))
               } else {
                 return callback()
               }
@@ -390,7 +390,7 @@ export default {
         // if (res.msg === 'success') {
         //   this.$msg({
         //     type: 'success',
-        //     text: this.$ts('response.success')
+        //     text: this.$ts('page.responseSuccess')
         //   })
         // }
         // console.log(res)
@@ -425,7 +425,7 @@ export default {
             this.disableds = true
             this.$msg({
               type: 'success',
-              text: this.$ts('response.success')
+              text: this.$ts('page.responseSuccess')
             })
             this.getConfig()
           })
@@ -454,7 +454,7 @@ export default {
         this.disableds = true
         this.$msg({
           type: 'success',
-          text: this.$ts('response.success')
+          text: this.$ts('page.responseSuccess')
         })
         this.getConfig()
       })

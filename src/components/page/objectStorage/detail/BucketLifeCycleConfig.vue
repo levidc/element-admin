@@ -6,9 +6,10 @@
           <div class="param-box">
             <div class="param-hd">
               <h3>生命周期定时任务配置</h3>
-              <el-button v-show="editControl && !loading" type="text" class="link-edit" @click="editControl = !editControl">
+              <el-button v-show="editControl && !loading" type="text" class="link-edit"
+                @click="editControl = !editControl">
                 <span style="color:#ff8746;position: relative;top:3px;">
-                  编辑
+                  {{ $ts('page.edit') }}
                 </span>
               </el-button>
               <div v-loading="loading">
@@ -48,8 +49,8 @@
                       </el-form-item>
                     </div>
                     <el-row>
-                      <el-button class="blue" @click="editControl = !editControl">{{ $ts('button.cancel') }}</el-button>
-                      <el-button class="golden" @click="putLifecycleTaskCron">{{ $ts('button.confirm') }}</el-button>
+                      <el-button class="blue" @click="editControl = !editControl">{{ $ts('page.cancel') }}</el-button>
+                      <el-button class="golden" @click="putLifecycleTaskCron">{{ $ts('page.confirm') }}</el-button>
                     </el-row>
                   </el-form>
                 </div>
@@ -178,7 +179,7 @@ export default {
               if (res.code === '200') {
                 this.$msg({
                   type: 'success',
-                  text: this.$ts('response.success')
+                  text: this.$ts('page.responseSuccess')
                 })
               }
             })

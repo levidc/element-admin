@@ -1,92 +1,38 @@
 <template>
   <div>
-    <el-table
-      v-if="!showFileConfig"
-      id="bdtable"
-      ref="multipleTable"
-      v-loading="loading"
-      stripe
-      border
-      :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
-      tooltip-effect="dark"
-      style="width: 100%"
-      max-height="600"
-      @sort-change="sortFunction"
-    >
+    <el-table v-if="!showFileConfig" id="bdtable" ref="multipleTable" v-loading="loading" stripe border
+      :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)" tooltip-effect="dark"
+      style="width: 100%" max-height="600" @sort-change="sortFunction">
       <el-table-column width="40px">
         <template slot-scope="scope">
-          <el-tooltip
-            placement="top"
-            content="复制"
-            :open-delay="300"
-          >
-            <i
-              class="el-icon-document-copy"
-              style="font-size:15px;"
-              @click="copyCode(scope.row)"
-            />
+          <el-tooltip placement="top" :content="$ts('page.copy')" :open-delay="300">
+            <i class="el-icon-document-copy" style="font-size:15px;" @click="copyCode(scope.row)" />
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column
-        label="文件名"
-        sortable="custom"
-        prop="Prefix"
-        min-width="150px"
-      >
+      <el-table-column :label="$ts('bucket.fileName')" sortable="custom" prop="Prefix" min-width="150px">
         <template slot-scope="scope">
-          <showToolTip
-            v-if="scope.row.type=='f'"
-            :text="scope.row.Key"
-            use-slot
-          >
-            <a
-              slot="data"
-              class="blue"
-              @click="goToFile(scope.row)"
-            >
-              <i
-                class="el-icon-document"
-                aria-hidden="true"
-              />
+          <showToolTip v-if="scope.row.type == 'f'" :text="scope.row.Key" use-slot>
+            <a slot="data" class="blue" @click="goToFile(scope.row)">
+              <i class="el-icon-document" aria-hidden="true" />
               {{ scope.row.Key }}
             </a>
           </showToolTip>
-          <showToolTip
-            v-if="scope.row.type=='d'"
-            :text="scope.row.Prefix"
-            use-slot
-          >
-            <router-link
-              slot="data"
-              class="blue"
-              :to="{name: 'BucketList',query:{file:false,filename:$route.query.filename?$route.query.filename+scope.row.Prefix:scope.row.Prefix}}"
-            >
-              <i
-                class="el-icon-folder"
-                aria-hidden="true"
-              />
+          <showToolTip v-if="scope.row.type == 'd'" :text="scope.row.Prefix" use-slot>
+            <router-link slot="data" class="blue"
+              :to="{ name: 'BucketList', query: { file: false, filename: $route.query.filename ? $route.query.filename + scope.row.Prefix : scope.row.Prefix } }">
+              <i class="el-icon-folder" aria-hidden="true" />
               {{ scope.row.Prefix }}
             </router-link>
           </showToolTip>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="type"
-        label="类型"
-        sortable="custom"
-        width="200px"
-      >
+      <el-table-column prop="type" :label="$ts('tempConfigFile.type')" sortable="custom" width="200px">
         <template slot-scope="scope">
-          {{ scope.row.type=='f'?getFileType(scope.row.Key): '文件夹' }}
+          {{ scope.row.type == 'f' ? getFileType(scope.row.Key) : $ts('bucket.dictionary') }}
         </template>
       </el-table-column>
-      <el-table-column
-        prop="Size"
-        label="大小"
-        sortable="custom"
-        width="200px"
-      >
+      <el-table-column prop="Size" :label="$ts('bucket.fileSize')" sortable="custom" width="200px">
         <template slot-scope="scope">
           {{ byteConvert(scope.row.Size) }}
         </template>
@@ -95,19 +41,14 @@
 				prop="storageType"
 				label="存储类型">
 			</el-table-column> -->
-      <el-table-column
-        prop="LastModified"
-        label="修改时间"
-        sortable="custom"
-        min-width="120px"
-      >
+      <el-table-column prop="LastModified" :label="$ts('bucket.modifyTime')" sortable="custom" min-width="120px">
         <template slot-scope="scope">
           {{ formatDate(scope.row.LastModified) }}
         </template>
       </el-table-column>
 
       <!-- <el-table-column
-        :label="$ts('action')"
+        :label="$ts('page.action')"
       >
         <template slot-scope="scope">
           <div v-if="scope.row.type=='f'">
@@ -125,50 +66,22 @@
       </el-table-column> -->
 
     </el-table>
-    <div
-      v-show="total&&!showFileConfig"
-      class="page_block"
-    >
-      <el-pagination
-        :current-page="currentPage"
-        :page-sizes="[5, 10, 50, 100]"
-        :page-size="pageSize"
-        layout="total,sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+    <div v-show="total && !showFileConfig" class="page_block">
+      <el-pagination :current-page="currentPage" :page-sizes="[5, 10, 50, 100]" :page-size="pageSize"
+        layout="total,sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
     </div>
 
     <!-- 对象详情页 -->
     <!-- <ObjectDetail v-if="showFileConfig" type="content" /> -->
-    <el-dialog
-      title="添加标签"
-      :visible.sync="isAddInfo"
-      width="800px"
-    >
+    <el-dialog title="添加标签" :visible.sync="isAddInfo" width="800px">
       <el-row class="mb_15">
         <el-col :span="24">
-          <el-table
-            ref="multipleTable"
-            :data="tableDataInfo"
-            border
-            tooltip-effect="dark"
-            style="width: 100%"
-          >
+          <el-table ref="multipleTable" :data="tableDataInfo" border tooltip-effect="dark" style="width: 100%">
             <el-table-column prop="tagKey">
-              <template
-                slot="header"
-                slot-scope="scope"
-              >
-                <el-popover
-                  slot="label"
-                  placement="top"
-                  width="300"
-                  :open-delay="500"
-                  trigger="hover"
-                  content="标签键区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符"
-                >
+              <template slot="header" slot-scope="scope">
+                <el-popover slot="label" placement="top" width="300" :open-delay="500" trigger="hover"
+                  content="标签键区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符">
                   <!-- <span slot="reference">名称&nbsp;<i class="fa  fa-question-circle" /></span> -->
                 </el-popover>
               </template>
@@ -176,27 +89,13 @@
                 <p v-show="!scope.row.isEdit">
                   {{ scope.row.tagKey }}
                 </p>
-                <el-input
-                  v-show="scope.row.isEdit"
-                  placeholder=""
-                  :value="scope.row.tagKey"
-                  size="mini"
-                />
+                <el-input v-show="scope.row.isEdit" placeholder="" :value="scope.row.tagKey" size="mini" />
               </template>
             </el-table-column>
             <el-table-column prop="tagValue">
-              <template
-                slot="header"
-                slot-scope="scope"
-              >
-                <el-popover
-                  slot="label"
-                  placement="top"
-                  width="300"
-                  :open-delay="500"
-                  trigger="hover"
-                  content="标签值区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符"
-                >
+              <template slot="header" slot-scope="scope">
+                <el-popover slot="label" placement="top" width="300" :open-delay="500" trigger="hover"
+                  content="标签值区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符">
                   <!-- <span slot="reference">标签值&nbsp;<i class="fa  fa-question-circle" /></span> -->
                 </el-popover>
               </template>
@@ -204,84 +103,35 @@
                 <p v-show="!scope.row.isEdit">
                   {{ scope.row.tagValue }}
                 </p>
-                <el-input
-                  v-show="scope.row.isEdit"
-                  placeholder=""
-                  :value="scope.row.tagValue"
-                  size="mini"
-                />
+                <el-input v-show="scope.row.isEdit" placeholder="" :value="scope.row.tagValue" size="mini" />
               </template>
             </el-table-column>
-            <el-table-column label="操作">
+            <el-table-column :label="$ts('page.action')">
               <template slot-scope="scope">
-                <div
-                  v-show="scope.row.isEdit"
-                  class="tag_table_a"
-                >
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="scope.row.isEdit=!scope.row.isEdit"
-                  >保存</el-button>
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="scope.row.isEdit=!scope.row.isEdit"
-                  >取消</el-button>
+                <div v-show="scope.row.isEdit" class="tag_table_a">
+                  <el-button type="text" size="mini" @click="scope.row.isEdit = !scope.row.isEdit">保存</el-button>
+                  <el-button type="text" size="mini" @click="scope.row.isEdit = !scope.row.isEdit">取消</el-button>
                 </div>
-                <div
-                  v-show="!scope.row.isEdit"
-                  class="tag_table_a"
-                >
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="doEdit(scope.$index, scope.row)"
-                  >编辑</el-button>
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="doDelete(scope.$index, scope.row)"
-                  >删除</el-button>
+                <div v-show="!scope.row.isEdit" class="tag_table_a">
+                  <el-button type="text" size="mini" @click="doEdit(scope.$index, scope.row)">编辑</el-button>
+                  <el-button type="text" size="mini" @click="doDelete(scope.$index, scope.row)">删除</el-button>
                 </div>
               </template>
             </el-table-column>
           </el-table>
-          <p class="moreTag"><el-button
-            type="text"
-            @click="handleAdd()"
-          >添加标签</el-button></p>
+          <p class="moreTag"><el-button type="text" @click="handleAdd()">添加标签</el-button></p>
         </el-col>
       </el-row>
     </el-dialog>
-    <el-dialog
-      title="权限设置"
-      :visible.sync="isSetAccess"
-      width="800px"
-    >
+    <el-dialog title="权限设置" :visible.sync="isSetAccess" width="800px">
       <h3 class="mb_15">公共权限</h3>
       <el-row class="mb_15">
         <el-col :span="24">
-          <el-table
-            ref="multipleTable"
-            :data="tableDataInfo"
-            border
-            tooltip-effect="dark"
-            style="width: 100%"
-          >
+          <el-table ref="multipleTable" :data="tableDataInfo" border tooltip-effect="dark" style="width: 100%">
             <el-table-column prop="tagKey">
-              <template
-                slot="header"
-                slot-scope="scope"
-              >
-                <el-popover
-                  slot="label"
-                  placement="top"
-                  width="300"
-                  :open-delay="500"
-                  trigger="hover"
-                  content="标签键区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符"
-                >
+              <template slot="header" slot-scope="scope">
+                <el-popover slot="label" placement="top" width="300" :open-delay="500" trigger="hover"
+                  content="标签键区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符">
                   <!-- <span slot="reference">名称&nbsp;<i class="fa  fa-question-circle" /></span> -->
                 </el-popover>
               </template>
@@ -289,27 +139,13 @@
                 <p v-show="!scope.row.isEdit">
                   {{ scope.row.tagKey }}
                 </p>
-                <el-input
-                  v-show="scope.row.isEdit"
-                  placeholder=""
-                  :value="scope.row.tagKey"
-                  size="mini"
-                />
+                <el-input v-show="scope.row.isEdit" placeholder="" :value="scope.row.tagKey" size="mini" />
               </template>
             </el-table-column>
             <el-table-column prop="tagValue">
-              <template
-                slot="header"
-                slot-scope="scope"
-              >
-                <el-popover
-                  slot="label"
-                  placement="top"
-                  width="300"
-                  :open-delay="500"
-                  trigger="hover"
-                  content="标签值区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符"
-                >
+              <template slot="header" slot-scope="scope">
+                <el-popover slot="label" placement="top" width="300" :open-delay="500" trigger="hover"
+                  content="标签值区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符">
                   <!-- <span slot="reference">标签值&nbsp;<i class="fa  fa-question-circle" /></span> -->
                 </el-popover>
               </template>
@@ -317,45 +153,18 @@
                 <p v-show="!scope.row.isEdit">
                   {{ scope.row.tagValue }}
                 </p>
-                <el-input
-                  v-show="scope.row.isEdit"
-                  placeholder=""
-                  :value="scope.row.tagValue"
-                  size="mini"
-                />
+                <el-input v-show="scope.row.isEdit" placeholder="" :value="scope.row.tagValue" size="mini" />
               </template>
             </el-table-column>
-            <el-table-column label="操作">
+            <el-table-column :label="$ts('page.action')">
               <template slot-scope="scope">
-                <div
-                  v-show="scope.row.isEdit"
-                  class="tag_table_a"
-                >
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="scope.row.isEdit=!scope.row.isEdit"
-                  >保存</el-button>
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="scope.row.isEdit=!scope.row.isEdit"
-                  >取消</el-button>
+                <div v-show="scope.row.isEdit" class="tag_table_a">
+                  <el-button type="text" size="mini" @click="scope.row.isEdit = !scope.row.isEdit">保存</el-button>
+                  <el-button type="text" size="mini" @click="scope.row.isEdit = !scope.row.isEdit">取消</el-button>
                 </div>
-                <div
-                  v-show="!scope.row.isEdit"
-                  class="tag_table_a"
-                >
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="doEdit(scope.$index, scope.row)"
-                  >编辑</el-button>
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="doDelete(scope.$index, scope.row)"
-                  >删除</el-button>
+                <div v-show="!scope.row.isEdit" class="tag_table_a">
+                  <el-button type="text" size="mini" @click="doEdit(scope.$index, scope.row)">编辑</el-button>
+                  <el-button type="text" size="mini" @click="doDelete(scope.$index, scope.row)">删除</el-button>
                 </div>
               </template>
             </el-table-column>
@@ -366,26 +175,11 @@
       <h3 class="mb_15">用户权限</h3>
       <el-row class="mb_15">
         <el-col :span="24">
-          <el-table
-            ref="multipleTable"
-            :data="tableDataInfo"
-            border
-            tooltip-effect="dark"
-            style="width: 100%"
-          >
+          <el-table ref="multipleTable" :data="tableDataInfo" border tooltip-effect="dark" style="width: 100%">
             <el-table-column prop="tagKey">
-              <template
-                slot="header"
-                slot-scope="scope"
-              >
-                <el-popover
-                  slot="label"
-                  placement="top"
-                  width="300"
-                  :open-delay="500"
-                  trigger="hover"
-                  content="标签键区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符"
-                >
+              <template slot="header" slot-scope="scope">
+                <el-popover slot="label" placement="top" width="300" :open-delay="500" trigger="hover"
+                  content="标签键区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符">
                   <!-- <span slot="reference">名称&nbsp;<i class="fa  fa-question-circle" /></span> -->
                 </el-popover>
               </template>
@@ -393,27 +187,13 @@
                 <p v-show="!scope.row.isEdit">
                   {{ scope.row.tagKey }}
                 </p>
-                <el-input
-                  v-show="scope.row.isEdit"
-                  placeholder=""
-                  :value="scope.row.tagKey"
-                  size="mini"
-                />
+                <el-input v-show="scope.row.isEdit" placeholder="" :value="scope.row.tagKey" size="mini" />
               </template>
             </el-table-column>
             <el-table-column prop="tagValue">
-              <template
-                slot="header"
-                slot-scope="scope"
-              >
-                <el-popover
-                  slot="label"
-                  placement="top"
-                  width="300"
-                  :open-delay="500"
-                  trigger="hover"
-                  content="标签值区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符"
-                >
+              <template slot="header" slot-scope="scope">
+                <el-popover slot="label" placement="top" width="300" :open-delay="500" trigger="hover"
+                  content="标签值区分大小写，支持 中文, a-z, A-Z, 0-9, +, -, _, =, /, ., :, @ 等字符">
                   <!-- <span slot="reference">标签值&nbsp;<i class="fa  fa-question-circle" /></span> -->
                 </el-popover>
               </template>
@@ -421,90 +201,44 @@
                 <p v-show="!scope.row.isEdit">
                   {{ scope.row.tagValue }}
                 </p>
-                <el-input
-                  v-show="scope.row.isEdit"
-                  placeholder=""
-                  :value="scope.row.tagValue"
-                  size="mini"
-                />
+                <el-input v-show="scope.row.isEdit" placeholder="" :value="scope.row.tagValue" size="mini" />
               </template>
             </el-table-column>
-            <el-table-column label="操作">
+            <el-table-column :label="$ts('page.action')">
               <template slot-scope="scope">
-                <div
-                  v-show="scope.row.isEdit"
-                  class="tag_table_a"
-                >
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="scope.row.isEdit=!scope.row.isEdit"
-                  >保存</el-button>
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="scope.row.isEdit=!scope.row.isEdit"
-                  >取消</el-button>
+                <div v-show="scope.row.isEdit" class="tag_table_a">
+                  <el-button type="text" size="mini" @click="scope.row.isEdit = !scope.row.isEdit">保存</el-button>
+                  <el-button type="text" size="mini" @click="scope.row.isEdit = !scope.row.isEdit">取消</el-button>
                 </div>
-                <div
-                  v-show="!scope.row.isEdit"
-                  class="tag_table_a"
-                >
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="doEdit(scope.$index, scope.row)"
-                  >编辑</el-button>
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="doDelete(scope.$index, scope.row)"
-                  >删除</el-button>
+                <div v-show="!scope.row.isEdit" class="tag_table_a">
+                  <el-button type="text" size="mini" @click="doEdit(scope.$index, scope.row)">编辑</el-button>
+                  <el-button type="text" size="mini" @click="doDelete(scope.$index, scope.row)">删除</el-button>
                 </div>
               </template>
             </el-table-column>
           </el-table>
         </el-col>
       </el-row>
-      <div
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button @click="isSetAccess = false;">关闭</el-button>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="isSetAccess = false;">{{ $ts('page.close') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog
-      title="重命名对象"
-      :visible.sync="isRenameFile"
-      width="550px"
-    >
+    <el-dialog title="重命名对象" :visible.sync="isRenameFile" width="550px">
       <el-row>
         <el-col :span="4">
           <div class="rename_icon_wrap">
-            <i
-              class="fa fa-pencil-square-o "
-              aria-hidden="true"
-            />
+            <i class="fa fa-pencil-square-o " aria-hidden="true" />
           </div>
         </el-col>
         <el-col :span="20">
           <p class="rename_word_title">您即将重命名 <strong>{{ oldFileName }}</strong> 为：</p>
-          <el-input
-            ref="tableFocus"
-            v-model="newFileName"
-            size="mini"
-            class="rename_input"
-            auto-complete="off"
-            clearable
-          />
+          <el-input ref="tableFocus" v-model="newFileName" size="mini" class="rename_input" auto-complete="off"
+            clearable />
         </el-col>
       </el-row>
-      <div
-        slot="footer"
-        class="dialog-footer"
-      >
-        <el-button type="primary">{{ $ts('button.confirm') }}</el-button>
-        <el-button @click="isRenameFile = false;">{{ $ts('button.cancel') }}</el-button>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary">{{ $ts('page.confirm') }}</el-button>
+        <el-button @click="isRenameFile = false;">{{ $ts('page.cancel') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -590,7 +324,7 @@ export default {
       if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
         this.$msg({
           type: 'success',
-          text: '复制成功'
+          text: this.$ts('page.copied')
         })
         return navigator.clipboard.writeText(str)
       } else {
@@ -600,7 +334,7 @@ export default {
         textarea.select()
         this.$msg({
           type: 'success',
-          text: '复制成功'
+          text: this.$ts('page.copied')
         })
         return new Promise((res, rej) => {
           document.execCommand('copy') ? res() : rej()
@@ -878,7 +612,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .el-icon-folder,
-.el-icon-document{
+.el-icon-document {
   margin-right: 5px;
   font-size: 14px;
   color: #b3c0cd;

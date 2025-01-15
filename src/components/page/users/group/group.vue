@@ -2,18 +2,19 @@
   <div>
     <div class="page_content_wrap">
       <el-row class="mb_15">
-        <el-button v-access="'admin:AddGroup'" size="small" type="primary" class="golden"
-          @click="visibleFlag = true">创建</el-button>
-        <el-tooltip content="刷新" placement="top" effect="dark">
+        <el-button v-access="'admin:AddGroup'" size="small" type="primary" class="golden" @click="visibleFlag = true">{{
+          $ts('page.create') }}</el-button>
+        <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
           <i class="el-icon-refresh right" @click="searchVal = ''; listGroup()" />
         </el-tooltip>
-        <el-input v-model="searchVal" class="search_style right" placeholder="用户组名过滤" width="14" clearable />
+        <el-input v-model="searchVal" class="search_style right" :placeholder="$ts('group.groupNameSearch')" width="14"
+          clearable />
       </el-row>
       <el-table v-loading="loading" :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)" border
         width="100%" @sort-change="sortFunction">
-        <el-table-column prop="groupName" label="组名" sortable="custom">
+        <el-table-column prop="groupName" :label="$ts('group.name')" sortable="custom">
           <template slot-scope="scope">
-            <el-tooltip placement="top" :content="$ts('view.group.detail')">
+            <el-tooltip placement="top" :content="$ts('group.viewGroupDetail')">
               <a v-access:disable="'admin:GetGroup'" class="blue"
                 @click="$router.push({ name: 'GroupDetail', params: { name: scope.row.groupName } })">
                 {{ scope.row.groupName }}
@@ -21,15 +22,16 @@
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column label="创建时间" sortable="custom" prop="createDate" :formatter="formatterDate" />
-        <el-table-column label="创建人" prop="createUser" sortable="custom" />
-        <el-table-column label="状态" prop="status" sortable="custom">
+        <el-table-column :label="$ts('policies.createTime')" sortable="custom" prop="createDate"
+          :formatter="formatterDate" />
+        <el-table-column :label="$ts('group.createUser')" prop="createUser" sortable="custom" />
+        <el-table-column :label="$ts('page.status')" prop="status" sortable="custom">
           <template slot-scope="scope">
-            <span v-if="scope.row.status == 1" class="status_green">启用</span>
-            <span v-else-if="scope.row.status == 0" class="status_red"> 未启用 </span>
+            <span v-if="scope.row.status == 1" class="status_green">{{ $ts('page.enable') }}</span>
+            <span v-else-if="scope.row.status == 0" class="status_red"> {{ $ts('page.disable') }} </span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="center">
+        <el-table-column :label="$ts('page.action')" align="center">
           <template slot-scope="scope">
             <svg v-access="'admin:DeleteGroup'" @click="selectGroup = scope.row; deleteFlag = true"
               class="icon icon-trash" aria-hidden="true">
@@ -43,52 +45,52 @@
         layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
         @current-change="handleCurrentChange" />
     </div>
-    <el-dialog class="addGroup" title="创建用户组" :visible.sync="visibleFlag" width="650px" @close="resetForm"
-      @open="dialogOpen('groupIpt')">
+    <el-dialog class="addGroup" :title="$ts('group.createGroup')" :visible.sync="visibleFlag" width="650px"
+      @close="resetForm" @open="dialogOpen('groupIpt')">
       <el-form ref="form" :model="form" label-width="120px" :rules="rules">
-        <el-form-item label="用户组名" prop="groupName" class="elinput">
-          <el-input ref="groupIpt" v-model="form.groupName" placeholder="填写组名" clearable />
+        <el-form-item :label="$ts('group.groupName')" prop="groupName" class="elinput">
+          <el-input ref="groupIpt" v-model="form.groupName" :placeholder="$ts('group.iptGroupName')" clearable />
         </el-form-item>
         <el-tabs v-model="activeName" style="margin-top:30px" @tab-click="handleScroll">
-          <el-tab-pane label="用户" name="users">
-            <el-form-item label="选择用户" prop="assignUsers" class="policyLabel">
-              <el-input v-model="form.assignUsers" placeholder="用户名过滤" clearable />
+          <el-tab-pane :label="$ts('user.user')" name="users">
+            <el-form-item :label="$ts('group.selectUser')" prop="assignUsers" class="policyLabel">
+              <el-input v-model="form.assignUsers" :placeholder="$ts('group.searchUsername')" clearable />
             </el-form-item>
             <el-table ref="userTable" border :data="usersData" class="policyData"
               :default-sort="{ prop: 'userName', order: 'ascending' }" :row-key="(row) => row.userName" max-height="400"
               @selection-change="handleSelectionChange">
               <el-table-column width="100px" type="selection" align="center" reserve-selection />
-              <el-table-column label="用户名" prop="userName" sortable />
+              <el-table-column :label="$ts('user.username')" prop="userName" sortable />
             </el-table>
           </el-tab-pane>
-          <el-tab-pane label="策略" name="policies">
-            <el-form-item label="选择策略" prop="assignPolicy" class="policyLabel">
-              <el-input v-model="form.assignPolicy" placeholder="策略名过滤" clearable />
+          <el-tab-pane :label="$ts('group.policies')" name="policies">
+            <el-form-item :label="$ts('group.selectPolicy')" prop="assignPolicy" class="policyLabel">
+              <el-input v-model="form.assignPolicy" :placeholder="$ts('group.searchPolicyName')" clearable />
             </el-form-item>
 
             <el-table ref="policyTable" border :data="policyData" class="policyData"
               :default-sort="{ prop: 'name', order: 'ascending' }" :row-key="(row) => row.name" max-height="400"
               @selection-change="handleSelectionChanges">
               <el-table-column width="100px" type="selection" align="center" reserve-selection />
-              <el-table-column label="策略名" prop="name" sortable />
+              <el-table-column :label="$ts('group.policyName')" prop="name" sortable />
             </el-table>
           </el-tab-pane>
         </el-tabs>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button class="blue" @click="visibleFlag = false">{{ $ts('button.cancel') }}</el-button>
-        <el-button type="primary" class="golden" @click="createGroup">{{ $ts('button.confirm') }}</el-button>
+        <el-button class="blue" @click="visibleFlag = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button type="primary" class="golden" @click="createGroup">{{ $ts('page.confirm') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="删除用户组" :visible.sync="deleteFlag" width="650px">
-      <p>删除当前用户组:
+    <el-dialog :title="$ts('group.deleteGroup')" :visible.sync="deleteFlag" width="650px">
+      <p>{{ $ts('group.deleteCurrentGroup') }}
         <span style="color: #ff8746;">
           {{ selectGroup.groupName }}
         </span>
       </p>
       <div slot="footer">
-        <el-button @click="deleteFlag = false">{{ $ts('cancel') }}</el-button>
-        <el-button type="primary" class="golden" @click="deleteGroup">{{ $ts('delete') }}</el-button>
+        <el-button @click="deleteFlag = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button type="primary" class="golden" @click="deleteGroup">{{ $ts('page.delete') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -104,7 +106,7 @@ export default {
     const checkNameReg = (rule, data, callback) => {
       const reg = /^[0-9a-zA-Z]{8,40}$/
       if (!reg.test(data)) {
-        return callback('用户组名只能输入英文及数字，长度限制为8-40位')
+        return callback(this.$ts('group.groupNameReg'))
       } else {
         return callback()
       }
@@ -258,7 +260,7 @@ export default {
             .then(res => {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
               this.visibleFlag = false
               this.listGroup()
@@ -273,10 +275,10 @@ export default {
       if (this.selectGroup.userList && this.selectGroup.userList.length) {
         this.deleteFlag = false
         this.$confirm(
-          `<p>当前用户组已分配如下用户<b style="color:#ff8746">${this.selectGroup.userList}</b>，需要移除组下<b style="color:#ff8746">所有用户</b>才能删除</p>`,
+          `${this.$ts('group.deleteGroupTip', { error: `<b style="color: #ff8746">${this.selectGroup.userList}</b>`, error2: `<b style="color: #ff8746">${this.$ts('user.allUser')}</b>` })}`,
           {
-            confirmButtonText: '去移除用户',
-            cancelButtonText: '取消',
+            confirmButtonText: this.$ts('group.toRemoveUser'),
+            cancelButtonText: this.$ts('page.cancel'),
             type: 'warning',
             dangerouslyUseHTMLString: true
           }
@@ -291,7 +293,7 @@ export default {
           .then(res => {
             this.$msg({
               type: 'success',
-              text: this.$ts('response.success')
+              text: this.$ts('page.responseSuccess')
             })
             this.listGroup()
           })

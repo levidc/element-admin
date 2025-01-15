@@ -61,7 +61,7 @@
           <el-button class="mr_10" @click="reset">重置</el-button>
           <el-button class="golden mr_10" type="primary" @click="searchParams">查询</el-button>
           <SelectColumns :column-headers="columns" class="mr_10" @hideColumn="hideColumn" />
-          <el-tooltip content="刷新" placement="top" effect="dark">
+          <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
             <i class="el-icon-refresh" @click="handleRefresh" />
           </el-tooltip>
         </div>
@@ -150,12 +150,12 @@
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column slot="action" :label="$ts('action')" fixed="right" width="100px">
+        <el-table-column slot="action" :label="$ts('page.action')" fixed="right" width="100px">
           <template slot-scope="scope">
             <el-dropdown size="small">
               <el-button v-access="'admin:UpdateStorageResourceController' || 'admin:DeleteResourceController'"
                 type="primary" class="blue">
-                {{ $ts('action') }}<i class="el-icon-arrow-down el-icon--right" />
+                {{ $ts('page.action') }}<i class="el-icon-arrow-down el-icon--right" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <!-- 添加下拉菜单禁用、需外层容器添加类名 -->
@@ -302,7 +302,7 @@
       </div>
       <div slot="footer">
         <el-button class="golden" @click="doCreateTask">{{ $ts('true') }}</el-button>
-        <el-button @click="confirmESFlag = false">{{ $ts('cancel') }}</el-button>
+        <el-button @click="confirmESFlag = false">{{ $ts('page.cancel') }}</el-button>
       </div>
     </el-dialog>
     <el-dialog :visible.sync="cloneFlag" width="30%" title="创建克隆任务">
@@ -768,14 +768,14 @@ export default {
     doDelete (row) {
       const { id, taskName } = row
       this.$confirm(`删除如下任务：<b style="color:#ff8736">${taskName}</b>，请确认！`, '', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+        confirmButtonText: this.$ts('page.confirm'),
+        cancelButtonText: this.$ts('page.cancel'),
         dangerouslyUseHTMLString: true
       }).then(() => {
         deleteTask({ taskId: id }).then(() => {
           this.$msg({
             type: 'success',
-            text: this.$ts('response.success')
+            text: this.$ts('page.responseSuccess')
           })
         }).finally(() => {
           this.handleSearchParams(false, true)
@@ -1025,7 +1025,7 @@ export default {
           }).then(() => {
             this.$msg({
               type: 'success',
-              text: '操作成功'
+              text: this.$ts('page.responseSuccess')
             })
             this.cloneFlag = false
           }).finally(() => {
@@ -1077,8 +1077,8 @@ export default {
               this.$confirm('当前备份带宽超出<strong style="color:#d3d6d8">50MB</strong>将会影响相关业务性能，请确认', '提示', {
                 distinguishCancelAndClose: true,
                 dangerouslyUseHTMLString: true,
-                confirmButtonText: '确定',
-                cancelButtonText: '取消'
+                confirmButtonText: this.$ts('page.confirm'),
+                cancelButtonText: this.$ts('page.cancel')
               }).then((res) => {
                 this.confirmESFlag = true
               })
@@ -1098,7 +1098,7 @@ export default {
       createTask(this.reqData).then((res) => {
         this.$msg({
           type: 'success',
-          text: '操作成功'
+          text: this.$ts('page.responseSuccess')
         })
         this.taskFlag = false
       }).finally(() => {
@@ -1234,15 +1234,15 @@ export default {
       const taskId = row.id
       this.$confirm('是否重试当前已失败的任务', `任务名:${row.taskName}`, {
         distinguishCancelAndClose: true,
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
+        confirmButtonText: this.$ts('page.confirm'),
+        cancelButtonText: this.$ts('page.cancel')
       }).then((res) => {
         retryTask({
           taskId
         }).then(() => {
           this.$msg({
             type: 'success',
-            text: this.$ts('response.success')
+            text: this.$ts('page.responseSuccess')
           })
           this.moveBackFlag = false
         }).finally(() => {
@@ -1361,13 +1361,13 @@ export default {
             this.$confirm('当前回迁带宽超出<strong style="color:#d3d6d8">50MB</strong>将会影响相关业务性能，请确认！', '提示', {
               distinguishCancelAndClose: true,
               dangerouslyUseHTMLString: true,
-              confirmButtonText: '确定',
-              cancelButtonText: '取消'
+              confirmButtonText: this.$ts('page.confirm'),
+              cancelButtonText: this.$ts('page.cancel')
             }).then((res) => {
               createMoveBackTasks(data).then(() => {
                 this.$msg({
                   type: 'success',
-                  text: this.$ts('response.success')
+                  text: this.$ts('page.responseSuccess')
                 })
                 this.moveBackFlag = false
               }).finally(() => {
@@ -1378,7 +1378,7 @@ export default {
             createMoveBackTasks(data).then(() => {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
               this.moveBackFlag = false
             }).finally(() => {

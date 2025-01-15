@@ -2,36 +2,38 @@
   <div>
     <div class="page_content_wrap">
       <div class="mb_15 clearfix">
-        <el-button v-access="'admin:CreateBucket'" class="golden" type="primary" @click="handleCreate">{{ $ts("CREATE")
-          }}</el-button>
+        <el-button v-access="'admin:CreateBucket'" class="golden" type="primary" @click="handleCreate">{{
+          $ts("page.create")
+        }}</el-button>
         <div class="right">
-          <el-tooltip content="刷新" placement="top" effect="dark">
+          <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
             <i class="el-icon-refresh" @click="searchVal = ''; listBucket()" />
           </el-tooltip>
         </div>
-        <el-input v-model="searchVal" class="search_style search_btn right with_search mr_10" placeholder="存储桶名过滤"
-          clearable />
+        <el-input v-model="searchVal" class="search_style search_btn right with_search mr_10"
+          :placeholder="$ts('bucket.searchBucketName')" clearable />
       </div>
       <BucketTable ref="buckettable" :search-val="searchVal" @buttonControl="buttonControl"
         @handleRouteParams="handleRouteParams" @deleteBucket="deleteBucket" @updateBucket="updateBucket" />
     </div>
 
-    <el-dialog :title="isAdd ? '创建存储桶' : '修改存储桶'" :visible.sync="isCreate" width="680px"
-      @open="dialogOpen('tableFocus'); showPoint = false;">
+    <el-dialog :title="isAdd ? $ts('bucket.createBucket') : $ts('bucket.modifyBucket')" :visible.sync="isCreate"
+      width="680px" @open="dialogOpen('tableFocus'); showPoint = false;">
       <el-form ref="createForm" :model="createForm" :rules="createRules" size="mini" label-width="100px"
         style="padding:0 5%;">
-        <el-form-item label="名称" prop="bucketName">
+        <el-form-item :label="$ts('bucket.name')" prop="bucketName">
           <el-input ref="tableFocus" v-model="createForm.bucketName" auto-complete="off" clearable :disabled="!isAdd"
-            placeholder="存储桶名称必须唯一，并且不能包含空格或大写字母。" />
+            :placeholder="$ts('bucket.bucketNamePlaceholder')" />
           <div v-if="isAdd" class="popover">
-            <el-popover placement="right" width="350" trigger="hover">
-              <p style="line-height:1.6;">名称只能由小写字母、数字、点 (.) 和连字符 (-) 组成。</p>
-              <p style="line-height:1.6;">名称需以数字字母开头结尾</p>
-              <p style="line-height:1.6;">名称不能包含两个相邻的句点(.)</p>
-              <p style="line-height:1.6;">不能以'xn--'开头和以-s3alias结尾</p>
-              <p style="line-height:1.6;">存储桶名称不能与 IP 地址相似</p>
-              <p style="line-height:1.6;">名称长度为3-63位字符</p>
-              <svg style="margin-left: -20px !important;" slot="reference" class="icon icon-question" aria-hidden="true">
+            <el-popover placement="right" width="360px" trigger="hover">
+              <p style="line-height:1.6;">{{ $ts('objectResource.bucketNameRegIpt1') }}</p>
+              <p style="line-height:1.6;">{{ $ts('objectResource.bucketNameRegIpt2') }}</p>
+              <p style="line-height:1.6;">{{ $ts('objectResource.bucketNameRegIpt3') }}</p>
+              <p style="line-height:1.6;">{{ $ts('objectResource.bucketNameRegIpt4') }}</p>
+              <p style="line-height:1.6;">{{ $ts('objectResource.bucketNameRegIpt5') }}</p>
+              <p style="line-height:1.6;">{{ $ts('objectResource.bucketNameRegIpt6') }}</p>
+              <svg style="margin-left: -20px !important;" slot="reference" class="icon icon-question"
+                aria-hidden="true">
                 <use xlink:href="#icon-question" />
               </svg>
             </el-popover>
@@ -57,43 +59,35 @@
 </el-form-item>
 </div> -->
         <!-- <el-form-item label="设置写保护" prop="writeProtect">
-          <el-radio v-model="createForm.writeProtect" label="on">开启</el-radio>
-          <el-radio v-model="createForm.writeProtect" label="off">关闭</el-radio>
+          <el-radio v-model="createForm.writeProtect" label="on">{{$ts('page.open')}}</el-radio>
+          <el-radio v-model="createForm.writeProtect" label="off">{{$ts('page.close')}}</el-radio>
         </el-form-item> -->
         <!-- <el-form-item label="设置多版本" prop="multiVersion">
           <el-radio-group v-model="createForm.multiVersion" :disabled="createForm.objectLock==='on'">
-            <el-radio label="on">开启</el-radio>
-            <el-radio label="off">关闭</el-radio>
+            <el-radio label="on">{{$ts('page.open')}}</el-radio>
+            <el-radio label="off">{{$ts('page.close')}}</el-radio>
           </el-radio-group>
         </el-form-item> -->
-        <el-form-item v-if="isAdd" label="对象锁定" prop="objectLock">
-          <el-radio v-model="createForm.objectLock" label="on">开启</el-radio>
-          <el-radio v-model="createForm.objectLock" label="off">关闭</el-radio>
-          <p class="input_tip_font">使用一次写入多次读取(WORM)模型存储对象，以帮助您防止对象在固定的时间段内或无限期地被删除或覆盖。</p>
+        <el-form-item v-if="isAdd" :label="$ts('bucket.objectLock')" prop="objectLock">
+          <el-radio v-model="createForm.objectLock" label="on">{{ $ts('page.open') }}</el-radio>
+          <el-radio v-model="createForm.objectLock" label="off">{{ $ts('page.close') }}</el-radio>
+          <p class="input_tip_font">{{ $ts('bucket.wormTip') }}</p>
         </el-form-item>
 
         <p v-if="createForm.objectLock == 'on'" class="mt_m10 mb_20"><i class="el-icon-warning-outline" />
-          对象锁定只对受版本控制的存储桶有效。启用对象锁定会自动启用存储桶版本控制。</p>
-
-        <el-form-item v-if="showOwner" label="桶拥有者" prop="userName">
+          {{ $ts('bucket.objectLockTip') }}</p>
+        <el-form-item v-if="showOwner" :label="$ts('bucket.bucketOwner')" prop="userName">
           <div style="display: flex;">
-            <el-select v-model="createForm.userName" placeholder="请选择拥有者" filterable style="width: 191px;"
-              @change="changeOwner" @click.native="reqUserName">
+            <el-select v-model="createForm.userName"
+              :placeholder="$ts('validate.selectItem', { name: $ts('bucket.bucketOwner') })" filterable
+              style="width: 191px;" @change="changeOwner" @click.native="reqUserName">
               <el-option v-for="item in searchSels" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
-            <p v-if="showPoint" class="point">&nbsp; <i class="el-icon-warning pointStyle" />&nbsp;创建后不能修改桶拥有者</p>
+            <p v-if="showPoint" class="point">&nbsp; <i class="el-icon-warning pointStyle" />&nbsp;{{
+              $ts('bucket.selectOwnerTip') }}</p>
           </div>
         </el-form-item>
 
-        <!-- <el-form-item label="添加访问用户">
-          <el-autocomplete v-model="createForm.userName" placeholder="用户名称过滤" clearable :fetch-suggestions="searchUserNames" />
-          <el-button class="golden ml_10" :disabled="validateName" @click="addUser">添加</el-button>
-        </el-form-item> -->
-        <!-- <el-form-item v-if="createForm.users && createForm.users.length" label="已关联的可见用户" prop="users">
-          <el-tag v-for="(item,index) in createForm.users" :key="item" closable @close="removeUser(index)">
-            {{ item }}
-          </el-tag>
-        </el-form-item> -->
         <el-row v-if="createForm.unknownUsers && createForm.unknownUsers.length">
           <el-form-item prop="unknownUsers">
             <el-tag v-for="(item, index) in createForm.unknownUsers" :key="item" style="color: crimson;">
@@ -102,25 +96,25 @@
           </el-form-item>
           <p class="mt_m10">
             <i class="el-icon-warning-outline" />
-            红字的关联用户已不存在，提交修改后将自动移除
+            {{ $ts('bucket.deleteUserTip') }}
           </p>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button class="blue" @click="isCreate = false; showPoint = false; resetForm('createForm')">{{
-          $ts('button.cancel')
-          }}</el-button>
-        <el-button type="primary" class="golden" @click="createBucket('createForm')">{{ $ts('button.confirm')
+          $ts('page.cancel')
+        }}</el-button>
+        <el-button type="primary" class="golden" @click="createBucket('createForm')">{{ $ts('page.confirm')
           }}</el-button>
       </div>
     </el-dialog>
 
-    <el-dialog v-if="isDelete" title="删除存储桶" :visible.sync="isDelete" width="30%">
-      <p>确定删除下面的存储桶吗？</p>
+    <el-dialog v-if="isDelete" :title="$ts('bucket.deleteBucket')" :visible.sync="isDelete" width="30%">
+      <p>{{ $ts('bucket.deleteBucketTitle') }}</p>
       <span class="dialogDrag_Obj">{{ detBucked }}</span>
       <span slot="footer" class="dialog-footer">
-        <el-button class="blue" @click="isDelete = false">{{ $ts('button.cancel') }}</el-button>
-        <el-button type="primary" class="golden" @click="isDelete = false; doDelete()">{{ $ts('button.confirm')
+        <el-button class="blue" @click="isDelete = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button type="primary" class="golden" @click="isDelete = false; doDelete()">{{ $ts('page.confirm')
           }}</el-button>
       </span>
     </el-dialog>
@@ -174,7 +168,6 @@ export default {
       searchVal: '',
       searchType: 'bucket',
       chooseObj: [],
-      checkList: ['存储桶名称', '创建时间', '所属地域', '操作', '访问'],
       userNameArr: [],
       createForm: {
         bucketName: '',
@@ -195,7 +188,7 @@ export default {
         bucketName: [
           {
             required: true,
-            message: '请填写存储桶名称',
+            message: this.$ts('validate.iptItem', { name: this.$ts('bucket.name') }),
             trigger: ['blur', 'change']
           },
           { validator: validBucketName, trigger: ['blur', 'change'] }
@@ -203,7 +196,7 @@ export default {
         userName: [
           {
             required: true,
-            message: '请填写桶的拥有者',
+            message: this.$ts('validate.selectItem', { name: this.$ts('bucket.bucketOwner') }),
             trigger: ['blur', 'change']
           }
         ]
@@ -394,7 +387,7 @@ export default {
 
         //         this.$msg({
         //           type: 'success',
-        //           text: this.$ts('response.success')
+        //           text: this.$ts('page.responseSuccess')
         //         })
         //         this.isCreate = false
         //       }).finally(() => {
@@ -407,7 +400,7 @@ export default {
         //       }).then(() => {
         //         this.$msg({
         //           type: 'success',
-        //           text: this.$ts('response.success')
+        //           text: this.$ts('page.responseSuccess')
         //         })
         //         this.isCreate = false
         //       }).finally(() => {
@@ -439,7 +432,7 @@ export default {
               Promise.allSettled(asyncArr).then(() => {
                 this.$msg({
                   type: 'success',
-                  text: this.$ts('response.success')
+                  text: this.$ts('page.responseSuccess')
                 })
                 this.showPoint = false
                 this.isCreate = false
@@ -467,19 +460,12 @@ export default {
       }
       this.$store.state.user._S3.deleteBucket(params, (err, data) => {
         if (err) {
-          if (err.code === 409) {
-            this.$msg({
-              type: 'error',
-              text: '此存储桶不为空,必须先清空存储桶，然后才能将其删除。'
-            })
-          } else {
-            this.showS3Msg(err)
-          }
+          this.showS3Msg(err)
           console.dir(err)
         } else {
           this.$msg({
             type: 'success',
-            text: this.$ts('response.success')
+            text: this.$ts('page.responseSuccess')
           })
           this.$refs.buckettable.listBuckets()
         }

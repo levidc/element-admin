@@ -1,38 +1,40 @@
 <template>
   <div>
     <el-table ref="multipleTable" v-loading="loading" stripe border
-      :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)" tooltip-effect="dark" style="width: 100%"
-      @sort-change="sortFunction">
-      <el-table-column prop="userName" :label="`${$ts('user.name')}(AK)`" sortable="custom">
+      :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)" tooltip-effect="dark"
+      style="width: 100%" @sort-change="sortFunction">
+      <el-table-column prop="userName" :label="`${$ts('user.username')}(AK)`" sortable="custom">
         <template slot-scope="scope">
-          <el-tooltip placement="top" :content="$ts('user.table.detail')">
+          <el-tooltip placement="top" :content="$ts('user.userDetail')">
             <a v-access:disable="'admin:GetUser'" class="blue" @click="viewDetail(scope.row.userName)">
               {{ scope.row.userName }}
             </a>
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column prop="userType" label="用户类型" sortable="custom">
+      <el-table-column prop="userType" :label="$ts('user.userType')" sortable="custom">
         <template slot-scope="scope">
           <span>{{
-            Number(scope.row.userType) == 1 ? '普通用户' : Number(scope.row.userType) == 2 ? '工号用户' : Number(scope.row.userType) == 0 ?'管理员':''
-            }}</span>
+            Number(scope.row.userType) == 1 ? $ts('user.commonUser') : Number(scope.row.userType) == 2 ?
+              $ts('user.jobNumberUser') :
+              Number(scope.row.userType) == 0 ? $ts('page.admin') : ''
+          }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" sortable="custom" prop="createTime">
+      <el-table-column :label="$ts('policies.createTime')" sortable="custom" prop="createTime">
         <template slot-scope="scope">
           {{ formatDate(scope.row.createTime) }}
         </template>
       </el-table-column>
-      <el-table-column label="状态" sortable="custom" prop="status">
+      <el-table-column :label="$ts('page.status')" sortable="custom" prop="status">
         <template slot-scope="scope">
-          <span v-if="scope.row.status == 1" class="status_green">启用</span>
-          <span v-else-if="scope.row.status == 0" class="status_red"> 未启用 </span>
+          <span v-if="scope.row.status == 1" class="status_green">{{ $ts('page.enable') }}</span>
+          <span v-else-if="scope.row.status == 0" class="status_red"> {{ $ts('page.disable') }} </span>
         </template>
       </el-table-column>
-      <el-table-column :label="$ts('action')" align="center">
+      <el-table-column :label="$ts('page.action')" align="center">
         <template slot-scope="scope">
-          <svg v-if="scope.row.userName !== 'superAdmin' && $store.state.role === 'superAdmin'"
+          <svg v-if="scope.row.userName !== 'superAdmin' && $store.state.user.role === 'superAdmin'"
             v-access="'admin:DeleteUser'" @click="selectUser = scope.row; deleteFlag = true" class="icon icon-trash"
             aria-hidden="true">
             <use xlink:href="#icon-trash" />
@@ -45,13 +47,13 @@
         layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
         @current-change="handleCurrentChange" />
     </div>
-    <el-dialog title="删除用户" :visible.sync="deleteFlag" width="650px">
-      <p>删除如下用户(AK):
+    <el-dialog :title="$ts('user.delUser')" :visible.sync="deleteFlag" width="650px">
+      <p>{{ $ts('user.delUserTitle') }}
         {{ selectUser.userName }}
       </p>
       <div slot="footer">
-        <el-button @click="deleteFlag = false">{{ $ts('cancel') }}</el-button>
-        <el-button class="golden" @click="confirmDelete">{{ $ts('delete') }}</el-button>
+        <el-button @click="deleteFlag = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button class="golden" @click="confirmDelete">{{ $ts('page.delete') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -105,7 +107,7 @@ export default {
         .then(res => {
           this.$msg({
             type: 'success',
-            text: this.$ts('response.success')
+            text: this.$ts('page.responseSuccess')
           })
           this.listUser()
         })
@@ -121,10 +123,10 @@ export default {
       if (this.selectUser.groups && this.selectUser.groups.length) {
         this.deleteFlag = false
         this.$confirm(
-          `<p>该用户已关联如下用户组 <b style="color:#ff8746">${this.selectUser.groups}</b>,删除后将从以上组中<b style="color:#ff8746">移除该用户</b>，是否确定?</p>`,
+          `${this.$ts("user.delUserTip", { error: `<b style="color: #ff8746">${this.selectUser.groups}</b>`, error2: `<b style="color: #ff8746">${this.$ts('user.removeGroupUser')}</b>` })}`,
           {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
+            confirmButtonText: this.$ts('page.confirm'),
+            cancelButtonText: this.$ts('page.cancel'),
             type: 'warning',
             dangerouslyUseHTMLString: true
           }

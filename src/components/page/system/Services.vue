@@ -10,10 +10,10 @@
           <el-button v-access="'admin:KillInstanceController'" type="danger" class="red" :disabled="deleteInstance"
             @click="deleteEvent">{{ $ts("service.remove") }}</el-button>
           <el-button v-if="false" @click="changeTab = !changeTab">群组配置</el-button>
-          <el-tooltip content="刷新" placement="top" effect="dark">
+          <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
             <i style="position:relative;top:1px" class="right el-icon-refresh" @click="listInstance" />
           </el-tooltip>
-          <el-button class="right tab_search_btn" type="primary" plain @click="changeStatus" icon="el-icon-search"/>
+          <el-button class="right tab_search_btn" type="primary" plain @click="changeStatus" icon="el-icon-search" />
           <el-input v-model="searchVal" class="search_style right" :placeholder="$ts('enter.service.name')" width="14"
             clearable />
           <el-select v-model="serviceStatus" filterable class="search_style right" clearable width="14"
@@ -45,11 +45,11 @@
 				</el-table-column> -->
           <el-table-column :label="$ts('host.ip')" sortable="custom" prop="host" />
           <el-table-column :label="$ts('port')" sortable="custom" prop="port" />
-          <!-- <el-table-column :label="$ts('action')">
+          <!-- <el-table-column :label="$ts('page.action')">
             <template slot-scope="scope">
               <el-dropdown size="small">
                 <el-button type="primary" class="blue">
-                  {{ $ts('action') }}<i class="el-icon-arrow-down el-icon--right" />
+                  {{ $ts('page.action') }}<i class="el-icon-arrow-down el-icon--right" />
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item @click.native="visibleD = true">{{ '修改' }}</el-dropdown-item>
@@ -68,7 +68,7 @@
         <div id="services_search" class="mb_15">
           <el-button type="primary" class="blue" @click="addGroup = true">创建群组</el-button>
           <!-- <el-button type="primary" class="blue" @click="visibleD = true">分配instance</el-button> -->
-          <el-tooltip content="刷新" placement="top" effect="dark">
+          <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
             <i style="position:relative;top:1px" class="right el-icon-refresh" @click="listInstanceGroup" />
           </el-tooltip>
           <el-tooltip content="返回" placement="top" effect="dark">
@@ -90,11 +90,11 @@
               <span class="blue">{{ scope.row.groupName }}</span>
             </template>
           </el-table-column>
-          <el-table-column slot="action" :label="$ts('action')">
+          <el-table-column slot="action" :label="$ts('page.action')">
             <template slot-scope="scope">
               <el-dropdown size="small">
                 <el-button type="primary" class="blue">
-                  {{ $ts('action') }}<i class="el-icon-arrow-down el-icon--right" />
+                  {{ $ts('page.action') }}<i class="el-icon-arrow-down el-icon--right" />
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item @click.native="visibleD = true; selectGroup = scope.row">{{ '分配服务'
@@ -119,8 +119,8 @@
         </el-row>
       </el-form>
       <div slot="footer">
-        <el-button class="golden" @click="createGroup">{{ $ts('button.confirm') }}</el-button>
-        <el-button @click="addGroup = false">{{ $ts('button.cancel') }}</el-button>
+        <el-button class="golden" @click="createGroup">{{ $ts('page.confirm') }}</el-button>
+        <el-button @click="addGroup = false">{{ $ts('page.cancel') }}</el-button>
       </div>
     </el-dialog>
     <el-dialog title="分配服务" width="65%" :visible.sync="visibleD">
@@ -172,9 +172,9 @@
         </div>
       </div>
       <div slot="footer">
-        <el-button class="golden" @click="setInstanceGroup">{{ $ts('button.confirm') }}</el-button>
-        <el-button class="primary blue" @click="resetD">{{ $ts('reset') }}</el-button>
-        <el-button @click="visibleD = false">{{ $ts('button.cancel') }}</el-button>
+        <el-button class="golden" @click="setInstanceGroup">{{ $ts('page.confirm') }}</el-button>
+        <el-button class="primary blue" @click="resetD">{{ $ts('page.reset') }}</el-button>
+        <el-button @click="visibleD = false">{{ $ts('page.cancel') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -386,7 +386,7 @@ export default {
               this.listInstanceGroup()
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
             }
           }).finally(() => {
@@ -445,7 +445,7 @@ export default {
           } else {
             this.$msg({
               type: 'success',
-              text: this.$ts('response.success')
+              text: this.$ts('page.responseSuccess')
             })
           }
         }
@@ -579,7 +579,7 @@ export default {
             } else {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
             }
           })
@@ -609,7 +609,7 @@ export default {
             } else {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
             }
           })
@@ -644,7 +644,7 @@ export default {
             } else {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
             }
           })

@@ -1,18 +1,21 @@
 <template>
   <div class="strategy" :style="{ height: height || undefined }">
     <div v-if="!hideLabel" class="flex label bold topMenu">
-      <span>授权语句</span>
+      <span>{{ $ts('policies.statement') }}</span>
       <div style="flex-grow: 1;" />
-      <el-button v-show="editable" type="primary" class="golden mini" icon="el-icon-plus" @click="onAddNewStatement">添加配置</el-button>
-      <el-button v-show="statementOpen.length<strategy.Statement.length" type="info" class="blue mini" icon="el-icon-arrow-down" @click="openAll">全部展开</el-button>
-      <el-button v-show="statementOpen.length>=strategy.Statement.length" type="info" class="blue mini" icon="el-icon-arrow-up" @click="closeAll">全部折叠</el-button>
+      <el-button v-show="editable" type="primary" class="golden mini" icon="el-icon-plus" @click="onAddNewStatement">{{
+        $ts('policies.addStatement') }}</el-button>
+      <el-button v-show="statementOpen.length < strategy.Statement.length" type="info" class="blue mini"
+        icon="el-icon-arrow-down" @click="openAll">{{ $ts('policies.expandAll') }}</el-button>
+      <el-button v-show="statementOpen.length >= strategy.Statement.length" type="info" class="blue mini"
+        icon="el-icon-arrow-up" @click="closeAll">{{ $ts('policies.closeAll') }}</el-button>
     </div>
     <div style="flex-grow: 1;" :style="{ overflowY: height ? 'auto' : undefined }">
-      <el-empty v-if="strategy.Statement&&strategy.Statement.length<=0" />
+      <el-empty v-if="strategy.Statement && strategy.Statement.length <= 0" />
       <el-collapse v-else v-model="statementOpen">
         <el-collapse-item v-for="(st, index) in strategy.Statement" :key="index" :name="index">
           <template slot="title">
-            <span class="mr">{{ '配置'+(index+1) }}</span>
+            <span class="mr">{{ $ts('policies.config') + (index + 1) }}</span>
             <span class="secordany">{{ currentName }}</span>
             <span style="flex-grow: 1;" />
           </template>
@@ -20,25 +23,15 @@
             <div v-if="editable" class="statement-del-btn">
               <i class=" el-icon-close" @click="() => onDelStatement(index)" />
             </div>
-            <AwzStatement
-              :value="st"
-              :editable="editable"
-              :action-config="actionConfig"
-              :label-width="statementLabelWidth"
-              :hide-principal="statementHidePrincipal"
-              :action-merge-group="statementActionMergeGroup"
-              :action-label-position="statementActionLabelPosition"
-              :action-key-col="statementActionKeyCol"
-              :action-label-col="statementActionLabelCol"
-              :action-label-width="statementActionLabelWidth"
-              :action-item-width="statementActionItemWidth"
-              :action-height="statementActionHeight"
-              :condition-symbols="statementConditionSymbols"
-              :condition-keys="statementConditionKeys"
-              :condition-height="statementConditionHeight"
+            <AwzStatement :value="st" :editable="editable" :action-config="actionConfig"
+              :label-width="statementLabelWidth" :hide-principal="statementHidePrincipal"
+              :action-merge-group="statementActionMergeGroup" :action-label-position="statementActionLabelPosition"
+              :action-key-col="statementActionKeyCol" :action-label-col="statementActionLabelCol"
+              :action-label-width="statementActionLabelWidth" :action-item-width="statementActionItemWidth"
+              :action-height="statementActionHeight" :condition-symbols="statementConditionSymbols"
+              :condition-keys="statementConditionKeys" :condition-height="statementConditionHeight"
               :show-all-permissiion-to-star="showAllPermissiionToStar"
-              @change="(data) => handleStatementChange(data, index)"
-            />
+              @change="(data) => handleStatementChange(data, index)" />
           </div>
         </el-collapse-item>
       </el-collapse>
@@ -113,17 +106,17 @@ export default {
     statementConditionSymbols: {
       type: Array,
       default: () => [
-        { value: 'StringEquals', label: '(字符串) =' },
-        { value: 'IpAddress', label: '(IP地址) 是' },
-        { value: 'NotIpAddress', label: '(IP地址) 否' }
+        // { value: 'StringEquals', label: '(字符串) =' },
+        // { value: 'IpAddress', label: '(IP地址) 是' },
+        // { value: 'NotIpAddress', label: '(IP地址) 否' }
       ]
     },
     statementConditionKeys: {
       type: Array,
       default: () => [
-        { value: 's3:prefix', label: '前缀' },
-        { value: 's3:delimiter', label: '分隔符' },
-        { value: 'aws:SourceIp', label: 'IP地址' }
+        // { value: 's3:prefix', label: '前缀' },
+        // { value: 's3:delimiter', label: '分隔符' },
+        // { value: 'aws:SourceIp', label: 'IP地址' }
       ]
     },
     statementConditionHeight: {
@@ -135,7 +128,7 @@ export default {
       default: false
     }
   },
-  data() {
+  data () {
     return {
       strategy: {
         name: '',
@@ -145,29 +138,29 @@ export default {
     }
   },
   computed: {
-    currentName() {
+    currentName () {
       if (this.$route.params.name === undefined || this.$route.params.name === 'create') return
       return this.$route.params.name
     }
   },
 
   watch: {
-    value() {
+    value () {
       this.refreshStrategy()
     }
   },
-  mounted() {
+  mounted () {
     this.refreshStrategy()
   },
   methods: {
-    refreshStrategy() {
+    refreshStrategy () {
       this.strategy = {
         ...this.value,
         name: this.value.name || '',
         Statement: this.value.Statement || []
       }
     },
-    getEmptyStatement() {
+    getEmptyStatement () {
       return {
         Sid: '',
         Effect: 'Allow',
@@ -177,17 +170,17 @@ export default {
         Condition: {}
       }
     },
-    onAddNewStatement() {
+    onAddNewStatement () {
       const index = this.strategy.Statement.length
       this.$set(this.strategy.Statement, index, this.getEmptyStatement())
       this.statementOpen = [index]
       this.emitChange()
     },
-    onDelStatement(index) {
+    onDelStatement (index) {
       // console.log(index, 'index')
-      this.$confirm(`您确定要删除 <b style="color:#ff8746">配置${index + 1}</b> 吗？`, '确认删除', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      this.$confirm(this.$ts('policies.delStatement', { error: `<b style="color:#ff8746">${this.$ts('policies.config')}${index + 1}</b>` }), '', {
+        confirmButtonText: this.$ts('page.confirm'),
+        cancelButtonText: this.$ts('page.cancel'),
         type: 'warning',
         dangerouslyUseHTMLString: true
       })
@@ -196,40 +189,28 @@ export default {
           this.emitChange()
         })
         .catch(() => { })
-        // customClass 怎么修改确认和取消的按钮颜色
     },
-    openAll() {
+    openAll () {
       this.statementOpen = this.strategy.Statement.map((st, idx) => idx) || []
     },
-    closeAll() {
+    closeAll () {
       this.statementOpen = []
     },
-    handleStatementChange(statement, index) {
+    handleStatementChange (statement, index) {
       this.$set(this.strategy.Statement, index, statement)
       this.emitChange()
     },
-    emitEdit() {
+    emitEdit () {
       this.$emit('edit', {})
     },
-    emitChange() {
+    emitChange () {
       this.$emit('input', this.deepClone(this.strategy))
       this.$emit('change', this.deepClone(this.strategy))
     },
-    emitSave() {
+    emitSave () {
       this.$emit('save', this.deepClone(this.strategy))
     },
-    emitDel() {
-      this.$confirm(`您确定要删除此IAM策略吗？`, '确认删除', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          this.$emit('delete', { name: this.strategy.name })
-        })
-        .catch(() => { })
-    },
-    deepClone(obj) {
+    deepClone (obj) {
       return JSON.parse(JSON.stringify(obj))
     }
   }
@@ -241,6 +222,7 @@ export default {
   display: flex;
   flex-direction: column;
   border: 1px solid #36464e;
+
   .strategy-header {
     display: flex;
     align-items: center;
@@ -293,7 +275,8 @@ export default {
 .secordany {
   color: #b2b4b9;
 }
-.topMenu{
+
+.topMenu {
   box-shadow: 0 2px 10px 0 inset rgba(0, 0, 0, 0.2);
   box-sizing: border-box;
   /* max-width: 1360px; */

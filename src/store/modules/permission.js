@@ -75,10 +75,10 @@ const mutations = {
       // 重定向路由为权限路由第一位
       const routeList = routes[1]
       // redirect配置登录首页及404和重定向
-      console.log(routeList, routeList.children, '333')
+      // console.log(routeList, routeList.children, '333')
       routes[0].redirect = routeList?.children[0]?.path ? routeList.path + '/' + routeList?.children[0]?.path : routeList.path
     } else {
-      //  
+      //
     }
     state.routes = accessConstantRoutes.concat(routes)
     // sideBar 取routes

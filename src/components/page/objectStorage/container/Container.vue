@@ -33,7 +33,7 @@
             </el-form-item>
           </el-col>
           <div class="right" style="margin-top:12px">
-            <el-tooltip content="刷新" placement="top" effect="dark">
+            <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
               <i class="el-icon-refresh" @click="listContainers" />
             </el-tooltip>
           </div>
@@ -174,8 +174,8 @@
         {{ item.containerId }}
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="deleteContainer">{{ $ts('button.confirm') }}</el-button>
-        <el-button @click="deleteFlag = false">{{ $ts('button.cancel') }}</el-button>
+        <el-button type="primary" @click="deleteContainer">{{ $ts('page.confirm') }}</el-button>
+        <el-button @click="deleteFlag = false">{{ $ts('page.cancel') }}</el-button>
       </div>
     </el-dialog>
   </div>

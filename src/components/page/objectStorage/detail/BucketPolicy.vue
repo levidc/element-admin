@@ -1,22 +1,22 @@
 <template>
   <div class="bucket-panel param-box">
     <div class="param-hd">
-      <h3>存储桶策略 </h3>
+      <h3>{{ $ts('route.BucketPermisson') }}</h3>
       <span v-if="editConfig" class="right">
         <el-button class="medium blue" @click="editConfig = false; getBucketPolicy()">
-          取消
+          {{ $ts('page.cancel') }}
         </el-button>
         <el-button type="primary" class="golden medium" @click="onSave">
-          保存策略
+          {{ $ts('bucket.savePolicy') }}
         </el-button>
       </span>
       <span v-if="!editConfig && !loading" class="editMenu">
         <el-button v-access="'s3:PutBucketPolicy'" type="text" class="link-edit" @click="editPolicy">
-          <span style="color:#ff8746">编辑</span>
+          <span style="color:#ff8746">{{ $ts('page.modify') }}</span>
         </el-button>
         <el-button v-access="'s3:DeleteBucketPolicy'" type="text" class="delBtn link-edit" :disabled="disableDel"
           @click="deletePolicy">
-          <span style="color:#ff3d6b">删除</span>
+          <span style="color:#ff3d6b">{{ $ts('page.delete') }}</span>
         </el-button>
       </span>
     </div>
@@ -26,23 +26,26 @@
         <div v-show="!editConfig && !nullPolicy" class="mt_10">
           <json-viewer v-show="!editConfig && !nullPolicy" :value="dataList" preview-mode :show-array-index="false"
             boxed theme="my-awesome-json-theme" :copyable="{
-              copyText: '复制', copiedText: '已复制'
+              copyText: $ts('page.copy'), copiedText: $ts('page.copied')
             }" />
         </div>
-        <p v-show="nullPolicy && !editConfig" style="font-size: 16px;" class="mt_20">没有相关的存储桶策略</p>
+        <p v-show="nullPolicy && !editConfig" style="font-size: 16px;" class="mt_20">{{ $ts('bucket.noBucketPolicy') }}
+        </p>
         <Strategy v-if="editConfig && actionHandle" ref="strategy" v-model="strategy" :editable="editable"
           :action-config="actionConfig" style="margin-top:20px;" statement-action-merge-group
           :statement-action-label-width="'100px'" :statement-action-item-width="'300px'" />
       </div>
     </div>
-    <el-dialog :title="nullPolicy ? '创建桶策略' : '修改桶策略'" :visible.sync="flag" width="40%">
+    <el-dialog :title="nullPolicy ? $ts('bucket.createBucketPolicy') : $ts('bucket.modifyBucketPolicy')"
+      :visible.sync="flag" width="40%">
       <div style="width: 100%">
         <json-viewer :value="jsonString" preview-mode boxed :show-array-index="false"
-          :copyable="{ 'copyText': '复制', 'copiedText': '已复制' }" theme="my-awesome-json-theme" />
+          :copyable="{ 'copyText': $ts('page.copy'), 'copiedText': $ts('page.copied') }"
+          theme="my-awesome-json-theme" />
       </div>
       <div slot="footer">
-        <el-button class="blue" @click="flag = false">{{ $ts("cancel") }}</el-button>
-        <el-button type="primary" class="golden" @click="submitCreate">{{ $ts("true") }}</el-button>
+        <el-button class="blue" @click="flag = false">{{ $ts("page.cancel") }}</el-button>
+        <el-button type="primary" class="golden" @click="submitCreate">{{ $ts("page.confirm") }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -91,7 +94,7 @@ export default {
           const arr = [
             {
               key: 's3',
-              label: 's3权限',
+              label: this.$ts('policies.s3'),
               children: []
             }
           ]
@@ -203,9 +206,9 @@ export default {
       )
     },
     deletePolicy () {
-      this.$confirm('删除当前存储桶的策略', {
-        confirmButtonText: '删除',
-        cancelButtonText: '取消',
+      this.$confirm(this.$ts('bucket.deleteCurrentPolicy'), {
+        confirmButtonText: this.$ts('page.delete'),
+        cancelButtonText: this.$ts('page.cancel'),
         type: 'warning'
       }).then(() => {
         this.$store.state.user._S3.deleteBucketPolicy(
@@ -219,7 +222,7 @@ export default {
             } else {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
               this.dataList = ''
               this.editConfig = false
@@ -260,7 +263,7 @@ export default {
           } else {
             this.$msg({
               type: 'success',
-              text: this.$ts('response.success')
+              text: this.$ts('page.responseSuccess')
             })
             this.editConfig = !this.editConfig
             this.flag = false
@@ -279,7 +282,7 @@ export default {
       for (let i = 0; i < this.strategy.Statement.length; i++) {
         try {
           if (!this.strategy.Statement[i].Principal.length) {
-            await this.$message.error('每个授权语句至少需要设置一个授权用户').then(() => Promise.reject())
+            await this.$message.error(this.$ts('bucket.statementPrincipalReg')).then(() => Promise.reject())
             return
           }
           const reg = /^([0-9a-zA-Z-_.?*][/]?)+$/
@@ -288,20 +291,20 @@ export default {
             const str = item.substring(item.indexOf('/') + 1)
             // console.log(str,'reg')
             if (!reg.test(str)) {
-              this.$message.error(`对象格式错误，仅支持英文、数字和/-_.?*且不能以"/"开头或者连续"/"`).then(() => Promise.reject())
+              this.$message.error(this.$ts('bucket.objectResourceReg')).then(() => Promise.reject())
               return
             }
           })
           if (!this.strategy.Statement[i].Resource.length) {
-            await this.$message.error('每个授权语句至少需要设置一个资源配置').then(() => Promise.reject())
+            await this.$message.error(this.$ts('policies.resourceTip')).then(() => Promise.reject())
             return
           }
           if (!this.strategy.Statement[i].Action.length) {
-            await this.$message.error('每个授权语句至少需要分配一个权限').then(() => Promise.reject())
+            await this.$message.error(this.$ts('policies.actionTip')).then(() => Promise.reject())
             return
           }
           if ([...(new Set(this.strategy.Statement[i].Resource))].length < this.strategy.Statement[i].Resource.length) {
-            await this.$message.error('资源配置重复，请检查').then(() => Promise.reject())
+            await this.$message.error(this.$ts('bucket.duplicatedResourceReg')).then(() => Promise.reject())
             return
           }
         } catch (error) {
@@ -397,7 +400,7 @@ export default {
 }
 
 :deep(.strategy) {
-  .topMenu + div {
+  .topMenu+div {
     height: auto !important;
   }
 }

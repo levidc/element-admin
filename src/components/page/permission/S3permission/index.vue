@@ -2,46 +2,21 @@
   <div>
     <div class="page_content_wrap">
       <el-row class="mv_10">
-        <!-- <el-button class="golden" @click="handleCreate">创建</el-button> -->
-        <el-tooltip content="刷新" placement="top" effect="dark">
+        <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
           <i class="el-icon-refresh right" @click="searchVal = ''; init()" />
         </el-tooltip>
-        <el-input v-model="searchVal" class="search_style right" placeholder="权限组名过滤" width="14" clearable />
+        <el-input v-model="searchVal" class="search_style right" :placeholder="$ts('S3permission.searchPlaceholder')"
+          width="14" clearable />
       </el-row>
-      <!-- <TableData
-          :loading="loading"
-          row-key="id"
-          :table-data="tableData"
-          :columns="columns"
-          :page-obj="page"
-          :sort-function="val => sortFunction(val,tableData)"
-          @go-page="onGoPage"
-        >
-          <el-table-column slot="permissions" label="权限集合" prop="permissions" :min-width="300">
-            <template slot-scope="scope">
-              <div class="permission">
-                <div v-for="item in scope.row.permissions.split(',')" :key="item">
-                  <el-tag size="mini" effect="plain">
-                    {{ item }}
-                  </el-tag>
-                </div>
-              </div>
-            </template>
-</el-table-column>
-<el-table-column slot="action" label="操作" width="80px">
-  <template slot-scope="scope">
-              <el-button class="blue" @click="handleFillForm(scope.row)">修改</el-button>
-            </template>
-</el-table-column>
-</TableData> -->
       <el-table v-loading="loading" :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
         tooltip-effect="dark" @sort-change="sortFunction">
-        <el-table-column label="权限组名" sortable="custom" prop="name" min-width="120px">
+        <el-table-column :label="$ts('S3permission.permissionGroupName')" sortable="custom" prop="name"
+          min-width="120px">
           <template slot-scope="scope">
             <span>{{ scope.row.name }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="权限集合" prop="permissions" :min-width="300">
+        <el-table-column :label="$ts('S3permission.permissionList')" prop="permissions" :min-width="300">
           <template slot-scope="scope">
             <div class="permission">
               <div v-for="item in scope.row.permissions.split(',')" :key="item">
@@ -52,9 +27,9 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="操作" min-width="100px">
+        <el-table-column :label="$ts('page.action')" min-width="100px">
           <template slot-scope="scope">
-            <el-button class="blue" @click="handleFillForm(scope.row)">修改</el-button>
+            <el-button class="blue" @click="handleFillForm(scope.row)">{{ $ts('page.modify') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -64,29 +39,28 @@
           @current-change="handleCurrentChange" />
       </div>
     </div>
-    <el-dialog :visible.sync="modal" :title="isAdd ? '创建权限组合' : '修改权限组合'" width="1000px" destroy-on-close>
+    <el-dialog :visible.sync="modal" :title="$ts('S3permission.modify')" width="1000px" destroy-on-close>
       <el-form :model="form" label-width="120px">
         <el-row>
           <el-col :span="14">
-            <el-form-item label="权限组合名:" prop="name">
-              <span v-if="!isAdd">
+            <el-form-item :label="$ts('S3permission.permissionName')" prop="name">
+              <span>
                 {{ form.name }}
               </span>
-              <el-input v-else v-model="form.name" clearable placeholder="占位符" />
-              <span v-if="!form.allow" style="color: #ff8746;">（拒绝访问选中的权限）</span>
+              <span v-if="!form.allow" style="color: #ff8746;">{{ $ts('S3permission.denyTip') }}</span>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="权限名过滤:" prop="name">
-              <el-input v-model="form.searchVal" clearable placeholder="权限名" />
+            <el-form-item :label="$ts('S3permission.permissionName')" prop="name">
+              <el-input v-model="form.searchVal" clearable :placeholder="$ts('S3permission.permissionNameFilter')" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row class="formModal">
-          <el-checkbox v-model="form.checkAll" :indeterminate="form.isIndeterminate"
-            @change="handleCheckAllChange">全选</el-checkbox>
+          <el-checkbox v-model="form.checkAll" :indeterminate="form.isIndeterminate" @change="handleCheckAllChange">{{
+            $ts('page.selectAll') }}</el-checkbox>
           <div style="margin: 15px 0;" />
           <el-checkbox-group v-model="form.permissions" @change="handleCheckedPermission">
             <el-checkbox v-for="item in permissions" :key="item" :label="item">{{ item }}</el-checkbox>
@@ -104,19 +78,20 @@
         :item-width="'300px'"
       /> -->
       <div slot="footer" class="dialog-footer">
-        <el-button class="blue" @click="modal = false">{{ $ts('button.cancel') }}</el-button>
-        <el-button class="golden" type="primary" @click="handleConfirmBtn">{{ $ts('button.confirm') }}</el-button>
+        <el-button class="blue" @click="modal = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button class="golden" type="primary" @click="handleConfirmBtn">{{ $ts('page.confirm') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog :visible.sync="confirmModl" title="确认修改" width="800px" destroy-on-close>
+    <el-dialog :visible.sync="confirmModl" :title="$ts('page.confirmModify')" width="800px" destroy-on-close>
       <div class="confirmTip">
         <i class="fa el-icon-warning-outline red" />
-        <span>当前修改的权限组合会应用到历史创建的策略上，<b>"确定"</b>保存修改，<b>"取消"</b>返回修改</span>
+        <span>{{ $ts('S3permission.submitTip') }}<b>"{{ $ts('page.confirm')
+            }}"</b>{{ $ts('page.saveModify') }}，<b>"{{ $ts('page.cancel') }}"</b>{{ $ts('page.returnToEdit') }}</span>
       </div>
       <div class="permissionPreview">
         <div class="pre">
           <p>
-            原权限
+            {{ $ts('S3permission.previousPermission') }}
           </p>
           <p v-for="item in form.copyPermission" :key="item">
             <el-tag>
@@ -126,7 +101,7 @@
         </div>
         <div class="cur">
           <p>
-            当前权限
+            {{ $ts('S3permission.currentPermission') }}
           </p>
           <el-tag v-if="form.checkAll && form.permissions.length === searchPermissions.length">{{ 's3:*' }}</el-tag>
           <template v-else>
@@ -139,8 +114,8 @@
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="confirmModl = false">{{ $ts('button.cancel') }}</el-button>
-        <el-button class="golden" type="primary" @click="submitCreate">{{ $ts('button.confirm') }}</el-button>
+        <el-button @click="confirmModl = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button class="golden" type="primary" @click="submitCreate">{{ $ts('page.confirm') }}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -154,7 +129,6 @@ export default {
     return {
       confirmModl: false,
       searchVal: '',
-      type: 'mod',
       loading: false,
       modal: false,
       form: {
@@ -174,19 +148,11 @@ export default {
       pageSize: 10,
       total: 0,
       order: '',
-      columns: [
-        { prop: 'name', title: '权限组名', show: true, sortable: 'custom', width: '240', showOverflowTooltip: true },
-        { slot: 'permissions', show: true },
-        { slot: 'action', show: true }
-      ],
       permissions: [],
       searchPermissions: []
     }
   },
   computed: {
-    isAdd () {
-      return this.type === 'add'
-    }
   },
   watch: {
     searchVal (val) {
@@ -224,12 +190,6 @@ export default {
     this.init()
   },
   methods: {
-    handleCreate () {
-      this.type = 'add'
-      this.showPermission().then(() => {
-        this.modal = true
-      })
-    },
     init () {
       this.loading = true
       listAllPermissionGroup().then(res => {
@@ -242,7 +202,6 @@ export default {
     },
     // 禁删除、修改名称、支持修改组合内的权限、添加
     handleFillForm (row) {
-      this.type = 'mod'
       const { id, name, allow, permissions = '' } = row
       Object.assign(this.form, { id, name, allow, permissions: permissions.split(',') })
       this.form.copyPermission = JSON.parse(JSON.stringify(this.form.permissions))
@@ -278,7 +237,7 @@ export default {
       updatePermissionGroup(data).then(res => {
         this.$msg({
           type: 'success',
-          text: this.$ts('response.success')
+          text: this.$ts('page.responseSuccess')
         })
         this.modal = false
         this.confirmModl = false

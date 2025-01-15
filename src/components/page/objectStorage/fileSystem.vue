@@ -2,26 +2,19 @@
   <div>
     <div class="page_content_wrap">
       <div class="mb_15 clearfix">
-        <!-- <el-button v-access="'admin:CreateBucket'" class="golden" type="primary" @click="">{{ $ts("CREATE") }}</el-button> -->
+        <!-- <el-button v-access="'admin:CreateBucket'" class="golden" type="primary" @click="">{{ $ts("page.create") }}</el-button> -->
         <div class="right">
-          <el-tooltip content="刷新" placement="top" effect="dark">
+          <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
             <i class="el-icon-refresh" @click="searchVal = ''; init()" />
           </el-tooltip>
         </div>
-        <el-input
-          v-model="searchVal"
-          class="search_style search_btn right with_search mr_10"
-          placeholder="存储桶名过滤"
-          clearable
-        />
+        <el-input v-model="searchVal" class="search_style search_btn right with_search mr_10"
+          :placeholder="$ts('bucket.searchBucketName')" clearable />
       </div>
-      <el-table
-        v-loading="loading"
-        :data="tableData.slice((pageIndex - 1) * pageSize, pageIndex * pageSize)"
-        style="width: 100%"
-      >
+      <el-table v-loading="loading" :data="tableData.slice((pageIndex - 1) * pageSize, pageIndex * pageSize)"
+        style="width: 100%">
         <!-- <el-table-column prop="fsName" label="文件系统名称" min-width="200px" /> -->
-        <el-table-column prop="bucketName" label="桶名称" min-width="200px" fixed>
+        <el-table-column prop="bucketName" :label="$ts('bucket.name')" min-width="200px" fixed>
           <template slot-scope="scope">
             <showToolTip :text="scope.row.name" use-slot>
               <a slot="data" class="blue" @click="filterBucket(scope.row)">
@@ -30,26 +23,21 @@
             </showToolTip>
           </template>
         </el-table-column>
-        <el-table-column prop="bucketName" label="读写权限" min-width="150px">
+        <el-table-column prop="bucketName" :label="this.$ts('client.readWritePermission')" min-width="150px">
           <template slot-scope="scope">
             {{ renderAuth(scope.row.ro) }}
           </template>
         </el-table-column>
         <!-- 展示客户端IP、区分nfs、samba、添加tag显著区分、多条显示查看详情 -->
-        <el-table-column prop="nfsInfos" label="共享路径" min-width="200px">
+        <el-table-column prop="nfsInfos" :label="$ts('fileSystem.url')" min-width="200px">
           <template slot-scope="scope">
             <div v-if="scope.row.clientData.length > 4" class="insertTable">
               <div class="rowFlex">
                 <div v-for="item in scope.row.clientData" :key="item.name" class="flex">
                   <el-tag>{{ item.type }}</el-tag>
                   <showToolTip :text="item.url" use-slot>
-                    <span
-                      slot="data"
-                      data-clipboard-action="copy"
-                      class="copyIcon"
-                      :data-clipboard-text="item.url"
-                      @click="copiedMsg"
-                    >
+                    <span slot="data" data-clipboard-action="copy" class="copyIcon" :data-clipboard-text="item.url"
+                      @click="copiedMsg">
                       <i class="el-icon-document-copy" style="position: relative;top: -1px;" />
                       {{ item.url }}
                     </span>
@@ -78,21 +66,13 @@
             </div>
             <div v-else-if="scope.row.clientData.length > 0" style="padding-bottom: 0;" class="insertTable">
               <div class="rowFlex">
-                <div
-                  v-for="item in scope.row.clientData"
-                  :key="item.name"
+                <div v-for="item in scope.row.clientData" :key="item.name"
                   :style="renderSingleStyle(scope.row.clientData)"
-                  :class="['flex', renderSingleClass(scope.row.clientData)]"
-                >
+                  :class="['flex', renderSingleClass(scope.row.clientData)]">
                   <el-tag>{{ item.type }}</el-tag>
                   <showToolTip :text="item.url" use-slot>
-                    <span
-                      slot="data"
-                      data-clipboard-action="copy"
-                      class="copyIcon"
-                      :data-clipboard-text="item.url"
-                      @click="copiedMsg"
-                    >
+                    <span slot="data" data-clipboard-action="copy" class="copyIcon" :data-clipboard-text="item.url"
+                      @click="copiedMsg">
                       <i class="el-icon-document-copy" style="position: relative;top: -1px;" />
                       {{ item.url }}
                     </span>
@@ -117,13 +97,13 @@
             <span v-else />
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200px" fixed="right">
+        <el-table-column :label="$ts('page.action')" width="200px" fixed="right">
           <template slot-scope="scope">
             <!-- <el-menu mode="horizontal" active-text-color="#8997a5" class="tableMenu">
               <el-submenu index="2" popper-append-to-body popper-class="tableSubMenu">
                 <template slot="title">
                   <el-button type="primary" class="blue">
-                    {{ $ts('action') }}<i class="el-icon-arrow-down el-icon--right" />
+                    {{ $ts('page.action') }}<i class="el-icon-arrow-down el-icon--right" />
                   </el-button>
                 </template>
   <el-menu-item index="2-1">
@@ -150,10 +130,11 @@
   </el-menu> -->
             <el-dropdown size="small" trigger="hover">
               <el-button type="primary" class="blue">
-                {{ $ts('action') }}<i class="el-icon-arrow-down el-icon--right" />
+                {{ $ts('page.action') }}<i class="el-icon-arrow-down el-icon--right" />
               </el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="handleShare(scope.row)">共享设置</el-dropdown-item>
+                <el-dropdown-item @click.native="handleShare(scope.row)">{{ $ts('fileSystem.shareConfig')
+                  }}</el-dropdown-item>
                 <!-- <el-popover
                   :ref="`popRef` + String(scope.row.fsId)"
                   placement="left"
@@ -190,76 +171,57 @@
         </el-table-column>
       </el-table>
       <div class="page_block">
-        <el-pagination
-          :current-page="pageIndex"
-          :page-sizes="[5, 10, 50, 100]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
+        <el-pagination :current-page="pageIndex" :page-sizes="[5, 10, 50, 100]" :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
+          @current-change="handleCurrentChange" />
       </div>
     </div>
-    <el-dialog title="共享" class="shareDialog" :visible.sync="applyModal" width="800px">
+    <el-dialog :title="$ts('fileSystem.share')" class="shareDialog" :visible.sync="applyModal" width="800px">
       <el-form ref="form" :model="form" label-width="120px" style="padding:0 5%;" :rules="rules">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="用户桶名称" prop="bucketName">
+            <el-form-item :label="$ts('bucket.name')" prop="bucketName">
               <span>{{ form.bucketName }}</span>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item prop="autoMount" label="是否自动mount">
+            <el-form-item prop="autoMount" :label="$ts('fileSystem.autoMount')">
               <el-radio-group v-model="form.autoMount">
-                <el-radio :label="true">是</el-radio>
-                <el-radio :label="false">否</el-radio>
+                <el-radio :label="true">{{ $ts('page.Yes') }}</el-radio>
+                <el-radio :label="false">{{ $ts('page.No') }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
         <div>
-          <el-form-item label="已共享客户端">
-            <el-tooltip content="刷新" placement="top" effect="dark">
+          <el-form-item :label="$ts('fileSystem.shareClient')">
+            <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
               <i class="right el-icon-refresh" @click="refreshList('apply')" />
             </el-tooltip>
           </el-form-item>
-          <DataTable
-            v-if="applyModal"
-            :max-height="500"
-            :table-data="clientFs"
-            :loading="loadingSelectClient"
-            :columns="selectClientColumn"
-            selection
-            :handle-selection-change="handleUnapplyChange"
-            :get-row-key="val => val.name"
-          >
-            <el-table-column slot="name" label="客户端名称" prop="name">
+          <DataTable v-if="applyModal" :max-height="500" :table-data="clientFs" :loading="loadingSelectClient"
+            :columns="selectClientColumn" selection :handle-selection-change="handleUnapplyChange"
+            :get-row-key="val => val.name">
+            <el-table-column slot="name" :label="$ts('client.name')" prop="name">
               <template slot-scope="scope">
                 <showToolTip :text="scope.row.name" />
               </template>
             </el-table-column>
-            <el-table-column slot="readOnly" label="访问权限" width="80">
+            <el-table-column slot="readOnly" :label="$ts('client.readonlyPermission')" width="80">
               <template slot-scope="scope">
-                {{ scope.row.readOnly ? '只读' : '读写' }}
+                {{ scope.row.readOnly ? $ts('client.readonly') : $ts('client.readWrite') }}
               </template>
             </el-table-column>
-            <el-table-column slot="sync" label="同步/异步" width="90">
+            <el-table-column slot="sync" :label="$ts('client.sync') + '/' + $ts('client.async')" width="90">
               <template slot-scope="scope">
-                {{ scope.row.sync ? '同步' : '异步' }}
+                {{ scope.row.sync ? $ts('client.sync') : $ts('client.async') }}
               </template>
             </el-table-column>
-            <el-table-column slot="url" label="共享路径" min-width="160">
+            <el-table-column slot="url" :label="$ts('fileSystem.url')" min-width="160">
               <template slot-scope="scope">
                 <showToolTip :text="scope.row.url" use-slot>
-                  <span
-                    slot="data"
-                    data-clipboard-action="copy"
-                    class="copyIcon"
-                    :data-clipboard-text="scope.row.url"
-                    style="cursor: pointer;"
-                    @click="copiedMsg"
-                  >
+                  <span slot="data" data-clipboard-action="copy" class="copyIcon" :data-clipboard-text="scope.row.url"
+                    style="cursor: pointer;" @click="copiedMsg">
                     <i class="el-icon-document-copy" style="margin-left:10px" />
                     {{ scope.row.url }}
                   </span>
@@ -279,35 +241,23 @@
               </svg>
             </el-button>
           </el-row>
-          <el-form-item label="未共享客户端">
-            <el-tooltip content="刷新" placement="top" effect="dark">
+          <el-form-item :label="$ts('fileSystem.notShareClient')">
+            <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
               <i class="right el-icon-refresh" @click="refreshList('unapply')" />
             </el-tooltip>
           </el-form-item>
-          <DataTable
-            v-if="applyModal"
-            ref="nfs"
-            :table-data="allNFS"
-            :loading="loadingNfs"
-            :columns="selectClientColumn"
-            :max-height="500"
-            :get-row-key="val => val.name"
-            selection
-            pagination
-            :total="nfsTotal"
-            :select-init="setAvailbleClient"
-            :handle-selection-change="handleApplyChange"
-            :keep-selection="false"
-            @renderPagination="renderNfsPagination"
-          >
-            <el-table-column slot="readOnly" label="访问权限" width="120">
+          <DataTable v-if="applyModal" ref="nfs" :table-data="allNFS" :loading="loadingNfs"
+            :columns="selectClientColumn" :max-height="500" :get-row-key="val => val.name" selection pagination
+            :total="nfsTotal" :select-init="setAvailbleClient" :handle-selection-change="handleApplyChange"
+            :keep-selection="false" @renderPagination="renderNfsPagination">
+            <el-table-column slot="readOnly" :label="$ts('client.readonlyPermission')" width="120">
               <template slot-scope="scope">
-                {{ scope.row.readOnly ? '只读' : '读写' }}
+                {{ scope.row.readOnly ? $ts('client.readonly') : $ts('client.readWrite') }}
               </template>
             </el-table-column>
-            <el-table-column slot="sync" label="同步/异步" width="120">
+            <el-table-column slot="sync" :label="$ts('client.sync') + '/' + $ts('client.async')" width="120">
               <template slot-scope="scope">
-                {{ scope.row.sync ? '同步' : '异步' }}
+                {{ scope.row.sync ? $ts('client.sync') : $ts('client.async') }}
               </template>
             </el-table-column>
           </DataTable>
@@ -337,17 +287,17 @@
             />
             <div class="footer clearfix mt_20">
               <div class="right">
-                <el-button class="blue" @click="cancelSelect">{{ $ts('button.cancel') }}</el-button>
-                <el-button type="primary" class="golden" @click="confirmSelected">{{ $ts('button.confirm')
+                <el-button class="blue" @click="cancelSelect">{{ $ts('page.cancel') }}</el-button>
+                <el-button type="primary" class="golden" @click="confirmSelected">{{ $ts('page.confirm')
                 }}</el-button>
               </div>
             </div>
-            <el-button slot="reference" class="blue" @click="getClient">添加</el-button>
+            <el-button slot="reference" class="blue" @click="getClient">{{ $ts('page.add') }}</el-button>
           </el-popover> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button class="blue" @click="applyModal = false">完成</el-button>
-        <!-- <el-button type="primary" class="golden" @click="confirmApply">{{ $ts('button.confirm')
+        <el-button class="blue" @click="applyModal = false">{{ $ts('page.done') }}</el-button>
+        <!-- <el-button type="primary" class="golden" @click="confirmApply">{{ $ts('page.confirm')
         }}</el-button> -->
       </div>
     </el-dialog>
@@ -369,13 +319,13 @@ export default {
   components: {
   },
   filters: {
-    nameFilter: function(arr) {
+    nameFilter: function (arr) {
       if (!arr && arr.length) return ''
       const names = arr.map(item => item.name).join(',')
       return names
     }
   },
-  data() {
+  data () {
     return {
       loadingAdd: false,
       loadingRemove: false,
@@ -392,30 +342,30 @@ export default {
       selectClientColumn: [
         {
           prop: 'name',
-          label: '客户端名称',
+          label: this.$ts('client.name'),
           minWidth: 150
         },
         {
           prop: 'hostname',
-          label: '客户端IP',
+          label: this.$ts('client.hostname'),
           minWidth: 120
         },
         {
           slot: 'readOnly',
           prop: 'readOnly',
-          label: '访问权限',
+          label: this.$ts('client.readonlyPermission'),
           width: '120',
           formatter: (__, _, val) => {
-            return val ? '只读' : '读写'
+            return val ? this.$ts('client.readonly') : this.$ts('client.readWrite')
           }
         },
         {
           slot: 'sync',
           prop: 'sync',
-          label: '同步/异步',
+          label: this.$ts('client.sync') + '/' + this.$ts('client.async'),
           width: '120',
           formatter: (__, _, val) => {
-            return val ? '同步' : '异步'
+            return val ? this.$ts('client.sync') : this.$ts('client.async')
           }
         },
         {
@@ -429,22 +379,6 @@ export default {
       },
       applyModal: false,
       value: ['share'],
-      options: [
-        {
-          label: '分析',
-          value: 'share',
-          children: [
-            {
-              label: '应用',
-              value: 'share'
-            },
-            {
-              label: '取消应用',
-              value: 'share'
-            }
-          ]
-        }
-      ],
       localPopRef: null,
       showPopover: false,
       clientFs: [],
@@ -463,11 +397,11 @@ export default {
         },
         {
           prop: 'type',
-          label: '类型'
+          label: this.$ts('tempConfigFile.type')
         },
         {
           prop: 'hostname',
-          label: '客户端IP'
+          label: this.$ts('client.hostname')
         },
         {
           slot: 'url'
@@ -490,12 +424,12 @@ export default {
       ],
       columns: [
         {
-          title: '文件系统名称',
+          title: this.$ts('fileSystem.name'),
           prop: 'fsName',
           minWidth: '200px'
         },
         {
-          title: '桶名称',
+          title: this.$ts('bucket.name'),
           prop: 'bucketName',
           minWidth: '200px'
         },
@@ -512,15 +446,15 @@ export default {
     }
   },
   computed: {
-    disabledApply() {
+    disabledApply () {
       return this.selApplyClientList.length === 0 || this.loadingAdd
     },
-    disableUnapply() {
+    disableUnapply () {
       return JSON.parse(JSON.stringify(this.selUnapplyClientList)).length === 0 || this.loadingRemove
     }
   },
   watch: {
-    searchVal(cur, pre) {
+    searchVal (cur, pre) {
       if (!cur && pre) {
         this.loading = true
         setTimeout(() => {
@@ -535,10 +469,10 @@ export default {
       }
     }
   },
-  destroyed() {
+  destroyed () {
     this.clipboard && this.clipboard.destroy()
   },
-  mounted() {
+  mounted () {
     this.init()
     // this.loading = true
     // // const totalIterations = 100000000
@@ -563,13 +497,13 @@ export default {
   },
 
   methods: {
-    copiedMsg: debounce.call(this, function() {
+    copiedMsg: debounce.call(this, function () {
       this.$msg({
         type: 'success',
-        text: '已复制'
+        text: this.$ts('page.copied')
       })
     }, 200),
-    renderSingleStyle(data) {
+    renderSingleStyle (data) {
       if (data.length === 1) {
         return {
           maxWidth: '100%',
@@ -577,12 +511,12 @@ export default {
         }
       }
     },
-    renderSingleClass(data) {
+    renderSingleClass (data) {
       if (data.length == 3) {
         return 'tripleStyle'
       }
     },
-    getClientData(clientInfo) {
+    getClientData (clientInfo) {
       const info = clientInfo.nfsInfos
       const samba = clientInfo.sambaInfos
       // const samba = JSON.parse(JSON.stringify(clientInfo.nfsInfos))
@@ -623,7 +557,7 @@ export default {
       // console.log(data, clientInfo, 'client')
       return data
     },
-    refreshList(type) {
+    refreshList (type) {
       if (type === 'apply') {
         this.getAppliedClient()
       } else {
@@ -640,7 +574,7 @@ export default {
       }
     },
     // 调用getNFSList 需要获取表格分页信息
-    confirmApply() {
+    confirmApply () {
       const {
         bucketName,
         autoMount
@@ -659,7 +593,7 @@ export default {
         if (JSON.stringify(failed) === '{}' && JSON.stringify(nfsSuccess) !== '{}') {
           this.$msg({
             type: 'success',
-            text: this.$ts('response.success')
+            text: this.$ts('page.responseSuccess')
           })
         } else {
           const errorInfo = Object.keys(failed).reduce((pre, cur) => {
@@ -682,7 +616,7 @@ export default {
         this.init()
       })
     },
-    confirmUnAppy() {
+    confirmUnAppy () {
       const data = {
         bucketName: this.form.bucketName,
         clientNames: this.selUnapplyClientList.map(x => x.name)
@@ -691,7 +625,7 @@ export default {
       shareUnapply(data).then(() => {
         this.$msg({
           type: 'success',
-          text: this.$ts('response.success')
+          text: this.$ts('page.responseSuccess')
         })
       })
         .finally(() => {
@@ -704,20 +638,20 @@ export default {
           this.init()
         })
     },
-    clearDataTable() {
+    clearDataTable () {
       this.renderPopover = false
       // 清除表格选择数据及相关配置
     },
-    handleApplyChange(val) {
+    handleApplyChange (val) {
       this.selApplyClientList = JSON.parse(JSON.stringify(val))
     },
-    handleUnapplyChange(val) {
+    handleUnapplyChange (val) {
       // console.log(val,'1233')
       // 复选异常手动清除组件复选框
       this.selUnapplyClientList = JSON.parse(JSON.stringify(val))
     },
     // 分页
-    renderNfsPagination(val) {
+    renderNfsPagination (val) {
       const {
         pageSize,
         pageNumber
@@ -727,7 +661,7 @@ export default {
         pageNum: pageSize
       })
     },
-    getNfsClient(pageReqBody) {
+    getNfsClient (pageReqBody) {
       pageReqBody = pageReqBody || {
         pageIndex: 1,
         pageNum: 10
@@ -743,18 +677,18 @@ export default {
         this.loadingNfs = false
       })
     },
-    getClient() {
+    getClient () {
       // this.renderPopover = true
       this.getNfsClient()
       // 当前NFS、
     },
-    cancelSelect() {
+    cancelSelect () {
       this.$refs['popApplyRef'] && this.$refs['popApplyRef'].doClose()
     },
-    setAvailbleClient(val) {
+    setAvailbleClient (val) {
       return this.clientFs.every(x => x.name !== val.name)
     },
-    handleShare(row) {
+    handleShare (row) {
       if (this.localPopRef) {
         this.$refs[this.localPopRef] && this.$refs[this.localPopRef].doClose()
       }
@@ -776,7 +710,7 @@ export default {
         // 获取已共享客户端：过滤未使用客户端到
       })
     },
-    getAppliedClient() {
+    getAppliedClient () {
       const row = this.selectedFs
       this.loadingSelectClient = true
       this.clientFs = []
@@ -788,12 +722,12 @@ export default {
         this.loadingSelectClient = false
       })
     },
-    handleResize() {
+    handleResize () {
       window.onresize = () => {
         this.$refs[this.localPopRef] && this.$refs[this.localPopRef].doClose()
       }
     },
-    viewClientFs(row) {
+    viewClientFs (row) {
       if (this.localPopRef) {
         this.$refs[this.localPopRef] && this.$refs[this.localPopRef].doClose()
       }
@@ -811,23 +745,23 @@ export default {
         this.showPopover = false
       })
     },
-    renderAuth(auth) {
+    renderAuth (auth) {
       switch (auth) {
         case true:
-          return '只读'
+          return this.$ts('client.readonly')
         case false:
-          return '读写'
+          return this.$ts('client.readWrite')
         default:
-          return '只读'
+          return this.$ts('client.readonly')
       }
     },
-    filterBucket(row) {
+    filterBucket (row) {
       this.$router.push({
         name: 'Bucket',
         params: { bucketName: row.bucketName }
       })
     },
-    init() {
+    init () {
       // 初始化
       this.setQueryIndex = 0
       this.setQuerySize = 1000
@@ -838,7 +772,7 @@ export default {
         pageSize: this.setQuerySize
       })
     },
-    getList(query) {
+    getList (query) {
       this.loading = true
       getFsList(query).then((res) => {
         if (res.data.records && !res.data.records.length) {
@@ -856,11 +790,11 @@ export default {
           this.loading = false
         })
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       this.pageSize = val
       this.pageIndex = 1
     },
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       // 最后一页请求分页
       this.pageIndex = val
       if (Math.ceil(this.total / this.pageSize) === val) {

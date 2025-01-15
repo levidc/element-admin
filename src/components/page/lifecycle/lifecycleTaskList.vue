@@ -51,7 +51,7 @@
             /> -->
           </el-form-item>
           <el-form-item
-            label="状态"
+            :label="$ts('page.status')"
             prop="status"
           >
             <el-select
@@ -166,13 +166,13 @@ export default {
       tableData: [],
       columns: [
         {
-          title: '桶名称',
+          title: this.$ts('bucket.name'),
           prop: 'bucketName',
           minWidth: '150px',
           fixed: true
         },
         {
-          title: '类型',
+          title: this.$ts('tempConfigFile.type'),
           prop: 'type',
           width: '150px',
           formatter: (_, __, val) => {
@@ -196,7 +196,7 @@ export default {
           }
         },
         {
-          title: '状态',
+          title: this.$ts('page.status'),
           prop: 'status',
           width: '200px',
           formatter: (_, __, val) => {

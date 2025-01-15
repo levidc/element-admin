@@ -1,48 +1,33 @@
 <template>
   <div>
     <div class="page_content_wrap">
-      <el-button
-        v-access="'admin:AddStorageDeviceController'"
-        class="blue mr_10"
-        :disabled="loading || innerFormLoading"
-        @click="showCreate('device')"
-      >创建设备</el-button>
-      <el-button
-        v-access="'admin:AddStorageResourceController'"
-        class="golden mr_10"
-        type="primary"
-        :disabled="loading || innerFormLoading"
-        @click="showCreate('object')"
-      >创建资源</el-button>
+      <el-button v-access="'admin:AddStorageDeviceController'" class="blue mr_10"
+        :disabled="loading || innerFormLoading" @click="showCreate('device')">{{ $ts('objectResource.createDevice')
+        }}</el-button>
+      <el-button v-access="'admin:AddStorageResourceController'" class="golden mr_10" type="primary"
+        :disabled="loading || innerFormLoading" @click="showCreate('object')">{{ $ts('objectResource.createResource')
+        }}</el-button>
       <div class="right">
-        <el-tooltip content="刷新" placement="top" effect="dark">
+        <el-tooltip :content="$ts('page.refresh')" placement="top" effect="dark">
           <i class="el-icon-refresh" @click="filterText = ''; getCurrentRefresh()" />
         </el-tooltip>
       </div>
     </div>
     <div class="treeContent">
       <div class="tree">
-        <el-input v-model="filterText" placeholder="设备或资源名过滤" class="mb_10" clearable />
+        <el-input v-model="filterText" :placeholder="$ts('objectResource.searchDeviceOrResource')" class="mb_10"
+          clearable />
         <div v-loading="loading" class="stauts">
-          <el-tree
-            v-if="!loading"
-            ref="tree"
-            :data="tableData"
-            node-key="id"
-            :props="treeOpt"
-            default-expand-all
-            icon-class="none"
-            :expand-on-click-node="false"
-            :filter-node-method="filterNode"
-            highlight-current
-            @node-click="getInfo"
-          >
+          <el-tree v-if="!loading" ref="tree" :data="tableData" node-key="id" :props="treeOpt" default-expand-all
+            icon-class="none" :expand-on-click-node="false" :filter-node-method="filterNode" highlight-current
+            @node-click="getInfo">
             <span slot-scope="{ node, data }" class="custom-tree-node">
               <span v-if="data.storageName">
                 <span class="resourceContainer">
                   <span class="resourcename">
-                    <el-tag style="margin-right:5px;">{{ data.storageType === 'IAM' ? 'AWS' : data.storageType }}</el-tag>
-                    <showToolTip :text="node.label" width="48%" />
+                    <el-tag style="margin-right:5px;">{{ data.storageType === 'IAM' ? 'AWS' : data.storageType
+                      }}</el-tag>
+                    <showToolTip :text="node.label" width="60%" />
                   </span>
                   <div>
                     <!-- <svg
@@ -55,7 +40,9 @@
                     <el-tag v-if="data.storageUseType !== 'CACHE' && stringToBoolean(data.default)">ACTIVE</el-tag>
                     <el-tag v-if="data.storageUseType !== 'CACHE' && stringToBoolean(data.next)">STANDBY</el-tag>
                     <el-tag v-if="data.storageType === 'NAS'">{{
-                      data.storageUseType === 'CACHE' ? '缓存' : data.storageUseType ==='DEFAULT'?'直接存储':'' }}</el-tag>
+                      data.storageUseType === 'CACHE' ? $ts('loadGroup.cacheLoad') : data.storageUseType === 'DEFAULT' ?
+                        $ts('loadGroup.defaultUseType') : ''
+                    }}</el-tag>
                   </div>
                 </span>
               </span>
@@ -81,36 +68,26 @@
           <el-form label-position="left" inline>
             <el-row>
               <el-col :span="12">
-                <el-form-item label="设备名称">
+                <el-form-item :label="$ts('objectResource.deviceName')">
                   <span>{{ fillDeviceForm.deviceName }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="是否默认设备">
-                  <span v-if="fillDeviceForm.isDefault" class="green">是</span>
-                  <span v-else>否</span>
+                <el-form-item :label="$ts('objectResource.isDefault')">
+                  <span v-if="fillDeviceForm.isDefault" class="green">{{ $ts('page.Yes') }}</span>
+                  <span v-else>{{ $ts('page.No') }}</span>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
               <div class="btn">
-                <el-button
-                  v-if="deviceForm.storageResourceModelList && deviceForm.storageResourceModelList.length"
-                  v-access="'admin:GetDefaultNextResourceController'"
-                  class="blue"
-                  @click="handleDefNextFlag(fillDeviceForm)"
-                >关联资源配置</el-button>
-                <el-button
-                  v-access="'admin:UpdateStorageDeviceController'"
-                  class="blue"
-                  @click="updateDevice(fillDeviceForm, true)"
-                >{{ $ts('modify') }}</el-button>
-                <el-button
-                  v-access="'admin:DeleteStorageDeviceController'"
-                  type="danger"
-                  class="red"
-                  @click="handleDel('device', { row: fillDeviceForm })"
-                >{{ $ts('delete') }}</el-button>
+                <el-button v-if="deviceForm.storageResourceModelList && deviceForm.storageResourceModelList.length"
+                  v-access="'admin:GetDefaultNextResourceController'" class="blue"
+                  @click="handleDefNextFlag(fillDeviceForm)">{{ $ts('objectResource.setNext') }}</el-button>
+                <el-button v-access="'admin:UpdateStorageDeviceController'" class="blue"
+                  @click="updateDevice(fillDeviceForm, true)">{{ $ts('page.modify') }}</el-button>
+                <el-button v-access="'admin:DeleteStorageDeviceController'" type="danger" class="red"
+                  @click="handleDel('device', { row: fillDeviceForm })">{{ $ts('page.delete') }}</el-button>
               </div>
             </el-row>
           </el-form>
@@ -120,12 +97,12 @@
           <el-form label-position="left" inline>
             <el-row>
               <el-col :span="12">
-                <el-form-item label="资源名称">
+                <el-form-item :label="$ts('loadGroup.resourceName')">
                   <span>{{ fillSourceForm.storageName }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="地址">
+                <el-form-item :label="$ts('loadGroup.url')">
                   <span>{{ fillSourceForm.url || '-' }}</span>
                 </el-form-item>
               </el-col>
@@ -133,54 +110,55 @@
 
             <el-row>
               <el-col :span="12">
-                <el-form-item label="存储热度">
+                <el-form-item :label="$ts('objectResource.storageType')">
                   <span>{{ fillSourceForm.storageType === 'IAM' ? 'AWS' : fillSourceForm.storageType }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item v-if="fillSourceForm.storageType === 'GLACIER'" label="存储厂商">
+                <el-form-item v-if="fillSourceForm.storageType === 'GLACIER'"
+                  :label="$ts('objectResource.manufacturer')">
                   <span>{{ fillSourceForm.manufacturer }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item v-if="fillSourceForm.storageType !== 'NAS'" label="签名类型">
+                <el-form-item v-if="fillSourceForm.storageType !== 'NAS'" :label="$ts('objectResource.signatureType')">
                   <span>{{ fillSourceForm.signatureType === 'AWS2' ? 'V2' : 'V4' }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item
                   v-if="fillSourceForm.storageType === 'S3' || fillSourceForm.storageType === 'GLACIER' || fillSourceForm.storageType === 'WARM'"
-                  label="用户名"
-                >
+                  :label="$ts('page.username')">
                   <span>{{ fillSourceForm.userName || '-' }}</span>
                 </el-form-item>
-                <el-form-item v-if="fillSourceForm.storageType === 'IAM'" label="区域">
+                <el-form-item v-if="fillSourceForm.storageType === 'IAM'" :label="$ts('loadGroup.region')">
                   <span>{{ transRegion(fillSourceForm.region) }}</span>
                 </el-form-item>
-                <el-form-item v-if="fillSourceForm.storageType === 'NAS'" label="存储用途">
-                  <span>{{ fillSourceForm.storageUseType === 'CACHE' ? '缓存' : '直接存储' }}</span>
+                <el-form-item v-if="fillSourceForm.storageType === 'NAS'" :label="$ts('loadGroup.storageUseType')">
+                  <span>{{ fillSourceForm.storageUseType === 'CACHE' ? $ts('loadGroup.cacheLoad') :
+                    $ts('loadGroup.defaultUseType') }}</span>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row v-if="fillSourceForm.storageType === 'NAS' || fillSourceForm.storageType === 'CACHE'">
               <el-col :span="12">
-                <el-form-item label="单个对象最大容量(MB)">
+                <el-form-item :label="$ts('loadGroup.mabObjectSize')">
                   <span>{{ fillSourceForm.extendInfo?.maxObjectSize || '-' }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="目录最大深度">
+                <el-form-item :label="$ts('loadGroup.dirMaxDepth')">
                   <span>{{ fillSourceForm.extendInfo?.dirMaxDepth || '-' }}</span>
                 </el-form-item>
               </el-col>
               <!--  -->
               <el-col :span="12">
-                <el-form-item label="最大子目录数">
+                <el-form-item :label="$ts('loadGroup.dirMaxSubDir')">
                   <span>{{ fillSourceForm.extendInfo?.dirMaxSubDir || '-' }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="单目录存储最大文件数">
+                <el-form-item :label="$ts('loadGroup.dirMaxFile')">
                   <span>{{ fillSourceForm.extendInfo?.dirMaxFile || '-' }}</span>
                 </el-form-item>
               </el-col>
@@ -197,14 +175,13 @@
             </el-row>
             <el-row>
               <el-col :span="12">
-                <el-form-item label="标签名">
+                <el-form-item :label="$ts('loadGroup.sign')">
                   <span>{{ fillSourceForm.sign }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item
-                  :label="fillSourceForm.storageType !== 'NAS' && fillSourceForm.storageType !== 'CACHE' ? '存储桶名' : '共享目录'"
-                >
+                  :label="fillSourceForm.storageType !== 'NAS' && fillSourceForm.storageType !== 'CACHE' ? $ts('bucket.name') : $ts('loadGroup.sharePath')">
                   <span>{{ fillSourceForm.bucketName }}</span>
                 </el-form-item>
               </el-col>
@@ -212,55 +189,56 @@
             <el-row v-if="form.storageType !== 'NAS'">
               <el-col :span="12">
                 <el-form-item label="pathStyle">
-                  <span>{{ fillSourceForm.pathStyle ? '是' : '否' }}</span>
+                  <span>{{ fillSourceForm.pathStyle ? $ts('page.Yes') : $ts('page.No') }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
                 <el-form-item label="chunkedEncodingEnabled">
-                  <span>{{ fillSourceForm.chunkedEncodingEnabled ? '是' : '否' }}</span>
+                  <span>{{ fillSourceForm.chunkedEncodingEnabled ? $ts('page.Yes') : $ts('page.No') }}</span>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row v-if="fillSourceForm.storageUseType !== 'CACHE'">
               <el-col :span="12">
-                <el-form-item label="默认资源">
-                  <span v-if="fillSourceForm.default" class="green"> 是</span>
-                  <span v-else> 否 </span>
+                <el-form-item :label="$ts('loadGroup.defaultResource')">
+                  <span v-if="fillSourceForm.default" class="green"> {{ $ts('page.Yes') }}</span>
+                  <span v-else> {{ $ts('page.No') }} </span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="下一个资源">
-                  <span v-if="fillSourceForm.next" class="green"> 是 </span>
-                  <span v-else> 否 </span>
+                <el-form-item :label="$ts('loadGroup.nextResource')">
+                  <span v-if="fillSourceForm.next" class="green"> {{ $ts('page.Yes') }} </span>
+                  <span v-else> {{ $ts('page.No') }} </span>
                 </el-form-item>
               </el-col>
             </el-row>
 
             <el-row>
               <el-col :span="12">
-                <el-form-item label="对象数量上限">
-                  <span v-if="fillSourceForm.objectCount">{{ fillSourceForm.objectCount == -1 ? '无限制' :
+                <el-form-item :label="$ts('loadGroup.objectCountLimit')">
+                  <span v-if="fillSourceForm.objectCount">{{ fillSourceForm.objectCount == -1 ? $ts('page.noLimit') :
                     handleDemi('', '', fillSourceForm.objectCount)
-                  }}</span>
+                    }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="对象容量上限">
-                  <span>{{ fillSourceForm.objectSize == -1 ? '无限制' : fillSourceForm.objectSize + '' +
+                <el-form-item :label="$ts('loadGroup.objectSizeLimit')">
+                  <span>{{ fillSourceForm.objectSize == -1 ? $ts('page.noLimit') : fillSourceForm.objectSize + '' +
                     fillSourceForm.unit }}</span>
                 </el-form-item>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="12">
-                <el-form-item label="对象已用数量">
+                <el-form-item :label="$ts('loadGroup.usedCount')">
                   <span v-if="fillSourceForm.usedCount">{{ handleDemi('', '', fillSourceForm.usedCount) }}</span>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="对象已用容量">
+                <el-form-item :label="$ts('loadGroup.userSize')">
                   <span>{{ byteConvert(fillSourceForm.usedSpace) }}</span>
-                  <span v-for="(item, i) in renderUtilityRatio(fillSourceForm) " :key="i" :style="{ color: item.color }">
+                  <span v-for="(item, i) in renderUtilityRatio(fillSourceForm) " :key="i"
+                    :style="{ color: item.color }">
                     {{ item.val }}
                   </span>
                 </el-form-item>
@@ -270,13 +248,13 @@
               <el-col :span="24">
                 <el-table :data="fillSourceForm.gateway" style="width: 90%;">
                   <el-table-column prop="gatewayAddress" />
-                  <el-table-column prop="gatewayStatus" label="服务状态" align="center">
+                  <el-table-column prop="gatewayStatus" :label="$ts('loadGroup.gatewayStatus')" align="center">
                     <template slot-scope="scope">
-                      <span v-if="scope.row.gatewayStatus" class="green">正常</span>
-                      <span v-else class="red">异常</span>
+                      <span v-if="scope.row.gatewayStatus" class="green">{{ $ts('page.normal') }}</span>
+                      <span v-else class="red">{{ $ts('page.abnormal') }}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="resourceStatus" label="资源连接状态" align="center">
+                  <el-table-column prop="resourceStatus" :label="$ts('loadGroup.resourceStatus')" align="center">
                     <template slot-scope="scope">
                       <span v-if="scope.row.resourceStatus === 'OK'" class="green">
                         {{ storageTypeEnu[scope.row.resourceStatus] }}
@@ -286,15 +264,10 @@
                       </span>
                       <span v-else class="red">
                         <span class="red" type="text">
-                          资源异常
+                          {{ $ts('loadGroup.resourceAbnormal') }}
                         </span>
-                        <el-popover
-                          popper-class="text-wrap"
-                          placement="top-start"
-                          title="异常详情"
-                          trigger="hover"
-                          :content="String(scope.row.resourceStatus).trim()"
-                        >
+                        <el-popover popper-class="text-wrap" placement="top-start" :title="$ts('loadGroup.errorDetail')"
+                          trigger="hover" :content="String(scope.row.resourceStatus).trim()">
                           <svg slot="reference" class="icon icon-question" aria-hidden="true">
                             <use xlink:href="#icon-question" />
                           </svg>
@@ -306,51 +279,32 @@
               </el-col>
             </el-row>
             <div class="btn">
-              <el-button
-                v-access="'admin:UpdateStorageResourceController'"
-                class="blue"
-                @click="updateForm(fillSourceForm, true)"
-              >{{
-                $ts('modify') }}</el-button>
-              <el-button
-                v-access="'admin:DeleteStorageDeviceController'"
-                type="danger"
-                class="red"
-                @click="handleDel('object', { row: fillSourceForm })"
-              >{{ $ts('delete') }}</el-button>
+              <el-button v-access="'admin:UpdateStorageResourceController'" class="blue"
+                @click="updateForm(fillSourceForm, true)">{{
+                  $ts('page.modify') }}</el-button>
+              <el-button v-access="'admin:DeleteStorageDeviceController'" type="danger" class="red"
+                @click="handleDel('object', { row: fillSourceForm })">{{ $ts('page.delete') }}</el-button>
             </div>
           </el-form>
         </div>
       </div>
     </div>
-    <el-dialog
-      :visible.sync="modelFormFlag"
-      width="70%"
-      :title="isAdd ? '创建存储资源' : '修改存储资源'"
-      custom-class="formDialog"
-      @open="dialogOpen('tableFocus')"
-    >
+    <el-dialog :visible.sync="modelFormFlag" width="70%"
+      :title="isAdd ? $ts('objectResource.createStorageResource') : $ts('objectResource.updateStorageResource')"
+      custom-class="formDialog" @open="dialogOpen('tableFocus')">
       <el-form ref="form" :model="form" :rules="rules" label-width="160px">
         <el-row>
           <el-col :span="12">
-            <el-form-item prop="storageName" label="资源名称">
-              <el-input
-                ref="tableFocus"
-                v-model.trim="form.storageName"
-                placeholder="请输入2-64位英文、中文、数字、'_-.'"
-                clearable
-              />
+            <el-form-item prop="storageName" :label="$ts('loadGroup.resourceName')">
+              <el-input ref="tableFocus" v-model.trim="form.storageName" :placeholder="$ts('loadGroup.loadGroupReg')"
+                clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item prop="storageType" label="存储热度">
+            <el-form-item prop="storageType" :label="$ts('objectResource.storageType')">
               <el-select v-model="form.storageType" style="width:100%" :disabled="!isAdd" @change="validateUrl">
-                <el-option
-                  v-for="item in filterEnumStorageType"
-                  :key="item.value"
-                  :value="item.value"
-                  :label="item.label"
-                />
+                <el-option v-for="item in filterEnumStorageType" :key="item.value" :value="item.value"
+                  :label="item.label" />
               </el-select>
               <!-- <el-button
                 v-if="form.storageType === 'NAS' || form.storageType==='CACHE'"
@@ -370,7 +324,7 @@
             <el-form-item label="" />
           </el-col>
           <el-col :span="12">
-            <el-form-item label="存储厂商" prop="manufacturer">
+            <el-form-item :label="$ts('objectResource.manufacturer')" prop="manufacturer">
               <el-radio-group v-model="form.manufacturer">
                 <el-radio v-for="{ label, value } in resourceFactoryMap" :key="value" :label="value">
                   {{ label }}
@@ -380,24 +334,19 @@
           </el-col>
         </el-row>
         <el-row v-if="form.storageType === 'NAS' || form.storageType === 'CACHE'" class="extendInfo">
-          <el-form-item label="高级配置" style="margin-bottom: 0px;">
+          <el-form-item style="margin-bottom: 0px;">
             <span slot="label">
               <span style="color:#ff8746">
-                高级配置
+                {{ $ts('objectResource.advancedConfig') }}
               </span>
             </span>
           </el-form-item>
           <el-row>
             <el-col :span="12">
-              <el-form-item label="单个对象最大容量" prop="extendInfo.maxObjectSize">
-                <el-input
-                  v-model="form.extendInfo.maxObjectSize"
-                  style="vertical-align: middle;"
-                  placeholder="请输入1-64的正整数"
-                  :disabled="!isAdd"
-                  clearable
-                  @input="val => inputPositiveNum(val, 'extendInfo.maxObjectSize', 64)"
-                >
+              <el-form-item :label="$ts('objectResource.maxObjectSize')" prop="extendInfo.maxObjectSize">
+                <el-input v-model="form.extendInfo.maxObjectSize" style="vertical-align: middle;"
+                  :placeholder="$ts('validate.positiveNumberRange', { min: 1, max: 64 })" :disabled="!isAdd" clearable
+                  @input="val => inputPositiveNum(val, 'extendInfo.maxObjectSize', 64)">
                   <span slot="append">
                     MB
                   </span>
@@ -405,64 +354,53 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="目录最大深度" prop="extendInfo.dirMaxDepth">
-                <el-input
-                  v-model="form.extendInfo.dirMaxDepth"
-                  placeholder="请输入1-2的正整数"
-                  :disabled="!isAdd"
-                  clearable
-                  @input="val => inputPositiveNum(val, 'extendInfo.dirMaxDepth', 2)"
-                />
+              <el-form-item :label="$ts('loadGroup.dirMaxDepth')" prop="extendInfo.dirMaxDepth">
+                <el-input v-model="form.extendInfo.dirMaxDepth"
+                  :placeholder="$ts('validate.positiveNumberRange', { min: 1, max: 2 })" :disabled="!isAdd" clearable
+                  @input="val => inputPositiveNum(val, 'extendInfo.dirMaxDepth', 2)" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="最大子目录数" prop="extendInfo.dirMaxSubDir">
-                <el-input
-                  v-model="form.extendInfo.dirMaxSubDir"
-                  placeholder="请输入1-20的正整数"
-                  :disabled="!isAdd"
-                  clearable
-                  @input="val => inputPositiveNum(val, 'extendInfo.dirMaxSubDir', 20)"
-                />
+              <el-form-item :label="$ts('loadGroup.dirMaxSubDir')" prop="extendInfo.dirMaxSubDir">
+                <el-input v-model="form.extendInfo.dirMaxSubDir"
+                  :placeholder="$ts('validate.positiveNumberRange', { min: 1, max: 20 })" :disabled="!isAdd" clearable
+                  @input="val => inputPositiveNum(val, 'extendInfo.dirMaxSubDir', 20)" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="单目录存储最大文件数" prop="extendInfo.dirMaxFile">
-                <el-input
-                  v-model="form.extendInfo.dirMaxFile"
-                  placeholder="请输入1-10000的正整数"
-                  :disabled="!isAdd"
-                  clearable
-                  @input="val => inputPositiveNum(val, 'extendInfo.dirMaxFile', 10000)"
-                />
+              <el-form-item :label="$ts('loadGroup.dirMaxFile')" prop="extendInfo.dirMaxFile">
+                <el-input v-model="form.extendInfo.dirMaxFile"
+                  :placeholder="$ts('validate.positiveNumberRange', { min: 1, max: 10000 })" :disabled="!isAdd"
+                  clearable @input="val => inputPositiveNum(val, 'extendInfo.dirMaxFile', 10000)" />
               </el-form-item>
             </el-col>
           </el-row>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item v-if="form.storageType === 'NAS'" prop="storageUseType" label="存储用途">
+            <el-form-item v-if="form.storageType === 'NAS'" prop="storageUseType"
+              :label="$ts('loadGroup.storageUseType')">
               <el-radio-group v-model="form.storageUseType" :disabled="!isAdd" @change="handleNextResource">
-                <el-radio label="DEFAULT">直接存储</el-radio>
-                <el-radio label="CACHE">缓存</el-radio>
+                <el-radio label="DEFAULT">{{ $ts('loadGroup.defaultUseType') }}</el-radio>
+                <el-radio label="CACHE">{{ $ts('loadGroup.cacheLoad') }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item v-if="form.storageType !== 'IAM'" prop="url" label="地址">
-              <el-input v-model.trim="form.url" placeholder="请输入2-64字符" clearable>
+            <el-form-item v-if="form.storageType !== 'IAM'" prop="url" :label="$ts('loadGroup.url')">
+              <el-input v-model.trim="form.url" :placeholder="$ts('objectResource.urlIpt')" clearable>
                 <template v-if="judgeS3Type" slot="prepend">http://</template>
               </el-input>
             </el-form-item>
-            <el-form-item v-else-if="form.storageType === 'IAM'" prop="region" label="区域">
+            <el-form-item v-else-if="form.storageType === 'IAM'" prop="region" :label="$ts('loadGroup.region')">
               <el-select v-model="form.region">
                 <el-option v-for="item in regions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col v-if="form.storageType !== 'NAS'" :span="12">
-            <el-form-item prop="signatureType" label="签名类型">
-              <el-select v-model="form.signatureType" placeholder="请选择签名类型">
+            <el-form-item prop="signatureType" :label="$ts('objectResource.signatureType')">
+              <el-select v-model="form.signatureType" :placeholder="$ts('objectResource.selectSignatureType')">
                 <el-option v-for="item in emuSignatureType" :key="item.value" :value="item.value" :label="item.label" />
               </el-select>
             </el-form-item>
@@ -472,25 +410,17 @@
           <el-col :span="12">
             <el-form-item
               v-if="form.storageType === 'S3' || form.storageType === 'GLACIER' || form.storageType === 'WARM'"
-              prop="userName"
-              label="用户名"
-            >
-              <el-input v-model.trim="form.userName" placeholder="请输入2-64字符" clearable auto-complete="new-password" />
+              prop="userName" :label="$ts('page.username')">
+              <el-input v-model.trim="form.userName" :placeholder="$ts('objectResource.urlIpt')" clearable
+                auto-complete="new-password" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item
               v-if="form.storageType === 'S3' || form.storageType === 'GLACIER' || form.storageType === 'WARM'"
-              prop="password"
-              label="密码"
-            >
-              <el-input
-                v-model.trim="form.password"
-                type="password"
-                placeholder="请输入2-64字符"
-                clearable
-                auto-complete="new-password"
-              />
+              prop="password" :label="$ts('login.password')">
+              <el-input v-model.trim="form.password" type="password" :placeholder="$ts('objectResource.urlIpt')"
+                clearable auto-complete="new-password" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -498,99 +428,71 @@
           <el-col :span="12">
             <el-form-item prop="pathStyle" label="pathStyle">
               <el-radio-group v-model="form.pathStyle">
-                <el-radio :label="true">是</el-radio>
-                <el-radio :label="false">否</el-radio>
+                <el-radio :label="true">{{ $ts('page.Yes') }}</el-radio>
+                <el-radio :label="false">{{ $ts('page.No') }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item prop="chunkedEncodingEnabled" label="chunkedEncodingEnabled" class="overflowLabel">
               <el-radio-group v-model="form.chunkedEncodingEnabled">
-                <el-radio :label="true">是</el-radio>
-                <el-radio :label="false">否</el-radio>
+                <el-radio :label="true">{{ $ts('page.Yes') }}</el-radio>
+                <el-radio :label="false">{{ $ts('page.No') }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item prop="sign" label="标签">
-              <el-input
-                v-model.trim="form.sign"
-                type="textarea"
-                :autosize="{ minRows: 2, maxRows: 4 }"
-                clearable
-                :disabled="!isAdd"
-                placeholder="请输入2-256字符"
-              />
+            <el-form-item prop="sign" :label="$ts('loadGroup.sign')">
+              <el-input v-model.trim="form.sign" type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" clearable
+                :disabled="!isAdd" :placeholder="$ts('objectResource.signIpt')" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item
-              v-if="form.storageType === 'NAS' || form.storageType === 'CACHE'"
-              prop="mountDir"
-              label="共享目录"
-            >
-              <el-input v-model="form.mountDir" placeholder="请输入共享目录" :disabled="!isAdd" />
+            <el-form-item v-if="form.storageType === 'NAS' || form.storageType === 'CACHE'" prop="mountDir"
+              :label="$ts('loadGroup.sharePath')">
+              <el-input v-model="form.mountDir" :placeholder="$ts('objectResource.sharePathRequired')"
+                :disabled="!isAdd" />
             </el-form-item>
-            <el-form-item v-else prop="bucketName" label="存储桶名">
+            <el-form-item v-else prop="bucketName" :label="$ts('bucket.name')">
               <el-popover placement="top" width="360px" trigger="hover" style="position:absolute;">
-                <p style="line-height:1.6;">名称只能由小写字母、数字、点 (.) 和连字符 (-) 组成。</p>
-                <p style="line-height:1.6;">名称需以数字字母开头结尾</p>
-                <p style="line-height:1.6;">名称不能包含两个相邻的句点(.)</p>
-                <p style="line-height:1.6;">不能以'xn--'开头和以-s3alias结尾</p>
-                <p style="line-height:1.6;">存储桶名称不能与 IP 地址相似</p>
-                <p style="line-height:1.6;">名称长度为3-63位字符</p>
-                <svg slot="reference" class="icon icon-question" aria-hidden="true" style="margin-left: -32px !important;">
+                <p style="line-height:1.6;">{{ $ts('objectResource.bucketNameRegIpt1') }}</p>
+                <p style="line-height:1.6;">{{ $ts('objectResource.bucketNameRegIpt2') }}</p>
+                <p style="line-height:1.6;">{{ $ts('objectResource.bucketNameRegIpt3') }}</p>
+                <p style="line-height:1.6;">{{ $ts('objectResource.bucketNameRegIpt4') }}</p>
+                <p style="line-height:1.6;">{{ $ts('objectResource.bucketNameRegIpt5') }}</p>
+                <p style="line-height:1.6;">{{ $ts('objectResource.bucketNameRegIpt6') }}</p>
+                <svg slot="reference" class="icon icon-question" aria-hidden="true"
+                  style="margin-left: -32px !important;">
                   <use xlink:href="#icon-question" />
                 </svg>
               </el-popover>
-              <el-input v-model.trim="form.bucketName" placeholder="请输入合法的存储桶名" :disabled="!isAdd" clearable />
+              <el-input v-model.trim="form.bucketName" :placeholder="$ts('objectResource.bucketNameReg')"
+                :disabled="!isAdd" clearable />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <!-- 对象数量和容量需要能设置不限制 -->
-            <el-form-item prop="objectCount" label="对象数量上限">
-              <QuickDefault
-                v-model="form.objectCount"
-                :default-value="-1"
-                vertical
-                class="quick-default-style"
-                label-of-default="无限制"
-                label-of-value="限制"
-              >
+            <el-form-item prop="objectCount" :label="$ts('loadGroup.objectCountLimit')">
+              <QuickDefault v-model="form.objectCount" :default-value="-1" vertical class="quick-default-style"
+                :label-of-default="$ts('page.noLimit')" :label-of-value="$ts('page.custom')">
                 <template #default="{ data, onChange: onObjectCount }">
-                  <el-input
-                    v-model="data.value"
-                    placeholder="请输入正整数"
-                    clearable
-                    @blur="onObjectCount()"
-                    @input="val => inputPositiveNum(val, 'objectCount')"
-                  />
+                  <el-input v-model="data.value" :placeholder="$ts('validate.positiveNumber')" clearable
+                    @blur="onObjectCount()" @input="val => inputPositiveNum(val, 'objectCount')" />
                 </template>
               </QuickDefault>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item prop="objectSize" label="对象容量上限">
-              <QuickDefault
-                v-model="form.objectSize"
-                :default-value="-1"
-                vertical
-                class="quick-default-style"
-                label-of-default="无限制"
-                label-of-value="限制"
-              >
+            <el-form-item prop="objectSize" :label="$ts('loadGroup.objectSizeLimit')">
+              <QuickDefault v-model="form.objectSize" :default-value="-1" vertical class="quick-default-style"
+                :label-of-default="$ts('page.noLimit')" :label-of-value="$ts('page.custom')">
                 <template #default="{ data, onChange: onObjectSize }">
-                  <el-input
-                    v-model="data.value"
-                    clearable
-                    :placeholder="placeholderValue"
-                    @blur="onObjectSize()"
-                    @input="val => inputPositiveNum(val, 'objectSize')"
-                  >
+                  <el-input v-model="data.value" clearable :placeholder="placeholderValue" @blur="onObjectSize()"
+                    @input="val => inputPositiveNum(val, 'objectSize')">
                     <el-select slot="append" v-model="form.unit" style="width: 85px" @change="changelogicUnit">
                       <el-option v-for="item in sizeSelect" :key="item.value" :label="item.label" :value="item.value" />
                     </el-select>
@@ -602,137 +504,116 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item prop="deviceId" label="设备">
-              <el-select
-                v-model="form.deviceId"
-                filterable
-                clearable
-                :disabled="!isAdd"
-                placeholder="请输入资源名或选择资源"
-                @change="judgeValidNext"
-              >
-                <el-option
-                  v-for="item in deviceSelectOpt"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                  clearable
-                />
+            <el-form-item prop="deviceId" :label="$ts('objectResource.device')">
+              <el-select v-model="form.deviceId" filterable clearable :disabled="!isAdd"
+                :placeholder="$ts('objectResource.selectDevice')" @change="judgeValidNext">
+                <el-option v-for="item in deviceSelectOpt" :key="item.value" :label="item.label" :value="item.value"
+                  clearable />
               </el-select>
             </el-form-item>
           </el-col>
           <!-- 编辑展示默认资源 -->
           <el-col v-if="!isAdd && form.storageUseType !== 'CACHE'" :span="12">
-            <el-form-item prop="defaultV" label="默认资源">
-              <span v-if="form.defaultV" style="color: #ff8746;">是</span>
-              <span v-else>否</span>
+            <el-form-item prop="defaultV" :label="$ts('loadGroup.defaultResource')">
+              <span v-if="form.defaultV" style="color: #ff8746;">{{ $ts('page.Yes') }}</span>
+              <span v-else>{{ $ts('page.No') }}</span>
             </el-form-item>
           </el-col>
           <el-col v-if="isAdd && form.storageUseType !== 'CACHE'" :span="12">
-            <el-form-item prop="next" label="下一个资源">
+            <el-form-item prop="next" :label="$ts('loadGroup.nextResource')">
               <el-popover placement="top" width="265px" trigger="hover" style="position:absolute;">
-                <p>设备下只能配置一个资源为下一个资源</p>
-                <svg slot="reference" class="icon icon-question" aria-hidden="true" style="margin-left: -32px !important;">
+                <p>{{ $ts('objectResource.nextResourceTip') }}</p>
+                <svg slot="reference" class="icon icon-question" aria-hidden="true"
+                  style="margin-left: -32px !important;">
                   <use xlink:href="#icon-question" />
                 </svg>
               </el-popover>
-              <el-switch
-                v-model="form.next"
-                active-text="是"
-                inactive-text="否"
-                :disabled="form.storageUseType === 'CACHE' || deviceExistNextConifg"
-              />
+              <el-switch v-model="form.next" :active-text="$ts('page.Yes')" :inactive-text="$ts('page.No')"
+                :disabled="form.storageUseType === 'CACHE' || deviceExistNextConifg" />
             </el-form-item>
           </el-col>
         </el-row>
         <!-- 设备只有一个下一个资源、切换设备判断是否可启用/ -->
         <el-row v-if="!isAdd && form.storageUseType !== 'CACHE'">
           <el-col :span="12">
-            <el-form-item prop="next" label="下一个资源">
+            <el-form-item prop="next" :label="$ts('loadGroup.nextResource')">
               <el-popover placement="top" width="260px" trigger="hover" style="position:absolute;">
-                <p>默认资源和下一个资源不能同时设置在同一个资源中</p>
-                <svg slot="reference" class="icon icon-question" aria-hidden="true" style="margin-left: -32px !important;">
+                <p>{{ $ts('default and next cannot at the same resource') }}</p>
+                <svg slot="reference" class="icon icon-question" aria-hidden="true"
+                  style="margin-left: -32px !important;">
                   <use xlink:href="#icon-question" />
                 </svg>
               </el-popover>
-              <el-switch
-                v-model="form.next"
-                active-text="是"
-                inactive-text="否"
-                :disabled="form.defaultV || form.storageUseType === 'CACHE'"
-              />
+              <el-switch v-model="form.next" :active-text="$ts('page.Yes')" :inactive-text="$ts('page.No')"
+                :disabled="form.defaultV || form.storageUseType === 'CACHE'" />
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button class="blue" @click="modelFormFlag = false">{{ $ts('button.cancel') }}</el-button>
-        <el-button class="golden" type="primary" @click="confirmCreate">{{ $ts('button.confirm') }}</el-button>
+        <el-button class="blue" @click="modelFormFlag = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button class="golden" type="primary" @click="confirmCreate">{{ $ts('page.confirm') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog :title="renderDel ? '删除存储资源' : '删除存储设备'" :visible.sync="deleteFlag" width="650px">
-      <p>{{ renderDel ? `删除如下存储资源:${selectRow.storageName}` : `删除如下存储设备: ${selectRow.deviceName}` }}
+    <el-dialog :title="renderDel ? $ts('objectResource.deleteResource') : $ts('objectResource.deleteDevice')"
+      :visible.sync="deleteFlag" width="650px">
+      <p>{{ renderDel ? `${$ts('objectResource.deleteSelectResource')}:${selectRow.storageName}` :
+        `${$ts('objectResource.deleteSelectDevice')}:
+        ${selectRow.deviceName}` }}
       </p>
       <div slot="footer">
-        <el-button class="blue" @click="deleteFlag = false">{{ $ts('cancel') }}</el-button>
-        <el-button type="primary" class="golden" @click="deleteForm">{{ $ts('delete') }}</el-button>
+        <el-button class="blue" @click="deleteFlag = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button type="primary" class="golden" @click="deleteForm">{{ $ts('page.delete') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog :visible.sync="deviceDialog" width="35%" :title="isAddDevice ? '创建存储设备' : '修改存储设备'">
+    <el-dialog :visible.sync="deviceDialog" width="35%"
+      :title="isAddDevice ? $ts('objectResource.createDevice') : $ts('objectResource.modifyDevice')">
       <el-form ref="Dform" :model="deviceForm" label-width="180px" :rules="dRules">
-        <el-form-item label="设备名称" prop="deviceName">
-          <el-input v-model="deviceForm.deviceName" placeholder="请输入2-40位英文、中文、数字、'_-.'" :disabled="!isAddDevice" />
+        <el-form-item :label="$ts('objectResource.deviceName')" prop="deviceName">
+          <el-input v-model="deviceForm.deviceName" :placeholder="$ts('objectResource.deviceNameIpt')"
+            :disabled="!isAddDevice" />
         </el-form-item>
-        <el-form-item label="是否默认设备" prop="isDefault">
-          <el-switch v-model="deviceForm.isDefault" active-text="是" inactive-text="否" />
+        <el-form-item :label="$ts('objectResource.isDefault')" prop="isDefault">
+          <el-switch v-model="deviceForm.isDefault" :active-text="$ts('page.Yes')" :inactive-text="$ts('page.No')" />
         </el-form-item>
       </el-form>
       <div slot="footer">
-        <el-button class="blue" @click="deviceDialog = false">{{ $ts('cancel') }}</el-button>
-        <el-button class="golden" @click="createDevice">{{ $ts('button.confirm') }}</el-button>
+        <el-button class="blue" @click="deviceDialog = false">{{ $ts('page.cancel') }}</el-button>
+        <el-button class="golden" @click="createDevice">{{ $ts('page.confirm') }}</el-button>
       </div>
     </el-dialog>
-    <el-dialog class="defNextFormDialog" :visible.sync="defNextFlag" width="45%" title="设备关联资源配置">
-      <el-input v-model="defNextForm.search" style="width:50%" placeholder="关键词检索" clearable @input="defSearch" />
-      <el-table
-        ref="defNextTable"
-        v-loading="loading"
-        :data="defNextResource"
-        max-height="300"
-        @sort-change="sortFunctionDef"
-        @current-change="handleRowChange"
-      >
+    <el-dialog class="defNextFormDialog" :visible.sync="defNextFlag" width="45%" :title="$ts('objectResource.setNext')">
+      <el-input v-model="defNextForm.search" style="width:50%" :placeholder="$ts('page.filter')" clearable
+        @input="defSearch" />
+      <el-table ref="defNextTable" v-loading="loading" :data="defNextResource" max-height="300"
+        @sort-change="sortFunctionDef" @current-change="handleRowChange">
         <el-table-column width="50" center>
           <template slot-scope="scope">
-            <el-radio
-              v-model="defNextForm.radio"
-              class="radio"
-              :label="scope.row.resourceId"
-              @change.native="getCurrentRow(scope.row)"
-            />
+            <el-radio v-model="defNextForm.radio" class="radio" :label="scope.row.resourceId"
+              @change.native="getCurrentRow(scope.row)" />
           </template>
         </el-table-column>
-        <el-table-column prop="storageName" label="资源名称" sortable="custom" />
-        <el-table-column prop="bucketName" label="存储桶名称" sortable="custom" />
-        <el-table-column prop="url" label="地址" sortable="custom" />
-        <el-table-column prop="default" label="默认资源" sortable="custom">
+        <el-table-column prop="storageName" :label="$ts('loadGroup.resourceName')" sortable="custom" />
+        <el-table-column prop="bucketName" :label="$ts('bucket.name')" sortable="custom" />
+        <el-table-column prop="url" :label="$ts('loadGroup.url')" sortable="custom" />
+        <el-table-column prop="default" :label="$ts('loadGroup.defaultResource')" sortable="custom">
           <template slot-scope="scope">
             <span :class="transferBool(scope.row.default) ? 'green' : 'red'">
-              {{ transferBool(scope.row.default) ? '是' : '否' }}
+              {{ transferBool(scope.row.default) ? $ts('page.Yes') : $ts('page.No') }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="next" label="下一个资源" sortable="custom">
+        <el-table-column prop="next" :label="$ts('loadGroup.nextResource')" sortable="custom">
           <template slot-scope="scope">
             <span :class="transferBool(scope.row.next) ? 'green' : 'red'">
-              {{ transferBool(scope.row.next) ? '是' : '否' }}
+              {{ transferBool(scope.row.next) ? $ts('page.Yes') : $ts('page.No') }}
             </span>
           </template>
         </el-table-column>
       </el-table>
       <el-form :model="defNextForm" style="margin: 20px 0;">
         <el-form-item style="margin-left:10px;">
-          <el-radio v-model="defNextForm.flag" label="next">下一个资源</el-radio>
+          <el-radio v-model="defNextForm.flag" label="next">{{ $ts('loadGroup.nextResource') }}</el-radio>
         </el-form-item>
       </el-form>
       <div slot="footer">
@@ -762,17 +643,17 @@ export default {
   components: {
     QuickDefault
   },
-  data() {
+  data () {
     var validateMaxInt = (rule, value, callback) => {
       if (this.form.unit == 'GB') {
         if (value > 8000000000) {
-          return callback(new Error('不超过8,000,000,000GB'))
+          return callback(new Error(this.$ts('validate.limitRange', { range: '8,000,000,000GB' })))
         } else {
           return callback()
         }
       } else if (this.form.unit == 'TB') {
         if (value > 83886) {
-          return callback(new Error('不超过83886TB'))
+          return callback(new Error(this.$ts('validate.limitRange', { range: '83886TB' })))
         } else {
           return callback()
         }
@@ -796,7 +677,7 @@ export default {
       ],
       regions: [
         {
-          label: '亚太地区(香港)', value: 'ap-east-1'
+          label: this.$ts('loadGroup.HK'), value: 'ap-east-1'
         }
       ],
       refreshId: [],
@@ -833,7 +714,7 @@ export default {
           required: true,
           validator: (_, val, cb) => {
             if (!val) {
-              return cb('请选择存储厂商')
+              return cb(this.$ts('objectResource.selectManufacturer'))
             } else {
               return cb()
             }
@@ -841,15 +722,15 @@ export default {
         },
         storageName: [
           {
-            required: true, message: '资源名称必填', trigger: ['blur', 'change']
+            required: true, message: this.$ts('validate.requiredReg', { name: this.$ts('loadGroup.resourceName') }), trigger: ['blur', 'change']
           },
           {
-            message: "请输入2-64位英文、中文、数字、'_-.'", pattern: /^[a-zA-Z0-9_\u4e00-\u9fa5\-\.]{2,64}$/
+            message: this.$ts('loadGroup.loadGroupReg'), pattern: /^[a-zA-Z0-9_\u4e00-\u9fa5\-\.]{2,64}$/
           }
         ],
         url: [
           {
-            required: true, message: '资源路径必填', trigger: ['blur', 'change']
+            required: true, message: this.$ts('validate.requiredReg', { name: this.$ts('objectResource.url') }), trigger: ['blur', 'change']
           },
           {
             validator: (rule, val, cb) => {
@@ -865,7 +746,7 @@ export default {
               //   return cb('资源路径需符合IP格式')
               // }
               if (val.length < 2 || val.length > 64) {
-                return cb('请输入2-64字符')
+                return cb(this.$ts('objectResource.urlIpt'))
               }
               return cb('')
             }
@@ -887,7 +768,7 @@ export default {
         ],
         bucketName: [
           {
-            required: true, message: '存储桶名必填', trigger: ['blur', 'change']
+            required: true, message: this.$ts('validate.requiredReg', { name: this.$ts('bucket.name') }), trigger: ['blur', 'change']
           },
           {
             validator: validBucketName, trigger: ['blur', 'change']
@@ -895,59 +776,58 @@ export default {
         ],
         region: [
           {
-            required: true, message: '区域必填', trigger: ['blur', 'change']
+            required: true, message: this.$ts('validate.requiredReg', { name: this.$ts('loadGroup.region') }), trigger: ['blur', 'change']
           }
         ],
-        accessKey: [
-          {
-            required: true, message: 'access key id 必填', trigger: ['blur', 'change']
-          },
-          {
-            min: 2, max: 64, message: '请输入2-64字符'
-          }
-        ],
-        secretKey: [
-          {
-            required: true, message: 'secret key 必填', trigger: ['blur', 'change']
-          },
-          {
-            min: 2, max: 64, message: '请输入2-64字符'
-          }
-        ],
+        // accessKey: [
+        //   {
+        //     required: true, message: 'access key id 必填', trigger: ['blur', 'change']
+        //   },
+        //   {
+        //     min: 2, max: 64, message: this.$ts('objectResource.urlIpt')
+        //   }
+        // ],
+        // secretKey: [
+        //   {
+        //     required: true, message: 'secret key 必填', trigger: ['blur', 'change']
+        //   },
+        //   {
+        //     min: 2, max: 64, message: this.$ts('objectResource.urlIpt')
+        //   }
+        // ],
         userName: [
           {
-            required: true, message: '用户名称必填', trigger: ['blur', 'change']
+            required: true, message: this.$ts('validate.requiredReg', { name: this.$ts('user.username') }), trigger: ['blur', 'change']
           },
           {
-            min: 2, max: 64, message: '请输入2-64字符'
+            min: 2, max: 64, message: this.$ts('objectResource.urlIpt')
           }
         ],
         password: [
           {
-            required: true, message: '用户密码必填', trigger: ['blur', 'change']
+            required: true, message: this.$ts('validate.requiredReg', { name: this.$ts('login.password') }), trigger: ['blur', 'change']
           },
           {
-            min: 2, max: 64, message: '请输入2-64字符'
+            min: 2, max: 64, message: this.$ts('objectResource.urlIpt')
           }
         ],
         sign: [
           {
-            required: true, message: '标签名必填', trigger: ['blur', 'change']
+            required: true, message: this.$ts('validate.requiredReg', { name: this.$ts('loadGroup.sign') }), trigger: ['blur', 'change']
           },
           {
-            min: 2, max: 256, message: '请输入2-256字符'
+            min: 2, max: 256, message: this.$ts('objectResource.signIpt')
           }
 
         ],
-        objectCount: { required: true, message: '存储数量上限必填，请输入正整数' },
+        objectCount: { required: true, message: this.$ts('validate.requiredReg', { name: this.$ts('loadGroup.objectCountLimit') }) },
         objectSize: [
-          { required: true, message: '存储数量上限必填，请输入正整数' },
+          { required: true, message: this.$ts('validate.requiredReg', { name: this.$ts('loadGroup.objectSizeLimit') }) },
           { validator: validateMaxInt, trigger: ['change', 'blur'] }
-
         ],
-        deviceId: { required: true, message: '请选择存储设备' },
-        storageType: { required: true, message: '请选择存储热度' },
-        mountDir: { required: true, message: '请设置共享目录' }
+        deviceId: { required: true, message: this.$ts('validate.selectItem', { name: this.$ts('objectResource.storageDevice') }) },
+        storageType: { required: true, message: this.$ts('validate.selectItem', { name: this.$ts('objectResource.storageType') }) },
+        mountDir: { required: true, message: this.$ts('validate.iptItem', { name: this.$ts('loadGroup.sharePath') }) }
       },
       form: {
         pathStyle: true,
@@ -984,10 +864,10 @@ export default {
         mountDir: ''
       },
       placeholder: [
-        { label: '容量上限不超过8,000,000,000GB', value: '容量上限不超过8,000,000,000GB' },
-        { label: '容量上限不超过83886TB', value: '容量上限不超过83886TB' }
+        { label: this.$ts('validate.limitRange', { range: '8,000,000,000GB' }), value: this.$ts('validate.limitRange', { range: '8,000,000,000GB' }) },
+        { label: this.$ts('validate.limitRange', { range: '83886TB' }), value: this.$ts('validate.limitRange', { range: '83886TB' }) }
       ],
-      placeholderValue: '容量上限不超过8,000,000,000GB',
+      placeholderValue: this.$ts('validate.limitRange', { range: '8,000,000,000GB' }),
       sizeSelect: [
         { label: 'GB', value: 'GB' },
         { label: 'TB', value: 'TB' }
@@ -1008,18 +888,18 @@ export default {
         pageSize: 10
       },
       tableData: [],
-      storageType: [
-        { label: 'NAS', value: 'NAS' },
-        { label: 'DBS', value: 'DBS' },
-        { label: 'REMOTE_DISK', value: 'REMOTE_DISK' },
-        { label: '本地磁盘', value: 'LOCAL_DISK' },
-        { label: 'DOS', value: 'DOS' }
-      ],
+      // storageType: [
+      //   { label: 'NAS', value: 'NAS' },
+      //   { label: 'DBS', value: 'DBS' },
+      //   { label: 'REMOTE_DISK', value: 'REMOTE_DISK' },
+      //   { label: '本地磁盘', value: 'LOCAL_DISK' },
+      //   { label: 'DOS', value: 'DOS' }
+      // ],
       prop: '',
       order: '',
       storageTypeEnu: {
-        'OK': '连接正常',
-        'NULL': ' 未检测'
+        'OK': this.$ts('loadGroup.connectNormal'),
+        'NULL': this.$ts('loadGroup.notCheck'),
         // 'STATUS_NULL': '未检测',
         // 'CONNECTING': '连接正常',
         // 'INVALID_KEY': '账号错误',
@@ -1031,7 +911,7 @@ export default {
         // 'REMOUNT': '重新挂载中'
       },
       dRules: {
-        deviceName: { message: "请输入2-40位英文、中文、数字、'_-.'", required: true, pattern: /^[a-zA-Z0-9'_\u4e00-\u9fa5\-\.]{2,40}$/ },
+        deviceName: { message: this.$ts('objectResource.deviceNameIpt'), required: true, pattern: /^[a-zA-Z0-9'_\u4e00-\u9fa5\-\.]{2,40}$/ },
         isDefault: { required: true }
       },
       deviceSelectOpt: [],
@@ -1041,46 +921,47 @@ export default {
     }
   },
   computed: {
-    resourceFactoryMap() {
+    resourceFactoryMap () {
       return [
         { label: '电信带库', value: '电信带库' },
         { label: '互盟蓝光', value: '互盟蓝光' },
+        { label: '安华信达光磁', value: '安华信达光磁' },
         { label: 'minio-fake', value: 'minio-fake', hide: this.copyForm.manufacturer !== 'minio-fake' && this.$route.query['miniofake'] !== 'true' }
       ].filter(x => !x.hide)
     },
-    isAdd() {
+    isAdd () {
       return this.opType === 'add'
     },
-    renderData() {
+    renderData () {
       return this.tableData.slice((this.pageObj.currentPage - 1) * this.pageObj.pageSize, this.pageObj.currentPage * this.pageObj.pageSize)
     },
-    isAddDevice() {
+    isAddDevice () {
       return this.optDType === 'add'
     },
-    renderDel() {
+    renderDel () {
       return this.opType === 'del'
     },
-    getStorageType() {
+    getStorageType () {
       return this.form.storageType
     },
-    deviceExistNextConifg() {
+    deviceExistNextConifg () {
       return this.form.deviceId && this.tableData.some(x => x.deviceId === this.form.deviceId && x.storageResourceModelList.some(item => item.next))
     },
-    judgeS3Type() {
+    judgeS3Type () {
       return this.form.storageType === 'S3'
     },
-    enableNasResource() {
+    enableNasResource () {
       return this.$route.query.nas === 'true'
     },
-    filterEnumStorageType() {
+    filterEnumStorageType () {
       return [
         {
-          label: '温存储',
+          label: this.$ts('loadGroup.warmLoad'),
           value: 'WARM',
           show: true
         },
         {
-          label: '冷存储',
+          label: this.$ts('loadGroup.dataLoad'),
           value: 'S3',
           show: true
         },
@@ -1094,7 +975,7 @@ export default {
           show: this.copyForm.storageType === 'NAS' || this.enableNasResource
         },
         {
-          label: '冰存储',
+          label: this.$ts('loadGroup.glacierLoad'),
           value: 'GLACIER',
           show: true
         }
@@ -1107,7 +988,7 @@ export default {
     ...mapState(['api'])
   },
   watch: {
-    resourceFactoryMap(val, pre) {
+    resourceFactoryMap (val, pre) {
       if (val.length < pre.length) {
         if (this.form.manufacturer === 'minio-fake') {
           this.form.manufacturer = ''
@@ -1121,23 +1002,23 @@ export default {
     //     this.form.nasAdvancedConfig = false
     //   }
     // },
-    deleteFlag(val) {
+    deleteFlag (val) {
       if (!val) {
         this.opType = 'add'
         this.optDType = 'add'
       }
     },
-    filterText(val) {
+    filterText (val) {
       this.$refs.tree.filter(val)
     },
-    defNextFlag(val) {
+    defNextFlag (val) {
       if (!val) {
         Object.assign(this.defNextForm, { flag: 'next', radio: '', search: '', resourceId: '' })
       }
     }
 
   },
-  mounted() {
+  mounted () {
     this.prop = this.defaultSort.prop
     this.order = this.defaultSort.order
     this.init().then(() => {
@@ -1145,7 +1026,7 @@ export default {
     })
   },
   methods: {
-    renderLoadGroupStatus(stauts) {
+    renderLoadGroupStatus (stauts) {
       let icon = ''
       switch (stauts) {
         case 'GREEN':
@@ -1161,13 +1042,13 @@ export default {
       }
       return '#icon-' + icon
     },
-    judgeValidNext() {
+    judgeValidNext () {
       // 禁用选择next
       if (this.deviceExistNextConifg && this.isAdd && this.form.next) {
-        this.$confirm('当前设备下已有资源为下一个资源，当前设置将会失效!', '确认', {
-          confirmButtonText: '确定',
+        this.$confirm(this.$ts('objectResource.setNextTip'), {
+          confirmButtonText: this.$ts('page.confirm'),
           showCancelButton: false,
-          cancelButtonText: '取消',
+          cancelButtonText: this.$ts('page.cancel'),
           type: 'warning'
         }).then(res => {
           this.form.next = false
@@ -1176,7 +1057,7 @@ export default {
         })
       }
     },
-    renderUtilityRatio(data) {
+    renderUtilityRatio (data) {
       const {
         objectSize,
         usedSpace,
@@ -1194,11 +1075,11 @@ export default {
         }]
       }
     },
-    handleNextResource(val) {
+    handleNextResource (val) {
       if (val === 'CACHE' && this.form.next) {
-        this.$confirm('当前NAS资源存储用途为缓存，下一个资源将会失效，是否继续？', '确认', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
+        this.$confirm(this.$ts('objectResource.setNasNextTip'), {
+          confirmButtonText: this.$ts('page.confirm'),
+          cancelButtonText: this.$ts('page.cancel'),
           type: 'warning'
         }).then(res => {
           this.form.next = false
@@ -1207,16 +1088,16 @@ export default {
         })
       }
     },
-    validateUrl() {
+    validateUrl () {
       setTimeout(() => {
         this.$refs.form.clearValidate('url')
       })
     },
-    transRegion(val) {
-      if (val === 'ap-east-1') return '亚太地区(香港)'
+    transRegion (val) {
+      if (val === 'ap-east-1') return this.$ts('loadGroup.HK')
       else return '-'
     },
-    showDefaultResource() {
+    showDefaultResource () {
       const defaultDevice = this.tableData.filter(item => {
         return item.default === 'true'
       })
@@ -1237,7 +1118,7 @@ export default {
     },
     // 刷新或者 修改当前设备、资源后重新让tree刷新数据并高亮
     // 新需求、需要获取资源状态
-    getCurrentRefresh() {
+    getCurrentRefresh () {
       this.init().then(() => {
         const { resourceId, storageResourceModelList, deviceName } = this.selectObject
         if (resourceId) {
@@ -1266,7 +1147,7 @@ export default {
         }
       })
     },
-    changelogicUnit(val) {
+    changelogicUnit (val) {
       if (val == 'TB') {
         this.form.objectSize = ''
         this.placeholderValue = this.placeholder[1].value
@@ -1275,7 +1156,7 @@ export default {
         this.placeholderValue = this.placeholder[0].value
       }
     },
-    inputPositiveNum(ipt, value, range) {
+    inputPositiveNum (ipt, value, range) {
       // let temp = ''
       // const keys = value.split('.')
       // for (const i of keys) {
@@ -1304,7 +1185,7 @@ export default {
       // console.log(tempV)
       // this[keys[0]][keys[1]] = ipt.replace(/(^0+)|\D/g, '')
     },
-    getResourceStatus(row) {
+    getResourceStatus (row) {
       // console.log(row.storageResourceModelList, 'row')
       // 调用资源
       this.showDescDevice = 'object'
@@ -1336,18 +1217,18 @@ export default {
       }
     },
 
-    transByteToGB(data) {
+    transByteToGB (data) {
       // ByteToGB、
       const res = (Number(data) / 1024 ** 3).toFixed(2)
       return res == 0 ? 0 : res
     },
-    handleRowChange(row) {
+    handleRowChange (row) {
       // 请求成功清除数据 row调用为null
       const resourceId = row && row.resourceId
       this.defNextForm.radio = resourceId
       this.defNextForm.resourceId = resourceId
     },
-    defSearch() {
+    defSearch () {
       this.defNextResource = JSON.parse(JSON.stringify(this.copyDefNextResource))
       if (!this.defNextForm.search) {
         return
@@ -1359,29 +1240,35 @@ export default {
         })
       }
     },
-    sortFunctionDef(val) {
+    sortFunctionDef (val) {
       this.defNextSort.prop = val.prop
       this.defNextSort.order = val.order
       this.defNextResource.sort(this.sortMethod(val.prop, val.order))
     },
-    getCurrentRow(row) {
+    getCurrentRow (row) {
       this.defNextForm.resourceId = row.resourceId
     },
-    transferBool(val) {
+    transferBool (val) {
       return this.stringToBoolean(val)
     },
-    confirmDefNext() {
+    confirmDefNext () {
       const {
         flag,
         deviceId,
         resourceId
       } = this.defNextForm
       if (!this.defNextForm.resourceId) {
-        return this.$notify.error('请选择存储资源')
+        return this.$msg({
+          type: 'error',
+          text: this.$ts('loadGroup.selectResourceRequired')
+        })
       }
       const item = this.defNextResource.find(item => item.resourceId == resourceId)
       if (item.default && flag === 'next') {
-        return this.$notify.error('默认资源和下一个资源不能同时设置在同一个资源中')
+        return this.$msg({
+          type: 'error',
+          text: this.$ts('default and next cannot at the same resource')
+        })
       }
       const data = {
         deviceId,
@@ -1404,29 +1291,29 @@ export default {
           this.handleDefNextFlag(row)
           this.$msg({
             type: 'success',
-            text: '操作成功'
+            text: this.$ts('page.responseSuccess')
           })
         }).finally(() => {
           this.loading = false
         })
       })
     },
-    handleDefNextFlag(row) {
+    handleDefNextFlag (row) {
       this.defNextResource = row.storageResourceModelList.filter(x => x.storageUseType !== 'CACHE')
       this.copyDefNextResource = JSON.parse(JSON.stringify(this.defNextResource))
       this.defNextForm.deviceId = row.deviceId
       this.defNextFlag = true
     },
-    handleDemi(row, _, value) {
+    handleDemi (row, _, value) {
       value = value === '0' ? '0' : String(value)
       const reg = /\B(?=(\d{3})+(?!\d))/g
       return value.replace(reg, ',')
     },
-    filterNode(value, data) {
+    filterNode (value, data) {
       if (!value) return true
       return (data.deviceName || data.storageName).toLocaleLowerCase().indexOf(value.toLocaleLowerCase()) !== -1
     },
-    getInfo(node) {
+    getInfo (node) {
       this.selectObject = node
       if (Object.keys(node).includes('storageResourceModelList')) {
         this.updateDevice(node, false, true)
@@ -1437,7 +1324,7 @@ export default {
         // render object
       }
     },
-    handleDel(type, { row }) {
+    handleDel (type, { row }) {
       if (type === 'device') {
         this.optDType = 'del'
       } else if (type === 'object') {
@@ -1447,7 +1334,7 @@ export default {
       this.selectRow = row
       this.deleteFlag = true
     },
-    stringToBoolean(string) {
+    stringToBoolean (string) {
       // console.log(string, 'string')
       if (typeof (string) !== 'string') return string
       switch (string.toLowerCase().trim()) {
@@ -1502,14 +1389,14 @@ export default {
     //       })
     //   })
     // },
-    init() {
+    init () {
       return new Promise((resolve) => {
         this.loading = true
         listStorageDevice().then((res) => {
           this.tableData = (res.data || []).map(item => {
             item.id = 'device' + item.deviceId
             if (item.storageResourceModelList && item.storageResourceModelList.length) {
-              item.storageResourceModelList.map(async(itx) => {
+              item.storageResourceModelList.map(async (itx) => {
                 itx.deviceName = itx.storageName
                 itx.id = 'resource' + itx.resourceId
                 // itx.resourceStatus = await this.getSingleResourceStatus(itx)
@@ -1578,7 +1465,7 @@ export default {
       })
     },
     // 点击创建、再修改、数据情况回显问题
-    async updateForm(row, flag = false, needFill = false) {
+    async updateForm (row, flag = false, needFill = false) {
       this.opType = 'update'
       // console.log(row.objectSize, 'egeg')
       // region、
@@ -1608,7 +1495,7 @@ export default {
         this.modelFormFlag = true
       }
     },
-    updateDevice(row, flag = false, needFill = false) {
+    updateDevice (row, flag = false, needFill = false) {
       this.optDType = 'update'
       Object.assign(this.deviceForm, {
         ...row, isDefault: this.stringToBoolean(row.default)
@@ -1623,7 +1510,7 @@ export default {
         })
       }
     },
-    createDevice() {
+    createDevice () {
       this.$refs['Dform'].validate((valid) => {
         if (valid) {
           const { deviceName, isDefault, deviceId } = this.deviceForm
@@ -1633,7 +1520,7 @@ export default {
             }).then(() => {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
               this.deviceDialog = false
               this.getCurrentRefresh()
@@ -1646,7 +1533,7 @@ export default {
             }).then(() => {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
               this.deviceDialog = false
               this.getCurrentRefresh()
@@ -1658,34 +1545,34 @@ export default {
         // console.log(valid, 'valid', this.deviceForm)
       })
     },
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       this.pageObj.currentPage = 1
       this.pageObj.pageSize = val
     },
     // 当前页改变时触发 跳转其他页
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       this.pageObj.currentPage = val
     },
-    getRowClass({ row }) {
+    getRowClass ({ row }) {
       if (row.storageResourceModelList && !row.storageResourceModelList.length) {
         return ['hide-dropdown']
       } else {
         return ['']
       }
     },
-    expandChange(row, any) {
+    expandChange (row, any) {
       this.$set(row, 'loading', true)
       setTimeout(() => {
         this.$set(row, 'loading', false)
       }, 200)
     },
-    dialogOpen(e) {
+    dialogOpen (e) {
       const ipt = e
-      this.$nextTick(function() {
+      this.$nextTick(function () {
         this.$refs[ipt].$el.querySelector('input').focus()
       })
     },
-    async showCreate(cName, id = '') {
+    async showCreate (cName, id = '') {
       if (cName === 'device') {
         Object.assign(this.deviceForm, {
           deviceName: '',
@@ -1745,7 +1632,7 @@ export default {
         // getRegions
       }
     },
-    async loadAsyncOption() {
+    async loadAsyncOption () {
       const res = await listStorageDevice()
       this.deviceSelectOpt = (res.data || []).map(item => {
         return {
@@ -1762,7 +1649,7 @@ export default {
       //   return { label: item, value: item }
       // })
     },
-    deleteForm() {
+    deleteForm () {
       if (this.renderDel) {
         const { resourceId, deviceId } = this.selectRow
         // 删除存储资源 校验关联负载组
@@ -1774,7 +1661,7 @@ export default {
             if (res.msg === 'success') {
               this.$msg({
                 type: 'success',
-                text: this.$ts('response.success')
+                text: this.$ts('page.responseSuccess')
               })
               this.showDescDevice = ''
             }
@@ -1793,7 +1680,7 @@ export default {
           if (res.msg === 'success') {
             this.$msg({
               type: 'success',
-              text: this.$ts('response.success')
+              text: this.$ts('page.responseSuccess')
             })
             this.showDescDevice = ''
           }
@@ -1807,7 +1694,7 @@ export default {
           })
       }
     },
-    confirmCreate() {
+    confirmCreate () {
       this.$refs['form'].validate((valid, object) => {
         const {
           manufacturer,
@@ -1880,7 +1767,7 @@ export default {
               .then((res) => {
                 this.$msg({
                   type: 'success',
-                  text: this.$ts('response.success')
+                  text: this.$ts('page.responseSuccess')
                 })
                 this.modelFormFlag = false
                 this.getCurrentRefresh()
@@ -1928,7 +1815,7 @@ export default {
               .then((res) => {
                 this.$msg({
                   type: 'success',
-                  text: this.$ts('response.success')
+                  text: this.$ts('page.responseSuccess')
                 })
                 if (this.form.objectSize != -1) {
                   this.form.unit == 'GB'

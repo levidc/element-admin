@@ -5,29 +5,30 @@
         <div class="bucket-panel">
           <div class="param-box">
             <div class="param-hd">
-              <h3>对象锁定</h3>
-              <span
-                style="margin-left:15px;vertical-align:bottom">使用一次写入多次读取(WORM)模型存储对象，防止对象在固定的时间段内或无限期地被删除或覆盖。</span>
+              <h3>{{ $ts('bucket.objectLock') }}</h3>
+              <span style="margin-left:15px;vertical-align:bottom">
+                {{ $ts('bucket.wormTip') }}
+              </span>
             </div>
             <div v-loading="loading">
               <el-button v-show="!switchOn" v-access="'s3:PutBucketObjectLockConfiguration'" class="modBtn" type="text"
                 :disabled="!objectLockEnable" @click="showOption">
                 <span style="color:#ff8746;">
-                  编辑
+                  {{ $ts('page.edit') }}
                 </span>
               </el-button>
-              <p class="title">对象锁定</p>
-              <p>{{ objectLockEnable ? '已启用' : '已禁用' }}</p>
+              <p class="title">{{ $ts('bucket.objectLock') }}</p>
+              <p>{{ objectLockEnable ? $ts('page.enable') : $ts('page.disable') }}</p>
               <div v-if="!switchOn">
                 <!-- 对象锁定未启用、隐藏默认保留期 -->
                 <div v-if="objectLockEnable">
-                  <p class="title">默认保留期</p>
+                  <p class="title">{{ $ts('bucket.defaultRetention') }}</p>
                   <p>{{ Retention }}</p>
                 </div>
-                <div v-if="Retention !== '未启用'">
-                  <p class="title">默认保留模式</p>
+                <div v-if="Retention !== $ts('page.disable')">
+                  <p class="title">{{ $ts('bucket.defaultRetentionMode') }}</p>
                   <p>{{ mode }}</p>
-                  <p class="title">默认保留期</p>
+                  <p class="title">{{ $ts('bucket.defaultRetention') }}</p>
                   <p>{{ timeNumData }}</p>
                 </div>
               </div>
@@ -35,34 +36,35 @@
                 <el-form ref="form" :model="form" :rules="rules">
                   <el-row>
                     <p class="title">
-                      默认保留期
+                      {{ $ts('bucket.defaultRetention') }}
                     </p>
-                    <span class="tip">自动保护置入此存储桶的新对象，保证其不被删除或覆盖。</span>
+                    <span class="tip">{{ $ts('bucket.defaultRetentionTip') }}</span>
                     <el-radio-group v-model="form.defaultTime" class="reverseColumn">
-                      <el-radio label="disable">禁用</el-radio>
-                      <el-radio label="enable">启用</el-radio>
+                      <el-radio label="disable">{{ $ts('page.disable') }}</el-radio>
+                      <el-radio label="enable">{{ $ts('page.enable') }}</el-radio>
                     </el-radio-group>
                   </el-row>
                   <el-row v-if="form.defaultTime !== 'disable'">
                     <p class="title">
-                      默认保留模式
+                      {{ $ts('bucket.defaultRetentionMode') }}
                     </p>
                     <el-radio-group v-model="form.mode" class="reverseColumn">
-                      <el-radio class="modePosition" label="GOVERNANCE">监管
+                      <el-radio class="modePosition" label="GOVERNANCE">{{ $ts('bucket.GOVERNANCE') }}
                         <span class="modeTip">
-                          在保留期内，具有特定权限的用户可以覆盖或删除受保护的对象版本。
+                          {{ $ts('bucket.GOVERNANCETip') }}
                         </span>
                       </el-radio>
-                      <el-radio class="modePosition" label="COMPLIANCE">合规
-                        <span class="modeTip">在保留期内，任何用户都不能覆盖或删除受保护的对象版本。</span>
+                      <el-radio class="modePosition" label="COMPLIANCE">{{ $ts('bucket.COMPLIANCE') }}
+                        <span class="modeTip">{{ $ts('bucket.COMPLIANCETip') }}</span>
                       </el-radio>
                     </el-radio-group>
                     <p class="title">
-                      默认保留期
+                      {{ $ts('bucket.defaultRetention') }}
                     </p>
                     <el-form-item prop="timeNum">
-                      <el-input v-model="form.timeNum" style="width:500px;margin-right:20px" size="mini"
-                        placeholder="输入数字" clearable />
+                      <el-input @input="val => form.timeNum = val.replace(/(^0+)|\D/g, '')" v-model="form.timeNum"
+                        style="width:500px;margin-right:20px" size="mini" :placeholder="$ts('validate.positiveNumber')"
+                        clearable />
                       <el-select v-model="expireTime" size="mini" @change="chanageExpireTime">
                         <el-option v-for="(item, index) in timeRange" :key="index" :label="item.name"
                           :value="item.value" />
@@ -70,8 +72,9 @@
                     </el-form-item>
                   </el-row>
                   <el-row style="width:730px;display:flex;justify-content:flex-end;margin-top:30px">
-                    <el-button @click="switchOn = false; getObjectLock()">取消</el-button>
-                    <el-button type="primary" class="golden" @click="saveObjectLockConfig">保存更改</el-button>
+                    <el-button @click="switchOn = false; getObjectLock()">{{ $ts('page.cancel') }}</el-button>
+                    <el-button type="primary" class="golden" @click="saveObjectLockConfig">{{ $ts('page.applySet')
+                      }}</el-button>
                   </el-row>
                 </el-form>
               </div>
@@ -88,20 +91,20 @@ export default {
     const validatorTimeNum = (rule, data, callback) => {
       const reg = new RegExp('^[0-9]+(\.[0-9]+)?$')
       if (!reg.test(data)) {
-        return callback('请输入有效的数值')
+        return callback(this.$ts('validate.positiveNumber'))
       } else if (String(data)[0] == '0' && String(data)[1] !== '.') {
-        return callback('请输入有效的数值')
+        return callback(this.$ts('validate.positiveNumber'))
       }
       if (this.expireTime == 'year') {
         if (data > 99) {
-          return callback(`当前配置的保留期不能大于99年`)
+          return callback(this.$ts('bucket.yearRange'))
         } else {
           return callback()
         }
       }
       if (this.expireTime == 'day') {
         if (data > 36135) {
-          return callback(`当前配置的保留期不能大于36135天`)
+          return callback(this.$ts('bucket.dayRange'))
         } else {
           return callback()
         }
@@ -121,8 +124,8 @@ export default {
       expireTime: '',
       timeNumData: '',
       timeRange: [
-        { name: '天', value: 'day' },
-        { name: '年', value: 'year' }
+        { name: this.$ts('page.day'), value: 'day' },
+        { name: this.$ts('page.year'), value: 'year' }
       ],
       rules: {
         timeNum: {
@@ -189,7 +192,7 @@ export default {
               } else {
                 this.$msg({
                   type: 'success',
-                  text: this.$ts('response.success')
+                  text: this.$ts('page.responseSuccess')
                 })
                 this.switchOn = false
                 console.log(data, 'putobjectlockconfiguration')
@@ -215,7 +218,7 @@ export default {
             this.loading = false
             console.log(data, 'objectlock')
             if (!Object.keys(data.ObjectLockConfiguration).length) {
-              this.Retention = '未启用'
+              this.Retention = this.$ts('page.disable')
               return
             }
             this.objectLockEnable =
@@ -223,8 +226,8 @@ export default {
 
             this.Retention = data.ObjectLockConfiguration.Rule.DefaultRetention
               .Mode
-              ? '已启用'
-              : '未启用'
+              ? this.$ts('page.enable')
+              : this.$ts('page.disable')
             // 默认保留期 开启 、关闭
             this.form.defaultTime = data.ObjectLockConfiguration.Rule
               .DefaultRetention.Mode
@@ -238,24 +241,24 @@ export default {
             this.mode =
               data.ObjectLockConfiguration.Rule.DefaultRetention.Mode ===
                 'GOVERNANCE'
-                ? '监管'
-                : '合规'
+                ? this.$ts('bucket.GOVERNANCE')
+                : this.$ts('bucket.COMPLIANCE')
 
             this.timeNumData = data.ObjectLockConfiguration.Rule
               .DefaultRetention.Days
-              ? data.ObjectLockConfiguration.Rule.DefaultRetention.Days + ' 天'
-              : data.ObjectLockConfiguration.Rule.DefaultRetention.Years + ' 年'
+              ? data.ObjectLockConfiguration.Rule.DefaultRetention.Days + ' ' + this.$ts('page.day')
+              : data.ObjectLockConfiguration.Rule.DefaultRetention.Years + ' ' + this.$ts('page.year')
 
             this.form.mode =
               data.ObjectLockConfiguration.Rule.DefaultRetention.Mode ||
               'GOVERNANCE'
-            console.log(this.timeNumData, 'timenum')
+            // console.log(this.timeNumData, 'timenum')
             // 默认保留期 天/年
             this.form.timeNum = Number(this.timeNumData.split(' ')[0])
               ? this.timeNumData.split(' ')[0]
               : ''
             this.expireTime =
-              this.timeNumData.split(' ')[1] === '天' ? 'day' : 'year'
+              this.timeNumData.split(' ')[1] === this.$ts('page.day') ? 'day' : 'year'
           }
         }
       )
